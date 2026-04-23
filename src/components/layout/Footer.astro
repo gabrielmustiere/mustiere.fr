@@ -1,0 +1,34 @@
+---
+interface Props {
+  variant?: 'home' | 'blog' | 'article';
+  maxWidth?: string;
+}
+
+const { variant = 'home', maxWidth = '720px' } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+{
+  variant === 'home' ? (
+    <footer class="mt-16 flex items-center justify-between text-[11px] text-[color:var(--color-muted)]">
+      <span>© {year} Gabriel Mustière</span>
+      <span class="tnum">Fait main · Nantes</span>
+    </footer>
+  ) : (
+    <footer
+      class="mx-auto px-6 sm:px-10 pb-16 flex items-center justify-between text-[11px] tracking-[0.1em] uppercase text-[color:var(--color-muted)] border-t border-[color:var(--color-rule)] pt-6"
+      style={`max-width: ${maxWidth}`}
+    >
+      <span>© {year} Gabriel Mustière</span>
+      {variant === 'article' ? (
+        <a href="/blog" class="hover:text-[color:var(--color-ink)]">
+          ← Tous les écrits
+        </a>
+      ) : (
+        <a href="/" class="hover:text-[color:var(--color-ink)]">
+          ← Retour à l'accueil
+        </a>
+      )}
+    </footer>
+  )
+}

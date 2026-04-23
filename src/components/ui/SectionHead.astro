@@ -1,0 +1,43 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+export type AccentKey = 'about' | 'blog' | 'projects' | 'contact' | 'cv';
+
+interface Props extends HTMLAttributes<'div'> {
+  number: string;
+  title: string;
+  accent: AccentKey;
+  level?: 1 | 2;
+}
+
+const { number, title, accent, level = 2, ...rest } = Astro.props;
+const accentClass = `acc-${accent}`;
+---
+
+<div class="mt-14 sm:mt-24 flex items-baseline gap-4" {...rest}>
+  <span
+    class:list={[
+      'tnum text-[11px] tracking-[0.12em] uppercase font-mono',
+      accentClass,
+    ]}
+  >
+    <span class="acc-dot"></span>§ {number}
+  </span>
+  {
+    level === 1 ? (
+      <h1
+        class="font-serif text-[32px] sm:text-[44px] leading-[1.05] tracking-[-0.01em]"
+        style="font-family: var(--font-serif)"
+      >
+        {title}
+      </h1>
+    ) : (
+      <h2
+        class="font-serif text-[32px] sm:text-[44px] leading-[1.05] tracking-[-0.01em]"
+        style="font-family: var(--font-serif)"
+      >
+        {title}
+      </h2>
+    )
+  }
+</div>

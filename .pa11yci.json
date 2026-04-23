@@ -1,0 +1,16 @@
+{
+  "defaults": {
+    "standard": "WCAG2AA",
+    "timeout": 20000,
+    "wait": 500,
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox"]
+    }
+  },
+  "urls": [
+    "http://localhost:4321/",
+    "http://localhost:4321/blog",
+    "http://localhost:4321/blog/pourquoi-vos-evaluations-llm-ne-valent-rien",
+    "http://localhost:4321/404.html"
+  ]
+}

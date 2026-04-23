@@ -1,0 +1,36 @@
+---
+import Footer from '../layout/Footer.astro';
+---
+
+<section data-key="cv" id="cv">
+  <div
+    class="mt-14 sm:mt-24 border-t border-[color:var(--color-rule-strong)] pt-8 flex items-center justify-between gap-6 flex-wrap"
+  >
+    <div>
+      <div
+        class="text-[11px] tracking-[0.12em] uppercase acc-cv font-mono"
+      >
+        <span class="acc-dot"></span>§ 05 · Document
+      </div>
+      <h2
+        class="font-serif mt-1 text-[28px] sm:text-[36px] tracking-[-0.01em]"
+        style="font-family: var(--font-serif)"
+      >
+        CV en PDF
+      </h2>
+      <p class="mt-2 text-[14px] text-[color:var(--color-muted)]">
+        Dernière mise à jour : avril 2026 · 2 pages · 180 ko
+      </p>
+    </div>
+    <a
+      href="/cv-gabriel-mustiere.pdf"
+      download
+      class="inline-flex items-center gap-2 text-[13px] border px-4 py-2 rounded-full hover:bg-white transition acc-cv"
+      style="border-color: var(--a-cv)"
+    >
+      <span>Télécharger</span>
+      <span class="font-mono text-[11px]">.pdf ↓</span>
+    </a>
+  </div>
+  <Footer variant="home" />
+</section>

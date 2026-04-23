@@ -1,0 +1,72 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+import { getCollection } from 'astro:content';
+import { formatDateShort, toISODate } from '../../utils/format-date';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
+  .slice(0, 4);
+---
+
+<section data-key="blog" id="blog">
+  <SectionHead number="02" title="Écrits" accent="blog" />
+  <p
+    class="mt-4 text-[14px] text-[color:var(--color-muted)] max-w-[480px]"
+  >
+    Notes sur la tech, le business et l'IA. Pas de fréquence, juste quand
+    j'ai quelque chose à dire.
+  </p>
+
+  <ul class="mt-8">
+    {
+      posts.map((post) => (
+        <li class="py-4 border-t border-[color:var(--color-rule)]">
+          <a
+            href={`/blog/${post.slug}`}
+            class="flex items-baseline gap-4 group"
+          >
+            <time
+              class="tnum text-[11px] tracking-[0.1em] uppercase shrink-0 w-20 acc-blog font-mono"
+              datetime={toISODate(post.data.publishedAt)}
+            >
+              {formatDateShort(post.data.publishedAt)}
+            </time>
+            <div class="flex-1">
+              <h3
+                class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
+                style="font-family: var(--font-serif)"
+              >
+                {post.data.title}
+              </h3>
+              {post.data.readingTime && (
+                <span class="text-[11px] tnum text-[color:var(--color-muted)]">
+                  {post.data.readingTime} min de lecture
+                </span>
+              )}
+            </div>
+          </a>
+        </li>
+      ))
+    }
+    <li class="border-t border-[color:var(--color-rule)]"></li>
+  </ul>
+  <div class="mt-6">
+    <a href="/blog" class="text-[13px] acc-blog link-u">
+      Voir tous les écrits →
+    </a>
+  </div>
+
+  <figure class="mt-10">
+    <figcaption
+      class="text-[11px] tracking-[0.12em] uppercase mb-2 text-[color:var(--color-muted)] font-mono"
+    >
+      Extrait — eval harness
+    </figcaption>
+    <pre class="code-block"><code>{`// tiny scoring loop
+for (const c of suite) {
+  const out = await model.run(c.input)
+  const s   = score(out, c.expected)
+  yield { id: c.id, score: s }
+}`}</code></pre>
+  </figure>
+</section>

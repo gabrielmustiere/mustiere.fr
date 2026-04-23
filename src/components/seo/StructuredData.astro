@@ -1,0 +1,41 @@
+---
+type JsonLdValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | JsonLdValue[]
+  | JsonLdObject
+  | null
+  | undefined;
+interface JsonLdObject {
+  [key: string]: JsonLdValue;
+}
+
+interface Props {
+  schemas: JsonLdObject[];
+}
+
+const { schemas } = Astro.props;
+
+function normalize(value: JsonLdValue): JsonLdValue {
+  if (value instanceof Date) return value.toISOString();
+  if (Array.isArray(value)) return value.map(normalize);
+  if (value && typeof value === 'object') {
+    const out: JsonLdObject = {};
+    for (const [k, v] of Object.entries(value)) {
+      if (v !== undefined && v !== null) out[k] = normalize(v);
+    }
+    return out;
+  }
+  return value;
+}
+
+const payload = schemas.map((s) => normalize(s));
+---
+
+{
+  payload.map((schema) => (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  ))
+}

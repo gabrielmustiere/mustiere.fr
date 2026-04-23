@@ -1,0 +1,48 @@
+---
+interface Props {
+  title: string;
+  url: string;
+}
+
+const { title, url } = Astro.props;
+---
+
+<button
+  type="button"
+  class="share-btn ml-auto text-[11px] tracking-[0.14em] uppercase border border-[color:var(--color-rule-strong)] rounded-full px-3 py-1 hover:bg-white transition font-mono"
+  data-share-title={title}
+  data-share-url={url}
+  aria-label={`Partager : ${title}`}
+>
+  <span data-share-label>Partager</span>
+</button>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.share-btn').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const title = btn.dataset.shareTitle ?? '';
+      const url = btn.dataset.shareUrl ?? window.location.href;
+      const label = btn.querySelector<HTMLElement>('[data-share-label]');
+      if (navigator.share) {
+        try {
+          await navigator.share({ title, url });
+        } catch {
+          /* user cancelled */
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        if (label) {
+          const prev = label.textContent;
+          label.textContent = 'Copié !';
+          setTimeout(() => {
+            label.textContent = prev;
+          }, 2000);
+        }
+      } catch {
+        /* clipboard denied; noop */
+      }
+    });
+  });
+</script>

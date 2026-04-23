@@ -1,0 +1,27 @@
+---
+import type { Category } from '../../content/config';
+
+interface Props {
+  category: Category;
+  size?: 'sm' | 'md';
+}
+
+const { category, size = 'sm' } = Astro.props;
+
+const accentMap: Record<Category, string> = {
+  IA: 'acc-projects',
+  Tech: 'acc-blog',
+  Lead: 'acc-about',
+  Business: 'acc-contact',
+};
+---
+
+<span
+  class:list={[
+    'font-mono uppercase',
+    accentMap[category],
+    size === 'sm' ? 'text-[10px] tracking-[0.14em]' : 'text-[11px] tracking-[0.12em]',
+  ]}
+>
+  {category}
+</span>

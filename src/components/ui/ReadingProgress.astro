@@ -1,0 +1,46 @@
+---
+---
+
+<div class="progress" aria-hidden="true">
+  <div id="progress-bar"></div>
+</div>
+
+<style>
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: transparent;
+    z-index: 40;
+    pointer-events: none;
+  }
+  .progress > div {
+    height: 100%;
+    width: 0%;
+    background: var(--a-blog);
+    transition: width 0.1s linear;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .progress > div {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const bar = document.getElementById('progress-bar');
+  if (bar) {
+    const update = () => {
+      const h = document.documentElement;
+      const scrolled = h.scrollTop;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? (scrolled / max) * 100 : 0;
+      bar.style.width = `${pct}%`;
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+  }
+</script>

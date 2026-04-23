@@ -1,0 +1,42 @@
+---
+title: "Postgres, pgvector et la tentation du silver bullet"
+excerpt: "pgvector est excellent. Il n'est pas la solution universelle que la hype laisse entendre. Retour d'expérience sur quatre déploiements, leurs limites et les arbitrages concrets à faire avant de l'adopter."
+publishedAt: 2026-02-12
+category: Tech
+tags: [postgres, pgvector, RAG, base de données]
+keywords: [pgvector production, vector database, Postgres RAG, embeddings Postgres]
+number: 5
+tldr: "pgvector couvre 80 % des cas de recherche vectorielle sans sortir de Postgres. Au-delà de ~10M d'embeddings ou d'un besoin de filtres complexes avec index ANN, la facture en latence et en mémoire devient sérieuse."
+---
+
+Il y a deux ans, ajouter de la recherche vectorielle à une appli voulait dire déployer Pinecone, Weaviate ou Qdrant à côté de Postgres. Aujourd'hui, beaucoup de projets démarrent avec `CREATE EXTENSION vector;` et s'arrêtent là. C'est souvent la bonne décision. Parfois pas.
+
+## Ce que pgvector fait très bien
+
+Pour des corpus en dessous de 1 à 5 millions d'embeddings, avec des dimensions ≤ 1536, pgvector est remarquable :
+
+- **Transactions ACID** sur les embeddings : écrire un document et son vecteur dans la même transaction.
+- **Filtrage par métadonnées** via les index B-tree existants, en SQL standard.
+- **Un seul système** à superviser, sauvegarder, upgrader.
+- **Coût** réduit à celui de votre Postgres actuel.
+
+L'index HNSW livré depuis la 0.5 ramène les temps de requête à quelques millisecondes même sur plusieurs millions de lignes, à condition d'avoir assez de RAM.
+
+## Là où ça coince
+
+J'ai vu quatre projets se cogner aux mêmes limites :
+
+1. **Combinaison index vectoriel + filtres sélectifs.** HNSW est un index approximatif ; il ne compose pas bien avec des `WHERE tenant_id = ?` qui éliminent 99 % des lignes. Le planner doit choisir entre index vectoriel + re-filtrage, ou scan filtré + tri par distance. Les deux plans scalent mal au-delà de ~50M de lignes.
+2. **Maintenance d'index.** Rebuild HNSW coûte cher sur gros volumes. En environnement multi-tenant avec beaucoup d'inserts, c'est un problème opérationnel réel.
+3. **Mémoire.** HNSW vit mieux en RAM. Sur un Postgres qui fait déjà du transactionnel intense, on se retrouve à arbitrer entre cache des tables chaudes et index vectoriel. Rarement confortable.
+4. **Re-ranking.** Les bases vectorielles spécialisées exposent des primitives de re-ranking hybride (BM25 + vecteur + filtres) plus ergonomiques qu'un enchaînement SQL.
+
+## La règle que je donne aux équipes
+
+Démarrer avec pgvector. Toujours. Sortir de Postgres uniquement quand l'un de ces trois seuils est franchi :
+
+- Volume > 10M d'embeddings **et** exigence de latence < 50ms p95.
+- Plus de 3 filtres sélectifs à combiner avec la similarité vectorielle.
+- Besoin de BM25 + vectoriel natif dans le même moteur.
+
+Dans les autres cas, la réponse la plus utile au client est : « on reste sur Postgres, on optimise l'index HNSW, et on ajoute de la RAM avant d'ajouter un système ».

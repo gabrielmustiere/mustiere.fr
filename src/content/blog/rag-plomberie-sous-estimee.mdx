@@ -1,0 +1,26 @@
+---
+title: "RAG : la plomberie qu'on sous-estime"
+excerpt: "Le RAG est vendu comme un problème d'embeddings. En production, 80 % du travail est ailleurs : découpage, normalisation, filtres de métadonnées, re-ranking. Tour des endroits où ça casse vraiment."
+publishedAt: 2025-11-22
+category: IA
+tags: [RAG, LLM, embeddings, production]
+keywords: [RAG production, retrieval augmented generation, chunking, re-ranking]
+number: 2
+tldr: "Le modèle d'embedding n'est pas le goulot du RAG. Le chunking, les métadonnées et le re-ranking le sont. Priorisez dans cet ordre avant d'optimiser le modèle."
+---
+
+Il y a un moment très marquant quand on passe un RAG de démo à la production : on se rend compte que le modèle d'embedding était le problème le plus simple. Tout le reste — le découpage, l'ingestion, le filtrage métier, le re-ranking, l'évaluation — est un travail de plomberie patient que personne ne vend sur LinkedIn.
+
+## Où ça casse, dans l'ordre
+
+**Le chunking.** Le premier ennemi. Découper au paragraphe donne des contextes incomplets ; découper à la page mélange des idées disjointes. La bonne découpe dépend du corpus, pas du modèle. Prévoyez de l'itérer.
+
+**Les métadonnées.** Un RAG sans filtre `tenant_id`, `date`, `type_document` ne sort jamais du PoC. Ajoutez-les dès la v0 — c'est plus simple que de les rétrofiter.
+
+**Le re-ranking.** La similarité vectorielle pure classe mal au-delà du top-3. Un cross-encoder léger sur le top-20 améliore les résultats plus fort qu'un passage à un meilleur embedding.
+
+**L'évaluation.** Sans suite d'éval adossée à des cas réels, vous ne savez pas si votre changement améliore ou dégrade. Voir mon autre billet sur les évaluations LLM.
+
+## L'ordre des priorités
+
+Prototype → chunking correct → métadonnées → re-ranking → embeddings de meilleure qualité → optimisation de latence. Dans cet ordre. Changer de modèle d'embedding avant d'avoir traité les trois premiers étages est presque toujours du mouvement sans progrès.

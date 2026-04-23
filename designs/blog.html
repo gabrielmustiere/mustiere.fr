@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Écrits — Gabriel Mustiere</title>
+<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style type="text/tailwindcss">
+  @theme {
+    --color-bg: #fafaf7;
+    --color-ink: #181613;
+    --color-muted: #6b655d;
+    --color-rule: #e4dfd6;
+  }
+  :root {
+    --a-about:    oklch(0.62 0.13  40);
+    --a-blog:     oklch(0.55 0.13 250);
+    --a-projects: oklch(0.55 0.10 145);
+    --a-contact:  oklch(0.52 0.13 330);
+    --a-cv:       oklch(0.58 0.13  75);
+  }
+  body { background:#fafaf7; color:#181613; font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  .font-serif { font-family:'Instrument Serif',Georgia,serif; }
+  .font-mono  { font-family:'JetBrains Mono',ui-monospace,monospace; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .acc-blog { color: var(--a-blog); }
+  .acc-about { color: var(--a-about); }
+  .acc-projects { color: var(--a-projects); }
+  .acc-contact { color: var(--a-contact); }
+  .acc-cv { color: var(--a-cv); }
+  .acc-dot { display:inline-block; width:6px; height:6px; border-radius:999px; background:currentColor; margin-right:8px; vertical-align:2px; }
+  .link-u { background-image: linear-gradient(currentColor, currentColor); background-size: 100% 1px; background-repeat:no-repeat; background-position:0 100%; padding-bottom:1px; transition: background-size .25s ease; }
+  .link-u:hover { background-size: 0% 1px; background-position: 100% 100%; }
+  em { font-style: italic; }
+  .cat-pill {
+    font-size: 10px; letter-spacing:.14em; text-transform: uppercase;
+    border: 1px solid currentColor; border-radius: 999px; padding: 2px 8px;
+  }
+  .chip-active { background: currentColor; }
+  .chip-active > span { color: #fafaf7; }
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<header class="border-b border-[#e4dfd6]">
+  <div class="mx-auto max-w-[960px] px-6 sm:px-10 py-5 flex items-center justify-between">
+    <a href="v1-quiet-editorial.html" class="font-serif text-[22px] tracking-[-0.01em]">Gabriel Mustiere</a>
+    <nav class="flex items-center gap-5 text-[13px] text-[#6b655d]">
+      <a href="v1-quiet-editorial.html#about" class="hover:text-[#181613]">À propos</a>
+      <a href="blog.html" class="text-[#181613]">Écrits</a>
+      <a href="v1-quiet-editorial.html#projects" class="hover:text-[#181613]">Projets</a>
+      <a href="v1-quiet-editorial.html#contact" class="hover:text-[#181613]">Contact</a>
+      <span class="text-[#bdb6a8]">·</span>
+      <a href="https://github.com/gmustiere" target="_blank" rel="noopener" class="hover:text-[#181613]">GitHub</a>
+      <a href="https://www.linkedin.com/in/gabrielmustiere" target="_blank" rel="noopener" class="hover:text-[#181613]">LinkedIn</a>
+    </nav>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[720px] px-6 sm:px-10 pt-10 sm:pt-16 pb-20">
+
+  <!-- Section head -->
+  <div class="flex items-center justify-between text-[11px] tracking-[.12em] uppercase">
+    <span class="acc-blog"><span class="acc-dot"></span>§ 02 · Écrits</span>
+    <span class="tnum text-[#8d8578]">12 billets</span>
+  </div>
+
+  <h1 class="font-serif mt-6 text-[52px] sm:text-[72px] leading-[1.02] tracking-[-0.015em]">
+    Écrits<br><em class="acc-blog">au long cours.</em>
+  </h1>
+
+  <p class="mt-6 text-[15px] sm:text-[16px] text-[#2a2622] leading-[1.7] max-w-[560px]">
+    Notes et essais sur la <span class="acc-blog">tech</span>, le
+    <span class="acc-about">business</span> et l'<span class="acc-projects">IA</span>.
+    Pas de fréquence — juste quand j'ai quelque chose à dire.
+  </p>
+
+  <!-- Filters -->
+  <div class="mt-10 flex flex-wrap items-center gap-2" id="filters">
+    <button data-tag="all" class="cat-pill text-[#181613] chip-active" aria-pressed="true"><span>Tout</span></button>
+    <button data-tag="IA" class="cat-pill acc-projects" aria-pressed="false"><span>IA</span></button>
+    <button data-tag="Tech" class="cat-pill acc-blog" aria-pressed="false"><span>Tech</span></button>
+    <button data-tag="Lead" class="cat-pill acc-about" aria-pressed="false"><span>Lead</span></button>
+    <button data-tag="Business" class="cat-pill acc-contact" aria-pressed="false"><span>Business</span></button>
+  </div>
+
+  <!-- Featured -->
+  <section class="mt-12 border-t border-[#bdb6a8] pt-6" data-tags="IA">
+    <div class="flex items-baseline justify-between text-[10px] tracking-[.14em] uppercase text-[#8d8578]">
+      <span>À la une</span><span class="tnum">№ 07</span>
+    </div>
+    <a href="article.html" class="block mt-3 group">
+      <h2 class="font-serif text-[30px] sm:text-[42px] leading-[1.08] tracking-[-0.015em] group-hover:text-[color:var(--a-blog)] transition-colors">
+        Pourquoi vos <em class="acc-blog">évaluations LLM</em> ne valent rien (et comment s'en sortir)
+      </h2>
+    </a>
+    <div class="mt-4 flex items-center gap-4 text-[11px] tracking-[.1em] uppercase text-[#8d8578]">
+      <span class="tnum acc-blog">14 Avr 2026</span>
+      <span>·</span>
+      <span class="acc-projects">IA</span>
+      <span>·</span>
+      <span class="tnum">11 min</span>
+    </div>
+    <p class="mt-4 text-[15px] text-[#2a2622] leading-[1.75] max-w-[560px]">
+      La plupart des équipes mesurent ce qu'elles peuvent mesurer, pas ce qui
+      compte. On part des cas d'échec observés en production pour construire
+      une suite d'évaluations qui tient sur la durée.
+    </p>
+  </section>
+
+  <!-- Archive -->
+  <section class="mt-16">
+    <div class="text-[10px] tracking-[.14em] uppercase text-[#8d8578] mb-3">Archive</div>
+    <ul id="archive">
+      <!-- post template repeated; each carries data-tags for filtering -->
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Lead">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">03 · 03 · 26</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Architecture d'une équipe de 4 à 20 : ce que personne ne dit</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-about">Lead</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">8 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Tech">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">12 · 02 · 26</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Postgres, pgvector et la tentation du silver bullet</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-blog">Tech</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">14 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Business">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">27 · 01 · 26</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Le coût réel d'une mauvaise décision technique</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-contact">Business</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">6 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Lead">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">11 · 12 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Contre les stand-ups</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-about">Lead</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">4 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="IA">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">22 · 11 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">RAG : la plomberie qu'on sous-estime</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-projects">IA</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">9 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Tech">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">04 · 10 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Bun, Deno, Node : je choisis quoi en 2026 ?</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-blog">Tech</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">7 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Business">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">12 · 09 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">TJM freelance : arrêter de se sous-évaluer</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-contact">Business</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">5 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="IA">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">20 · 08 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Structurer un prompt : sept règles tenues pendant un an</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-projects">IA</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">12 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Lead">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">02 · 07 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Devenir CTO sans perdre son âme d'ingénieur</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-about">Lead</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">8 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="Tech">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">14 · 06 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Observabilité pour petites équipes, pragmatiquement</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-blog">Tech</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">10 min</span>
+        </a>
+      </li>
+      <li class="py-5 border-t border-[#e4dfd6]" data-tags="IA">
+        <a href="article.html" class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group">
+          <span class="tnum text-[11px] tracking-[.08em] uppercase acc-blog">28 · 05 · 25</span>
+          <h3 class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors">Agents LLM : la plupart du temps, pas besoin</h3>
+          <span class="hidden sm:inline text-[10px] tracking-[.14em] uppercase acc-projects">IA</span>
+          <span class="hidden sm:inline text-[11px] tnum text-right text-[#8d8578]">6 min</span>
+        </a>
+      </li>
+      <li class="border-t border-[#e4dfd6]"></li>
+    </ul>
+    <p id="empty" class="hidden mt-6 text-[13px] text-[#8d8578]">Rien dans cette catégorie pour l'instant.</p>
+  </section>
+
+</main>
+
+<footer class="mx-auto max-w-[720px] px-6 sm:px-10 pb-16 flex items-center justify-between text-[11px] tracking-[.1em] uppercase text-[#8d8578] border-t border-[#e4dfd6] pt-6">
+  <span>© 2026 Gabriel Mustiere</span>
+  <a href="v1-quiet-editorial.html" class="hover:text-[#181613]">← Retour à l'accueil</a>
+</footer>
+
+<script>
+  const filters = document.getElementById('filters');
+  const posts = document.querySelectorAll('#archive li[data-tags]');
+  const empty = document.getElementById('empty');
+
+  filters.addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-tag]'); if (!b) return;
+    filters.querySelectorAll('button').forEach(x => {
+      x.classList.remove('chip-active');
+      x.setAttribute('aria-pressed','false');
+    });
+    b.classList.add('chip-active');
+    b.setAttribute('aria-pressed','true');
+
+    const tag = b.dataset.tag;
+    let shown = 0;
+    posts.forEach(li => {
+      const show = tag === 'all' || li.dataset.tags.includes(tag);
+      li.classList.toggle('hidden', !show);
+      if (show) shown++;
+    });
+    empty.classList.toggle('hidden', shown > 0);
+  });
+</script>
+
+</body>
+</html>

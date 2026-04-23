@@ -1,0 +1,53 @@
+---
+import SectionHead from '../ui/SectionHead.astro';
+---
+
+<section data-key="about" id="about">
+  <SectionHead number="01" title="À propos" accent="about" />
+
+  <div
+    class="mt-6 space-y-5 text-[15px] text-[#2a2622] leading-[1.75]"
+  >
+    <p>
+      J'écris du code depuis <span class="tnum acc-about">2009</span>, je
+      dirige des équipes depuis <span class="tnum acc-about">2014</span>,
+      et depuis <span class="tnum acc-about">2021</span> je travaille en
+      indépendant avec des scale-ups, studios et fondateurs. Mon terrain :
+      les produits techniques où la donnée, le tempo et la
+      <em class="acc-about">lisibilité de l'architecture</em> comptent
+      autant que la feature.
+    </p>
+    <p>
+      J'ai été <em class="acc-about">CTO</em> dans deux startups (séries A
+      et B), <em class="acc-about">Lead Engineer</em> dans un groupe média,
+      et je contribue encore régulièrement en IC — TypeScript, Python, Go
+      quand il faut, et PostgreSQL quand c'est possible.
+    </p>
+    <p>
+      Aujourd'hui je m'intéresse à l'outillage autour des
+      <span class="hl acc-projects">LLMs</span> : orchestration, évaluation,
+      intégration produit. Pas le hype — la plomberie.
+    </p>
+  </div>
+
+  <dl
+    class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[color:var(--color-muted)]"
+  >
+    <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+      <dt>Expérience</dt>
+      <dd class="tnum acc-about">15 ans</dd>
+    </div>
+    <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+      <dt>Rôles</dt>
+      <dd class="text-[color:var(--color-ink)]">CTO · Lead · IC</dd>
+    </div>
+    <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+      <dt>Basé à</dt>
+      <dd class="text-[color:var(--color-ink)]">Nantes · remote</dd>
+    </div>
+    <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+      <dt>Disponibilité</dt>
+      <dd class="acc-about">Q3 2026</dd>
+    </div>
+  </dl>
+</section>

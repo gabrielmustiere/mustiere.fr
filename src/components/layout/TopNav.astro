@@ -1,0 +1,69 @@
+---
+import { SITE } from '../../consts';
+
+interface Props {
+  current?: 'home' | 'blog' | 'article';
+}
+const { current = 'home' } = Astro.props;
+
+const links = [
+  { href: '/#about', label: 'À propos', key: 'about' },
+  { href: '/blog', label: 'Écrits', key: 'blog' },
+  { href: '/#projects', label: 'Projets', key: 'projects' },
+  { href: '/#contact', label: 'Contact', key: 'contact' },
+];
+---
+
+<header class="border-b border-[color:var(--color-rule)]">
+  <div
+    class="mx-auto max-w-[960px] px-6 sm:px-10 py-5 flex items-center justify-between"
+  >
+    <a
+      href="/"
+      class="font-serif text-[22px] tracking-[-0.01em]"
+      style="font-family: var(--font-serif)"
+    >
+      {SITE.name}
+    </a>
+    <nav
+      class="flex items-center gap-5 text-[13px] text-[color:var(--color-muted)]"
+      aria-label="Navigation principale"
+    >
+      {
+        links.map((l) => {
+          const isActive =
+            (current === 'blog' && l.key === 'blog') ||
+            (current === 'article' && l.key === 'blog');
+          return (
+            <a
+              href={l.href}
+              class:list={[
+                isActive
+                  ? 'text-[color:var(--color-ink)]'
+                  : 'hover:text-[color:var(--color-ink)]',
+              ]}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              {l.label}
+            </a>
+          );
+        })
+      }
+      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+        >·</span
+      >
+      <a
+        href={SITE.author.github}
+        target="_blank"
+        rel="noopener"
+        class="hover:text-[color:var(--color-ink)]">GitHub</a
+      >
+      <a
+        href={SITE.author.linkedin}
+        target="_blank"
+        rel="noopener"
+        class="hover:text-[color:var(--color-ink)]">LinkedIn</a
+      >
+    </nav>
+  </div>
+</header>

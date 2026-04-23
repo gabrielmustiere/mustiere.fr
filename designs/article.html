@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pourquoi vos évaluations LLM ne valent rien — Gabriel Mustiere</title>
+<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style type="text/tailwindcss">
+  @theme {
+    --color-bg: #fafaf7;
+    --color-ink: #181613;
+    --color-muted: #6b655d;
+    --color-rule: #e4dfd6;
+  }
+  :root {
+    --a-about:    oklch(0.62 0.13  40);
+    --a-blog:     oklch(0.55 0.13 250);
+    --a-projects: oklch(0.55 0.10 145);
+    --a-contact:  oklch(0.52 0.13 330);
+    --a-cv:       oklch(0.58 0.13  75);
+  }
+  body { background:#fafaf7; color:#181613; font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  .font-serif { font-family:'Instrument Serif',Georgia,serif; }
+  .font-mono  { font-family:'JetBrains Mono',ui-monospace,monospace; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .acc-blog { color: var(--a-blog); }
+  .acc-projects { color: var(--a-projects); }
+  .acc-about { color: var(--a-about); }
+  .acc-contact { color: var(--a-contact); }
+  .acc-dot { display:inline-block; width:6px; height:6px; border-radius:999px; background:currentColor; margin-right:8px; vertical-align:2px; }
+
+  em { font-style: italic; }
+
+  .link-u { background-image: linear-gradient(currentColor, currentColor); background-size: 100% 1px; background-repeat:no-repeat; background-position:0 100%; padding-bottom:1px; transition: background-size .25s ease; }
+  .link-u:hover { background-size: 0% 1px; background-position: 100% 100%; }
+
+  /* Prose */
+  .prose { color:#2a2622; font-size: 17px; line-height: 1.75; }
+  .prose p + p { margin-top: 1.2em; }
+  .prose h2 { font-family: 'Instrument Serif', serif; font-size: 34px; line-height: 1.15; letter-spacing: -0.015em; margin: 2.2em 0 .7em; color:#181613; }
+  .prose h3 { font-family: 'Instrument Serif', serif; font-size: 24px; line-height: 1.2; letter-spacing: -0.01em; margin: 1.8em 0 .5em; color:#181613; }
+  .prose blockquote {
+    border-left: 2px solid var(--a-blog);
+    padding: .2em 0 .2em 1.2em;
+    margin: 1.4em 0;
+    color:#2a2622;
+    font-family: 'Instrument Serif', serif;
+    font-size: 22px;
+    line-height: 1.45;
+  }
+  .prose ul { margin: 1em 0; padding-left: 1.4em; list-style: none; }
+  .prose ul li { position: relative; padding-left: .2em; margin: .35em 0; }
+  .prose ul li::before { content: ""; position: absolute; left: -1em; top: .7em; width: 6px; height: 1px; background: var(--a-blog); }
+  .prose a { color: var(--a-blog); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  .prose strong { font-weight: 600; color:#181613; }
+  .prose code { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: .88em; background:#f3f1ec; border:1px solid var(--color-rule); border-radius:4px; padding: 1px 5px; }
+
+  .code-block {
+    background:#f3f1ec; border:1px solid var(--color-rule); border-radius:8px;
+    font-family:'JetBrains Mono',ui-monospace,monospace;
+    font-size: 13px; line-height: 1.7; color:#2a2622;
+    padding: 16px 18px; overflow-x:auto; white-space:pre; margin: 1.6em 0;
+  }
+  .code-block .c-com { color:#8d8578; font-style:italic; }
+  .code-block .c-key { color:#8a5a1a; }
+  .code-block .c-str { color:#3f5d3a; }
+  .code-block .c-typ { color:#5a4a8a; }
+  .code-caption {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 11px; letter-spacing: .05em; color:#8d8578;
+    margin-top: -.5em; margin-bottom: 1.6em;
+  }
+
+  /* Progress bar */
+  .progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 2px;
+    background: transparent; z-index: 40;
+  }
+  .progress > div {
+    height: 100%; width: 0%; background: var(--a-blog);
+    transition: width .1s linear;
+  }
+
+  .cat-pill { font-size: 10px; letter-spacing:.14em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 999px; padding: 2px 8px; }
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true"><div id="bar"></div></div>
+
+<!-- Top bar -->
+<header class="border-b border-[#e4dfd6]">
+  <div class="mx-auto max-w-[960px] px-6 sm:px-10 py-5 flex items-center justify-between">
+    <a href="v1-quiet-editorial.html" class="font-serif text-[22px] tracking-[-0.01em]">Gabriel Mustiere</a>
+    <nav class="flex items-center gap-5 text-[13px] text-[#6b655d]">
+      <a href="v1-quiet-editorial.html#about" class="hover:text-[#181613]">À propos</a>
+      <a href="blog.html" class="text-[#181613]">Écrits</a>
+      <a href="v1-quiet-editorial.html#projects" class="hover:text-[#181613]">Projets</a>
+      <a href="v1-quiet-editorial.html#contact" class="hover:text-[#181613]">Contact</a>
+      <span class="text-[#bdb6a8]">·</span>
+      <a href="https://github.com/gmustiere" target="_blank" rel="noopener" class="hover:text-[#181613]">GitHub</a>
+      <a href="https://www.linkedin.com/in/gabrielmustiere" target="_blank" rel="noopener" class="hover:text-[#181613]">LinkedIn</a>
+    </nav>
+  </div>
+</header>
+
+<article class="mx-auto max-w-[680px] px-6 sm:px-10 pt-10 sm:pt-16 pb-20">
+
+  <!-- Breadcrumb -->
+  <nav class="text-[11px] tracking-[.12em] uppercase text-[#8d8578] flex items-center gap-2">
+    <a href="blog.html" class="hover:text-[#181613]">← Écrits</a>
+    <span class="text-[#bdb6a8]">/</span>
+    <span class="acc-projects">IA</span>
+  </nav>
+
+  <!-- Header -->
+  <header class="mt-10">
+    <div class="flex items-center gap-3 text-[11px] tracking-[.12em] uppercase">
+      <span class="acc-blog tnum">№ 07</span>
+      <span class="text-[#bdb6a8]">·</span>
+      <span class="acc-blog tnum">14 · 04 · 2026</span>
+      <span class="text-[#bdb6a8]">·</span>
+      <span class="tnum text-[#8d8578]">11 min</span>
+    </div>
+    <h1 class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]">
+      Pourquoi vos <em class="acc-blog">évaluations LLM</em> ne valent rien (et comment s'en sortir).
+    </h1>
+    <p class="mt-6 text-[17px] sm:text-[19px] text-[#2a2622] leading-[1.55] font-serif">
+      La plupart des équipes mesurent ce qu'elles peuvent mesurer, pas ce qui
+      compte. Remonter le fil à partir des cas d'échec observés en production.
+    </p>
+
+    <!-- byline -->
+    <div class="mt-8 flex items-center gap-3 pb-6 border-b border-[#e4dfd6]">
+      <div class="w-9 h-9 rounded-full" style="background: var(--a-blog); opacity:.15"></div>
+      <div class="text-[13px]">
+        <div class="text-[#181613]">Gabriel Mustiere</div>
+        <div class="text-[11px] text-[#8d8578]">CTO freelance · <span class="acc-blog">@gmustiere</span></div>
+      </div>
+      <button class="ml-auto text-[11px] tracking-[.14em] uppercase border border-[#bdb6a8] rounded-full px-3 py-1 hover:bg-white">Partager</button>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="prose mt-10">
+    <p>
+      <span class="font-serif text-[24px] float-left leading-[1] pr-2 pt-1 acc-blog">I</span>l y a
+      un moment, dans l'adoption des LLMs en production, où l'équipe se rend
+      compte qu'elle vole à l'aveugle. Les démos impressionnent, les tickets
+      rentrent, et personne ne sait vraiment si on <em>régresse</em> à chaque
+      changement de prompt ou de modèle. C'est à ce moment-là qu'on décide
+      d'écrire une suite d'évaluations.
+    </p>
+
+    <p>
+      Dans 9 cas sur 10, cette suite finit par ne rien évaluer du tout.
+    </p>
+
+    <h2>Le piège du benchmark public</h2>
+    <p>
+      La tentation initiale est d'aller chercher un benchmark qui existe
+      déjà — MMLU, GSM8K, le dernier dataset en vogue — et de reporter le
+      score. C'est confortable, c'est objectif, c'est comparable. Le
+      problème : ça ne mesure pas <strong>votre</strong> produit.
+    </p>
+    <p>
+      Votre produit a une distribution d'entrées spécifique, un domaine
+      métier, des contraintes de format, un contexte qui pèse beaucoup dans
+      la sortie. Aucun benchmark public ne capture ces trois choses.
+    </p>
+
+    <blockquote>
+      Un modèle qui gagne 2 points sur MMLU peut perdre 15 points sur votre
+      cas. L'inverse est aussi vrai.
+    </blockquote>
+
+    <h2>Partir des cas d'échec, pas des cas idéaux</h2>
+    <p>
+      La seconde erreur consiste à écrire, le vendredi après-midi, une
+      trentaine d'exemples « jolis » qui correspondent au happy path. Ils
+      passent, tout va bien, on déploie. La production, elle, ne passe pas
+      par le happy path.
+    </p>
+    <p>
+      L'approche qui tient : dès le premier jour en prod, instrumenter les
+      logs, et retenir tous les cas où <strong>un humain a dû reprendre la
+      sortie</strong>. Ces cas deviennent la <em>graine</em> de la suite
+      d'éval. On les anonymise, on les fige, on les exécute à chaque
+      changement.
+    </p>
+
+    <h3>Petit harnais minimal</h3>
+    <p>Un script suffit. Voici une version TypeScript, sans dépendance :</p>
+
+<pre class="code-block"><span class="c-com">// eval-harness.ts — tient en &lt; 50 lignes</span>
+<span class="c-key">type</span> <span class="c-typ">Case</span> = { id: <span class="c-typ">string</span>; input: <span class="c-typ">string</span>; expected: <span class="c-typ">string</span> }
+<span class="c-key">type</span> <span class="c-typ">Result</span> = { id: <span class="c-typ">string</span>; score: <span class="c-typ">number</span>; output: <span class="c-typ">string</span> }
+
+<span class="c-key">async function*</span> runSuite(
+  suite: <span class="c-typ">Case</span>[],
+  model: (input: <span class="c-typ">string</span>) =&gt; <span class="c-typ">Promise</span>&lt;<span class="c-typ">string</span>&gt;,
+  score: (out: <span class="c-typ">string</span>, exp: <span class="c-typ">string</span>) =&gt; <span class="c-typ">number</span>,
+): <span class="c-typ">AsyncGenerator</span>&lt;<span class="c-typ">Result</span>&gt; {
+  <span class="c-key">for</span> (<span class="c-key">const</span> c <span class="c-key">of</span> suite) {
+    <span class="c-key">const</span> out = <span class="c-key">await</span> model(c.input)
+    <span class="c-key">yield</span> { id: c.id, score: score(out, c.expected), output: out }
+  }
+}
+
+<span class="c-key">const</span> suite = <span class="c-key">await</span> loadFrom(<span class="c-str">"./cases/*.json"</span>)
+<span class="c-key">const</span> results: <span class="c-typ">Result</span>[] = []
+<span class="c-key">for await</span> (<span class="c-key">const</span> r <span class="c-key">of</span> runSuite(suite, gpt, semantic)) {
+  results.push(r)
+  console.log(r.id, r.score.toFixed(2))
+}
+<span class="c-key">const</span> mean = results.reduce((a, r) =&gt; a + r.score, 0) / results.length
+console.log(<span class="c-str">`mean = ${mean.toFixed(3)}`</span>)</pre>
+    <div class="code-caption">eval-harness.ts — à garder simple, à versionner dans le repo produit.</div>
+
+    <p>
+      La fonction <code>score</code> est le vrai sujet. Dans mon expérience,
+      vous aurez besoin d'un mélange :
+    </p>
+
+    <ul>
+      <li>Des règles dures pour le format (JSON valide, longueur max, champs obligatoires).</li>
+      <li>Des règles lexicales pour le vocabulaire métier (synonymes acceptés, interdictions).</li>
+      <li>Un juge LLM pour la <em>qualité sémantique</em>, calibré sur quelques centaines d'exemples annotés à la main.</li>
+    </ul>
+
+    <h2>La métrique qui compte vraiment</h2>
+    <p>
+      Après six mois d'utilisation, la seule métrique qui prédit correctement
+      la satisfaction utilisateur est le <em>taux de reprise humaine</em> :
+      sur 100 sorties, combien un opérateur a dû en modifier pour qu'elles
+      soient acceptables ? C'est brut, c'est coûteux à instrumenter, c'est la
+      seule qui tient.
+    </p>
+    <p>
+      Tout le reste — scores sémantiques, BLEU, ROUGE, LLM-as-judge — n'est
+      qu'une <strong>approximation</strong> de ce signal. Utile en CI rapide,
+      inutile en l'absence du signal primaire.
+    </p>
+
+    <h2>Ce qu'il ne faut pas faire</h2>
+    <ul>
+      <li>Mesurer uniquement sur du golden data écrit par l'équipe.</li>
+      <li>Ne pas versionner la suite avec le code.</li>
+      <li>Faire confiance à un score global sans regarder la distribution par segment.</li>
+      <li>Remplacer le juge humain par LLM-as-judge sans calibration.</li>
+    </ul>
+
+    <p>
+      L'évaluation LLM n'est pas un sous-problème du ML. C'est un problème
+      produit : vous devez savoir ce que vaut une sortie <em>pour votre
+      utilisateur</em>. Tant que vous n'avez pas ça, vous n'évaluez rien.
+    </p>
+  </div>
+
+  <!-- End rule -->
+  <div class="mt-14 flex items-center gap-3 text-[11px] tracking-[.12em] uppercase">
+    <span class="acc-blog">§ fin</span>
+    <span class="flex-1 border-t border-[#e4dfd6]"></span>
+    <span class="tnum text-[#8d8578]">14 · 04 · 2026</span>
+  </div>
+
+  <!-- Next articles -->
+  <aside class="mt-16">
+    <div class="text-[10px] tracking-[.14em] uppercase text-[#8d8578] mb-4">À lire ensuite</div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <a href="article.html" class="block border-t border-[#e4dfd6] pt-4 group">
+        <div class="flex items-center gap-2 text-[10px] tracking-[.14em] uppercase">
+          <span class="acc-projects">IA</span><span class="text-[#bdb6a8]">·</span><span class="tnum text-[#8d8578]">9 min</span>
+        </div>
+        <h3 class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors">RAG : la plomberie qu'on sous-estime</h3>
+      </a>
+      <a href="article.html" class="block border-t border-[#e4dfd6] pt-4 group">
+        <div class="flex items-center gap-2 text-[10px] tracking-[.14em] uppercase">
+          <span class="acc-about">Lead</span><span class="text-[#bdb6a8]">·</span><span class="tnum text-[#8d8578]">8 min</span>
+        </div>
+        <h3 class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors">Architecture d'une équipe de 4 à 20</h3>
+      </a>
+    </div>
+  </aside>
+
+</article>
+
+<footer class="mx-auto max-w-[680px] px-6 sm:px-10 pb-16 flex items-center justify-between text-[11px] tracking-[.1em] uppercase text-[#8d8578] border-t border-[#e4dfd6] pt-6">
+  <span>© 2026 Gabriel Mustiere</span>
+  <a href="blog.html" class="hover:text-[#181613]">← Tous les écrits</a>
+</footer>
+
+<script>
+  // Reading progress
+  const bar = document.getElementById('bar');
+  const update = () => {
+    const h = document.documentElement;
+    const scrolled = h.scrollTop;
+    const max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+  };
+  update();
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+</script>
+
+</body>
+</html>

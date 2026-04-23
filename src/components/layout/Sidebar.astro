@@ -1,0 +1,192 @@
+---
+import { SITE } from '../../consts';
+
+const index = [
+  { key: 'about', num: '01', label: 'Parcours' },
+  { key: 'blog', num: '02', label: 'Écrits' },
+  { key: 'projects', num: '03', label: 'Projets' },
+  { key: 'contact', num: '04', label: 'Contact' },
+  { key: 'cv', num: '05', label: 'CV' },
+];
+---
+
+<aside class="sidebar" aria-label="Navigation du site">
+  <div
+    class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)]"
+  >
+    {SITE.name}
+  </div>
+  <a
+    href="#top"
+    class="font-serif mt-2 text-[34px] leading-[1.05] tracking-[-0.01em] block"
+    style="font-family: var(--font-serif)"
+  >
+    CTO<br /><em class="acc-about">freelance</em>
+  </a>
+  <p
+    class="mt-4 text-[12.5px] text-[color:var(--color-muted)] leading-[1.55]"
+  >
+    Tech · Business · IA.<br />Nantes — remote.
+  </p>
+
+  <nav class="mt-10" aria-label="Sections">
+    <div
+      class="text-[10px] tracking-[0.14em] uppercase mb-2 text-[color:var(--color-muted)]"
+    >
+      Index
+    </div>
+    <ul>
+      {
+        index.map(({ key, num, label }) => (
+          <li>
+            <a
+              href={`#${key}`}
+              class="idx-link"
+              data-key={key}
+              data-idx-link
+            >
+              <span class="num">{num}</span>
+              <span class="label">{label}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div
+    class="mt-auto text-[10px] tracking-[0.12em] uppercase text-[color:var(--color-muted)]"
+  >
+    <div class="flex items-center gap-3 mb-3">
+      <a
+        href={SITE.author.github}
+        target="_blank"
+        rel="noopener"
+        class="hover:text-[color:var(--color-ink)]">GitHub</a
+      >
+      <span class="text-[color:var(--color-rule-strong)]">·</span>
+      <a
+        href={SITE.author.linkedin}
+        target="_blank"
+        rel="noopener"
+        class="hover:text-[color:var(--color-ink)]">LinkedIn</a
+      >
+    </div>
+    <div class="flex items-center gap-2 mb-1">
+      <span
+        class="inline-block w-[6px] h-[6px] rounded-full bg-[#5a7a4a]"
+        aria-hidden="true"></span>
+      <span>Disponible Q3 2026</span>
+    </div>
+    <div>v. 2026.04 — Nantes</div>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--color-rule-strong);
+      padding: 176px 32px 40px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+  }
+  .idx-link {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    align-items: baseline;
+    padding: 7px 0;
+    font-size: 13px;
+    color: #2a2622;
+    transition: color 0.15s ease;
+  }
+  .idx-link .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+  }
+  .idx-link:hover,
+  .idx-link.is-active {
+    color: var(--color-ink);
+  }
+  .idx-link.is-active .label::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: currentColor;
+    margin-right: 8px;
+    vertical-align: 2px;
+  }
+  .idx-link[data-key='about'].is-active {
+    color: var(--a-about);
+  }
+  .idx-link[data-key='blog'].is-active {
+    color: var(--a-blog);
+  }
+  .idx-link[data-key='projects'].is-active {
+    color: var(--a-projects);
+  }
+  .idx-link[data-key='contact'].is-active {
+    color: var(--a-contact);
+  }
+  .idx-link[data-key='cv'].is-active {
+    color: var(--a-cv);
+  }
+</style>
+
+<script>
+  const links = document.querySelectorAll<HTMLAnchorElement>(
+    '[data-idx-link]'
+  );
+  if (links.length) {
+    const byKey = new Map<string, HTMLAnchorElement>();
+    links.forEach((a) => byKey.set(a.dataset.key!, a));
+
+    const keys = ['about', 'blog', 'projects', 'contact', 'cv'];
+    const sections = keys
+      .map((k) => document.getElementById(k))
+      .filter((el): el is HTMLElement => !!el);
+
+    if (sections.length) {
+      let current: string | null = null;
+      const setActive = (key: string | null) => {
+        if (key === current) return;
+        current = key;
+        links.forEach((a) => {
+          const active = a.dataset.key === key;
+          a.classList.toggle('is-active', active);
+          if (active) {
+            a.setAttribute('aria-current', 'location');
+          } else {
+            a.removeAttribute('aria-current');
+          }
+        });
+      };
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((e) => e.isIntersecting)
+            .sort(
+              (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+            );
+          if (visible.length) {
+            setActive(visible[0].target.id);
+          }
+        },
+        { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] }
+      );
+
+      sections.forEach((s) => io.observe(s));
+    }
+  }
+</script>

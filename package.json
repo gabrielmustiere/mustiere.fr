@@ -1,0 +1,35 @@
+{
+  "name": "mustiere-fr",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "astro": "astro",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "astro": "^5.1.0",
+    "@astrojs/mdx": "^4.0.0",
+    "@astrojs/rss": "^4.0.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/instrument-serif": "^5.1.0",
+    "@fontsource/jetbrains-mono": "^5.1.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "astro-robots-txt": "^1.0.0",
+    "sharp": "^0.33.5",
+    "shiki": "^1.24.0",
+    "tailwindcss": "^4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "prettier": "^3.4.0",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.7.0"
+  }
+}

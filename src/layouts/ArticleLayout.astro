@@ -1,0 +1,206 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TopNav from '../components/layout/TopNav.astro';
+import Footer from '../components/layout/Footer.astro';
+import ReadingProgress from '../components/ui/ReadingProgress.astro';
+import ShareButton from '../components/ui/ShareButton.astro';
+import CategoryPill from '../components/ui/CategoryPill.astro';
+import StructuredData from '../components/seo/StructuredData.astro';
+import {
+  personSchema,
+  blogPostingSchema,
+  breadcrumbSchema,
+} from '../utils/schema';
+import {
+  formatDateDottedFull,
+  toISODate,
+} from '../utils/format-date';
+import { SITE } from '../consts';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+  nextPosts: CollectionEntry<'blog'>[];
+}
+
+const { post, nextPosts } = Astro.props;
+const { data } = post;
+const url = new URL(`/blog/${post.slug}`, SITE.url).href;
+
+const schemas = [
+  personSchema(),
+  blogPostingSchema({
+    title: data.title,
+    description: data.excerpt,
+    slug: post.slug,
+    publishedAt: data.publishedAt,
+    updatedAt: data.updatedAt,
+    category: data.category,
+    keywords: data.keywords,
+    readingTime: data.readingTime,
+    image: data.ogImage,
+  }),
+  breadcrumbSchema([
+    { name: 'Accueil', url: SITE.url },
+    { name: 'Écrits', url: `${SITE.url}/blog` },
+    { name: data.title, url },
+  ]),
+];
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.excerpt}
+  type="article"
+  publishedTime={data.publishedAt}
+  modifiedTime={data.updatedAt}
+  category={data.category}
+  tags={data.tags}
+  image={data.ogImage}
+>
+  <StructuredData slot="head" schemas={schemas} />
+
+  <ReadingProgress />
+  <TopNav current="article" />
+
+  <article
+    class="mx-auto max-w-[680px] px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
+  >
+    <nav
+      class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
+      aria-label="Fil d'Ariane"
+    >
+      <a href="/blog" class="hover:text-[color:var(--color-ink)]">
+        ← Écrits
+      </a>
+      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+        >/</span
+      >
+      <CategoryPill category={data.category} size="sm" />
+    </nav>
+
+    <header class="mt-10">
+      <div
+        class="flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
+      >
+        <span class="acc-blog tnum"
+          >№ {String(data.number).padStart(2, '0')}</span
+        >
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >·</span
+        >
+        <time
+          class="acc-blog tnum"
+          datetime={toISODate(data.publishedAt)}
+        >
+          {formatDateDottedFull(data.publishedAt)}
+        </time>
+        {
+          data.readingTime && (
+            <>
+              <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
+              <span class="tnum text-[color:var(--color-muted)]">{data.readingTime} min</span>
+            </>
+          )
+        }
+      </div>
+      <h1
+        class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
+        style="font-family: var(--font-serif)"
+      >
+        {data.title}
+      </h1>
+      <p
+        class="mt-6 text-[17px] sm:text-[19px] text-[#2a2622] leading-[1.55] font-serif"
+      >
+        {data.excerpt}
+      </p>
+
+      {
+        data.tldr && (
+          <aside
+            class="mt-8 p-4 border-l-2 text-[15px] leading-[1.6] text-[#2a2622] italic"
+            style="border-color: var(--a-blog); background: color-mix(in oklch, var(--a-blog) 6%, transparent)"
+            aria-label="Résumé en bref"
+          >
+            <span class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-1">
+              TL;DR
+            </span>
+            {data.tldr}
+          </aside>
+        )
+      }
+
+      <div
+        class="mt-8 flex items-center gap-3 pb-6 border-b border-[color:var(--color-rule)]"
+      >
+        <div
+          class="w-9 h-9 rounded-full"
+          style="background: var(--a-blog); opacity: 0.15"
+          role="presentation"
+          aria-hidden="true"
+        ></div>
+        <div class="text-[13px]">
+          <div class="text-[color:var(--color-ink)]">{SITE.author.name}</div>
+          <div class="text-[11px] text-[color:var(--color-muted)] font-mono">
+            {SITE.author.jobTitle} · <span class="acc-blog">@gmustiere</span>
+          </div>
+        </div>
+        <ShareButton title={data.title} url={url} />
+      </div>
+    </header>
+
+    <div class="prose mt-10">
+      <slot />
+    </div>
+
+    <div
+      class="mt-14 flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
+    >
+      <span class="acc-blog">§ fin</span>
+      <span
+        class="flex-1 border-t border-[color:var(--color-rule)]"
+        aria-hidden="true"></span>
+      <time
+        class="tnum text-[color:var(--color-muted)]"
+        datetime={toISODate(data.updatedAt ?? data.publishedAt)}
+      >
+        {formatDateDottedFull(data.updatedAt ?? data.publishedAt)}
+      </time>
+    </div>
+
+    {
+      nextPosts.length > 0 && (
+        <aside class="mt-16">
+          <div class="text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] mb-4 font-mono">
+            À lire ensuite
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {nextPosts.map((next) => (
+              <a
+                href={`/blog/${next.slug}`}
+                class="block border-t border-[color:var(--color-rule)] pt-4 group"
+              >
+                <div class="flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase font-mono">
+                  <CategoryPill category={next.data.category} size="sm" />
+                  <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
+                  {next.data.readingTime && (
+                    <span class="tnum text-[color:var(--color-muted)]">{next.data.readingTime} min</span>
+                  )}
+                </div>
+                <h3
+                  class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
+                  style="font-family: var(--font-serif)"
+                >
+                  {next.data.title}
+                </h3>
+              </a>
+            ))}
+          </div>
+        </aside>
+      )
+    }
+  </article>
+
+  <Footer variant="article" maxWidth="680px" />
+</BaseLayout>

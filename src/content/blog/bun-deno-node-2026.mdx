@@ -1,0 +1,29 @@
+---
+title: "Bun, Deno, Node : je choisis quoi en 2026 ?"
+excerpt: "Trois runtimes, trois philosophies, et un marché qui a cessé de pivoter tous les six mois. Retour d'expérience sur ce que chacun gagne vraiment aujourd'hui, et ce que Node garde pour lui."
+publishedAt: 2025-10-04
+category: Tech
+tags: [JavaScript, TypeScript, Node, Bun, Deno, runtime]
+keywords: [Bun vs Node, Deno production, runtime JavaScript 2026, TypeScript runtime]
+number: 1
+tldr: "Node reste le choix par défaut en 2026. Bun si vous démarrez un projet, voulez un tooling intégré et acceptez quelques aspérités. Deno pour les scripts courts et le edge. Le risque de vendor lock-in n'est plus ce qui tranche."
+---
+
+La guerre des runtimes JavaScript a perdu son caractère religieux. Les trois options tiennent en production, leurs publics se sont clarifiés, et le débat n'est plus « lequel va survivre » mais « lequel est le moins mauvais pour ce cas ».
+
+## Ce que chacun a consolidé
+
+**Node** : l'écosystème npm sans réserve, le support LTS prévisible, les meilleurs outils d'observabilité commerciaux, et depuis quelques versions un test runner et un watcher natifs. C'est l'option qu'aucun recruteur ne remettra en cause.
+
+**Bun** : un temps de démarrage impressionnant, un package manager 10× plus rapide, un bundler, un runner de test et un transpileur TS intégrés. L'argument tooling est réel. Des aspérités subsistent sur les APIs Node les moins populaires, et sur certains natifs.
+
+**Deno** : la philosophie sécurité-par-défaut, un excellent support TypeScript natif, un runtime pensé pour le edge (Deno Deploy). L'écosystème est plus petit, mais l'import via URL a mûri.
+
+## Mon heuristique actuelle
+
+- **Projet existant avec lockfile** : restez sur Node. Le gain de migrer ne paie pas le risque.
+- **Nouveau projet, équipe 1-5 personnes** : Bun. Le tooling intégré rembourse vite l'apprentissage.
+- **Scripts, workers courts, fonctions edge** : Deno, surtout si vous visez Deno Deploy.
+- **Latence ultra-critique au démarrage** : Bun ou Deno, selon l'hébergeur.
+
+Le débat n'est plus existentiel. C'est un choix outil — à faire avec la même sérénité que celui d'un linter.
