@@ -1,6 +1,5 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Sidebar from '../components/layout/Sidebar.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 import AboutSection from '../components/home/AboutSection.astro';
 import BlogSection from '../components/home/BlogSection.astro';
 import ProjectsSection from '../components/home/ProjectsSection.astro';
@@ -11,113 +10,76 @@ import { personSchema, websiteSchema } from '../utils/schema';
 import { SITE } from '../consts';
 ---
 
-<BaseLayout
+<SiteLayout
   title={SITE.title}
   description={SITE.description}
   type="website"
+  current="home"
 >
   <StructuredData
     slot="head"
     schemas={[personSchema(), websiteSchema()]}
   />
 
-  <div class="layout">
-    <Sidebar />
-
-    <div class="main-col" id="top">
-      <main
-        id="main"
-        class="mx-auto max-w-[640px] px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
+  <main
+    id="main"
+    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
+    style="max-width: var(--w-home)"
+  >
+    <header class="mt-10 sm:mt-24">
+      <h1
+        class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
+        style="font-family: var(--font-serif)"
       >
-        <div
-          class="lg:hidden flex items-center justify-between text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)]"
+        CTO &amp; lead<br />
+        <em class="acc-about">en freelance.</em>
+      </h1>
+      <p
+        class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[560px]"
+      >
+        <span class="tnum">15 ans</span> à construire, mettre en production
+        et <em class="acc-about">faire tenir</em> des produits tech.
+        J'interviens sur de <span class="hl acc-about">l'architecture</span>,
+        du <span class="hl acc-blog">lead technique</span> et des sujets
+        <span class="hl acc-projects">IA</span> — en mission, en audit, ou
+        en sparring-partner de fondateurs.
+      </p>
+      <div class="mt-6 sm:mt-8 flex items-center gap-5 text-[13px]">
+        <a href="#contact" class="link-u text-[color:var(--color-ink)]">
+          Me contacter
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]">·</span>
+        <a href="#cv" class="link-u text-[color:var(--color-muted)]">
+          CV (PDF)
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]">·</span>
+        <a
+          href={SITE.author.github}
+          target="_blank"
+          rel="noopener"
+          class="link-u text-[color:var(--color-muted)]"
+          aria-label="GitHub"
         >
-          <span>{SITE.name}</span>
-          <span class="tnum">2026 · Nantes</span>
-        </div>
+          GitHub
+        </a>
+        <a
+          href={SITE.author.linkedin}
+          target="_blank"
+          rel="noopener"
+          class="link-u text-[color:var(--color-muted)]"
+          aria-label="LinkedIn"
+        >
+          LinkedIn
+        </a>
+      </div>
+    </header>
 
-        <header class="mt-14 sm:mt-24">
-          <h1
-            class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
-            style="font-family: var(--font-serif)"
-          >
-            CTO &amp; lead<br />
-            <em class="acc-about">en freelance.</em>
-          </h1>
-          <p
-            class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[520px]"
-          >
-            <span class="tnum">15 ans</span> à construire, mettre en
-            production et <em class="acc-about">faire tenir</em> des produits
-            tech. J'interviens sur de <span class="hl acc-about">l'architecture</span>,
-            du <span class="hl acc-blog">lead technique</span> et des sujets
-            <span class="hl acc-projects">IA</span> — en mission, en audit,
-            ou en sparring-partner de fondateurs.
-          </p>
-          <div class="mt-6 sm:mt-8 flex items-center gap-5 text-[13px]">
-            <a href="#contact" class="link-u text-[color:var(--color-ink)]">
-              Me contacter
-            </a>
-            <span class="text-[color:var(--color-rule-strong)]">·</span>
-            <a href="#cv" class="link-u text-[color:var(--color-muted)]">
-              CV (PDF)
-            </a>
-            <span class="text-[color:var(--color-rule-strong)]">·</span>
-            <a
-              href={SITE.author.github}
-              target="_blank"
-              rel="noopener"
-              class="link-u text-[color:var(--color-muted)]"
-              aria-label="GitHub"
-            >
-              GitHub
-            </a>
-            <a
-              href={SITE.author.linkedin}
-              target="_blank"
-              rel="noopener"
-              class="link-u text-[color:var(--color-muted)]"
-              aria-label="LinkedIn"
-            >
-              LinkedIn
-            </a>
-          </div>
-        </header>
+    <hr class="mt-14 sm:mt-24 border-0 border-t border-[color:var(--color-rule)]" />
 
-        <hr class="mt-14 sm:mt-24 border-0 border-t border-[color:var(--color-rule)]" />
-
-        <AboutSection />
-        <BlogSection />
-        <ProjectsSection />
-        <ContactSection />
-        <CvSection />
-      </main>
-    </div>
-  </div>
-</BaseLayout>
-
-<style is:global>
-  section[id],
-  h2[id] {
-    scroll-margin-top: 24px;
-  }
-
-  .layout {
-    display: block;
-  }
-  @media (min-width: 1024px) {
-    .layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: 100vh;
-    }
-  }
-  .main-col {
-    min-width: 0;
-  }
-  @media (min-width: 1024px) {
-    .main-col {
-      padding: 40px 64px;
-    }
-  }
-</style>
+    <AboutSection />
+    <BlogSection />
+    <ProjectsSection />
+    <ContactSection />
+    <CvSection />
+  </main>
+</SiteLayout>

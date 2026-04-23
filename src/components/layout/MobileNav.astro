@@ -1,0 +1,394 @@
+---
+import { SITE } from '../../consts';
+import type { SidebarMode } from './Sidebar.astro';
+
+interface Props {
+  current?: SidebarMode;
+}
+
+const { current = 'home' } = Astro.props;
+const isHome = current === 'home';
+const activeKey =
+  current === 'blog' || current === 'article' ? 'blog' : null;
+
+const index = [
+  { key: 'about', num: '01', label: 'Parcours', home: '#about', away: '/#about' },
+  { key: 'blog', num: '02', label: 'Écrits', home: '#blog', away: '/blog' },
+  { key: 'projects', num: '03', label: 'Projets', home: '#projects', away: '/#projects' },
+  { key: 'contact', num: '04', label: 'Contact', home: '#contact', away: '/#contact' },
+  { key: 'cv', num: '05', label: 'CV', home: '#cv', away: '/#cv' },
+] as const;
+---
+
+<header class="mobile-nav lg:hidden" aria-label="Navigation mobile">
+  <a
+    href="/"
+    class="brand font-serif text-[20px] tracking-[-0.01em]"
+    style="font-family: var(--font-serif)"
+  >
+    {SITE.name}
+  </a>
+  <button
+    type="button"
+    id="mobile-menu-trigger"
+    class="hamburger"
+    aria-expanded="false"
+    aria-controls="mobile-menu-panel"
+    aria-label="Ouvrir le menu"
+  >
+    <span class="bar" aria-hidden="true"></span>
+    <span class="bar" aria-hidden="true"></span>
+    <span class="hamburger-label">Menu</span>
+  </button>
+</header>
+
+<dialog
+  id="mobile-menu-panel"
+  class="mobile-dialog"
+  aria-label="Menu principal"
+>
+  <div class="mobile-dialog-inner">
+    <header class="mobile-dialog-header">
+      <span class="brand-label">
+        {SITE.name}
+      </span>
+      <button
+        type="button"
+        class="close-btn"
+        data-close
+        aria-label="Fermer le menu"
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+
+    <div
+      class="font-serif brand-big"
+      style="font-family: var(--font-serif)"
+    >
+      CTO<br /><em class="acc-about">freelance</em>
+    </div>
+    <p class="brand-sub">Tech · Business · IA. Nantes — remote.</p>
+
+    <nav class="mobile-nav-links" aria-label="Sections">
+      <ol>
+        {
+          index.map(({ key, num, label, home, away }) => {
+            const href = isHome ? home : away;
+            const isActive = !isHome && activeKey === key;
+            return (
+              <li>
+                <a
+                  href={href}
+                  class:list={['m-link', { 'is-active': isActive }]}
+                  data-key={key}
+                  data-close-on-click
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  <span class="num">{num}</span>
+                  <span
+                    class="label font-serif"
+                    style="font-family: var(--font-serif)"
+                  >
+                    {label}
+                  </span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ol>
+    </nav>
+
+    <footer class="mobile-dialog-footer">
+      <div class="socials">
+        <a
+          href={SITE.author.github}
+          target="_blank"
+          rel="noopener">GitHub</a
+        >
+        <span aria-hidden="true" class="sep">·</span>
+        <a
+          href={SITE.author.linkedin}
+          target="_blank"
+          rel="noopener">LinkedIn</a
+        >
+      </div>
+      <div class="availability">
+        <span
+          class="dot"
+          aria-hidden="true"></span>
+        <span>Disponible Q3 2026</span>
+      </div>
+    </footer>
+  </div>
+</dialog>
+
+<style>
+  .mobile-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--color-rule);
+    background: var(--color-bg);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+  }
+  @media (min-width: 1024px) {
+    .mobile-nav {
+      display: none;
+    }
+  }
+  .mobile-nav .brand {
+    color: var(--color-ink);
+    text-decoration: none;
+  }
+
+  .hamburger {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    border: 1px solid var(--color-rule);
+    border-radius: 999px;
+    background: transparent;
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .hamburger:hover {
+    color: var(--color-ink);
+    border-color: var(--color-rule-strong);
+  }
+  .hamburger .bar {
+    display: block;
+    width: 14px;
+    height: 1px;
+    background: currentColor;
+  }
+  .hamburger .bar + .bar {
+    margin-top: 3px;
+    margin-left: -14px;
+  }
+  .hamburger-label {
+    margin-left: 4px;
+  }
+
+  .mobile-dialog {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100dvh;
+    max-width: 100%;
+    max-height: 100dvh;
+    background: var(--color-bg);
+    color: var(--color-ink);
+    overflow: hidden;
+  }
+  .mobile-dialog::backdrop {
+    background: rgba(24, 22, 19, 0.3);
+  }
+  .mobile-dialog[open] {
+    animation: dialog-fade 0.18s ease-out;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-dialog[open] {
+      animation: none;
+    }
+  }
+  @keyframes dialog-fade {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .mobile-dialog-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px 28px 32px;
+  }
+
+  .mobile-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-rule);
+  }
+  .brand-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .close-btn {
+    appearance: none;
+    background: none;
+    border: 1px solid var(--color-rule);
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--color-ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: border-color 0.15s ease;
+  }
+  .close-btn:hover {
+    border-color: var(--color-rule-strong);
+  }
+
+  .brand-big {
+    margin-top: 40px;
+    font-size: clamp(56px, 13vw, 88px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+  }
+  .brand-sub {
+    margin-top: 12px;
+    color: var(--color-muted);
+    font-size: 13px;
+    letter-spacing: 0.02em;
+  }
+
+  .mobile-nav-links {
+    margin-top: 28px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+  .mobile-nav-links ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: none;
+  }
+  .mobile-nav-links li + li {
+    border-top: 1px solid var(--color-rule);
+  }
+  .m-link {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    align-items: baseline;
+    padding: 18px 0;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .m-link .num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--color-muted);
+    padding-top: 8px;
+  }
+  .m-link .label {
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .m-link:hover .label {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .m-link.is-active .label {
+    color: var(--a-blog);
+  }
+  .m-link.is-active .num {
+    color: var(--a-blog);
+  }
+
+  .mobile-dialog-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-rule);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .socials {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .socials a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .socials a:hover {
+    color: var(--color-ink);
+  }
+  .socials .sep {
+    color: var(--color-rule-strong);
+  }
+  .availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .availability .dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #5a7a4a;
+  }
+</style>
+
+<script>
+  const trigger = document.getElementById(
+    'mobile-menu-trigger'
+  ) as HTMLButtonElement | null;
+  const dialog = document.getElementById(
+    'mobile-menu-panel'
+  ) as HTMLDialogElement | null;
+
+  if (trigger && dialog) {
+    const closeBtn = dialog.querySelector<HTMLButtonElement>('[data-close]');
+    const links = dialog.querySelectorAll<HTMLAnchorElement>(
+      '[data-close-on-click]'
+    );
+
+    const open = () => {
+      dialog.showModal();
+      trigger.setAttribute('aria-expanded', 'true');
+    };
+    const close = () => {
+      if (dialog.open) dialog.close();
+    };
+
+    trigger.addEventListener('click', open);
+    closeBtn?.addEventListener('click', close);
+    dialog.addEventListener('close', () => {
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.focus();
+    });
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) close();
+    });
+    links.forEach((a) => a.addEventListener('click', close));
+  }
+</script>

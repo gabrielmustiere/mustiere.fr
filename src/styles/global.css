@@ -12,9 +12,9 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --w-home: 640px;
-  --w-blog: 720px;
-  --w-prose: 680px;
+  --w-home: 720px;
+  --w-blog: 820px;
+  --w-prose: 720px;
 }
 
 :root {
@@ -38,6 +38,10 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+html:has(dialog[open]) {
+  overflow: hidden;
 }
 
 body {

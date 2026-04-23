@@ -1,13 +1,28 @@
 ---
 import { SITE } from '../../consts';
 
+export type SidebarMode = 'home' | 'blog' | 'article';
+
+interface Props {
+  current?: SidebarMode;
+}
+
+const { current = 'home' } = Astro.props;
+
+const isHome = current === 'home';
+
 const index = [
-  { key: 'about', num: '01', label: 'Parcours' },
-  { key: 'blog', num: '02', label: 'Écrits' },
-  { key: 'projects', num: '03', label: 'Projets' },
-  { key: 'contact', num: '04', label: 'Contact' },
-  { key: 'cv', num: '05', label: 'CV' },
-];
+  { key: 'about', num: '01', label: 'Parcours', home: '#about', away: '/#about' },
+  { key: 'blog', num: '02', label: 'Écrits', home: '#blog', away: '/blog' },
+  { key: 'projects', num: '03', label: 'Projets', home: '#projects', away: '/#projects' },
+  { key: 'contact', num: '04', label: 'Contact', home: '#contact', away: '/#contact' },
+  { key: 'cv', num: '05', label: 'CV', home: '#cv', away: '/#cv' },
+] as const;
+
+const activeKey =
+  current === 'blog' || current === 'article' ? 'blog' : null;
+
+const brandHref = isHome ? '#top' : '/';
 ---
 
 <aside class="sidebar" aria-label="Navigation du site">
@@ -17,7 +32,7 @@ const index = [
     {SITE.name}
   </div>
   <a
-    href="#top"
+    href={brandHref}
     class="font-serif mt-2 text-[34px] leading-[1.05] tracking-[-0.01em] block"
     style="font-family: var(--font-serif)"
   >
@@ -37,19 +52,24 @@ const index = [
     </div>
     <ul>
       {
-        index.map(({ key, num, label }) => (
-          <li>
-            <a
-              href={`#${key}`}
-              class="idx-link"
-              data-key={key}
-              data-idx-link
-            >
-              <span class="num">{num}</span>
-              <span class="label">{label}</span>
-            </a>
-          </li>
-        ))
+        index.map(({ key, num, label, home, away }) => {
+          const href = isHome ? home : away;
+          const isActive = !isHome && activeKey === key;
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={['idx-link', { 'is-active': isActive }]}
+                data-key={key}
+                data-idx-link={isHome ? '' : undefined}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <span class="num">{num}</span>
+                <span class="label">{label}</span>
+              </a>
+            </li>
+          );
+        })
       }
     </ul>
   </nav>
@@ -143,50 +163,58 @@ const index = [
   }
 </style>
 
-<script>
-  const links = document.querySelectorAll<HTMLAnchorElement>(
-    '[data-idx-link]'
-  );
-  if (links.length) {
-    const byKey = new Map<string, HTMLAnchorElement>();
-    links.forEach((a) => byKey.set(a.dataset.key!, a));
-
-    const keys = ['about', 'blog', 'projects', 'contact', 'cv'];
-    const sections = keys
-      .map((k) => document.getElementById(k))
-      .filter((el): el is HTMLElement => !!el);
-
-    if (sections.length) {
-      let current: string | null = null;
-      const setActive = (key: string | null) => {
-        if (key === current) return;
-        current = key;
-        links.forEach((a) => {
-          const active = a.dataset.key === key;
-          a.classList.toggle('is-active', active);
-          if (active) {
-            a.setAttribute('aria-current', 'location');
-          } else {
-            a.removeAttribute('aria-current');
-          }
-        });
-      };
-
-      const io = new IntersectionObserver(
-        (entries) => {
-          const visible = entries
-            .filter((e) => e.isIntersecting)
-            .sort(
-              (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
-            );
-          if (visible.length) {
-            setActive(visible[0].target.id);
-          }
-        },
-        { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] }
+{
+  isHome && (
+    <script>
+      const links = document.querySelectorAll<HTMLAnchorElement>(
+        '[data-idx-link]'
       );
+      if (links.length) {
+        const byKey = new Map<string, HTMLAnchorElement>();
+        links.forEach((a) => byKey.set(a.dataset.key!, a));
 
-      sections.forEach((s) => io.observe(s));
-    }
-  }
-</script>
+        const keys = ['about', 'blog', 'projects', 'contact', 'cv'];
+        const sections = keys
+          .map((k) => document.getElementById(k))
+          .filter((el): el is HTMLElement => !!el);
+
+        if (sections.length) {
+          let current: string | null = null;
+          const setActive = (key: string | null) => {
+            if (key === current) return;
+            current = key;
+            links.forEach((a) => {
+              const active = a.dataset.key === key;
+              a.classList.toggle('is-active', active);
+              if (active) {
+                a.setAttribute('aria-current', 'location');
+              } else {
+                a.removeAttribute('aria-current');
+              }
+            });
+          };
+
+          const io = new IntersectionObserver(
+            (entries) => {
+              const visible = entries
+                .filter((e) => e.isIntersecting)
+                .sort(
+                  (a, b) =>
+                    a.boundingClientRect.top - b.boundingClientRect.top
+                );
+              if (visible.length) {
+                setActive(visible[0].target.id);
+              }
+            },
+            {
+              rootMargin: '-20% 0px -60% 0px',
+              threshold: [0, 0.1, 0.5, 1],
+            }
+          );
+
+          sections.forEach((s) => io.observe(s));
+        }
+      }
+    </script>
+  )
+}

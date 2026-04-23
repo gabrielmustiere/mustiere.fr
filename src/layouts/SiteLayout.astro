@@ -1,0 +1,60 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Sidebar, { type SidebarMode } from '../components/layout/Sidebar.astro';
+import MobileNav from '../components/layout/MobileNav.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  modifiedTime?: Date;
+  author?: string;
+  category?: string;
+  tags?: string[];
+  noindex?: boolean;
+  current?: SidebarMode;
+}
+
+const { current = 'home', ...baseProps } = Astro.props;
+---
+
+<BaseLayout {...baseProps}>
+  <slot name="head" slot="head" />
+
+  <MobileNav current={current} />
+
+  <div class="layout">
+    <Sidebar current={current} />
+    <div class="main-col" id="top">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  .layout {
+    display: block;
+  }
+  @media (min-width: 1024px) {
+    .layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      min-height: 100vh;
+    }
+  }
+  .main-col {
+    min-width: 0;
+  }
+  @media (min-width: 1024px) {
+    .main-col {
+      padding: 40px 64px;
+    }
+  }
+  section[id],
+  h2[id] {
+    scroll-margin-top: 24px;
+  }
+</style>

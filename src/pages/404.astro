@@ -1,15 +1,17 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteLayout from '../layouts/SiteLayout.astro';
 ---
 
-<BaseLayout
+<SiteLayout
   title="Page introuvable"
   description="La page demandée n'existe pas ou a été déplacée."
   noindex
+  current="blog"
 >
   <main
     id="main"
-    class="mx-auto max-w-[640px] px-6 sm:px-10 pt-24 pb-24 min-h-[60vh]"
+    class="mx-auto px-6 sm:px-10 pt-24 pb-24 min-h-[60vh]"
+    style="max-width: var(--w-home)"
   >
     <p
       class="text-[11px] tracking-[0.12em] uppercase acc-blog font-mono"
@@ -34,4 +36,4 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <a href="/blog" class="link-u acc-blog">Voir le blog</a>
     </p>
   </main>
-</BaseLayout>
+</SiteLayout>

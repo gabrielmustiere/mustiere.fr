@@ -1,6 +1,5 @@
 ---
-import BaseLayout from './BaseLayout.astro';
-import TopNav from '../components/layout/TopNav.astro';
+import SiteLayout from './SiteLayout.astro';
 import Footer from '../components/layout/Footer.astro';
 import ReadingProgress from '../components/ui/ReadingProgress.astro';
 import ShareButton from '../components/ui/ShareButton.astro';
@@ -48,7 +47,7 @@ const schemas = [
 ];
 ---
 
-<BaseLayout
+<SiteLayout
   title={data.title}
   description={data.excerpt}
   type="article"
@@ -57,14 +56,16 @@ const schemas = [
   category={data.category}
   tags={data.tags}
   image={data.ogImage}
+  current="article"
 >
   <StructuredData slot="head" schemas={schemas} />
 
   <ReadingProgress />
-  <TopNav current="article" />
 
   <article
-    class="mx-auto max-w-[680px] px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
+    id="main"
+    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
+    style="max-width: var(--w-prose)"
   >
     <nav
       class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
@@ -202,5 +203,5 @@ const schemas = [
     }
   </article>
 
-  <Footer variant="article" maxWidth="680px" />
-</BaseLayout>
+  <Footer variant="article" maxWidth="720px" />
+</SiteLayout>

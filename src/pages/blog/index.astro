@@ -1,6 +1,5 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import TopNav from '../../components/layout/TopNav.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
 import Footer from '../../components/layout/Footer.astro';
 import CategoryPill from '../../components/ui/CategoryPill.astro';
 import StructuredData from '../../components/seo/StructuredData.astro';
@@ -30,10 +29,11 @@ const categories: Category[] = ['IA', 'Tech', 'Lead', 'Business'];
 const description = `Blog de Gabriel Mustière : ${totalCount} billets sur l'IA, la tech, le leadership et le business. Notes et essais d'un CTO freelance basé à Nantes.`;
 ---
 
-<BaseLayout
+<SiteLayout
   title="Écrits — Blog"
   description={description}
   type="website"
+  current="blog"
 >
   <StructuredData
     slot="head"
@@ -47,11 +47,10 @@ const description = `Blog de Gabriel Mustière : ${totalCount} billets sur l'IA,
     ]}
   />
 
-  <TopNav current="blog" />
-
   <main
     id="main"
-    class="mx-auto max-w-[720px] px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
+    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
+    style="max-width: var(--w-blog)"
   >
     <div
       class="flex items-center justify-between text-[11px] tracking-[0.12em] uppercase font-mono"
@@ -202,8 +201,8 @@ const description = `Blog de Gabriel Mustière : ${totalCount} billets sur l'IA,
     </section>
   </main>
 
-  <Footer variant="blog" maxWidth="720px" />
-</BaseLayout>
+  <Footer variant="blog" maxWidth="820px" />
+</SiteLayout>
 
 <style is:global>
   .cat-pill {
