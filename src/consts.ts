@@ -1,18 +1,18 @@
 export const SITE = {
   url: 'https://mustiere.fr',
-  name: 'Gabriel Mustière',
-  title: 'Gabriel Mustière — CTO freelance à Nantes',
+  name: 'Gabriel Mustiere',
+  title: 'Gabriel Mustiere — CTO freelance à Nantes',
   description:
-    'CTO freelance basé à Nantes. 15 ans d’expérience en architecture, IA, leadership technique et accompagnement de produits au long cours.',
+    'CTO freelance basé à Nantes. 14 ans dans la tech, CTO depuis 2017. Architecture, leadership technique, SaaS & e-commerce.',
   locale: 'fr-FR',
   author: {
-    name: 'Gabriel Mustière',
-    email: 'gmustiere@technao.net',
+    name: 'Gabriel Mustiere',
+    email: 'mustiere.gabriel@gmail.com',
     city: 'Nantes',
     country: 'France',
     jobTitle: 'CTO freelance',
-    github: 'https://github.com/gmustiere',
-    linkedin: 'https://www.linkedin.com/in/gmustiere/',
+    github: 'https://github.com/gabrielmustiere',
+    linkedin: 'https://www.linkedin.com/in/gabrielmustiere/',
   },
   nav: [
     { href: '/', label: 'Accueil' },

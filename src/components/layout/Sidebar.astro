@@ -12,8 +12,8 @@ const { current = 'home' } = Astro.props;
 const isHome = current === 'home';
 
 const index = [
-  { key: 'about', num: '01', label: 'Parcours', home: '#about', away: '/#about' },
-  { key: 'blog', num: '02', label: 'Écrits', home: '#blog', away: '/blog' },
+  { key: 'blog', num: '01', label: 'Blog', home: '#blog', away: '/blog' },
+  { key: 'about', num: '02', label: 'Parcours', home: '#about', away: '/#about' },
   { key: 'projects', num: '03', label: 'Projets', home: '#projects', away: '/#projects' },
   { key: 'contact', num: '04', label: 'Contact', home: '#contact', away: '/#contact' },
   { key: 'cv', num: '05', label: 'CV', home: '#cv', away: '/#cv' },
@@ -136,7 +136,7 @@ const brandHref = isHome ? '#top' : '/';
   .idx-link.is-active {
     color: var(--color-ink);
   }
-  .idx-link.is-active .label::before {
+  .idx-link .label::before {
     content: '';
     display: inline-block;
     width: 6px;
@@ -145,6 +145,11 @@ const brandHref = isHome ? '#top' : '/';
     background: currentColor;
     margin-right: 8px;
     vertical-align: 2px;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+  .idx-link.is-active .label::before {
+    opacity: 1;
   }
   .idx-link[data-key='about'].is-active {
     color: var(--a-about);
@@ -173,7 +178,7 @@ const brandHref = isHome ? '#top' : '/';
         const byKey = new Map<string, HTMLAnchorElement>();
         links.forEach((a) => byKey.set(a.dataset.key!, a));
 
-        const keys = ['about', 'blog', 'projects', 'contact', 'cv'];
+        const keys = ['blog', 'about', 'projects', 'contact', 'cv'];
         const sections = keys
           .map((k) => document.getElementById(k))
           .filter((el): el is HTMLElement => !!el);
@@ -194,21 +199,19 @@ const brandHref = isHome ? '#top' : '/';
             });
           };
 
+          const visibleIds = new Set<string>();
           const io = new IntersectionObserver(
             (entries) => {
-              const visible = entries
-                .filter((e) => e.isIntersecting)
-                .sort(
-                  (a, b) =>
-                    a.boundingClientRect.top - b.boundingClientRect.top
-                );
-              if (visible.length) {
-                setActive(visible[0].target.id);
+              for (const e of entries) {
+                if (e.isIntersecting) visibleIds.add(e.target.id);
+                else visibleIds.delete(e.target.id);
               }
+              const firstVisible = keys.find((k) => visibleIds.has(k));
+              if (firstVisible) setActive(firstVisible);
             },
             {
               rootMargin: '-20% 0px -60% 0px',
-              threshold: [0, 0.1, 0.5, 1],
+              threshold: 0,
             }
           );
 

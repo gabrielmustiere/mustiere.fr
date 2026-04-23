@@ -55,6 +55,6 @@ const { current = 'home', ...baseProps } = Astro.props;
   }
   section[id],
   h2[id] {
-    scroll-margin-top: 24px;
+    scroll-margin-top: calc(var(--mobile-nav-h, 0px) + 24px);
   }
 </style>

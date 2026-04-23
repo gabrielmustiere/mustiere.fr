@@ -12,8 +12,8 @@ const activeKey =
   current === 'blog' || current === 'article' ? 'blog' : null;
 
 const index = [
-  { key: 'about', num: '01', label: 'Parcours', home: '#about', away: '/#about' },
-  { key: 'blog', num: '02', label: 'Écrits', home: '#blog', away: '/blog' },
+  { key: 'blog', num: '01', label: 'Blog', home: '#blog', away: '/blog' },
+  { key: 'about', num: '02', label: 'Parcours', home: '#about', away: '/#about' },
   { key: 'projects', num: '03', label: 'Projets', home: '#projects', away: '/#projects' },
   { key: 'contact', num: '04', label: 'Contact', home: '#contact', away: '/#contact' },
   { key: 'cv', num: '05', label: 'CV', home: '#cv', away: '/#cv' },
@@ -36,8 +36,10 @@ const index = [
     aria-controls="mobile-menu-panel"
     aria-label="Ouvrir le menu"
   >
-    <span class="bar" aria-hidden="true"></span>
-    <span class="bar" aria-hidden="true"></span>
+    <span class="bars" aria-hidden="true">
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </span>
     <span class="hamburger-label">Menu</span>
   </button>
 </header>
@@ -125,6 +127,14 @@ const index = [
 </dialog>
 
 <style>
+  :root {
+    --mobile-nav-h: 56px;
+  }
+  @media (min-width: 1024px) {
+    :root {
+      --mobile-nav-h: 0px;
+    }
+  }
   .mobile-nav {
     display: flex;
     align-items: center;
@@ -166,18 +176,16 @@ const index = [
     color: var(--color-ink);
     border-color: var(--color-rule-strong);
   }
+  .hamburger .bars {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 3px;
+  }
   .hamburger .bar {
     display: block;
     width: 14px;
     height: 1px;
     background: currentColor;
-  }
-  .hamburger .bar + .bar {
-    margin-top: 3px;
-    margin-left: -14px;
-  }
-  .hamburger-label {
-    margin-left: 4px;
   }
 
   .mobile-dialog {
