@@ -48,7 +48,7 @@ export const GET: APIRoute = async () => {
   for (const post of posts) {
     const date = toISODate(post.data.publishedAt);
     lines.push(
-      `- [${post.data.title}](${SITE.url}/blog/${post.slug}) (${date}, ${post.data.category}) : ${post.data.excerpt}`
+      `- [${post.data.title}](${SITE.url}/blog/${post.id}) (${date}, ${post.data.category}) : ${post.data.excerpt}`
     );
   }
   lines.push('');

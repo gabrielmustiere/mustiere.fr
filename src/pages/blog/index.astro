@@ -15,7 +15,7 @@ import {
   toISODate,
 } from '../../utils/format-date';
 import { SITE } from '../../consts';
-import type { Category } from '../../content/config';
+import type { Category } from '../../content.config';
 
 const all = (await getCollection('blog', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
@@ -121,7 +121,7 @@ const description = `Blog de Gabriel Mustière : ${totalCount} billets sur l'IA,
             <span>À la une</span>
             <span class="tnum">№ {String(featured.data.number).padStart(2, '0')}</span>
           </div>
-          <a href={`/blog/${featured.slug}`} class="block mt-3 group">
+          <a href={`/blog/${featured.id}`} class="block mt-3 group">
             <h2
               class="font-serif text-[30px] sm:text-[42px] leading-[1.08] tracking-[-0.015em] group-hover:text-[color:var(--a-blog)] transition-colors"
               style="font-family: var(--font-serif)"
@@ -163,7 +163,7 @@ const description = `Blog de Gabriel Mustière : ${totalCount} billets sur l'IA,
               data-tags={post.data.category}
             >
               <a
-                href={`/blog/${post.slug}`}
+                href={`/blog/${post.id}`}
                 class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group"
               >
                 <time

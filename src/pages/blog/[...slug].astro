@@ -1,5 +1,5 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
 import { readingTimeFromText } from '../../utils/reading-time';
 
@@ -10,12 +10,12 @@ export async function getStaticPaths() {
   );
 
   return posts.map((post) => {
-    const idx = sorted.findIndex((p) => p.slug === post.slug);
+    const idx = sorted.findIndex((p) => p.id === post.id);
     const nextPosts = [sorted[idx + 1], sorted[idx - 1]].filter(
       (p): p is CollectionEntry<'blog'> => Boolean(p)
     );
     return {
-      params: { slug: post.slug },
+      params: { slug: post.id },
       props: { post, nextPosts },
     };
   });
@@ -27,13 +27,11 @@ type Props = {
 };
 const { post, nextPosts } = Astro.props as Props;
 
-const { Content, remarkPluginFrontmatter } = await post.render();
+const { Content } = await render(post);
 
 if (!post.data.readingTime && post.body) {
   post.data.readingTime = readingTimeFromText(post.body);
 }
-
-void remarkPluginFrontmatter;
 ---
 
 <ArticleLayout post={post} nextPosts={nextPosts}>

@@ -2,7 +2,6 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import robotsTxt from 'astro-robots-txt';
-import tailwindcss from '@tailwindcss/vite';
 
 import { SITE } from './src/consts.ts';
 
@@ -46,9 +45,6 @@ export default defineConfig({
       ],
     }),
   ],
-  vite: {
-    plugins: [tailwindcss()],
-  },
   markdown: {
     shikiConfig: {
       theme: 'github-light',

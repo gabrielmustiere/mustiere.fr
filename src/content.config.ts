@@ -1,9 +1,11 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
+import { glob } from 'astro/loaders';
+import { z } from 'zod';
 
 const categoryEnum = z.enum(['IA', 'Tech', 'Lead', 'Business']);
 
 const blog = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
   schema: z.object({
     title: z.string().max(120),
     excerpt: z.string().min(80).max(220),
@@ -21,7 +23,7 @@ const blog = defineCollection({
 });
 
 const projects = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
     title: z.string(),
     subtitle: z.string(),
@@ -29,7 +31,7 @@ const projects = defineCollection({
     kind: z.string(),
     year: z.number().int(),
     excerpt: z.string(),
-    url: z.string().url().optional(),
+    url: z.url().optional(),
     order: z.number().int().default(0),
   }),
 });

@@ -25,14 +25,14 @@ interface Props {
 
 const { post, nextPosts } = Astro.props;
 const { data } = post;
-const url = new URL(`/blog/${post.slug}`, SITE.url).href;
+const url = new URL(`/blog/${post.id}`, SITE.url).href;
 
 const schemas = [
   personSchema(),
   blogPostingSchema({
     title: data.title,
     description: data.excerpt,
-    slug: post.slug,
+    slug: post.id,
     publishedAt: data.publishedAt,
     updatedAt: data.updatedAt,
     category: data.category,
@@ -178,7 +178,7 @@ const schemas = [
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {nextPosts.map((next) => (
               <a
-                href={`/blog/${next.slug}`}
+                href={`/blog/${next.id}`}
                 class="block border-t border-[color:var(--color-rule)] pt-4 group"
               >
                 <div class="flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase font-mono">

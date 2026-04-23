@@ -46,14 +46,16 @@ export const GET: APIRoute = async () => {
     parts.push(`### ${post.data.title}`);
     parts.push('');
     parts.push(
-      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}/blog/${post.slug}*`
+      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}/blog/${post.id}*`
     );
     parts.push('');
     if (post.data.tldr) {
       parts.push(`**TL;DR.** ${post.data.tldr}`);
       parts.push('');
     }
-    parts.push(post.body.trim());
+    if (post.body) {
+      parts.push(post.body.trim());
+    }
     parts.push('');
     parts.push('---');
     parts.push('');

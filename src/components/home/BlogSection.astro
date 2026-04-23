@@ -22,7 +22,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
       posts.map((post) => (
         <li class="py-4 border-t border-[color:var(--color-rule)]">
           <a
-            href={`/blog/${post.slug}`}
+            href={`/blog/${post.id}`}
             class="flex items-baseline gap-4 group"
           >
             <time
