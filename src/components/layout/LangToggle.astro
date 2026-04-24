@@ -17,6 +17,7 @@ const { variant = 'sidebar', otherLangHref } = Astro.props;
 const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
 const tr = useTranslations(lang);
 const currentHref = Astro.url.pathname;
+const ukClipId = `lang-toggle-uk-clip-${variant}`;
 
 const hrefFor = (code: Lang): string => {
   if (code === lang) return currentHref;
@@ -48,27 +49,49 @@ const hrefFor = (code: Lang): string => {
           <span class="lang-toggle__flag" aria-hidden="true">
             {code === 'fr' ? (
               <svg
-                width="14"
-                height="10"
-                viewBox="0 0 14 10"
+                width="18"
+                height="12"
+                viewBox="0 0 3 2"
                 xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
               >
-                <rect x="0.5" y="0.5" width="13" height="9" fill="none" stroke="currentColor" stroke-width="1" />
-                <line x1="4.75" y1="1" x2="4.75" y2="9" stroke="currentColor" stroke-width="1" />
-                <line x1="9.25" y1="1" x2="9.25" y2="9" stroke="currentColor" stroke-width="1" />
+                <rect width="1" height="2" fill="#002654" />
+                <rect x="1" width="1" height="2" fill="#ffffff" />
+                <rect x="2" width="1" height="2" fill="#ce1126" />
               </svg>
             ) : (
               <svg
-                width="14"
-                height="10"
-                viewBox="0 0 14 10"
+                width="18"
+                height="12"
+                viewBox="0 0 60 30"
                 xmlns="http://www.w3.org/2000/svg"
+                preserveAspectRatio="none"
               >
-                <rect x="0.5" y="0.5" width="13" height="9" fill="none" stroke="currentColor" stroke-width="1" />
-                <line x1="0.5" y1="0.5" x2="13.5" y2="9.5" stroke="currentColor" stroke-width="1" />
-                <line x1="0.5" y1="9.5" x2="13.5" y2="0.5" stroke="currentColor" stroke-width="1" />
-                <line x1="7" y1="0.5" x2="7" y2="9.5" stroke="currentColor" stroke-width="1" />
-                <line x1="0.5" y1="5" x2="13.5" y2="5" stroke="currentColor" stroke-width="1" />
+                <clipPath id={ukClipId}>
+                  <path d="M30,15 h30 v15 z v-15 h-30 z h-30 v15 z v-15 h30 z" />
+                </clipPath>
+                <rect width="60" height="30" fill="#012169" />
+                <path
+                  d="M0,0 L60,30 M60,0 L0,30"
+                  stroke="#ffffff"
+                  stroke-width="6"
+                />
+                <path
+                  d="M0,0 L60,30 M60,0 L0,30"
+                  clip-path={`url(#${ukClipId})`}
+                  stroke="#c8102e"
+                  stroke-width="4"
+                />
+                <path
+                  d="M30,0 v30 M0,15 h60"
+                  stroke="#ffffff"
+                  stroke-width="10"
+                />
+                <path
+                  d="M30,0 v30 M0,15 h60"
+                  stroke="#c8102e"
+                  stroke-width="6"
+                />
               </svg>
             )}
           </span>
@@ -109,15 +132,25 @@ const hrefFor = (code: Lang): string => {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 14px;
-    height: 10px;
-    opacity: 0;
-    transform: translateX(-4px);
-    transition: opacity 0.15s ease, transform 0.15s ease;
+    width: 18px;
+    height: 12px;
+    border-radius: 1px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+    transition: opacity 0.15s ease, filter 0.15s ease;
   }
-  .lang-toggle__item.is-active .lang-toggle__flag {
+  .lang-toggle__flag > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .lang-toggle__item:not(.is-active) .lang-toggle__flag {
+    opacity: 0.65;
+    filter: saturate(0.85);
+  }
+  .lang-toggle__item:not(.is-active):hover .lang-toggle__flag {
     opacity: 1;
-    transform: translateX(0);
+    filter: saturate(1);
   }
   .lang-toggle__code {
     font-feature-settings: 'tnum' 1;
