@@ -1,9 +1,20 @@
 ---
 import SectionHead from '../ui/SectionHead.astro';
+import { SITE } from '../../consts';
 ---
 
 <section data-key="about" id="about">
   <SectionHead number="02" title="À propos" accent="about" />
+
+  <img
+    src="/avatar.jpeg"
+    alt={`Portrait de ${SITE.author.name}`}
+    width="96"
+    height="96"
+    class="mt-6 about-portrait"
+    loading="lazy"
+    decoding="async"
+  />
 
   <div
     class="mt-6 space-y-5 text-[15px] text-[#2a2622] leading-[1.75]"
@@ -53,3 +64,14 @@ import SectionHead from '../ui/SectionHead.astro';
     </div>
   </dl>
 </section>
+
+<style>
+  .about-portrait {
+    width: 96px;
+    height: 96px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 1px solid var(--color-rule-strong);
+    display: block;
+  }
+</style>

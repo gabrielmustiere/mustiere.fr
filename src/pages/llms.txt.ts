@@ -58,7 +58,7 @@ export const GET: APIRoute = async () => {
     lines.push('');
     for (const project of projects) {
       lines.push(
-        `- ${project.data.title} (${project.data.kind} · ${project.data.year} · ${project.data.status}) : ${project.data.excerpt}`
+        `- [${project.data.title}](${SITE.url}/projects/${project.id}) (${project.data.kind} · ${project.data.year} · ${project.data.status}) : ${project.data.excerpt}`
       );
     }
     lines.push('');

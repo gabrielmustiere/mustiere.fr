@@ -1,7 +1,7 @@
 ---
 import { SITE } from '../../consts';
 
-export type SidebarMode = 'home' | 'blog' | 'article';
+export type SidebarMode = 'home' | 'blog' | 'article' | 'project';
 
 interface Props {
   current?: SidebarMode;
@@ -20,14 +20,29 @@ const index = [
 ] as const;
 
 const activeKey =
-  current === 'blog' || current === 'article' ? 'blog' : null;
+  current === 'blog' || current === 'article'
+    ? 'blog'
+    : current === 'project'
+      ? 'projects'
+      : null;
 
 const brandHref = isHome ? '#top' : '/';
 ---
 
 <aside class="sidebar" aria-label="Navigation du site">
+  <a href={brandHref} class="avatar-link" aria-label="Retour à l'accueil">
+    <img
+      src="/avatar.jpeg"
+      alt={`Portrait de ${SITE.author.name}`}
+      width="56"
+      height="56"
+      class="avatar"
+      loading="eager"
+      decoding="async"
+    />
+  </a>
   <div
-    class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)]"
+    class="mt-4 text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)]"
   >
     {SITE.name}
   </div>
@@ -111,11 +126,28 @@ const brandHref = isHome ? '#top' : '/';
       display: flex;
       flex-direction: column;
       border-right: 1px solid var(--color-rule-strong);
-      padding: 176px 32px 40px;
+      padding: 64px 32px 40px;
       position: sticky;
       top: 0;
       height: 100vh;
     }
+  }
+  .avatar-link {
+    display: inline-block;
+    line-height: 0;
+    border-radius: 999px;
+    transition: transform 0.2s ease;
+  }
+  .avatar-link:hover {
+    transform: scale(1.03);
+  }
+  .avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 1px solid var(--color-rule-strong);
+    display: block;
   }
   .idx-link {
     display: grid;

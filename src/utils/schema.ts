@@ -7,6 +7,7 @@ export function personSchema() {
     '@id': `${SITE.url}/#person`,
     name: SITE.author.name,
     url: SITE.url,
+    image: `${SITE.url}/avatar.jpeg`,
     email: `mailto:${SITE.author.email}`,
     jobTitle: SITE.author.jobTitle,
     worksFor: { '@type': 'Organization', name: 'Indépendant' },
@@ -91,6 +92,23 @@ export function blogPostingSchema(p: BlogPostingInput) {
     image: p.image ? `${SITE.url}${p.image}` : `${SITE.url}${SITE.ogImage}`,
     author: { '@id': `${SITE.url}/#person` },
     publisher: { '@id': `${SITE.url}/#person` },
+  };
+}
+
+export function faqPageSchema(
+  items: Array<{ question: string; answer: string }>
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
   };
 }
 
