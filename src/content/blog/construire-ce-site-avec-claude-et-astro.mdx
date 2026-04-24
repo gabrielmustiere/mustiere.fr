@@ -1,0 +1,188 @@
+---
+title: "Comment j'ai construit ce site avec Claude et Astro"
+excerpt: "Retour d'expérience sur la fabrication de mustiere.fr : design avec Claude, implémentation avec Claude Code et Astro, et pourquoi le SEO s'est joué dans le schéma de contenu plutôt que dans les mots-clés."
+publishedAt: 2026-04-24
+category: Tech
+tags: [Astro, Claude, SEO, i18n]
+keywords: [Astro SEO, Claude Code Astro, site statique SEO, JSON-LD Astro, hreflang Astro, llms.txt]
+number: 1
+tldr: "Claude Deisgn a produit les maquettes, Claude Code les a transformées en site Astro statique. Le SEO sérieux tient dans six briques : schéma Zod, hreflang, JSON-LD, sitemap, llms.txt, et un site assez rapide pour que Google n'ait rien à redire."
+lang: fr
+translationOf: "building-this-site-with-claude-and-astro"
+---
+
+Ce site existait depuis trois ans sous forme d'une page HTML figée. Je voulais un vrai blog, bilingue, propre sur le SEO, sans me transformer en développeur frontend à temps plein. Je m'en suis sorti en deux week-ends grâce à deux outils : **Claude** pour le design, **Claude Code** pour l'implémentation en Astro. Voici ce que j'ai retenu, avec un focus appuyé sur la partie référencement — c'est là que la plupart des portfolios de CTO se plantent.
+
+## Étape 1 — designer avec Claude Design, pas avec Figma
+
+Je ne suis pas designer. Ouvrir Figma pour itérer sur une page d'accueil coûte cher en friction. Claude Design, lui, sait produire une maquette, du HTML + Tailwind qui s'affiche immédiatement dans un navigateur. Le processus :
+
+1. Je décris l'identité visuelle (éditoriale, sobre, typographie mixte serif + sans + mono) et les sections attendues.
+2. Claude Deisgn me rend trois artifacts HTML autonomes : accueil, liste d'articles, article.
+3. J'itère en langage naturel (« la sidebar est trop dense », « fais sauter le bandeau Tweaks », « passe l'accent de cette section en ocre »).
+4. À la fin, je demande à Claude de rédiger un **handoff document** : tokens de design, palette oklch, structure Astro recommandée, comportements JS.
+
+Ce handoff, c'est le fichier `README.md` du repo — je l'utilise comme brief à l'entrée de Claude Code. Les maquettes HTML deviennent la référence de fidélité pixel-perfect ; Claude Code n'a plus qu'à les recoder en composants Astro idiomatiques.
+
+## Étape 2 — implémenter avec Claude Code et Astro
+
+**Pourquoi Astro ?** Trois raisons concrètes pour un site de contenu :
+
+- **Zéro JS par défaut.** Ce que je n'écris pas ne peut pas casser, ne ralentit pas les Core Web Vitals, et ne m'oblige pas à hydrater des îlots pour afficher du texte.
+- **Content Collections typées.** Chaque article est un `.mdx` validé par un schéma Zod. Le build casse si un champ manque — pas de date manquante qui plombe le sitemap en prod.
+- **i18n natif.** Un simple bloc dans `astro.config.mjs` et je tiens deux arbres `/fr` et `/en` sans router maison.
+
+Claude Code, lui, est à son aise sur ce genre de codebase : lecture large de la structure, édits ciblés, respect des conventions du projet. Je travaille en plan-then-execute : je lui demande d'abord de planifier un découpage en petites tâches, je relis, puis je laisse exécuter.
+
+## Focus SEO — six briques non négociables
+
+Pour un site de CTO freelance, le SEO n'est pas un plan marketing. C'est l'hygiène qui fait que Google, Perplexity, ChatGPT et les recruteurs trouvent les bonnes pages dans le bon ordre. Voici ce qui porte 90 % du résultat.
+
+### 1. Un schéma de contenu strict
+
+La première brique SEO n'est pas dans le HTML, elle est dans le modèle de données. Chaque article déclare des champs obligatoires via Zod, sinon le build casse :
+
+```ts
+// src/content.config.ts
+const blog = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
+  schema: z.object({
+    title: z.string().max(120),
+    excerpt: z.string().min(80).max(220),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
+    category: z.enum(['IA', 'Tech', 'Lead', 'Business']),
+    tags: z.array(z.string()).default([]),
+    keywords: z.array(z.string()).default([]),
+    tldr: z.string().min(60).max(320),
+    lang: z.enum(['fr', 'en']).default('fr'),
+    translationOf: z.string().optional(),
+  }),
+});
+```
+
+`excerpt` est borné entre 80 et 220 caractères parce que c'est la longueur utile d'une meta description. `tldr` force un résumé exploitable par les LLM. `translationOf` relie deux versions linguistiques du même article : indispensable pour les balises `hreflang`.
+
+### 2. Hreflang et canonical systématiques
+
+Un site bilingue mal balisé se tire une balle dans le pied : Google indexe les deux versions comme des doublons. Le `BaseLayout` émet une balise canonique et deux `hreflang` sur **chaque page**, en se basant sur le `translationOf` du contenu :
+
+```astro
+<link rel="canonical" href={canonicalURL} />
+<link rel="alternate" hreflang={otherLang} href={altUrl} />
+<link rel="alternate" hreflang={lang} href={canonicalURL} />
+<link
+  rel="alternate"
+  hreflang="x-default"
+  href={lang === 'fr' ? canonicalURL : altUrl}
+/>
+```
+
+`x-default` pointe vers la version française — c'est ma version principale. Sans ce bloc, un moteur ne saurait pas laquelle des deux pages servir à un utilisateur anglophone.
+
+### 3. JSON-LD pour chaque type d'entité
+
+Les données structurées sont encore sous-utilisées par les devs et lues par toutes les IA qui crawlent le web. J'émets trois schémas sur chaque article : `Person`, `BlogPosting`, `BreadcrumbList`.
+
+```ts
+// src/utils/schema.ts (extrait)
+export function blogPostingSchema(p: BlogPostingInput) {
+  const lang = p.lang ?? 'fr';
+  const url = `${SITE.url}${localizedPath(lang, `/blog/${p.slug}`)}`;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    '@id': `${url}#article`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+    url,
+    headline: p.title,
+    description: p.description,
+    datePublished: p.publishedAt,
+    dateModified: p.updatedAt ?? p.publishedAt,
+    inLanguage: LANG_META[lang].bcp47,
+    articleSection: p.category,
+    keywords: p.keywords.join(', '),
+    timeRequired: p.readingTime ? `PT${p.readingTime}M` : undefined,
+    author: { '@id': `${SITE.url}/#person` },
+    publisher: { '@id': `${SITE.url}/#person` },
+  };
+}
+```
+
+Le même `Person` est référencé partout via `@id`, pas dupliqué. C'est ce que Google veut : un graphe, pas un tas de JSON dispersés.
+
+### 4. Sitemap et robots.txt IA-friendly
+
+Deux intégrations Astro font 95 % du travail. Le sitemap est généré au build avec les locales déclarées ; `robots.txt` autorise explicitement les crawlers IA que je veux voir citer mon contenu.
+
+```js
+// astro.config.mjs (extrait)
+integrations: [
+  sitemap({
+    i18n: { defaultLocale: 'fr', locales: { fr: 'fr-FR', en: 'en-GB' } },
+    changefreq: 'weekly',
+    priority: 0.7,
+  }),
+  robotsTxt({
+    sitemap: [`${SITE.url}/sitemap-index.xml`],
+    policy: [
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'ClaudeBot', allow: '/' },
+      { userAgent: 'PerplexityBot', allow: '/' },
+      { userAgent: 'Google-Extended', allow: '/' },
+      { userAgent: 'Bytespider', disallow: '/' },
+      { userAgent: '*', allow: '/', disallow: ['/404'] },
+    ],
+  }),
+],
+```
+
+Bloquer Bytespider n'est pas de l'idéologie : c'est un crawler bruyant qui consomme de la bande passante sans citer ses sources. Ouvrir GPTBot, ClaudeBot et PerplexityBot, au contraire, c'est accepter d'être cité par les assistants que mes prospects utilisent déjà.
+
+### 5. Un `llms.txt` pour l'ère des LLM
+
+Personne ne sait encore si le standard `llms.txt` va s'imposer, mais il coûte presque rien et résout un vrai problème : un LLM qui crawle mon site a besoin d'un plan éditorial, pas d'un sitemap XML.
+
+```ts
+// src/pages/fr/llms.txt.ts (extrait)
+export const GET: APIRoute = async () => {
+  const posts = (await getCollection('blog', ({ data }) =>
+    !data.draft && (data.lang ?? 'fr') === 'fr'
+  )).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+
+  const lines: string[] = [`# ${SITE.name}`, '', '## Articles', ''];
+  for (const post of posts) {
+    lines.push(
+      `- [${post.data.title}](${SITE.url}/fr/blog/${post.id}) ` +
+      `(${toISODate(post.data.publishedAt)}, ${post.data.category}) : ${post.data.excerpt}`
+    );
+  }
+  return new Response(lines.join('\n'), {
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+  });
+};
+```
+
+Les excerpts stricts du schéma Zod (point 1) deviennent ici des résumés utilisables par un modèle sans qu'il ait à charger chaque article.
+
+### 6. Statique, léger, rapide
+
+Les cinq premiers points ne valent rien si la page met 4 secondes à s'afficher. Astro sort du HTML pur, Tailwind v4 génère le CSS utilisé, et trois options dans `astro.config.mjs` achèvent le travail :
+
+```js
+build: { inlineStylesheets: 'auto', format: 'file' },
+prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
+trailingSlash: 'never',
+```
+
+Le `inlineStylesheets: 'auto'` embarque le CSS critique dans le HTML initial — zéro aller-retour pour le premier paint. Le `prefetch` au hover précharge la page au moment où la souris entre sur un lien. `trailingSlash: 'never'` évite les redirections 301 entre `/blog/` et `/blog` qui plombent les scores PageSpeed.
+
+## Ce que je ferais différemment
+
+- **Commencer par le schéma**, pas par le design. Un champ `keywords` oublié au départ se paie en migration plus tard.
+- **Écrire la page `/llms.txt` dès le jour 1.** C'est cinq lignes de code et ça force à avoir des excerpts propres partout.
+- **Mesurer le Lighthouse sur mobile à chaque commit.** J'ai un `pa11yci` et un `lighthouserc.json` dans le repo ; je les aurais posés plus tôt.
+
+## Le code est ouvert
+
+Le repo complet est public : [github.com/gabrielmustiere/mustiere.fr](https://github.com/gabrielmustiere/mustiere.fr). Si vous voulez cloner la structure pour votre propre site de consultant, servez-vous — le schéma, les utils SEO et le squelette i18n sont directement réutilisables.
