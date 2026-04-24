@@ -16,6 +16,23 @@ export default defineConfig({
     prefetchAll: false,
     defaultStrategy: 'hover',
   },
+  i18n: {
+    defaultLocale: 'fr',
+    locales: ['fr', 'en'],
+    routing: {
+      prefixDefaultLocale: true,
+      redirectToDefaultLocale: false,
+    },
+  },
+  redirects: {
+    '/': '/fr',
+    '/blog': '/fr/blog',
+    '/blog/[...slug]': '/fr/blog/[...slug]',
+    '/projects/[...slug]': '/fr/projects/[...slug]',
+    '/rss.xml': '/fr/rss.xml',
+    '/llms.txt': '/fr/llms.txt',
+    '/llms-full.txt': '/fr/llms-full.txt',
+  },
   integrations: [
     mdx(),
     sitemap({
@@ -23,6 +40,13 @@ export default defineConfig({
         !page.includes('/404') &&
         !page.includes('/llms.txt') &&
         !page.includes('/llms-full.txt'),
+      i18n: {
+        defaultLocale: 'fr',
+        locales: {
+          fr: 'fr-FR',
+          en: 'en-GB',
+        },
+      },
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),

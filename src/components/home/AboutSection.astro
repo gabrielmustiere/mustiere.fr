@@ -1,14 +1,22 @@
 ---
 import SectionHead from '../ui/SectionHead.astro';
-import { SITE } from '../../consts';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
 ---
 
 <section data-key="about" id="about">
-  <SectionHead number="02" title="À propos" accent="about" />
+  <SectionHead number="02" title={tr.home.about.title} accent="about" />
 
   <img
     src="/avatar.jpeg"
-    alt={`Portrait de ${SITE.author.name}`}
+    alt={tr.portrait}
     width="96"
     height="96"
     class="mt-6 about-portrait"
@@ -19,48 +27,81 @@ import { SITE } from '../../consts';
   <div
     class="mt-6 space-y-5 text-[15px] text-[#2a2622] leading-[1.75]"
   >
-    <p>
-      <span class="tnum acc-about">14 ans</span> dans la tech, et
-      <em class="acc-about">CTO depuis 2017</em>. J'ai construit la filiale
-      SaaS <em class="acc-about">Progicar</em> (Groupe GEMY) de zéro à plus
-      de 25 personnes réparties en trois équipes produit, puis cofondé
-      <em class="acc-about">Passion Barbecue</em> où j'ai porté la
-      plateforme e-commerce Sylius de bout en bout.
-    </p>
-    <p>
-      Depuis septembre <span class="tnum acc-about">2025</span>, je
-      travaille en <em class="acc-about">freelance</em>. J'accompagne
-      actuellement <em class="acc-about">Anytime</em> sur la mise en
-      conformité PSD2/SCA via <span class="hl acc-about">WebAuthn</span>
-      (passkeys, biométrie, clés de sécurité).
-    </p>
-    <p>
-      Mes terrains de prédilection : la
-      <span class="hl acc-projects">construction d'équipes tech</span>
-      autonomes, <span class="hl acc-blog">l'architecture évolutive</span>
-      et l'industrialisation DevOps. L'alignement produit-tech au service
-      du business, pas la hype.
-    </p>
+    {
+      lang === 'fr' ? (
+        <>
+          <p>
+            <span class="tnum acc-about">14 ans</span> dans la tech, et
+            <em class="acc-about">CTO depuis 2017</em>. J'ai construit la filiale
+            SaaS <em class="acc-about">Progicar</em> (Groupe GEMY) de zéro à plus
+            de 25 personnes réparties en trois équipes produit, puis cofondé
+            <em class="acc-about">Passion Barbecue</em> où j'ai porté la
+            plateforme e-commerce Sylius de bout en bout.
+          </p>
+          <p>
+            Depuis septembre <span class="tnum acc-about">2025</span>, je
+            travaille en <em class="acc-about">freelance</em>. J'accompagne
+            actuellement <em class="acc-about">Anytime</em> sur la mise en
+            conformité PSD2/SCA via <span class="hl acc-about">WebAuthn</span>
+            (passkeys, biométrie, clés de sécurité).
+          </p>
+          <p>
+            Mes terrains de prédilection : la
+            <span class="hl acc-projects">construction d'équipes tech</span>
+            autonomes, <span class="hl acc-blog">l'architecture évolutive</span>
+            et l'industrialisation DevOps. L'alignement produit-tech au service
+            du business, pas la hype.
+          </p>
+        </>
+      ) : (
+        <>
+          <p>
+            <span class="tnum acc-about">14 years</span> in tech, and
+            <em class="acc-about">CTO since 2017</em>. I built the SaaS
+            subsidiary <em class="acc-about">Progicar</em> (Groupe GEMY) from
+            scratch to more than 25 people spread across three product teams,
+            then co-founded <em class="acc-about">Passion Barbecue</em>, where I
+            ran the Sylius e-commerce platform end-to-end.
+          </p>
+          <p>
+            Since September <span class="tnum acc-about">2025</span>, I work as a
+            <em class="acc-about">freelance</em>. I'm currently supporting
+            <em class="acc-about">Anytime</em> on their PSD2/SCA compliance via
+            <span class="hl acc-about">WebAuthn</span> (passkeys, biometrics,
+            security keys).
+          </p>
+          <p>
+            My favourite terrain: building
+            <span class="hl acc-projects">autonomous engineering teams</span>,
+            <span class="hl acc-blog">evolutive architecture</span> and DevOps
+            industrialisation. Product-tech alignment in service of the
+            business, not the hype.
+          </p>
+        </>
+      )
+    }
   </div>
 
   <dl
     class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[color:var(--color-muted)]"
   >
     <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
-      <dt>Expérience</dt>
-      <dd class="tnum acc-about">14 ans · CTO depuis 2017</dd>
+      <dt>{tr.home.about.experienceLabel}</dt>
+      <dd class="tnum acc-about">
+        {lang === 'fr' ? '14 ans · CTO depuis 2017' : '14 years · CTO since 2017'}
+      </dd>
     </div>
     <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
-      <dt>Rôles</dt>
+      <dt>{tr.home.about.rolesLabel}</dt>
       <dd class="text-[color:var(--color-ink)]">CTO · Lead · IC</dd>
     </div>
     <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
-      <dt>Basé à</dt>
-      <dd class="text-[color:var(--color-ink)]">Nantes · remote</dd>
+      <dt>{tr.home.about.locationLabel}</dt>
+      <dd class="text-[color:var(--color-ink)]">{tr.home.about.location}</dd>
     </div>
     <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
-      <dt>Disponibilité</dt>
-      <dd class="acc-about">Q3 2026</dd>
+      <dt>{tr.home.about.availabilityLabel}</dt>
+      <dd class="acc-about">{tr.home.about.availability}</dd>
     </div>
   </dl>
 </section>

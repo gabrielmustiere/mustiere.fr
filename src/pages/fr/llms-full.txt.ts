@@ -1,18 +1,23 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
-import { SITE } from '../consts';
-import { toISODate } from '../utils/format-date';
+import { SITE } from '../../consts';
+import { toISODate } from '../../utils/format-date';
 
 export const GET: APIRoute = async () => {
-  const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
-    (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
-  );
+  const posts = (
+    await getCollection(
+      'blog',
+      ({ data }) => !data.draft && (data.lang ?? 'fr') === 'fr'
+    )
+  ).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
   const parts: string[] = [];
 
   parts.push(`# ${SITE.name}`);
   parts.push('');
-  parts.push(`> ${SITE.description}`);
+  parts.push(
+    `> CTO freelance basé à Nantes. 14 ans dans la tech, CTO depuis 2017. Architecture, leadership technique, SaaS & e-commerce.`
+  );
   parts.push('');
   parts.push(
     `Site : ${SITE.url} · GitHub : ${SITE.author.github} · LinkedIn : ${SITE.author.linkedin} · Contact : ${SITE.author.email}`
@@ -24,7 +29,7 @@ export const GET: APIRoute = async () => {
   parts.push('## À propos');
   parts.push('');
   parts.push(
-    `${SITE.author.name} est ${SITE.author.jobTitle} basé à ${SITE.author.city}. Il écrit du code depuis 2009, dirige des équipes depuis 2014, et travaille en indépendant depuis 2021 avec des scale-ups, studios et fondateurs. Son terrain : les produits techniques où la donnée, le tempo et la lisibilité de l'architecture comptent autant que la feature.`
+    `${SITE.author.name} est CTO freelance basé à ${SITE.author.city}. Il écrit du code depuis 2009, dirige des équipes depuis 2014, et travaille en indépendant depuis 2021 avec des scale-ups, studios et fondateurs. Son terrain : les produits techniques où la donnée, le tempo et la lisibilité de l'architecture comptent autant que la feature.`
   );
   parts.push('');
   parts.push(
@@ -46,7 +51,7 @@ export const GET: APIRoute = async () => {
     parts.push(`### ${post.data.title}`);
     parts.push('');
     parts.push(
-      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}/blog/${post.id}*`
+      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}/fr/blog/${post.id}*`
     );
     parts.push('');
     if (post.data.tldr) {

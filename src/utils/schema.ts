@@ -1,22 +1,11 @@
 import { SITE } from '../consts';
+import { LANG_META, type Lang } from '../i18n/config';
+import { localizedPath } from '../i18n/utils';
+import { ui } from '../i18n/ui';
 
-export function personSchema() {
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    '@id': `${SITE.url}/#person`,
-    name: SITE.author.name,
-    url: SITE.url,
-    image: `${SITE.url}/avatar.jpeg`,
-    email: `mailto:${SITE.author.email}`,
-    jobTitle: SITE.author.jobTitle,
-    worksFor: { '@type': 'Organization', name: 'Indépendant' },
-    address: {
-      '@type': 'PostalAddress',
-      addressLocality: SITE.author.city,
-      addressCountry: SITE.author.country,
-    },
-    knowsAbout: [
+export function personSchema(lang: Lang = 'fr') {
+  const knowsAbout: Record<Lang, string[]> = {
+    fr: [
       'Architecture logicielle',
       'Architecture hexagonale',
       'Leadership technique',
@@ -28,32 +17,68 @@ export function personSchema() {
       'PostgreSQL',
       'TypeScript',
     ],
+    en: [
+      'Software architecture',
+      'Hexagonal architecture',
+      'Technical leadership',
+      'SaaS',
+      'E-commerce',
+      'WebAuthn',
+      'Strong Customer Authentication',
+      'DevOps',
+      'PostgreSQL',
+      'TypeScript',
+    ],
+  };
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `${SITE.url}/#person`,
+    name: SITE.author.name,
+    url: SITE.url,
+    image: `${SITE.url}/avatar.jpeg`,
+    email: `mailto:${SITE.author.email}`,
+    jobTitle: lang === 'fr' ? 'CTO freelance' : 'Freelance CTO',
+    worksFor: {
+      '@type': 'Organization',
+      name: lang === 'fr' ? 'Indépendant' : 'Independent',
+    },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: SITE.author.city,
+      addressCountry: SITE.author.country,
+    },
+    knowsAbout: knowsAbout[lang],
     sameAs: [SITE.author.github, SITE.author.linkedin],
   };
 }
 
-export function websiteSchema() {
+export function websiteSchema(lang: Lang = 'fr') {
+  const tr = ui[lang];
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     '@id': `${SITE.url}/#website`,
     url: SITE.url,
     name: SITE.name,
-    description: SITE.description,
-    inLanguage: SITE.locale,
+    description: tr.site.description,
+    inLanguage: LANG_META[lang].bcp47,
     publisher: { '@id': `${SITE.url}/#person` },
   };
 }
 
-export function blogSchema() {
+export function blogSchema(lang: Lang = 'fr') {
+  const tr = ui[lang];
+  const blogUrl = `${SITE.url}${localizedPath(lang, '/blog')}`;
   return {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    '@id': `${SITE.url}/blog#blog`,
-    url: `${SITE.url}/blog`,
-    name: `${SITE.name} — Écrits`,
-    description: 'Notes et essais sur la tech, le business et l\'IA.',
-    inLanguage: SITE.locale,
+    '@id': `${blogUrl}#blog`,
+    url: blogUrl,
+    name: `${SITE.name} — ${tr.home.blog.title}`,
+    description: tr.home.blog.intro,
+    inLanguage: LANG_META[lang].bcp47,
     author: { '@id': `${SITE.url}/#person` },
     publisher: { '@id': `${SITE.url}/#person` },
   };
@@ -70,10 +95,12 @@ interface BlogPostingInput {
   wordCount?: number;
   readingTime?: number;
   image?: string;
+  lang?: Lang;
 }
 
 export function blogPostingSchema(p: BlogPostingInput) {
-  const url = `${SITE.url}/blog/${p.slug}`;
+  const lang: Lang = p.lang ?? 'fr';
+  const url = `${SITE.url}${localizedPath(lang, `/blog/${p.slug}`)}`;
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -84,7 +111,7 @@ export function blogPostingSchema(p: BlogPostingInput) {
     description: p.description,
     datePublished: p.publishedAt,
     dateModified: p.updatedAt ?? p.publishedAt,
-    inLanguage: SITE.locale,
+    inLanguage: LANG_META[lang].bcp47,
     articleSection: p.category,
     keywords: p.keywords.join(', '),
     wordCount: p.wordCount,

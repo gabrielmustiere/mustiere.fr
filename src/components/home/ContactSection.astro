@@ -1,15 +1,23 @@
 ---
 import SectionHead from '../ui/SectionHead.astro';
 import { SITE } from '../../consts';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
 ---
 
 <section data-key="contact" id="contact">
-  <SectionHead number="04" title="Contact" accent="contact" />
+  <SectionHead number="04" title={tr.home.contact.title} accent="contact" />
   <p
     class="mt-4 text-[15px] text-[#2a2622] leading-[1.75] max-w-[520px]"
   >
-    Missions, audits, sparring : un mail suffit. Je réponds sous 48h,
-    jamais aux sollicitations commerciales.
+    {tr.home.contact.intro}
   </p>
   <dl class="mt-6 text-[15px]">
     <div
@@ -18,7 +26,7 @@ import { SITE } from '../../consts';
       <dt
         class="text-[11px] tracking-[0.1em] uppercase w-20 text-[color:var(--color-muted)] font-mono"
       >
-        Email
+        {tr.home.contact.emailLabel}
       </dt>
       <dd>
         <a
@@ -33,7 +41,7 @@ import { SITE } from '../../consts';
       <dt
         class="text-[11px] tracking-[0.1em] uppercase w-20 text-[color:var(--color-muted)] font-mono"
       >
-        LinkedIn
+        {tr.home.contact.linkedinLabel}
       </dt>
       <dd>
         <a
@@ -50,7 +58,7 @@ import { SITE } from '../../consts';
       <dt
         class="text-[11px] tracking-[0.1em] uppercase w-20 text-[color:var(--color-muted)] font-mono"
       >
-        GitHub
+        {tr.home.contact.githubLabel}
       </dt>
       <dd>
         <a

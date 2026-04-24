@@ -1,8 +1,13 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
-import { getLangFromUrl, useTranslations, localizedPath } from '../i18n/utils';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { useTranslations, localizedPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
 
-const lang = getLangFromUrl(Astro.url);
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
 const tr = useTranslations(lang);
 ---
 

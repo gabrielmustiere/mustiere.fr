@@ -1,22 +1,31 @@
 ---
 import { SITE } from '../../consts';
+import { getLangFromUrl, useTranslations, localizedPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+import LangToggle from './LangToggle.astro';
 
 export type SidebarMode = 'home' | 'blog' | 'article' | 'project';
 
 interface Props {
   current?: SidebarMode;
+  lang?: Lang;
+  otherLangHref?: string;
 }
 
-const { current = 'home' } = Astro.props;
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
+const { current = 'home', otherLangHref } = Astro.props;
 
 const isHome = current === 'home';
+const blogPath = localizedPath(lang, '/blog');
+const homePath = localizedPath(lang, '/');
 
 const index = [
-  { key: 'blog', num: '01', label: 'Blog', home: '#blog', away: '/blog' },
-  { key: 'about', num: '02', label: 'Parcours', home: '#about', away: '/#about' },
-  { key: 'projects', num: '03', label: 'Projets', home: '#projects', away: '/#projects' },
-  { key: 'contact', num: '04', label: 'Contact', home: '#contact', away: '/#contact' },
-  { key: 'cv', num: '05', label: 'CV', home: '#cv', away: '/#cv' },
+  { key: 'blog', num: '01', label: tr.nav.items.blog, home: '#blog', away: blogPath },
+  { key: 'about', num: '02', label: tr.nav.items.about, home: '#about', away: `${homePath}#about` },
+  { key: 'projects', num: '03', label: tr.nav.items.projects, home: '#projects', away: `${homePath}#projects` },
+  { key: 'contact', num: '04', label: tr.nav.items.contact, home: '#contact', away: `${homePath}#contact` },
+  { key: 'cv', num: '05', label: tr.nav.items.cv, home: '#cv', away: `${homePath}#cv` },
 ] as const;
 
 const activeKey =
@@ -26,14 +35,14 @@ const activeKey =
       ? 'projects'
       : null;
 
-const brandHref = isHome ? '#top' : '/';
+const brandHref = isHome ? '#top' : homePath;
 ---
 
-<aside class="sidebar" aria-label="Navigation du site">
-  <a href={brandHref} class="avatar-link" aria-label="Retour à l'accueil">
+<aside class="sidebar" aria-label={tr.nav.ariaSidebar}>
+  <a href={brandHref} class="avatar-link" aria-label={tr.nav.ariaBackHome}>
     <img
       src="/avatar.jpeg"
-      alt={`Portrait de ${SITE.author.name}`}
+      alt={tr.portrait}
       width="56"
       height="56"
       class="avatar"
@@ -51,19 +60,19 @@ const brandHref = isHome ? '#top' : '/';
     class="font-serif mt-2 text-[34px] leading-[1.05] tracking-[-0.01em] block"
     style="font-family: var(--font-serif)"
   >
-    CTO<br /><em class="acc-about">freelance</em>
+    {tr.site.role}<br /><em class="acc-about">{tr.site.roleSuffix}</em>
   </a>
   <p
     class="mt-4 text-[12.5px] text-[color:var(--color-muted)] leading-[1.55]"
   >
-    Tech · Business · IA.<br />Nantes — remote.
+    {tr.site.tagline}<br />{tr.site.taglineLocation}
   </p>
 
-  <nav class="mt-10" aria-label="Sections">
+  <nav class="mt-10" aria-label={tr.nav.ariaSections}>
     <div
       class="text-[10px] tracking-[0.14em] uppercase mb-2 text-[color:var(--color-muted)]"
     >
-      Index
+      {tr.nav.index}
     </div>
     <ul>
       {
@@ -92,6 +101,7 @@ const brandHref = isHome ? '#top' : '/';
   <div
     class="mt-auto text-[10px] tracking-[0.12em] uppercase text-[color:var(--color-muted)]"
   >
+    <LangToggle variant="sidebar" lang={lang} otherLangHref={otherLangHref} />
     <div class="flex items-center gap-3 mb-3">
       <a
         href={SITE.author.github}
@@ -111,9 +121,9 @@ const brandHref = isHome ? '#top' : '/';
       <span
         class="inline-block w-[6px] h-[6px] rounded-full bg-[#5a7a4a]"
         aria-hidden="true"></span>
-      <span>Disponible Q3 2026</span>
+      <span>{tr.availability}</span>
     </div>
-    <div>v. 2026.04 — Nantes</div>
+    <div>{tr.version}</div>
   </div>
 </aside>
 

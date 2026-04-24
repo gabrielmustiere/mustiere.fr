@@ -1,0 +1,81 @@
+---
+title: "Why your LLM evals are worthless (and how to fix it)"
+excerpt: "Most teams measure what they can measure, not what matters. Start from the failure cases you see in production and build an eval suite that holds up over time."
+publishedAt: 2026-04-14
+category: IA
+tags: [LLM, evaluation, production, quality]
+keywords: [LLM evaluation, eval harness, LLM production, LLM testing, AI quality]
+number: 7
+tldr: "Stop benchmarking on MMLU and stop writing golden data on a Friday afternoon. The only metric that predicts user satisfaction is the human-rework rate, instrumented from day one in production."
+lang: en
+translationOf: "pourquoi-vos-evaluations-llm-ne-valent-rien"
+---
+
+There's a moment, as teams push LLMs into production, when they realize they're flying blind. The demos look great, tickets keep coming in, and nobody actually knows whether each prompt tweak or model swap is a *regression*. That's when someone decides to write an eval suite.
+
+Nine times out of ten, that suite ends up evaluating nothing at all.
+
+## The public-benchmark trap
+
+The first instinct is to grab an existing benchmark — MMLU, GSM8K, whatever dataset is trending this week — and report the score. It's comfortable, it's objective, it's comparable. The problem: it doesn't measure **your** product.
+
+Your product has a specific input distribution, a business domain, format constraints, and a context window that weighs heavily on the output. No public benchmark captures those three things.
+
+> A model that gains 2 points on MMLU can lose 15 on your use case. The reverse is also true.
+
+## Start from failures, not happy paths
+
+The second mistake is to sit down on a Friday afternoon and write thirty "pretty" examples that match the happy path. They pass, everyone's happy, we ship. Production, however, does not travel the happy path.
+
+What actually works: from day one in production, instrument the logs and keep every case where **a human had to rewrite the output**. Those cases become the *seed* of the eval suite. You anonymize them, freeze them, and run them on every change.
+
+### A minimal harness
+
+A script is enough. Here's a dependency-free TypeScript version:
+
+```ts
+// eval-harness.ts — fits in under 50 lines
+type Case = { id: string; input: string; expected: string };
+type Result = { id: string; score: number; output: string };
+
+async function* runSuite(
+  suite: Case[],
+  model: (input: string) => Promise<string>,
+  score: (out: string, exp: string) => number,
+): AsyncGenerator<Result> {
+  for (const c of suite) {
+    const out = await model(c.input);
+    yield { id: c.id, score: score(out, c.expected), output: out };
+  }
+}
+
+const suite = await loadFrom('./cases/*.json');
+const results: Result[] = [];
+for await (const r of runSuite(suite, gpt, semantic)) {
+  results.push(r);
+  console.log(r.id, r.score.toFixed(2));
+}
+const mean = results.reduce((a, r) => a + r.score, 0) / results.length;
+console.log(`mean = ${mean.toFixed(3)}`);
+```
+
+The `score` function is the real subject. In my experience, you'll need a mix:
+
+- Hard rules for format (valid JSON, max length, required fields).
+- Lexical rules for the business vocabulary (allowed synonyms, forbidden terms).
+- An LLM judge for *semantic quality*, calibrated against a few hundred hand-annotated examples.
+
+## The metric that actually matters
+
+After six months of real use, the only metric that reliably predicts user satisfaction is the *human-rework rate*: out of 100 outputs, how many did an operator have to edit to make acceptable? It's blunt, it's expensive to instrument, and it's the only one that holds.
+
+Everything else — semantic scores, BLEU, ROUGE, LLM-as-judge — is just an **approximation** of that signal. Useful in fast CI, useless without the primary signal.
+
+## What not to do
+
+- Measure only on golden data written by the team.
+- Not versioning the suite alongside the code.
+- Trusting a global score without looking at the per-segment distribution.
+- Swapping human judgment for LLM-as-judge without calibration.
+
+LLM evaluation isn't a sub-problem of ML. It's a product problem: you need to know what an output is worth *to your user*. Until you have that, you're evaluating nothing.

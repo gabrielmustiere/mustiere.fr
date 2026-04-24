@@ -1,0 +1,28 @@
+---
+title: "RAG: the plumbing nobody budgets for"
+excerpt: "RAG gets sold as an embeddings problem. In production, 80% of the work is somewhere else: chunking, normalization, metadata filters, re-ranking. A tour of where it actually breaks."
+publishedAt: 2025-11-22
+category: IA
+tags: [RAG, LLM, embeddings, production]
+keywords: [RAG production, retrieval augmented generation, chunking, re-ranking]
+number: 2
+tldr: "The embedding model isn't the RAG bottleneck. Chunking, metadata, and re-ranking are. Prioritize in that order before you start optimizing the model."
+lang: en
+translationOf: "rag-plomberie-sous-estimee"
+---
+
+There's a very telling moment when you take a RAG from demo to production: you realize the embedding model was the easy problem. Everything else — chunking, ingestion, business filtering, re-ranking, evaluation — is patient plumbing work that nobody sells on LinkedIn.
+
+## Where it breaks, in order
+
+**Chunking.** The first enemy. Splitting by paragraph gives you incomplete context; splitting by page mashes unrelated ideas together. The right split depends on the corpus, not the model. Plan to iterate on it.
+
+**Metadata.** A RAG without `tenant_id`, `date`, or `document_type` filters never leaves the PoC. Add them in v0 — it's cheaper than retrofitting.
+
+**Re-ranking.** Pure vector similarity ranks badly past the top-3. A lightweight cross-encoder on the top-20 improves results more than swapping in a better embedding ever will.
+
+**Evaluation.** Without an eval suite anchored in real cases, you have no idea whether your latest change made things better or worse. See my other piece on LLM evals.
+
+## Priority order
+
+Prototype → decent chunking → metadata → re-ranking → better embeddings → latency optimization. In that order. Swapping embedding models before you've handled the first three floors is almost always motion without progress.

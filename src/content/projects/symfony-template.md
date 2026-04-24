@@ -22,6 +22,8 @@ faq:
     answer: "Pas de Redis ou RabbitMQ préconfiguré, pas de CI GitHub Actions livrée, pas de design system, pas d'API Platform. Ces pièces sont trop dépendantes du contexte pour qu'un template impose un choix générique qui finira à la poubelle. Elles s'ajoutent en quelques minutes le jour où le projet en a réellement besoin."
   - question: "Comment l'utiliser concrètement ?"
     answer: "Via le bouton « Use this template » sur GitHub, puis cinq commandes : composer install, npm install, copier le .env, lancer les migrations et fixtures, puis symfony serve. Compter une dizaine de minutes avant d'écrire la première ligne de code métier."
+lang: fr
+translationOf: "symfony-template-en"
 ---
 
 ## Pourquoi ce template

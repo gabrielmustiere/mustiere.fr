@@ -2,8 +2,11 @@
 import BaseLayout from './BaseLayout.astro';
 import Sidebar, { type SidebarMode } from '../components/layout/Sidebar.astro';
 import MobileNav from '../components/layout/MobileNav.astro';
+import { getLangFromUrl } from '../i18n/utils';
+import type { Lang } from '../i18n/config';
 
 interface Props {
+  lang?: Lang;
   title?: string;
   description?: string;
   image?: string;
@@ -16,18 +19,20 @@ interface Props {
   tags?: string[];
   noindex?: boolean;
   current?: SidebarMode;
+  otherLangHref?: string;
 }
 
-const { current = 'home', ...baseProps } = Astro.props;
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const { current = 'home', otherLangHref, ...baseProps } = Astro.props;
 ---
 
-<BaseLayout {...baseProps}>
+<BaseLayout {...baseProps} lang={lang} otherLangHref={otherLangHref}>
   <slot name="head" slot="head" />
 
-  <MobileNav current={current} />
+  <MobileNav current={current} lang={lang} otherLangHref={otherLangHref} />
 
   <div class="layout">
-    <Sidebar current={current} />
+    <Sidebar current={current} lang={lang} otherLangHref={otherLangHref} />
     <div class="main-col" id="top">
       <slot />
     </div>

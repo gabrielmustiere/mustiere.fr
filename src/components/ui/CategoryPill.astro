@@ -1,12 +1,18 @@
 ---
 import type { Category } from '../../content.config';
+import { BLOG_CATEGORIES } from '../../i18n/ui';
+import { getLangFromUrl } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
 
 interface Props {
   category: Category;
   size?: 'sm' | 'md';
+  lang?: Lang;
 }
 
 const { category, size = 'sm' } = Astro.props;
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const label = BLOG_CATEGORIES[lang][category];
 
 const accentMap: Record<Category, string> = {
   IA: 'acc-projects',
@@ -23,5 +29,5 @@ const accentMap: Record<Category, string> = {
     size === 'sm' ? 'text-[10px] tracking-[0.14em]' : 'text-[11px] tracking-[0.12em]',
   ]}
 >
-  {category}
+  {label}
 </span>

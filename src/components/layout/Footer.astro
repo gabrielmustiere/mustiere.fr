@@ -1,32 +1,45 @@
 ---
+import { getLangFromUrl, useTranslations, localizedPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+
 interface Props {
   variant?: 'home' | 'blog' | 'article';
   maxWidth?: string;
+  lang?: Lang;
 }
 
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
 const { variant = 'home', maxWidth = '720px' } = Astro.props;
 const year = new Date().getFullYear();
+const copyright = tr.footer.copyright.replace('{year}', String(year));
 ---
 
 {
   variant === 'home' ? (
     <footer class="mt-16 flex items-center justify-between text-[11px] text-[color:var(--color-muted)]">
-      <span>© {year} Gabriel Mustiere</span>
-      <span class="tnum">Fait main · Nantes</span>
+      <span>{copyright}</span>
+      <span class="tnum">{tr.footer.handmade}</span>
     </footer>
   ) : (
     <footer
       class="mx-auto px-6 sm:px-10 pb-16 flex items-center justify-between text-[11px] tracking-[0.1em] uppercase text-[color:var(--color-muted)] border-t border-[color:var(--color-rule)] pt-6"
       style={`max-width: ${maxWidth}`}
     >
-      <span>© {year} Gabriel Mustiere</span>
+      <span>{copyright}</span>
       {variant === 'article' ? (
-        <a href="/blog" class="hover:text-[color:var(--color-ink)]">
-          ← Tous les écrits
+        <a
+          href={localizedPath(lang, '/blog')}
+          class="hover:text-[color:var(--color-ink)]"
+        >
+          {tr.article.backToBlog}
         </a>
       ) : (
-        <a href="/" class="hover:text-[color:var(--color-ink)]">
-          ← Retour à l'accueil
+        <a
+          href={localizedPath(lang, '/')}
+          class="hover:text-[color:var(--color-ink)]"
+        >
+          {tr.footer.backHome}
         </a>
       )}
     </footer>

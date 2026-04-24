@@ -1,0 +1,124 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import AboutSection from '../home/AboutSection.astro';
+import BlogSection from '../home/BlogSection.astro';
+import ProjectsSection from '../home/ProjectsSection.astro';
+import ContactSection from '../home/ContactSection.astro';
+import CvSection from '../home/CvSection.astro';
+import StructuredData from '../seo/StructuredData.astro';
+import { personSchema, websiteSchema } from '../../utils/schema';
+import { SITE } from '../../consts';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const tr = useTranslations(lang);
+---
+
+<SiteLayout
+  title={tr.site.title}
+  description={tr.site.description}
+  type="website"
+  current="home"
+  lang={lang}
+>
+  <StructuredData
+    slot="head"
+    schemas={[personSchema(lang), websiteSchema(lang)]}
+  />
+
+  <main
+    id="main"
+    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
+    style="max-width: var(--w-home)"
+  >
+    <header class="mt-10 sm:mt-24">
+      {
+        lang === 'fr' ? (
+          <h1
+            class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
+            style="font-family: var(--font-serif)"
+          >
+            CTO &amp; lead<br />
+            <em class="acc-about">en freelance.</em>
+          </h1>
+        ) : (
+          <h1
+            class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
+            style="font-family: var(--font-serif)"
+          >
+            Freelance<br />
+            <em class="acc-about">CTO &amp; lead.</em>
+          </h1>
+        )
+      }
+
+      {
+        lang === 'fr' ? (
+          <p
+            class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[560px]"
+          >
+            <span class="tnum">14 ans</span> à construire, mettre en production
+            et <em class="acc-about">faire tenir</em> des produits tech.
+            J'interviens sur de <span class="hl acc-about">l'architecture</span>,
+            du <span class="hl acc-blog">lead technique</span> et des sujets
+            <span class="hl acc-projects">SaaS &amp; e-commerce</span> — en
+            mission, en audit, ou en sparring-partner de fondateurs.
+          </p>
+        ) : (
+          <p
+            class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[560px]"
+          >
+            <span class="tnum">14 years</span> building, shipping and
+            <em class="acc-about">sustaining</em> tech products. I work on
+            <span class="hl acc-about">architecture</span>,
+            <span class="hl acc-blog">technical leadership</span> and
+            <span class="hl acc-projects">SaaS &amp; e-commerce</span> — on
+            missions, audits, or as a sparring partner for founders.
+          </p>
+        )
+      }
+
+      <div class="mt-6 sm:mt-8 flex items-center gap-5 text-[13px]">
+        <a href="#contact" class="link-u text-[color:var(--color-ink)]">
+          {lang === 'fr' ? 'Me contacter' : 'Get in touch'}
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]">·</span>
+        <a href="#cv" class="link-u text-[color:var(--color-muted)]">
+          {lang === 'fr' ? 'CV (PDF)' : 'Résumé (PDF)'}
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]">·</span>
+        <a
+          href={SITE.author.github}
+          target="_blank"
+          rel="noopener"
+          class="link-u text-[color:var(--color-muted)]"
+          aria-label="GitHub"
+        >
+          GitHub
+        </a>
+        <a
+          href={SITE.author.linkedin}
+          target="_blank"
+          rel="noopener"
+          class="link-u text-[color:var(--color-muted)]"
+          aria-label="LinkedIn"
+        >
+          LinkedIn
+        </a>
+      </div>
+    </header>
+
+    <hr class="mt-14 sm:mt-24 border-0 border-t border-[color:var(--color-rule)]" />
+
+    <BlogSection lang={lang} />
+    <AboutSection lang={lang} />
+    <ProjectsSection lang={lang} />
+    <ContactSection lang={lang} />
+    <CvSection lang={lang} />
+  </main>
+</SiteLayout>

@@ -10,8 +10,11 @@ import '@fontsource/jetbrains-mono/500.css';
 import '../styles/global.css';
 import SkipLink from '../components/layout/SkipLink.astro';
 import { SITE } from '../consts';
+import { getLangFromUrl, useTranslations, swapLang } from '../i18n/utils';
+import { LANG_META, type Lang } from '../i18n/config';
 
 export interface Props {
+  lang?: Lang;
   title?: string;
   description?: string;
   image?: string;
@@ -23,11 +26,15 @@ export interface Props {
   category?: string;
   tags?: string[];
   noindex?: boolean;
+  otherLangHref?: string;
 }
+
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
 
 const {
   title,
-  description = SITE.description,
+  description = tr.site.description,
   image = SITE.ogImage,
   canonical,
   type = 'website',
@@ -37,15 +44,20 @@ const {
   category,
   tags = [],
   noindex = false,
+  otherLangHref,
 } = Astro.props;
 
-const pageTitle = title ? `${title} — ${SITE.name}` : SITE.title;
+const pageTitle = title ? `${title} — ${SITE.name}` : tr.site.title;
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, SITE.url).href;
 const ogImageURL = new URL(image, SITE.url).href;
+const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
+const altPath = otherLangHref ?? swapLang(Astro.url.pathname, otherLang);
+const altUrl = new URL(altPath, SITE.url).href;
+const rssHref = lang === 'fr' ? '/fr/rss.xml' : '/en/rss.xml';
 ---
 
 <!doctype html>
-<html lang="fr-FR">
+<html lang={LANG_META[lang].htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -55,6 +67,13 @@ const ogImageURL = new URL(image, SITE.url).href;
     <meta name="description" content={description} />
     <meta name="author" content={author} />
     <link rel="canonical" href={canonicalURL} />
+    <link rel="alternate" hreflang={otherLang} href={altUrl} />
+    <link rel="alternate" hreflang={lang} href={canonicalURL} />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={lang === 'fr' ? canonicalURL : altUrl}
+    />
 
     {
       noindex ? (
@@ -74,7 +93,11 @@ const ogImageURL = new URL(image, SITE.url).href;
     <meta property="og:image" content={ogImageURL} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale" content={LANG_META[lang].ogLocale} />
+    <meta
+      property="og:locale:alternate"
+      content={LANG_META[lang === 'fr' ? 'en' : 'fr'].ogLocale}
+    />
     <meta property="og:site_name" content={SITE.name} />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -119,15 +142,15 @@ const ogImageURL = new URL(image, SITE.url).href;
     <link
       rel="alternate"
       type="application/rss+xml"
-      title={`${SITE.name} — Blog`}
-      href="/rss.xml"
+      title={`${SITE.name} — ${tr.home.blog.title}`}
+      href={rssHref}
     />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <slot name="head" />
   </head>
   <body>
-    <SkipLink />
+    <SkipLink lang={lang} />
     <slot />
   </body>
 </html>

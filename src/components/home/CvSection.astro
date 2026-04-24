@@ -1,5 +1,14 @@
 ---
 import Footer from '../layout/Footer.astro';
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
 ---
 
 <section data-key="cv" id="cv">
@@ -10,16 +19,16 @@ import Footer from '../layout/Footer.astro';
       <div
         class="text-[11px] tracking-[0.12em] uppercase acc-cv font-mono"
       >
-        <span class="acc-dot"></span>§ 05 · Document
+        <span class="acc-dot"></span>§ 05 · {lang === 'fr' ? 'Document' : 'Document'}
       </div>
       <h2
         class="font-serif mt-1 text-[28px] sm:text-[36px] tracking-[-0.01em]"
         style="font-family: var(--font-serif)"
       >
-        CV en PDF
+        {tr.home.cv.title}
       </h2>
       <p class="mt-2 text-[14px] text-[color:var(--color-muted)]">
-        Dernière mise à jour : avril 2026 · 2 pages · 180 ko
+        {tr.home.cv.meta}
       </p>
     </div>
     <a
@@ -28,9 +37,9 @@ import Footer from '../layout/Footer.astro';
       class="inline-flex items-center gap-2 text-[13px] border px-4 py-2 rounded-full hover:bg-white transition acc-cv"
       style="border-color: var(--a-cv)"
     >
-      <span>Télécharger</span>
+      <span>{tr.home.cv.cta}</span>
       <span class="font-mono text-[11px]">.pdf ↓</span>
     </a>
   </div>
-  <Footer variant="home" />
+  <Footer variant="home" lang={lang} />
 </section>

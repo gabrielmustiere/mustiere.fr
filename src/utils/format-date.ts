@@ -1,11 +1,19 @@
-const MONTHS_SHORT_FR = [
-  'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
-  'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc',
-];
+import type { Lang } from '../i18n/config';
 
-export function formatDateShort(date: Date): string {
+const MONTHS_SHORT: Record<Lang, string[]> = {
+  fr: [
+    'Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin',
+    'Juil', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc',
+  ],
+  en: [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ],
+};
+
+export function formatDateShort(date: Date, lang: Lang = 'fr'): string {
   const d = String(date.getDate()).padStart(2, '0');
-  const m = MONTHS_SHORT_FR[date.getMonth()];
+  const m = MONTHS_SHORT[lang][date.getMonth()];
   const y = String(date.getFullYear()).slice(-2);
   return `${d} ${m} ${y}`;
 }

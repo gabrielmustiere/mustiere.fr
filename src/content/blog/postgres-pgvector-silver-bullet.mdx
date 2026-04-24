@@ -7,6 +7,8 @@ tags: [postgres, pgvector, RAG, base de données]
 keywords: [pgvector production, vector database, Postgres RAG, embeddings Postgres]
 number: 5
 tldr: "pgvector couvre 80 % des cas de recherche vectorielle sans sortir de Postgres. Au-delà de ~10M d'embeddings ou d'un besoin de filtres complexes avec index ANN, la facture en latence et en mémoire devient sérieuse."
+lang: fr
+translationOf: "postgres-pgvector-no-silver-bullet"
 ---
 
 Il y a deux ans, ajouter de la recherche vectorielle à une appli voulait dire déployer Pinecone, Weaviate ou Qdrant à côté de Postgres. Aujourd'hui, beaucoup de projets démarrent avec `CREATE EXTENSION vector;` et s'arrêtent là. C'est souvent la bonne décision. Parfois pas.

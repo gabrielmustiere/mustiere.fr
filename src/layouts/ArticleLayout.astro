@@ -15,6 +15,8 @@ import {
   toISODate,
 } from '../utils/format-date';
 import { SITE } from '../consts';
+import { useTranslations, localizedPath } from '../i18n/utils';
+import type { Lang } from '../i18n/config';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -24,10 +26,20 @@ interface Props {
 
 const { post, nextPosts } = Astro.props;
 const { data } = post;
-const url = new URL(`/blog/${post.id}`, SITE.url).href;
+const lang: Lang = (data.lang ?? 'fr') as Lang;
+const tr = useTranslations(lang);
+
+const url = new URL(localizedPath(lang, `/blog/${post.id}`), SITE.url).href;
+const blogHref = localizedPath(lang, '/blog');
+const homeHref = localizedPath(lang, '/');
+
+const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
+const otherLangHref = data.translationOf
+  ? localizedPath(otherLang, `/blog/${data.translationOf}`)
+  : localizedPath(otherLang, '/blog');
 
 const schemas = [
-  personSchema(),
+  personSchema(lang),
   blogPostingSchema({
     title: data.title,
     description: data.excerpt,
@@ -38,10 +50,11 @@ const schemas = [
     keywords: data.keywords,
     readingTime: data.readingTime,
     image: data.ogImage,
+    lang,
   }),
   breadcrumbSchema([
-    { name: 'Accueil', url: SITE.url },
-    { name: 'Écrits', url: `${SITE.url}/blog` },
+    { name: lang === 'fr' ? 'Accueil' : 'Home', url: `${SITE.url}${homeHref}` },
+    { name: tr.home.blog.title, url: `${SITE.url}${blogHref}` },
     { name: data.title, url },
   ]),
 ];
@@ -57,6 +70,8 @@ const schemas = [
   tags={data.tags}
   image={data.ogImage}
   current="article"
+  lang={lang}
+  otherLangHref={otherLangHref}
 >
   <StructuredData slot="head" schemas={schemas} />
 
@@ -69,15 +84,15 @@ const schemas = [
   >
     <nav
       class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
-      aria-label="Fil d'Ariane"
+      aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}
     >
-      <a href="/blog" class="hover:text-[color:var(--color-ink)]">
-        ← Écrits
+      <a href={blogHref} class="hover:text-[color:var(--color-ink)]">
+        ← {tr.home.blog.title}
       </a>
       <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
         >/</span
       >
-      <CategoryPill category={data.category} size="sm" />
+      <CategoryPill category={data.category} size="sm" lang={lang} />
     </nav>
 
     <header class="mt-10">
@@ -122,10 +137,10 @@ const schemas = [
           <aside
             class="mt-8 p-4 border-l-2 text-[15px] leading-[1.6] text-[#2a2622] italic"
             style="border-color: var(--a-blog); background: color-mix(in oklch, var(--a-blog) 6%, transparent)"
-            aria-label="Résumé en bref"
+            aria-label={tr.article.tldrLabel}
           >
             <span class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-1">
-              TL;DR
+              {tr.article.tldrLabel}
             </span>
             {data.tldr}
           </aside>
@@ -137,7 +152,7 @@ const schemas = [
       >
         <img
           src="/avatar.jpeg"
-          alt={`Portrait de ${SITE.author.name}`}
+          alt={tr.portrait}
           width="36"
           height="36"
           class="w-9 h-9 rounded-full object-cover"
@@ -148,10 +163,10 @@ const schemas = [
         <div class="text-[13px]">
           <div class="text-[color:var(--color-ink)]">{SITE.author.name}</div>
           <div class="text-[11px] text-[color:var(--color-muted)] font-mono">
-            {SITE.author.jobTitle} · <span class="acc-blog">@gmustiere</span>
+            {lang === 'fr' ? 'CTO freelance' : 'Freelance CTO'} · <span class="acc-blog">@gmustiere</span>
           </div>
         </div>
-        <ShareButton title={data.title} url={url} />
+        <ShareButton title={data.title} url={url} lang={lang} />
       </div>
     </header>
 
@@ -162,7 +177,7 @@ const schemas = [
     <div
       class="mt-14 flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
     >
-      <span class="acc-blog">§ fin</span>
+      <span class="acc-blog">{lang === 'fr' ? '§ fin' : '§ end'}</span>
       <span
         class="flex-1 border-t border-[color:var(--color-rule)]"
         aria-hidden="true"></span>
@@ -178,16 +193,16 @@ const schemas = [
       nextPosts.length > 0 && (
         <aside class="mt-16">
           <div class="text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] mb-4 font-mono">
-            À lire ensuite
+            {lang === 'fr' ? 'À lire ensuite' : 'Up next'}
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {nextPosts.map((next) => (
               <a
-                href={`/blog/${next.id}`}
+                href={localizedPath(lang, `/blog/${next.id}`)}
                 class="block border-t border-[color:var(--color-rule)] pt-4 group"
               >
                 <div class="flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase font-mono">
-                  <CategoryPill category={next.data.category} size="sm" />
+                  <CategoryPill category={next.data.category} size="sm" lang={lang} />
                   <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
                   {next.data.readingTime && (
                     <span class="tnum text-[color:var(--color-muted)]">{next.data.readingTime} min</span>
@@ -207,5 +222,5 @@ const schemas = [
     }
   </article>
 
-  <Footer variant="article" maxWidth="720px" />
+  <Footer variant="article" maxWidth="720px" lang={lang} />
 </SiteLayout>

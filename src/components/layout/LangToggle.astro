@@ -1,0 +1,149 @@
+---
+import { getLangFromUrl, swapLang } from '../../i18n/utils';
+import { LANGUAGES, type Lang } from '../../i18n/config';
+import { useTranslations } from '../../i18n/utils';
+
+interface Props {
+  variant?: 'sidebar' | 'mobile';
+  lang?: Lang;
+  /**
+   * Optional override for the URL of the other-language version.
+   * Useful when the target slug differs (translated slugs).
+   */
+  otherLangHref?: string;
+}
+
+const { variant = 'sidebar', otherLangHref } = Astro.props;
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
+const currentHref = Astro.url.pathname;
+
+const hrefFor = (code: Lang): string => {
+  if (code === lang) return currentHref;
+  return otherLangHref ?? swapLang(Astro.url.pathname, code);
+};
+---
+
+<div
+  class:list={['lang-toggle', `lang-toggle--${variant}`]}
+  role="group"
+  aria-label={tr.toggle.ariaLabel}
+>
+  {
+    LANGUAGES.map((code) => {
+      const isActive = code === lang;
+      const href = hrefFor(code);
+      return (
+        <a
+          href={href}
+          class:list={['lang-toggle__item', { 'is-active': isActive }]}
+          hreflang={code}
+          lang={code}
+          aria-current={isActive ? 'true' : undefined}
+          aria-label={
+            code === 'fr' ? tr.toggle.switchToFrench : tr.toggle.switchToEnglish
+          }
+          data-lang={code}
+        >
+          <span class="lang-toggle__flag" aria-hidden="true">
+            {code === 'fr' ? (
+              <svg
+                width="14"
+                height="10"
+                viewBox="0 0 14 10"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect x="0.5" y="0.5" width="13" height="9" fill="none" stroke="currentColor" stroke-width="1" />
+                <line x1="4.75" y1="1" x2="4.75" y2="9" stroke="currentColor" stroke-width="1" />
+                <line x1="9.25" y1="1" x2="9.25" y2="9" stroke="currentColor" stroke-width="1" />
+              </svg>
+            ) : (
+              <svg
+                width="14"
+                height="10"
+                viewBox="0 0 14 10"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect x="0.5" y="0.5" width="13" height="9" fill="none" stroke="currentColor" stroke-width="1" />
+                <line x1="0.5" y1="0.5" x2="13.5" y2="9.5" stroke="currentColor" stroke-width="1" />
+                <line x1="0.5" y1="9.5" x2="13.5" y2="0.5" stroke="currentColor" stroke-width="1" />
+                <line x1="7" y1="0.5" x2="7" y2="9.5" stroke="currentColor" stroke-width="1" />
+                <line x1="0.5" y1="5" x2="13.5" y2="5" stroke="currentColor" stroke-width="1" />
+              </svg>
+            )}
+          </span>
+          <span class="lang-toggle__code">{code.toUpperCase()}</span>
+        </a>
+      );
+    })
+  }
+</div>
+
+<style>
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .lang-toggle__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--color-muted);
+    text-decoration: none;
+    padding: 2px 0;
+    transition: color 0.15s ease;
+    position: relative;
+  }
+  .lang-toggle__item:not(.is-active):hover {
+    color: var(--color-ink);
+  }
+  .lang-toggle__item.is-active {
+    color: var(--a-blog);
+  }
+  .lang-toggle__flag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 10px;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+  .lang-toggle__item.is-active .lang-toggle__flag {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .lang-toggle__code {
+    font-feature-settings: 'tnum' 1;
+  }
+  .lang-toggle--sidebar {
+    margin-bottom: 12px;
+  }
+  .lang-toggle--mobile {
+    padding: 16px 0 4px;
+  }
+</style>
+
+<script>
+  // Preserve hash when swapping language
+  document.querySelectorAll<HTMLAnchorElement>('.lang-toggle__item').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      if (a.getAttribute('aria-current') === 'true') {
+        e.preventDefault();
+        return;
+      }
+      const hash = window.location.hash;
+      if (hash) {
+        e.preventDefault();
+        const base = a.getAttribute('href') ?? '';
+        window.location.href = base + hash;
+      }
+    });
+  });
+</script>

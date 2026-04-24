@@ -1,12 +1,13 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import ProjectLayout from '../../layouts/ProjectLayout.astro';
+import ProjectLayout from '../../../layouts/ProjectLayout.astro';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
-  const sorted = [...projects].sort(
-    (a, b) => a.data.order - b.data.order
+  const projects = await getCollection(
+    'projects',
+    ({ data }) => data.lang === 'en'
   );
+  const sorted = [...projects].sort((a, b) => a.data.order - b.data.order);
 
   return projects.map((project) => {
     const others = sorted.filter(

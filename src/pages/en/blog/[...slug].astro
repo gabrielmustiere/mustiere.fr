@@ -1,0 +1,42 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import ArticleLayout from '../../../layouts/ArticleLayout.astro';
+import { readingTimeFromText } from '../../../utils/reading-time';
+
+export async function getStaticPaths() {
+  const posts = await getCollection(
+    'blog',
+    ({ data }) => !data.draft && data.lang === 'en'
+  );
+  const sorted = [...posts].sort(
+    (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+  );
+
+  return posts.map((post) => {
+    const idx = sorted.findIndex((p) => p.id === post.id);
+    const nextPosts = [sorted[idx + 1], sorted[idx - 1]].filter(
+      (p): p is CollectionEntry<'blog'> => Boolean(p)
+    );
+    return {
+      params: { slug: post.id },
+      props: { post, nextPosts },
+    };
+  });
+}
+
+type Props = {
+  post: CollectionEntry<'blog'>;
+  nextPosts: CollectionEntry<'blog'>[];
+};
+const { post, nextPosts } = Astro.props as Props;
+
+const { Content } = await render(post);
+
+if (!post.data.readingTime && post.body) {
+  post.data.readingTime = readingTimeFromText(post.body);
+}
+---
+
+<ArticleLayout post={post} nextPosts={nextPosts}>
+  <Content />
+</ArticleLayout>

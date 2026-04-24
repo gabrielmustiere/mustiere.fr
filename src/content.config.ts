@@ -4,6 +4,8 @@ import { z } from 'zod';
 
 const categoryEnum = z.enum(['IA', 'Tech', 'Lead', 'Business']);
 
+const langEnum = z.enum(['fr', 'en']);
+
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
   schema: z.object({
@@ -19,6 +21,8 @@ const blog = defineCollection({
     keywords: z.array(z.string()).default([]),
     tldr: z.string().min(60).max(320),
     number: z.number().int().positive(),
+    lang: langEnum.default('fr'),
+    translationOf: z.string().optional(),
   }),
 });
 
@@ -43,6 +47,8 @@ const projects = defineCollection({
         })
       )
       .default([]),
+    lang: langEnum.default('fr'),
+    translationOf: z.string().optional(),
   }),
 });
 

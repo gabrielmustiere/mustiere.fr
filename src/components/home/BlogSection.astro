@@ -2,19 +2,32 @@
 import SectionHead from '../ui/SectionHead.astro';
 import { getCollection } from 'astro:content';
 import { formatDateShort, toISODate } from '../../utils/format-date';
+import { getLangFromUrl, useTranslations, localizedPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft))
+interface Props {
+  lang?: Lang;
+}
+
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
+
+const posts = (
+  await getCollection(
+    'blog',
+    ({ data }) => !data.draft && (data.lang ?? 'fr') === lang
+  )
+)
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
   .slice(0, 4);
 ---
 
 <section data-key="blog" id="blog">
-  <SectionHead number="01" title="Blog" accent="blog" />
+  <SectionHead number="01" title={tr.home.blog.title} accent="blog" />
   <p
     class="mt-4 text-[14px] text-[color:var(--color-muted)] max-w-[480px]"
   >
-    Notes sur la tech, le business et l'IA. Pas de fréquence, juste quand
-    j'ai quelque chose à dire.
+    {tr.home.blog.intro}
   </p>
 
   <ul class="mt-8">
@@ -22,14 +35,14 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
       posts.map((post) => (
         <li class="py-4 border-t border-[color:var(--color-rule)]">
           <a
-            href={`/blog/${post.id}`}
+            href={localizedPath(lang, `/blog/${post.id}`)}
             class="flex items-baseline gap-4 group"
           >
             <time
               class="tnum text-[11px] tracking-[0.1em] uppercase shrink-0 w-20 acc-blog font-mono"
               datetime={toISODate(post.data.publishedAt)}
             >
-              {formatDateShort(post.data.publishedAt)}
+              {formatDateShort(post.data.publishedAt, lang)}
             </time>
             <div class="flex-1">
               <h3
@@ -40,7 +53,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
               </h3>
               {post.data.readingTime && (
                 <span class="text-[11px] tnum text-[color:var(--color-muted)]">
-                  {post.data.readingTime} min de lecture
+                  {post.data.readingTime} {tr.article.readingTime}
                 </span>
               )}
             </div>
@@ -51,8 +64,8 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     <li class="border-t border-[color:var(--color-rule)]"></li>
   </ul>
   <div class="mt-6">
-    <a href="/blog" class="text-[13px] acc-blog link-u">
-      Voir tous les articles →
+    <a href={localizedPath(lang, '/blog')} class="text-[13px] acc-blog link-u">
+      {tr.home.blog.seeAll} →
     </a>
   </div>
 
@@ -60,7 +73,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
     <figcaption
       class="text-[11px] tracking-[0.12em] uppercase mb-2 text-[color:var(--color-muted)] font-mono"
     >
-      Extrait — eval harness
+      {lang === 'fr' ? 'Extrait — eval harness' : 'Excerpt — eval harness'}
     </figcaption>
     <pre class="code-block"><code>{`// tiny scoring loop
 for (const c of suite) {

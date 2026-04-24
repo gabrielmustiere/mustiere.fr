@@ -1,10 +1,16 @@
 ---
+import { getLangFromUrl, useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+
 interface Props {
   title: string;
   url: string;
+  lang?: Lang;
 }
 
 const { title, url } = Astro.props;
+const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
+const tr = useTranslations(lang);
 ---
 
 <button
@@ -12,9 +18,10 @@ const { title, url } = Astro.props;
   class="share-btn ml-auto text-[11px] tracking-[0.14em] uppercase border border-[color:var(--color-rule-strong)] rounded-full px-3 py-1 hover:bg-white transition font-mono"
   data-share-title={title}
   data-share-url={url}
-  aria-label={`Partager : ${title}`}
+  data-share-copied={tr.article.shareCopied}
+  aria-label={`${tr.article.share}: ${title}`}
 >
-  <span data-share-label>Partager</span>
+  <span data-share-label>{tr.article.share}</span>
 </button>
 
 <script>
@@ -22,6 +29,7 @@ const { title, url } = Astro.props;
     btn.addEventListener('click', async () => {
       const title = btn.dataset.shareTitle ?? '';
       const url = btn.dataset.shareUrl ?? window.location.href;
+      const copiedLabel = btn.dataset.shareCopied ?? 'Copied';
       const label = btn.querySelector<HTMLElement>('[data-share-label]');
       if (navigator.share) {
         try {
@@ -35,7 +43,7 @@ const { title, url } = Astro.props;
         await navigator.clipboard.writeText(url);
         if (label) {
           const prev = label.textContent;
-          label.textContent = 'Copié !';
+          label.textContent = copiedLabel;
           setTimeout(() => {
             label.textContent = prev;
           }, 2000);
