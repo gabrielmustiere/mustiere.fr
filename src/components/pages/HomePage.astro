@@ -6,7 +6,7 @@ import ProjectsSection from '../home/ProjectsSection.astro';
 import ContactSection from '../home/ContactSection.astro';
 import CvSection from '../home/CvSection.astro';
 import StructuredData from '../seo/StructuredData.astro';
-import { personSchema, websiteSchema } from '../../utils/schema';
+import { profilePageSchema } from '../../utils/schema';
 import { SITE } from '../../consts';
 import { useTranslations } from '../../i18n/utils';
 import type { Lang } from '../../i18n/config';
@@ -20,7 +20,6 @@ const tr = useTranslations(lang);
 ---
 
 <SiteLayout
-  title={tr.site.title}
   description={tr.site.description}
   type="website"
   current="home"
@@ -28,7 +27,7 @@ const tr = useTranslations(lang);
 >
   <StructuredData
     slot="head"
-    schemas={[personSchema(lang), websiteSchema(lang)]}
+    schemas={[profilePageSchema(lang)]}
   />
 
   <main
@@ -43,7 +42,8 @@ const tr = useTranslations(lang);
             class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
             style="font-family: var(--font-serif)"
           >
-            CTO &amp; lead<br />
+            CTO &amp; lead{' '}
+            <br />
             <em class="acc-about">en freelance.</em>
           </h1>
         ) : (
@@ -51,7 +51,8 @@ const tr = useTranslations(lang);
             class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
             style="font-family: var(--font-serif)"
           >
-            Freelance<br />
+            Freelance{' '}
+            <br />
             <em class="acc-about">CTO &amp; lead.</em>
           </h1>
         )

@@ -4,10 +4,14 @@ import Footer from '../components/layout/Footer.astro';
 import ReadingProgress from '../components/ui/ReadingProgress.astro';
 import ShareButton from '../components/ui/ShareButton.astro';
 import StructuredData from '../components/seo/StructuredData.astro';
-import { personSchema, breadcrumbSchema, faqPageSchema } from '../utils/schema';
+import {
+  breadcrumbSchema,
+  faqPageSchema,
+  softwareSourceCodeSchema,
+} from '../utils/schema';
 import { SITE } from '../consts';
 import { useTranslations, localizedPath } from '../i18n/utils';
-import { LANG_META, type Lang } from '../i18n/config';
+import type { Lang } from '../i18n/config';
 import type { CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -29,20 +33,15 @@ const otherLangHref = data.translationOf
   : localizedPath(otherLangCode, '/');
 
 const schemas = [
-  personSchema(lang),
-  {
-    '@context': 'https://schema.org',
-    '@type': 'CreativeWork',
-    '@id': `${url}#project`,
-    url,
-    name: data.title,
-    headline: data.title,
+  softwareSourceCodeSchema({
+    title: data.title,
     description: data.excerpt,
-    inLanguage: LANG_META[lang].bcp47,
-    creator: { '@id': `${SITE.url}/#person` },
-    ...(data.url ? { sameAs: [data.url] } : {}),
-    ...(data.year ? { dateCreated: String(data.year) } : {}),
-  },
+    slug: project.id,
+    year: data.year,
+    repository: data.url,
+    lang,
+    cover: data.cover,
+  }),
   breadcrumbSchema([
     { name: lang === 'fr' ? 'Accueil' : 'Home', url: `${SITE.url}${homeHref}` },
     { name: tr.home.projects.title, url: `${SITE.url}${homeHref}#projects` },
@@ -53,8 +52,9 @@ const schemas = [
 ---
 
 <SiteLayout
-  title={`${data.title} — ${data.subtitle}`}
+  title={data.title}
   description={data.excerpt}
+  image={data.cover}
   type="article"
   current="project"
   lang={lang}
@@ -64,8 +64,8 @@ const schemas = [
 
   <ReadingProgress />
 
+  <main id="main">
   <article
-    id="main"
     class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
     style="max-width: var(--w-prose)"
   >
@@ -193,16 +193,16 @@ const schemas = [
           >
             {tr.project.faqTitle}
           </h2>
-          <dl class="divide-y divide-[color:var(--color-rule)]">
+          <div class="divide-y divide-[color:var(--color-rule)]">
             {data.faq.map((item, i) => (
               <details
                 class="group py-4"
                 open={i === 0}
               >
                 <summary class="flex items-start justify-between gap-4 cursor-pointer list-none">
-                  <dt class="font-serif text-[18px] leading-[1.35] text-[color:var(--color-ink)]" style="font-family: var(--font-serif)">
+                  <span class="font-serif text-[18px] leading-[1.35] text-[color:var(--color-ink)]" style="font-family: var(--font-serif)">
                     {item.question}
-                  </dt>
+                  </span>
                   <span
                     class="text-[color:var(--color-rule-strong)] font-mono text-[18px] leading-none mt-1 transition-transform group-open:rotate-45"
                     aria-hidden="true"
@@ -210,12 +210,12 @@ const schemas = [
                     +
                   </span>
                 </summary>
-                <dd class="mt-3 text-[15px] leading-[1.65] text-[#2a2622]">
+                <div class="mt-3 text-[15px] leading-[1.65] text-[#2a2622]">
                   {item.answer}
-                </dd>
+                </div>
               </details>
             ))}
-          </dl>
+          </div>
         </section>
       )
     }
@@ -260,6 +260,7 @@ const schemas = [
       )
     }
   </article>
+  </main>
 
   <Footer variant="article" maxWidth="720px" lang={lang} />
 </SiteLayout>

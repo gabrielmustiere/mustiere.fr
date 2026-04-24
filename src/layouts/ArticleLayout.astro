@@ -6,7 +6,6 @@ import ShareButton from '../components/ui/ShareButton.astro';
 import CategoryPill from '../components/ui/CategoryPill.astro';
 import StructuredData from '../components/seo/StructuredData.astro';
 import {
-  personSchema,
   blogPostingSchema,
   breadcrumbSchema,
 } from '../utils/schema';
@@ -39,7 +38,6 @@ const otherLangHref = data.translationOf
   : localizedPath(otherLang, '/blog');
 
 const schemas = [
-  personSchema(lang),
   blogPostingSchema({
     title: data.title,
     description: data.excerpt,
@@ -50,6 +48,7 @@ const schemas = [
     keywords: data.keywords,
     readingTime: data.readingTime,
     image: data.ogImage,
+    tldr: data.tldr,
     lang,
   }),
   breadcrumbSchema([
@@ -77,8 +76,8 @@ const schemas = [
 
   <ReadingProgress />
 
+  <main id="main">
   <article
-    id="main"
     class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
     style="max-width: var(--w-prose)"
   >
@@ -221,6 +220,7 @@ const schemas = [
       )
     }
   </article>
+  </main>
 
   <Footer variant="article" maxWidth="720px" lang={lang} />
 </SiteLayout>

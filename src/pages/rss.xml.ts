@@ -1,9 +1,12 @@
 import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
-import { SITE } from '../../consts';
-import { ui } from '../../i18n/ui';
+import { SITE } from '../consts';
+import { ui } from '../i18n/ui';
 
+// Flux RSS racine — contenu FR (langue par défaut du site).
+// Les lecteurs qui pointent `https://mustiere.fr/rss.xml` tombent ici
+// sans dépendre d'une redirection serveur. Le flux EN reste sur /en/rss.xml.
 export async function GET(context: APIContext) {
   const posts = (
     await getCollection(

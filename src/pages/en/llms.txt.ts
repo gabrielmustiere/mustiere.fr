@@ -34,16 +34,16 @@ export const GET: APIRoute = async () => {
   lines.push('## Main pages');
   lines.push('');
   lines.push(
-    `- [Home](${SITE.url}/en): introduction, background, areas of expertise (AI, architecture, leadership).`
+    `- [Home](${SITE.url}/en/): introduction, background, areas of expertise (AI, architecture, leadership).`
   );
   lines.push(
-    `- [Writing](${SITE.url}/en/blog): notes and essays from a freelance CTO on tech, AI, leadership and business.`
+    `- [Writing](${SITE.url}/en/blog/): notes and essays from a freelance CTO on tech, AI, leadership and business.`
   );
   lines.push(
-    `- [Résumé PDF](${SITE.url}/cv-gabriel-mustiere.pdf): detailed résumé, last updated April 2026.`
+    `- [Résumé PDF](${SITE.url}/cv.pdf): detailed résumé, last updated April 2026.`
   );
   lines.push(`- [RSS feed](${SITE.url}/en/rss.xml): blog updates.`);
-  lines.push(`- [French version](${SITE.url}/fr): same content in French.`);
+  lines.push(`- [French version](${SITE.url}/fr/): same content in French.`);
   lines.push('');
 
   lines.push('## Posts');
@@ -51,7 +51,7 @@ export const GET: APIRoute = async () => {
   for (const post of posts) {
     const date = toISODate(post.data.publishedAt);
     lines.push(
-      `- [${post.data.title}](${SITE.url}/en/blog/${post.id}) (${date}, ${post.data.category}): ${post.data.excerpt}`
+      `- [${post.data.title}](${SITE.url}/en/blog/${post.id}/) (${date}, ${post.data.category}): ${post.data.excerpt}`
     );
   }
   lines.push('');
@@ -61,7 +61,7 @@ export const GET: APIRoute = async () => {
     lines.push('');
     for (const project of projects) {
       lines.push(
-        `- [${project.data.title}](${SITE.url}/en/projects/${project.id}) (${project.data.kind} · ${project.data.year} · ${project.data.status}): ${project.data.excerpt}`
+        `- [${project.data.title}](${SITE.url}/en/projects/${project.id}/) (${project.data.kind} · ${project.data.year} · ${project.data.status}): ${project.data.excerpt}`
       );
     }
     lines.push('');

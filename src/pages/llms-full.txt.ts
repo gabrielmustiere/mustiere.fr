@@ -1,8 +1,11 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
-import { SITE } from '../../consts';
-import { toISODate } from '../../utils/format-date';
+import { SITE } from '../consts';
+import { toISODate } from '../utils/format-date';
 
+// Racine `llms-full.txt` — contenu intégral (FR par défaut) destiné aux LLMs
+// qui consomment les pages complètes pour l'entraînement / le RAG.
+// Les versions localisées restent disponibles sur /fr/llms-full.txt et /en/llms-full.txt.
 export const GET: APIRoute = async () => {
   const posts = (
     await getCollection(
@@ -21,6 +24,10 @@ export const GET: APIRoute = async () => {
   parts.push('');
   parts.push(
     `Site : ${SITE.url} · GitHub : ${SITE.author.github} · LinkedIn : ${SITE.author.linkedin} · Contact : ${SITE.author.email}`
+  );
+  parts.push('');
+  parts.push(
+    `Localized variants: ${SITE.url}/fr/llms-full.txt (default) · ${SITE.url}/en/llms-full.txt`
   );
   parts.push('');
   parts.push('---');

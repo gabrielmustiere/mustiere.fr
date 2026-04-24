@@ -1,8 +1,12 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
-import { SITE } from '../../consts';
-import { toISODate } from '../../utils/format-date';
+import { SITE } from '../consts';
+import { toISODate } from '../utils/format-date';
 
+// Racine `llms.txt` — contenu FR (langue par défaut du site), avec un pointeur
+// explicite vers la variante localisée anglaise. Servi en text/plain pour que
+// les crawlers LLM (Anthropic, OpenAI, Perplexity, Google…) obtiennent le
+// contenu attendu sans meta-refresh intermédiaire.
 export const GET: APIRoute = async () => {
   const posts = (
     await getCollection(
@@ -21,6 +25,14 @@ export const GET: APIRoute = async () => {
   lines.push(
     `> CTO freelance basé à Nantes. 14 ans dans la tech, CTO depuis 2017. Architecture, leadership technique, SaaS & e-commerce.`
   );
+  lines.push('');
+
+  lines.push('## Languages');
+  lines.push('');
+  lines.push(
+    `- Français (default): [${SITE.url}/fr/llms.txt](${SITE.url}/fr/llms.txt)`
+  );
+  lines.push(`- English: [${SITE.url}/en/llms.txt](${SITE.url}/en/llms.txt)`);
   lines.push('');
 
   lines.push('## Identité');
@@ -46,9 +58,7 @@ export const GET: APIRoute = async () => {
     `- [CV PDF](${SITE.url}/cv.pdf) : CV détaillé, dernière mise à jour avril 2026.`
   );
   lines.push(`- [Flux RSS](${SITE.url}/fr/rss.xml) : mises à jour du blog.`);
-  lines.push(
-    `- [English version](${SITE.url}/en/) : same content in English.`
-  );
+  lines.push(`- [English version](${SITE.url}/en/) : same content in English.`);
   lines.push('');
 
   lines.push('## Articles');
@@ -75,7 +85,7 @@ export const GET: APIRoute = async () => {
   lines.push('## Optional');
   lines.push('');
   lines.push(
-    `- [llms-full.txt](${SITE.url}/fr/llms-full.txt) : contenu intégral du site en markdown pour les LLMs.`
+    `- [llms-full.txt](${SITE.url}/llms-full.txt) : contenu intégral du site en markdown pour les LLMs.`
   );
   lines.push(`- [Sitemap](${SITE.url}/sitemap-index.xml)`);
   lines.push(

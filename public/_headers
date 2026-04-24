@@ -31,6 +31,31 @@
   Content-Type: text/plain; charset=utf-8
   X-Robots-Tag: index, follow
 
+/fr/llms.txt
+  Cache-Control: public, max-age=3600
+  Content-Type: text/plain; charset=utf-8
+  X-Robots-Tag: index, follow
+
+/fr/llms-full.txt
+  Cache-Control: public, max-age=3600
+  Content-Type: text/plain; charset=utf-8
+  X-Robots-Tag: index, follow
+
+/en/llms.txt
+  Cache-Control: public, max-age=3600
+  Content-Type: text/plain; charset=utf-8
+  X-Robots-Tag: index, follow
+
+/en/llms-full.txt
+  Cache-Control: public, max-age=3600
+  Content-Type: text/plain; charset=utf-8
+  X-Robots-Tag: index, follow
+
+/cv.pdf
+  Cache-Control: public, max-age=86400
+  Content-Type: application/pdf
+  X-Robots-Tag: index, follow
+
 /sitemap-*.xml
   Cache-Control: public, max-age=3600
   Content-Type: application/xml; charset=utf-8

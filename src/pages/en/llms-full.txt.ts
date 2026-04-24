@@ -48,7 +48,7 @@ export const GET: APIRoute = async () => {
     parts.push(`### ${post.data.title}`);
     parts.push('');
     parts.push(
-      `*Published on ${date} · Category: ${post.data.category} · URL: ${SITE.url}/en/blog/${post.id}*`
+      `*Published on ${date} · Category: ${post.data.category} · URL: ${SITE.url}/en/blog/${post.id}/*`
     );
     parts.push('');
     if (post.data.tldr) {

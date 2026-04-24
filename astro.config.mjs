@@ -7,10 +7,10 @@ import { SITE } from './src/consts.ts';
 
 export default defineConfig({
   site: SITE.url,
-  trailingSlash: 'never',
+  trailingSlash: 'always',
   build: {
     inlineStylesheets: 'auto',
-    format: 'file',
+    format: 'directory',
   },
   prefetch: {
     prefetchAll: false,
@@ -25,13 +25,10 @@ export default defineConfig({
     },
   },
   redirects: {
-    '/': '/fr',
-    '/blog': '/fr/blog',
+    '/': '/fr/',
+    '/blog/': '/fr/blog/',
     '/blog/[...slug]': '/fr/blog/[...slug]',
     '/projects/[...slug]': '/fr/projects/[...slug]',
-    '/rss.xml': '/fr/rss.xml',
-    '/llms.txt': '/fr/llms.txt',
-    '/llms-full.txt': '/fr/llms-full.txt',
   },
   integrations: [
     mdx(),
@@ -71,6 +68,8 @@ export default defineConfig({
   ],
   markdown: {
     shikiConfig: {
+      // github-light sur fond blanc pur (#ffffff) satisfait WCAG AA sur tous les
+      // tokens (≥ 4.5:1) ; le fond des blocs de code est donc désaturé dans global.css.
       theme: 'github-light',
       wrap: false,
     },

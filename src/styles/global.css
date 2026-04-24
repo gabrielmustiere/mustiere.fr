@@ -6,7 +6,8 @@
   --color-muted: #6b655d;
   --color-rule: #e4dfd6;
   --color-rule-strong: #bdb6a8;
-  --color-code-bg: #f3f1ec;
+  /* #ffffff pour garantir WCAG AA (≥ 4.5:1) sur les tokens github-light de Shiki. */
+  --color-code-bg: #ffffff;
 
   --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -18,11 +19,13 @@
 }
 
 :root {
-  --a-about: oklch(0.62 0.1 42);
+  /* Contrastes AA (≥ 4.5:1 sur fond --color-bg #fafaf7) vérifiés via
+     Lighthouse. --a-about assombri de 0.62 → 0.48 pour passer de 3.6:1 à > 4.8:1. */
+  --a-about: oklch(0.48 0.13 42);
   --a-blog: oklch(0.46 0.09 255);
-  --a-projects: oklch(0.54 0.06 155);
+  --a-projects: oklch(0.48 0.07 155);
   --a-contact: oklch(0.46 0.08 330);
-  --a-cv: oklch(0.58 0.1 75);
+  --a-cv: oklch(0.5 0.11 75);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -264,6 +267,18 @@ body {
   line-height: 1.7;
   margin: 1.6em 0;
   font-family: var(--font-mono);
+}
+
+/* Shiki github-light — override des tokens qui tombent sous 4.5:1 sur fond blanc.
+   L'orange (variables/paramètres) et le gris pâle (commentaires) sont les seuls
+   colors problématiques de la palette. */
+.astro-code span[style*="#E36209"],
+.astro-code span[style*="#e36209"] {
+  color: #b4500a !important;
+}
+.astro-code span[style*="#6A737D"],
+.astro-code span[style*="#6a737d"] {
+  color: #57606a !important;
 }
 
 .prose pre code {

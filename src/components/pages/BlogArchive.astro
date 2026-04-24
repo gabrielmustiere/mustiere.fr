@@ -5,7 +5,6 @@ import CategoryPill from '../ui/CategoryPill.astro';
 import StructuredData from '../seo/StructuredData.astro';
 import { getCollection } from 'astro:content';
 import {
-  personSchema,
   blogSchema,
   breadcrumbSchema,
 } from '../../utils/schema';
@@ -38,10 +37,23 @@ const totalCount = all.length;
 
 const categories: Category[] = ['IA', 'Tech', 'Lead', 'Business'];
 
+const frCount =
+  totalCount === 0
+    ? 'aucun billet'
+    : totalCount === 1
+      ? '1 billet'
+      : `${totalCount} billets`;
+const enCount =
+  totalCount === 0
+    ? 'no posts'
+    : totalCount === 1
+      ? '1 post'
+      : `${totalCount} posts`;
+
 const description =
   lang === 'fr'
-    ? `Blog de Gabriel Mustiere : ${totalCount} billets sur l'IA, la tech, le leadership et le business. Notes et essais d'un CTO freelance basé à Nantes.`
-    : `Gabriel Mustiere's blog: ${totalCount} posts on AI, tech, leadership and business. Notes and essays from a freelance CTO based in Nantes.`;
+    ? `Blog de Gabriel Mustiere : ${frCount} sur l'IA, la tech, le leadership et le business. Notes et essais d'un CTO freelance basé à Nantes.`
+    : `Gabriel Mustiere's blog: ${enCount} on AI, tech, leadership and business. Notes and essays from a freelance CTO based in Nantes.`;
 ---
 
 <SiteLayout
@@ -54,7 +66,6 @@ const description =
   <StructuredData
     slot="head"
     schemas={[
-      personSchema(lang),
       blogSchema(lang),
       breadcrumbSchema([
         { name: lang === 'fr' ? 'Accueil' : 'Home', url: `${SITE.url}${homeHref}` },
@@ -86,14 +97,14 @@ const description =
           class="font-serif mt-6 text-[52px] sm:text-[72px] leading-[1.02] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
         >
-          Écrits<br /><em class="acc-blog">au long cours.</em>
+          Écrits <br /><em class="acc-blog">au long cours.</em>
         </h1>
       ) : (
         <h1
           class="font-serif mt-6 text-[52px] sm:text-[72px] leading-[1.02] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
         >
-          Writing<br /><em class="acc-blog">at length.</em>
+          Writing <br /><em class="acc-blog">at length.</em>
         </h1>
       )
     }

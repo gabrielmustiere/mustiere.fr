@@ -25,14 +25,12 @@ const projects = (
         <a
           href={localizedPath(lang, `/projects/${project.id}`)}
           class="block group project-card"
-          aria-label={`${lang === 'fr' ? 'Voir le projet' : 'View project'} ${project.data.title}`}
         >
           <article>
             {project.data.cover ? (
               <img
                 src={project.data.cover}
-                alt=""
-                aria-hidden="true"
+                alt={`${project.data.title} — ${project.data.kind}`}
                 loading="lazy"
                 decoding="async"
                 class="w-full aspect-[21/9] object-cover rounded-md border border-[color:var(--color-rule)] transition-opacity group-hover:opacity-90"
