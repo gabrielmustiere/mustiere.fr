@@ -43,7 +43,7 @@ const tr = useTranslations(lang);
       <a href={localizedPath(lang, '/')} class="link-u text-[color:var(--color-ink)]">
         ← {tr.error404.backHome}
       </a>
-      <span class="text-[color:var(--color-rule-strong)]">·</span>
+      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
       <a href={localizedPath(lang, '/blog')} class="link-u acc-blog">
         {tr.error404.goToBlog}
       </a>

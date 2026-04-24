@@ -3,14 +3,16 @@
     "standard": "WCAG2AA",
     "timeout": 20000,
     "wait": 500,
+    "hideElements": "[aria-hidden='true']",
     "chromeLaunchConfig": {
       "args": ["--no-sandbox"]
     }
   },
   "urls": [
     "http://localhost:4321/",
-    "http://localhost:4321/blog",
-    "http://localhost:4321/blog/pourquoi-vos-evaluations-llm-ne-valent-rien",
+    "http://localhost:4321/fr/",
+    "http://localhost:4321/fr/blog/",
+    "http://localhost:4321/fr/blog/construire-ce-site-avec-claude-et-astro/",
     "http://localhost:4321/404.html"
   ]
 }

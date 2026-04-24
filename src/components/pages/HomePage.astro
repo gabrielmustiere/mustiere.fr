@@ -88,11 +88,11 @@ const tr = useTranslations(lang);
         <a href="#contact" class="link-u text-[color:var(--color-ink)]">
           {lang === 'fr' ? 'Me contacter' : 'Get in touch'}
         </a>
-        <span class="text-[color:var(--color-rule-strong)]">·</span>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
         <a href="#cv" class="link-u text-[color:var(--color-muted)]">
           {lang === 'fr' ? 'CV (PDF)' : 'Résumé (PDF)'}
         </a>
-        <span class="text-[color:var(--color-rule-strong)]">·</span>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
         <a
           href={SITE.author.github}
           target="_blank"

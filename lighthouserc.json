@@ -4,8 +4,8 @@
       "staticDistDir": "./dist",
       "url": [
         "http://localhost/index.html",
-        "http://localhost/blog.html",
-        "http://localhost/blog/pourquoi-vos-evaluations-llm-ne-valent-rien.html"
+        "http://localhost/blog/index.html",
+        "http://localhost/blog/construire-ce-site-avec-claude-et-astro/index.html"
       ],
       "numberOfRuns": 2,
       "settings": {
