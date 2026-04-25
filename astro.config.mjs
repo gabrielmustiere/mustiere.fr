@@ -7,7 +7,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import robotsTxt from 'astro-robots-txt';
 
-import { SITE } from '@/consts.ts';
+import { SITE } from './src/consts.ts';
 
 const LOCALE_TAGS = { fr: 'fr-FR', en: 'en-GB' };
 const TRANSLATED_COLLECTIONS = ['blog', 'projects'];
