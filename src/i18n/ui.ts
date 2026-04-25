@@ -78,7 +78,7 @@ export const ui = {
       filterLabel: 'Filtrer par catégorie',
     },
     article: {
-      backToBlog: '← Tous les écrits',
+      backToBlog: '← Tous les articles de blog',
       publishedOn: 'Publié le',
       updatedOn: 'Mis à jour le',
       readingTime: 'min de lecture',
@@ -152,7 +152,7 @@ export const ui = {
       closeMenu: 'Close menu',
       menuLabel: 'Menu',
       items: {
-        blog: 'Writing',
+        blog: 'Blog posts',
         about: 'Background',
         projects: 'Projects',
         contact: 'Contact',
@@ -164,7 +164,7 @@ export const ui = {
     version: 'v. 2026.04 — Nantes',
     home: {
       blog: {
-        title: 'Writing',
+        title: 'Blog posts',
         intro:
           "Notes on tech, business and AI. No schedule — only when I have something to say.",
         seeAll: 'All posts',
@@ -200,7 +200,7 @@ export const ui = {
       },
     },
     blogIndex: {
-      title: 'Writing',
+      title: 'Blog posts',
       description:
         "Notes on tech, business and AI. No schedule — only when I have something to say.",
       allCategories: 'All',
@@ -208,7 +208,7 @@ export const ui = {
       filterLabel: 'Filter by category',
     },
     article: {
-      backToBlog: '← All writing',
+      backToBlog: '← All blog posts',
       publishedOn: 'Published on',
       updatedOn: 'Updated on',
       readingTime: 'min read',
@@ -253,10 +253,10 @@ export const ui = {
       description:
         "It was either moved, or it never existed. These things happen.",
       backHome: 'Back to home',
-      goToBlog: 'Go to writing',
+      goToBlog: 'Go to blog',
     },
     rss: {
-      title: 'Gabriel Mustiere — Writing',
+      title: 'Gabriel Mustiere — Blog posts',
       description:
         'Notes on tech, business and AI by Gabriel Mustiere, freelance CTO in Nantes.',
     },

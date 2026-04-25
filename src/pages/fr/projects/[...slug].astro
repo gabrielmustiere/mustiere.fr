@@ -26,9 +26,9 @@ type Props = {
 };
 const { project, others } = Astro.props as Props;
 
-const { Content } = await render(project);
+const { Content, headings } = await render(project);
 ---
 
-<ProjectLayout project={project} others={others}>
+<ProjectLayout project={project} others={others} headings={headings}>
   <Content />
 </ProjectLayout>

@@ -1,0 +1,41 @@
+---
+type Accent = 'blog' | 'projects';
+
+interface Props {
+  label: string;
+  accent: Accent;
+  trailing?: string;
+  trailingDateTime?: string;
+  marginTop?: string;
+}
+
+const {
+  label,
+  accent,
+  trailing,
+  trailingDateTime,
+  marginTop = 'mt-14',
+} = Astro.props;
+const accentClass = accent === 'blog' ? 'acc-blog' : 'acc-projects';
+---
+
+<div
+  class={`${marginTop} flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono`}
+>
+  <span class={accentClass}>{label}</span>
+  <span
+    class="flex-1 border-t border-[color:var(--color-rule)]"
+    aria-hidden="true"></span>
+  {
+    trailing && trailingDateTime && (
+      <time class="tnum text-[color:var(--color-muted)]" datetime={trailingDateTime}>
+        {trailing}
+      </time>
+    )
+  }
+  {
+    trailing && !trailingDateTime && (
+      <span class="tnum text-[color:var(--color-muted)]">{trailing}</span>
+    )
+  }
+</div>

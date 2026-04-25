@@ -1,0 +1,72 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+type Accent = 'blog' | 'projects';
+
+interface Props {
+  headings: MarkdownHeading[];
+  title: string;
+  accent: Accent;
+  minHeadings?: number;
+  maxDepth?: number;
+}
+
+const {
+  headings,
+  title,
+  accent,
+  minHeadings = 3,
+  maxDepth = 3,
+} = Astro.props;
+
+const filtered = headings.filter(
+  (h) => h.depth >= 2 && h.depth <= maxDepth && h.slug && h.text
+);
+let h2Counter = 0;
+const numbered = filtered.map((h) => ({
+  ...h,
+  number: h.depth === 2 ? ++h2Counter : null,
+}));
+const accentClass = accent === 'blog' ? 'acc-blog' : 'acc-projects';
+const accentVar = accent === 'blog' ? 'var(--a-blog)' : 'var(--a-projects)';
+
+const showToc = filtered.length >= minHeadings;
+---
+
+{
+  showToc && (
+    <nav
+      class="mt-8 p-4 sm:p-5 border-l-2"
+      style={`border-color: ${accentVar}; background: color-mix(in oklch, ${accentVar} 4%, transparent)`}
+      aria-labelledby="toc-title"
+    >
+      <h2
+        id="toc-title"
+        class={`${accentClass} not-italic font-mono uppercase tracking-[0.14em] text-[10px] block mb-3`}
+      >
+        § {title}
+      </h2>
+      <ol class="list-none p-0 m-0 space-y-1.5 text-[14px] leading-[1.55] tnum">
+        {numbered.map((h) => (
+          <li
+            class={h.depth === 3 ? 'pl-4' : ''}
+            style={h.depth === 3 ? 'border-left: 1px solid var(--color-rule); margin-left: 0.25rem' : ''}
+          >
+            <a
+              href={`#${h.slug}`}
+              class="text-[color:var(--color-ink)] hover:text-[color:var(--related-accent,inherit)] transition-colors"
+              style={`--related-accent: ${accentVar}`}
+            >
+              {h.number !== null && (
+                <span class="text-[color:var(--color-muted)] font-mono mr-2 tnum text-[11px]">
+                  {String(h.number).padStart(2, '0')}
+                </span>
+              )}
+              {h.text}
+            </a>
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

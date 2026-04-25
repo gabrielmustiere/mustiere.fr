@@ -2,12 +2,18 @@
 import SiteLayout from './SiteLayout.astro';
 import Footer from '../components/layout/Footer.astro';
 import ReadingProgress from '../components/ui/ReadingProgress.astro';
-import ShareButton from '../components/ui/ShareButton.astro';
 import CategoryPill from '../components/ui/CategoryPill.astro';
 import StructuredData from '../components/seo/StructuredData.astro';
+import Callout from '../components/ui/Callout.astro';
+import SectionMarker from '../components/ui/SectionMarker.astro';
+import AuthorCard from '../components/ui/AuthorCard.astro';
+import RelatedItems from '../components/ui/RelatedItems.astro';
+import Faq from '../components/ui/Faq.astro';
+import TableOfContents from '../components/ui/TableOfContents.astro';
 import {
   blogPostingSchema,
   breadcrumbSchema,
+  faqPageSchema,
 } from '../utils/schema';
 import {
   formatDateDottedFull,
@@ -17,13 +23,15 @@ import { SITE } from '../consts';
 import { useTranslations, localizedPath } from '../i18n/utils';
 import type { Lang } from '../i18n/config';
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 
 interface Props {
   post: CollectionEntry<'blog'>;
   nextPosts: CollectionEntry<'blog'>[];
+  headings?: MarkdownHeading[];
 }
 
-const { post, nextPosts } = Astro.props;
+const { post, nextPosts, headings = [] } = Astro.props;
 const { data } = post;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);
@@ -36,6 +44,10 @@ const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
 const otherLangHref = data.translationOf
   ? localizedPath(otherLang, `/blog/${data.translationOf}`)
   : localizedPath(otherLang, '/blog');
+
+const relatedUrls = nextPosts.map(
+  (n) => new URL(localizedPath(lang, `/blog/${n.id}`), SITE.url).href
+);
 
 const schemas = [
   blogPostingSchema({
@@ -50,13 +62,19 @@ const schemas = [
     image: data.ogImage,
     tldr: data.tldr,
     lang,
+    relatedUrls,
   }),
   breadcrumbSchema([
     { name: lang === 'fr' ? 'Accueil' : 'Home', url: `${SITE.url}${homeHref}` },
     { name: tr.home.blog.title, url: `${SITE.url}${blogHref}` },
     { name: data.title, url },
   ]),
+  ...(data.faq.length > 0 ? [faqPageSchema(data.faq)] : []),
 ];
+
+const tocTitle = lang === 'fr' ? 'sommaire' : 'contents';
+const upNextTitle = lang === 'fr' ? 'À lire ensuite' : 'Up next';
+const endLabel = lang === 'fr' ? '§ fin' : '§ end';
 ---
 
 <SiteLayout
@@ -77,149 +95,115 @@ const schemas = [
   <ReadingProgress />
 
   <main id="main">
-  <article
-    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
-    style="max-width: var(--w-prose)"
-  >
-    <nav
-      class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
-      aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}
+    <article
+      class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
+      style="max-width: var(--w-prose)"
     >
-      <a href={blogHref} class="hover:text-[color:var(--color-ink)]">
-        ← {tr.home.blog.title}
-      </a>
-      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
-        >/</span
+      <nav
+        class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
+        aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}
       >
-      <CategoryPill category={data.category} size="sm" lang={lang} />
-    </nav>
-
-    <header class="mt-10">
-      <div
-        class="flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
-      >
-        <span class="acc-blog tnum"
-          >№ {String(data.number).padStart(2, '0')}</span
-        >
+        <a href={blogHref} class="hover:text-[color:var(--color-ink)]">
+          ← {tr.home.blog.title}
+        </a>
         <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
-          >·</span
+          >/</span
         >
-        <time
-          class="acc-blog tnum"
-          datetime={toISODate(data.publishedAt)}
+        <CategoryPill category={data.category} size="sm" lang={lang} />
+      </nav>
+
+      <header class="mt-10">
+        <div
+          class="flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
         >
-          {formatDateDottedFull(data.publishedAt)}
-        </time>
+          <span class="acc-blog tnum"
+            >№ {String(data.number).padStart(2, '0')}</span
+          >
+          <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+            >·</span
+          >
+          <time
+            class="acc-blog tnum"
+            datetime={toISODate(data.publishedAt)}
+          >
+            {formatDateDottedFull(data.publishedAt)}
+          </time>
+          {
+            data.readingTime && (
+              <>
+                <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
+                <span class="tnum text-[color:var(--color-muted)]">{data.readingTime} min</span>
+              </>
+            )
+          }
+        </div>
+        <h1
+          class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
+          style="font-family: var(--font-serif)"
+        >
+          {data.title}
+        </h1>
+        <p
+          class="mt-6 text-[17px] sm:text-[19px] text-[#2a2622] leading-[1.55] font-serif"
+          data-speakable
+        >
+          {data.excerpt}
+        </p>
+
         {
-          data.readingTime && (
-            <>
-              <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
-              <span class="tnum text-[color:var(--color-muted)]">{data.readingTime} min</span>
-            </>
+          data.tldr && (
+            <Callout
+              label={tr.article.tldrLabel}
+              accent="blog"
+              ariaLabel={tr.article.tldrLabel}
+            >
+              <span data-speakable>{data.tldr}</span>
+            </Callout>
           )
         }
+
+        <AuthorCard
+          shareTitle={data.title}
+          shareUrl={url}
+          lang={lang}
+          accent="blog"
+        />
+      </header>
+
+      <TableOfContents
+        headings={headings}
+        title={tocTitle}
+        accent="blog"
+      />
+
+      <div class="prose mt-10">
+        <slot />
       </div>
-      <h1
-        class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
-        style="font-family: var(--font-serif)"
-      >
-        {data.title}
-      </h1>
-      <p
-        class="mt-6 text-[17px] sm:text-[19px] text-[#2a2622] leading-[1.55] font-serif"
-      >
-        {data.excerpt}
-      </p>
 
       {
-        data.tldr && (
-          <aside
-            class="mt-8 p-4 border-l-2 text-[15px] leading-[1.6] text-[#2a2622] italic"
-            style="border-color: var(--a-blog); background: color-mix(in oklch, var(--a-blog) 6%, transparent)"
-            aria-label={tr.article.tldrLabel}
-          >
-            <span class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-1">
-              {tr.article.tldrLabel}
-            </span>
-            {data.tldr}
-          </aside>
+        data.faq.length > 0 && (
+          <Faq
+            items={data.faq}
+            title={tr.project.faqTitle}
+            accent="blog"
+          />
         )
       }
 
-      <div
-        class="mt-8 flex items-center gap-3 pb-6 border-b border-[color:var(--color-rule)]"
-      >
-        <img
-          src="/avatar.jpeg"
-          alt={tr.portrait}
-          width="36"
-          height="36"
-          class="w-9 h-9 rounded-full object-cover"
-          style="border: 1px solid var(--color-rule-strong)"
-          loading="eager"
-          decoding="async"
-        />
-        <div class="text-[13px]">
-          <div class="text-[color:var(--color-ink)]">{SITE.author.name}</div>
-          <div class="text-[11px] text-[color:var(--color-muted)] font-mono">
-            {lang === 'fr' ? 'CTO freelance' : 'Freelance CTO'} · <span class="acc-blog">@gmustiere</span>
-          </div>
-        </div>
-        <ShareButton title={data.title} url={url} lang={lang} />
-      </div>
-    </header>
+      <SectionMarker
+        label={endLabel}
+        accent="blog"
+        trailing={formatDateDottedFull(data.updatedAt ?? data.publishedAt)}
+        trailingDateTime={toISODate(data.updatedAt ?? data.publishedAt)}
+      />
 
-    <div class="prose mt-10">
-      <slot />
-    </div>
-
-    <div
-      class="mt-14 flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
-    >
-      <span class="acc-blog">{lang === 'fr' ? '§ fin' : '§ end'}</span>
-      <span
-        class="flex-1 border-t border-[color:var(--color-rule)]"
-        aria-hidden="true"></span>
-      <time
-        class="tnum text-[color:var(--color-muted)]"
-        datetime={toISODate(data.updatedAt ?? data.publishedAt)}
-      >
-        {formatDateDottedFull(data.updatedAt ?? data.publishedAt)}
-      </time>
-    </div>
-
-    {
-      nextPosts.length > 0 && (
-        <aside class="mt-16">
-          <div class="text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] mb-4 font-mono">
-            {lang === 'fr' ? 'À lire ensuite' : 'Up next'}
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {nextPosts.map((next) => (
-              <a
-                href={localizedPath(lang, `/blog/${next.id}`)}
-                class="block border-t border-[color:var(--color-rule)] pt-4 group"
-              >
-                <div class="flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase font-mono">
-                  <CategoryPill category={next.data.category} size="sm" lang={lang} />
-                  <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
-                  {next.data.readingTime && (
-                    <span class="tnum text-[color:var(--color-muted)]">{next.data.readingTime} min</span>
-                  )}
-                </div>
-                <h3
-                  class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
-                  style="font-family: var(--font-serif)"
-                >
-                  {next.data.title}
-                </h3>
-              </a>
-            ))}
-          </div>
-        </aside>
-      )
-    }
-  </article>
+      <RelatedItems
+        kind="blog"
+        title={upNextTitle}
+        items={nextPosts}
+        lang={lang}
+      />
+    </article>
   </main>
 
   <Footer variant="article" maxWidth="720px" lang={lang} />

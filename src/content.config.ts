@@ -6,6 +6,11 @@ const categoryEnum = z.enum(['IA', 'Tech', 'Lead', 'Business']);
 
 const langEnum = z.enum(['fr', 'en']);
 
+const faqItem = z.object({
+  question: z.string(),
+  answer: z.string(),
+});
+
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
   schema: z.object({
@@ -20,6 +25,7 @@ const blog = defineCollection({
     draft: z.boolean().default(false),
     keywords: z.array(z.string()).default([]),
     tldr: z.string().min(60).max(320),
+    faq: z.array(faqItem).default([]),
     number: z.number().int().positive(),
     lang: langEnum.default('fr'),
     translationOf: z.string().optional(),
@@ -39,14 +45,7 @@ const projects = defineCollection({
     cover: z.string().optional(),
     url: z.url().optional(),
     order: z.number().int().default(0),
-    faq: z
-      .array(
-        z.object({
-          question: z.string(),
-          answer: z.string(),
-        })
-      )
-      .default([]),
+    faq: z.array(faqItem).default([]),
     lang: langEnum.default('fr'),
     translationOf: z.string().optional(),
   }),

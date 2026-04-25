@@ -2,8 +2,13 @@
 import SiteLayout from './SiteLayout.astro';
 import Footer from '../components/layout/Footer.astro';
 import ReadingProgress from '../components/ui/ReadingProgress.astro';
-import ShareButton from '../components/ui/ShareButton.astro';
 import StructuredData from '../components/seo/StructuredData.astro';
+import Callout from '../components/ui/Callout.astro';
+import SectionMarker from '../components/ui/SectionMarker.astro';
+import AuthorCard from '../components/ui/AuthorCard.astro';
+import RelatedItems from '../components/ui/RelatedItems.astro';
+import Faq from '../components/ui/Faq.astro';
+import TableOfContents from '../components/ui/TableOfContents.astro';
 import {
   breadcrumbSchema,
   faqPageSchema,
@@ -13,13 +18,15 @@ import { SITE } from '../consts';
 import { useTranslations, localizedPath } from '../i18n/utils';
 import type { Lang } from '../i18n/config';
 import type { CollectionEntry } from 'astro:content';
+import type { MarkdownHeading } from 'astro';
 
 interface Props {
   project: CollectionEntry<'projects'>;
   others: CollectionEntry<'projects'>[];
+  headings?: MarkdownHeading[];
 }
 
-const { project, others } = Astro.props;
+const { project, others, headings = [] } = Astro.props;
 const { data } = project;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);
@@ -32,6 +39,10 @@ const otherLangHref = data.translationOf
   ? localizedPath(otherLangCode, `/projects/${data.translationOf}`)
   : localizedPath(otherLangCode, '/');
 
+const relatedUrls = others.map(
+  (o) => new URL(localizedPath(lang, `/projects/${o.id}`), SITE.url).href
+);
+
 const schemas = [
   softwareSourceCodeSchema({
     title: data.title,
@@ -41,6 +52,8 @@ const schemas = [
     repository: data.url,
     lang,
     cover: data.cover,
+    abstract: data.summary,
+    relatedUrls,
   }),
   breadcrumbSchema([
     { name: lang === 'fr' ? 'Accueil' : 'Home', url: `${SITE.url}${homeHref}` },
@@ -49,6 +62,11 @@ const schemas = [
   ]),
   ...(data.faq.length > 0 ? [faqPageSchema(data.faq)] : []),
 ];
+
+const tocTitle = lang === 'fr' ? 'sommaire' : 'contents';
+const summaryLabel = lang === 'fr' ? 'Résumé' : 'Summary';
+const summaryAria = lang === 'fr' ? 'Résumé du projet' : 'Project summary';
+const endLabel = lang === 'fr' ? '§ fin' : '§ end';
 ---
 
 <SiteLayout
@@ -65,201 +83,120 @@ const schemas = [
   <ReadingProgress />
 
   <main id="main">
-  <article
-    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
-    style="max-width: var(--w-prose)"
-  >
-    <nav
-      class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
-      aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}
+    <article
+      class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
+      style="max-width: var(--w-prose)"
     >
-      <a href={`${homeHref}#projects`} class="hover:text-[color:var(--color-ink)]">
-        ← {tr.home.projects.title}
-      </a>
-      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
-        >/</span
+      <nav
+        class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
+        aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}
       >
-      <span class="acc-projects">{data.kind}</span>
-    </nav>
-
-    <header class="mt-10">
-      <div
-        class="flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
-      >
-        <span class="acc-projects tnum">{data.status}</span>
+        <a href={`${homeHref}#projects`} class="hover:text-[color:var(--color-ink)]">
+          ← {tr.home.projects.title}
+        </a>
         <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
-          >·</span
+          >/</span
         >
-        <span class="acc-projects tnum">{data.year}</span>
-        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
-          >·</span
-        >
-        <span class="tnum text-[color:var(--color-muted)]">{data.kind}</span>
-      </div>
-      <h1
-        class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
-        style="font-family: var(--font-serif)"
-      >
-        {data.title}
-      </h1>
-      <p
-        class="mt-6 text-[17px] sm:text-[19px] text-[#2a2622] leading-[1.55] font-serif"
-      >
-        {data.subtitle}
-      </p>
+        <span class="acc-projects">{data.kind}</span>
+      </nav>
 
-      <aside
-        class="mt-8 p-5 border-l-2 text-[15px] leading-[1.65] text-[#2a2622] italic"
-        style="border-color: var(--a-projects); background: color-mix(in oklch, var(--a-projects) 6%, transparent)"
-        aria-label={lang === 'fr' ? 'Résumé du projet' : 'Project summary'}
-      >
-        <span
-          class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-2"
+      <header class="mt-10">
+        <div
+          class="flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
         >
-          {lang === 'fr' ? 'Résumé' : 'Summary'}
-        </span>
-        {data.summary ?? data.excerpt}
-      </aside>
-
-      <div
-        class="mt-8 flex items-center gap-3 pb-6 border-b border-[color:var(--color-rule)]"
-      >
-        <img
-          src="/avatar.jpeg"
-          alt={tr.portrait}
-          width="36"
-          height="36"
-          class="w-9 h-9 rounded-full object-cover"
-          style="border: 1px solid var(--color-rule-strong)"
-          loading="eager"
-          decoding="async"
-        />
-        <div class="text-[13px]">
-          <div class="text-[color:var(--color-ink)]">{SITE.author.name}</div>
-          <div class="text-[11px] text-[color:var(--color-muted)] font-mono">
-            {lang === 'fr' ? 'CTO freelance' : 'Freelance CTO'} ·
-            <span class="acc-projects">@gmustiere</span>
-          </div>
+          <span class="acc-projects tnum">{data.status}</span>
+          <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+            >·</span
+          >
+          <span class="acc-projects tnum">{data.year}</span>
+          <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+            >·</span
+          >
+          <span class="tnum text-[color:var(--color-muted)]">{data.kind}</span>
         </div>
-        <ShareButton title={data.title} url={url} lang={lang} />
+        <h1
+          class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
+          style="font-family: var(--font-serif)"
+        >
+          {data.title}
+        </h1>
+        <p
+          class="mt-6 text-[17px] sm:text-[19px] text-[#2a2622] leading-[1.55] font-serif"
+          data-speakable
+        >
+          {data.subtitle}
+        </p>
+
+        <Callout label={summaryLabel} accent="projects" ariaLabel={summaryAria}>
+          <span data-speakable>{data.summary ?? data.excerpt}</span>
+        </Callout>
+
+        <AuthorCard
+          shareTitle={data.title}
+          shareUrl={url}
+          lang={lang}
+          accent="projects"
+        />
+
+        {
+          data.url && (
+            <div class="mt-6">
+              <a
+                href={data.url}
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center gap-2 text-[12px] tracking-[0.1em] uppercase font-mono text-[color:var(--color-ink)] border border-[color:var(--color-ink)] rounded-full px-4 py-2 hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-bg)] transition-colors"
+              >
+                <svg
+                  aria-hidden="true"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                >
+                  <path d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 014 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+                </svg>
+                <span>{lang === 'fr' ? 'Voir sur GitHub' : 'View on GitHub'}</span>
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
+          )
+        }
+      </header>
+
+      <TableOfContents
+        headings={headings}
+        title={tocTitle}
+        accent="projects"
+      />
+
+      <div class="prose mt-10">
+        <slot />
       </div>
 
       {
-        data.url && (
-          <div class="mt-6">
-            <a
-              href={data.url}
-              target="_blank"
-              rel="noopener"
-              class="inline-flex items-center gap-2 text-[12px] tracking-[0.1em] uppercase font-mono text-[color:var(--color-ink)] border border-[color:var(--color-ink)] rounded-full px-4 py-2 hover:bg-[color:var(--color-ink)] hover:text-[color:var(--color-bg)] transition-colors"
-            >
-              <svg
-                aria-hidden="true"
-                width="14"
-                height="14"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-              >
-                <path
-                  d="M8 0C3.58 0 0 3.58 0 8a8 8 0 005.47 7.59c.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 014 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-                />
-              </svg>
-              <span>{lang === 'fr' ? 'Voir sur GitHub' : 'View on GitHub'}</span>
-              <span aria-hidden="true">↗</span>
-            </a>
-          </div>
+        data.faq.length > 0 && (
+          <Faq
+            items={data.faq}
+            title={tr.project.faqTitle}
+            accent="projects"
+          />
         )
       }
-    </header>
 
-    <div class="prose mt-10">
-      <slot />
-    </div>
+      <SectionMarker
+        label={endLabel}
+        accent="projects"
+        trailing={String(data.year)}
+      />
 
-    {
-      data.faq.length > 0 && (
-        <section class="mt-16" aria-labelledby="faq-title">
-          <div class="flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono mb-6">
-            <span class="acc-projects">§ faq</span>
-            <span
-              class="flex-1 border-t border-[color:var(--color-rule)]"
-              aria-hidden="true"
-            />
-          </div>
-          <h2
-            id="faq-title"
-            class="font-serif text-[28px] sm:text-[32px] leading-[1.15] tracking-[-0.01em] mb-6"
-            style="font-family: var(--font-serif)"
-          >
-            {tr.project.faqTitle}
-          </h2>
-          <div class="divide-y divide-[color:var(--color-rule)]">
-            {data.faq.map((item, i) => (
-              <details
-                class="group py-4"
-                open={i === 0}
-              >
-                <summary class="flex items-start justify-between gap-4 cursor-pointer list-none">
-                  <span class="font-serif text-[18px] leading-[1.35] text-[color:var(--color-ink)]" style="font-family: var(--font-serif)">
-                    {item.question}
-                  </span>
-                  <span
-                    class="text-[color:var(--color-rule-strong)] font-mono text-[18px] leading-none mt-1 transition-transform group-open:rotate-45"
-                    aria-hidden="true"
-                  >
-                    +
-                  </span>
-                </summary>
-                <div class="mt-3 text-[15px] leading-[1.65] text-[#2a2622]">
-                  {item.answer}
-                </div>
-              </details>
-            ))}
-          </div>
-        </section>
-      )
-    }
-
-    <div
-      class="mt-14 flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
-    >
-      <span class="acc-projects">{lang === 'fr' ? '§ fin' : '§ end'}</span>
-      <span
-        class="flex-1 border-t border-[color:var(--color-rule)]"
-        aria-hidden="true"></span>
-      <span class="tnum text-[color:var(--color-muted)]">{data.year}</span>
-    </div>
-
-    {
-      others.length > 0 && (
-        <aside class="mt-16">
-          <div class="text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] mb-4 font-mono">
-            {tr.project.otherProjects}
-          </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {others.map((next) => (
-              <a
-                href={localizedPath(lang, `/projects/${next.id}`)}
-                class="block border-t border-[color:var(--color-rule)] pt-4 group"
-              >
-                <div class="flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase font-mono">
-                  <span class="acc-projects">{next.data.status}</span>
-                  <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
-                  <span class="tnum text-[color:var(--color-muted)]">{next.data.year}</span>
-                </div>
-                <h3
-                  class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] group-hover:text-[color:var(--a-projects)] transition-colors"
-                  style="font-family: var(--font-serif)"
-                >
-                  {next.data.title}
-                </h3>
-              </a>
-            ))}
-          </div>
-        </aside>
-      )
-    }
-  </article>
+      <RelatedItems
+        kind="project"
+        title={tr.project.otherProjects}
+        items={others}
+        lang={lang}
+      />
+    </article>
   </main>
 
   <Footer variant="article" maxWidth="720px" lang={lang} />

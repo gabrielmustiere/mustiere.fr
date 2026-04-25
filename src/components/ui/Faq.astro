@@ -1,0 +1,55 @@
+---
+import SectionMarker from './SectionMarker.astro';
+
+type Accent = 'blog' | 'projects';
+
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+interface Props {
+  items: FaqItem[];
+  title: string;
+  accent: Accent;
+  id?: string;
+}
+
+const { items, title, accent, id = 'faq-title' } = Astro.props;
+---
+
+<section class="mt-16" aria-labelledby={id}>
+  <SectionMarker label="§ faq" accent={accent} marginTop="" />
+  <h2
+    id={id}
+    class="font-serif mt-6 text-[28px] sm:text-[32px] leading-[1.15] tracking-[-0.01em] mb-6"
+    style="font-family: var(--font-serif)"
+  >
+    {title}
+  </h2>
+  <div class="divide-y divide-[color:var(--color-rule)]">
+    {
+      items.map((item, i) => (
+        <details class="group py-4" open={i === 0}>
+          <summary class="flex items-start justify-between gap-4 cursor-pointer list-none">
+            <span
+              class="font-serif text-[18px] leading-[1.35] text-[color:var(--color-ink)]"
+              style="font-family: var(--font-serif)"
+            >
+              {item.question}
+            </span>
+            <span
+              class="text-[color:var(--color-rule-strong)] font-mono text-[18px] leading-none mt-1 transition-transform group-open:rotate-45"
+              aria-hidden="true"
+            >
+              +
+            </span>
+          </summary>
+          <div class="mt-3 text-[15px] leading-[1.65] text-[#2a2622]">
+            {item.answer}
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>

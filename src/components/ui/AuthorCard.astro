@@ -1,0 +1,42 @@
+---
+import ShareButton from './ShareButton.astro';
+import { SITE } from '../../consts';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/config';
+
+type Accent = 'blog' | 'projects';
+
+interface Props {
+  shareTitle: string;
+  shareUrl: string;
+  lang: Lang;
+  accent: Accent;
+}
+
+const { shareTitle, shareUrl, lang, accent } = Astro.props;
+const tr = useTranslations(lang);
+const accentClass = accent === 'blog' ? 'acc-blog' : 'acc-projects';
+const role = lang === 'fr' ? 'CTO freelance' : 'Freelance CTO';
+---
+
+<div
+  class="mt-8 flex items-center gap-3 pb-6 border-b border-[color:var(--color-rule)]"
+>
+  <img
+    src="/avatar.jpeg"
+    alt={tr.portrait}
+    width="36"
+    height="36"
+    class="w-9 h-9 rounded-full object-cover"
+    style="border: 1px solid var(--color-rule-strong)"
+    loading="eager"
+    decoding="async"
+  />
+  <div class="text-[13px]">
+    <div class="text-[color:var(--color-ink)]">{SITE.author.name}</div>
+    <div class="text-[11px] text-[color:var(--color-muted)] font-mono">
+      {role} · <span class={accentClass}>@gmustiere</span>
+    </div>
+  </div>
+  <ShareButton title={shareTitle} url={shareUrl} lang={lang} />
+</div>

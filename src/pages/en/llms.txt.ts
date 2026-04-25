@@ -37,7 +37,7 @@ export const GET: APIRoute = async () => {
     `- [Home](${SITE.url}/en/): introduction, background, areas of expertise (AI, architecture, leadership).`
   );
   lines.push(
-    `- [Writing](${SITE.url}/en/blog/): notes and essays from a freelance CTO on tech, AI, leadership and business.`
+    `- [Blog posts](${SITE.url}/en/blog/): notes and essays from a freelance CTO on tech, AI, leadership and business.`
   );
   lines.push(
     `- [Résumé PDF](${SITE.url}/cv.pdf): detailed résumé, last updated April 2026.`

@@ -1,0 +1,27 @@
+---
+type Accent = 'blog' | 'projects';
+
+interface Props {
+  label: string;
+  accent: Accent;
+  ariaLabel?: string;
+  as?: 'aside' | 'section';
+}
+
+const { label, accent, ariaLabel, as = 'aside' } = Astro.props;
+const Tag = as;
+const accentVar = accent === 'blog' ? 'var(--a-blog)' : 'var(--a-projects)';
+---
+
+<Tag
+  class="mt-8 p-4 sm:p-5 border-l-2 text-[15px] leading-[1.65] text-[#2a2622] italic"
+  style={`border-color: ${accentVar}; background: color-mix(in oklch, ${accentVar} 6%, transparent)`}
+  aria-label={ariaLabel ?? label}
+>
+  <span
+    class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-2"
+  >
+    {label}
+  </span>
+  <slot />
+</Tag>

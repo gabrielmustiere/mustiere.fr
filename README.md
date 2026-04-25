@@ -3,8 +3,8 @@
 ## Overview
 Portfolio mono-page pour Gabriel Mustiere, CTO freelance basé à Nantes.
 Le site comprend :
-- **Page d'accueil** (`v3-quiet-nav.html`) — identité, parcours, extraits d'écrits, projets, contact, CV, avec une sidebar sticky contenant un index §01–§05 et un scroll-spy coloré.
-- **Liste des écrits** (`blog.html`) — 12 articles avec filtres par catégorie (IA / Tech / Lead / Business), article mis en avant en tête.
+- **Page d'accueil** (`v3-quiet-nav.html`) — identité, parcours, extraits d'articles de blog, projets, contact, CV, avec une sidebar sticky contenant un index §01–§05 et un scroll-spy coloré.
+- **Liste des articles de blog** (`blog.html`) — 12 articles avec filtres par catégorie (IA / Tech / Lead / Business), article mis en avant en tête.
 - **Page d'article** (`article.html`) — lecture longue éditoriale avec barre de progression, drop cap, citations, blocs de code stylés, « à lire ensuite ».
 
 Ton éditorial, minimaliste, typographie mixte (serif + sans + mono), palette beige + accents colorés sobres.
@@ -82,7 +82,7 @@ Définie en **oklch** pour une chromaticité et une luminosité uniformes. Ne pa
 | Token | Valeur | Section | Description |
 |---|---|---|---|
 | `--a-about` | `oklch(0.62 0.13 40)` | § 01 Parcours | Terre cuite |
-| `--a-blog` | `oklch(0.55 0.13 250)` | § 02 Écrits | Encre bleue |
+| `--a-blog` | `oklch(0.55 0.13 250)` | § 02 Articles de blog | Encre bleue |
 | `--a-projects` | `oklch(0.55 0.10 145)` | § 03 Projets | Vert sauge |
 | `--a-contact` | `oklch(0.52 0.13 330)` | § 04 Contact | Prune |
 | `--a-cv` | `oklch(0.58 0.13 75)` | § 05 CV | Ocre |
@@ -144,7 +144,7 @@ Souligné 2px de la couleur courante (utilisé pour surligner des mots-clés dan
 3. Paragraphe meta : "Tech · Business · IA. Nantes — remote."
 4. Nav "Index" avec 5 liens :
    - `§01 Parcours` → `#about`
-   - `§02 Écrits` → `#blog`
+   - `§02 Articles de blog` → `#blog`
    - `§03 Projets` → `#projects`
    - `§04 Contact` → `#contact`
    - `§05 CV` → `#cv`
@@ -167,12 +167,12 @@ Sections (toutes ont un en-tête `SectionHead` : `§ 0X · Titre` + sous-titre d
 
 **§01 Parcours** — bio détaillée, liste stats "Expérience / Rôles / Basé à / Disponibilité" en `<ul>` avec filets.
 
-**§02 Écrits** — 5 articles récents :
+**§02 Articles de blog** — 5 articles récents :
 - Chaque item : date à gauche (acc-blog, font-mono, 11px, tracking .1em, width 80px), titre serif, temps de lecture
 - Lien entier `<a href="/blog/[slug]">` avec `group-hover:text-[color:var(--a-blog)]`
-- Sous la liste : lien "Voir tous les écrits →" (acc-blog)
+- Sous la liste : lien "Voir tous les articles de blog →" (acc-blog)
 
-**§03 Projets** — 3 items mission, même grille que écrits.
+**§03 Projets** — 3 items mission, même grille que les articles de blog.
 
 **§04 Contact** — paragraphe + liste key-value (Email, LinkedIn, GitHub) en grid 2 colonnes.
 
@@ -209,10 +209,10 @@ Implémentation recommandée en Astro :
 </script>
 ```
 
-### 2. Liste des écrits — `src/pages/blog/index.astro` (d'après `blog.html`)
+### 2. Liste des articles de blog — `src/pages/blog/index.astro` (d'après `blog.html`)
 
-- **Top nav** commune (TopNav.astro) : brand à gauche, liens `À propos · Écrits · Projets · Contact · GitHub · LinkedIn` à droite
-- **En-tête** : `§ 02 · Écrits`, H1 `Écrits / <em class="acc-blog">au long cours.</em>` (72px desktop)
+- **Top nav** commune (TopNav.astro) : brand à gauche, liens `À propos · Articles de blog · Projets · Contact · GitHub · LinkedIn` à droite
+- **En-tête** : `§ 02 · Articles de blog`, H1 `Articles de blog / <em class="acc-blog">au long cours.</em>` (72px desktop)
 - **Filtres** (chips) : `Tout / IA / Tech / Lead / Business` — actif = fond couleur + texte `#fafaf7`
 - **À la une** : premier article en grand (42px serif)
 - **Archive** : liste `<li>` avec grid `[110px_1fr_80px_60px]` (date / titre / catégorie / temps)
@@ -245,7 +245,7 @@ Layout centré sur 680px.
 
 - **Barre de progression** fixed top, `height: 2px`, fond `var(--a-blog)`, `width` calculé sur le scroll
 - **Top nav** (même que blog)
-- **Breadcrumb** : `← Écrits / CATÉGORIE`
+- **Breadcrumb** : `← Articles de blog / CATÉGORIE`
 - **En-tête article** : N° + date + temps | H1 serif 60px (avec em coloré acc-blog) | excerpt serif 19px
 - **Byline** : avatar circulaire (teinte acc-blog opacity .15), nom, handle, bouton "Partager"
 - **Corps (classe `.prose`)** :
@@ -327,7 +327,7 @@ Tout le texte est en **français**. Les articles blog sont des stubs de démo à
 
 Dans `designs/` :
 - `v3-quiet-nav.html` — page d'accueil avec sidebar navigation
-- `blog.html` — liste des écrits
+- `blog.html` — liste des articles de blog
 - `article.html` — page d'article
 
 Pour voir une maquette en contexte : ouvre-la dans un navigateur (elle est autonome, Tailwind CDN + Google Fonts).

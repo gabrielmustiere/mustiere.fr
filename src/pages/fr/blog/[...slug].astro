@@ -30,13 +30,13 @@ type Props = {
 };
 const { post, nextPosts } = Astro.props as Props;
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 
 if (!post.data.readingTime && post.body) {
   post.data.readingTime = readingTimeFromText(post.body);
 }
 ---
 
-<ArticleLayout post={post} nextPosts={nextPosts}>
+<ArticleLayout post={post} nextPosts={nextPosts} headings={headings}>
   <Content />
 </ArticleLayout>

@@ -167,6 +167,7 @@ interface BlogPostingInput {
   image?: string;
   tldr?: string;
   lang?: Lang;
+  relatedUrls?: string[];
 }
 
 export function blogPostingSchema(p: BlogPostingInput) {
@@ -198,6 +199,11 @@ export function blogPostingSchema(p: BlogPostingInput) {
       width: 1200,
       height: 630,
     },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['[data-speakable]'],
+    },
+    relatedLink: p.relatedUrls && p.relatedUrls.length > 0 ? p.relatedUrls : undefined,
     author: { '@id': PERSON_ID },
     publisher: { '@id': ORG_ID },
     isPartOf: { '@id': WEBSITE_ID },
@@ -212,6 +218,8 @@ interface SoftwareSourceCodeInput {
   repository?: string;
   lang: Lang;
   cover?: string;
+  abstract?: string;
+  relatedUrls?: string[];
 }
 
 export function softwareSourceCodeSchema(p: SoftwareSourceCodeInput) {
@@ -227,6 +235,7 @@ export function softwareSourceCodeSchema(p: SoftwareSourceCodeInput) {
     name: p.title,
     headline: p.title,
     description: p.description,
+    abstract: p.abstract,
     inLanguage: LANG_META[p.lang].bcp47,
     author: { '@id': PERSON_ID },
     creator: { '@id': PERSON_ID },
@@ -240,6 +249,11 @@ export function softwareSourceCodeSchema(p: SoftwareSourceCodeInput) {
       url: imageUrl,
       contentUrl: imageUrl,
     },
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['[data-speakable]'],
+    },
+    relatedLink: p.relatedUrls && p.relatedUrls.length > 0 ? p.relatedUrls : undefined,
     isPartOf: { '@id': WEBSITE_ID },
   };
 }
