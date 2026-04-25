@@ -7,17 +7,17 @@ import '@fontsource/inter/600.css';
 import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
 
-import '../styles/global.css';
-import SkipLink from '../components/layout/SkipLink.astro';
-import StructuredData from '../components/seo/StructuredData.astro';
+import '@styles/global.css';
+import SkipLink from '@components/layout/SkipLink.astro';
+import StructuredData from '@components/seo/StructuredData.astro';
 import {
   organizationSchema,
   personSchema,
   websiteSchema,
-} from '../utils/schema';
-import { SITE } from '../consts';
-import { getLangFromUrl, useTranslations, swapLang } from '../i18n/utils';
-import { LANG_META, type Lang } from '../i18n/config';
+} from '@/utils/schema';
+import { SITE } from '@/consts';
+import { getLangFromUrl, useTranslations, swapLang } from '@/i18n/utils';
+import { LANG_META, type Lang } from '@/i18n/config';
 
 export interface Props {
   lang?: Lang;

@@ -1,27 +1,27 @@
 ---
 import SiteLayout from './SiteLayout.astro';
-import Footer from '../components/layout/Footer.astro';
-import ReadingProgress from '../components/ui/ReadingProgress.astro';
-import CategoryPill from '../components/ui/CategoryPill.astro';
-import StructuredData from '../components/seo/StructuredData.astro';
-import Callout from '../components/ui/Callout.astro';
-import SectionMarker from '../components/ui/SectionMarker.astro';
-import AuthorCard from '../components/ui/AuthorCard.astro';
-import RelatedItems from '../components/ui/RelatedItems.astro';
-import Faq from '../components/ui/Faq.astro';
-import TableOfContents from '../components/ui/TableOfContents.astro';
+import Footer from '@components/layout/Footer.astro';
+import ReadingProgress from '@components/ui/ReadingProgress.astro';
+import CategoryPill from '@components/ui/CategoryPill.astro';
+import StructuredData from '@components/seo/StructuredData.astro';
+import Callout from '@components/ui/Callout.astro';
+import SectionMarker from '@components/ui/SectionMarker.astro';
+import AuthorCard from '@components/ui/AuthorCard.astro';
+import RelatedItems from '@components/ui/RelatedItems.astro';
+import Faq from '@components/ui/Faq.astro';
+import TableOfContents from '@components/ui/TableOfContents.astro';
 import {
   blogPostingSchema,
   breadcrumbSchema,
   faqPageSchema,
-} from '../utils/schema';
+} from '@/utils/schema';
 import {
   formatDateDottedFull,
   toISODate,
-} from '../utils/format-date';
-import { SITE } from '../consts';
-import { useTranslations, localizedPath } from '../i18n/utils';
-import type { Lang } from '../i18n/config';
+} from '@/utils/format-date';
+import { SITE } from '@/consts';
+import { useTranslations, localizedPath } from '@/i18n/utils';
+import type { Lang } from '@/i18n/config';
 import type { CollectionEntry } from 'astro:content';
 import type { MarkdownHeading } from 'astro';
 

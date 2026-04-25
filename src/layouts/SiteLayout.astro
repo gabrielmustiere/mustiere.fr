@@ -1,9 +1,9 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import Sidebar, { type SidebarMode } from '../components/layout/Sidebar.astro';
-import MobileNav from '../components/layout/MobileNav.astro';
-import { getLangFromUrl } from '../i18n/utils';
-import type { Lang } from '../i18n/config';
+import Sidebar, { type SidebarMode } from '@components/layout/Sidebar.astro';
+import MobileNav from '@components/layout/MobileNav.astro';
+import { getLangFromUrl } from '@/i18n/utils';
+import type { Lang } from '@/i18n/config';
 
 interface Props {
   lang?: Lang;

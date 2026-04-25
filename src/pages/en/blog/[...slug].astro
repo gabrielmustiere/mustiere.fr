@@ -1,7 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
-import ArticleLayout from '../../../layouts/ArticleLayout.astro';
-import { readingTimeFromText } from '../../../utils/reading-time';
+import ArticleLayout from '@layouts/ArticleLayout.astro';
+import { readingTimeFromText } from '@/utils/reading-time';
 
 export async function getStaticPaths() {
   const posts = await getCollection(

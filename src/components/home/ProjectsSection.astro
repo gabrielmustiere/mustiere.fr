@@ -1,8 +1,8 @@
 ---
-import SectionHead from '../ui/SectionHead.astro';
+import SectionHead from '@components/ui/SectionHead.astro';
 import { getCollection } from 'astro:content';
-import { getLangFromUrl, useTranslations, localizedPath } from '../../i18n/utils';
-import type { Lang } from '../../i18n/config';
+import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
+import type { Lang } from '@/i18n/config';
 
 interface Props {
   lang?: Lang;

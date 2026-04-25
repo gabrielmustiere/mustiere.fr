@@ -1,7 +1,7 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
-import { SITE } from '../consts';
-import { toISODate } from '../utils/format-date';
+import { SITE } from '@/consts';
+import { toISODate } from '@/utils/format-date';
 
 // Racine `llms-full.txt` — contenu intégral (FR par défaut) destiné aux LLMs
 // qui consomment les pages complètes pour l'entraînement / le RAG.

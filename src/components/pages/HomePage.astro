@@ -1,15 +1,15 @@
 ---
-import SiteLayout from '../../layouts/SiteLayout.astro';
-import AboutSection from '../home/AboutSection.astro';
-import BlogSection from '../home/BlogSection.astro';
-import ProjectsSection from '../home/ProjectsSection.astro';
-import ContactSection from '../home/ContactSection.astro';
-import CvSection from '../home/CvSection.astro';
-import StructuredData from '../seo/StructuredData.astro';
-import { profilePageSchema } from '../../utils/schema';
-import { SITE } from '../../consts';
-import { useTranslations } from '../../i18n/utils';
-import type { Lang } from '../../i18n/config';
+import SiteLayout from '@layouts/SiteLayout.astro';
+import AboutSection from '@components/home/AboutSection.astro';
+import BlogSection from '@components/home/BlogSection.astro';
+import ProjectsSection from '@components/home/ProjectsSection.astro';
+import ContactSection from '@components/home/ContactSection.astro';
+import CvSection from '@components/home/CvSection.astro';
+import StructuredData from '@components/seo/StructuredData.astro';
+import { profilePageSchema } from '@/utils/schema';
+import { SITE } from '@/consts';
+import { useTranslations } from '@/i18n/utils';
+import type { Lang } from '@/i18n/config';
 
 interface Props {
   lang: Lang;

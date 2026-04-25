@@ -1,7 +1,7 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
-import { SITE } from '../consts';
-import { toISODate } from '../utils/format-date';
+import { SITE } from '@/consts';
+import { toISODate } from '@/utils/format-date';
 
 // Racine `llms.txt` — contenu FR (langue par défaut du site), avec un pointeur
 // explicite vers la variante localisée anglaise. Servi en text/plain pour que

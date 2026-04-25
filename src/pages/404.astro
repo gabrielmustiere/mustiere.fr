@@ -1,6 +1,6 @@
 ---
-import SiteLayout from '../layouts/SiteLayout.astro';
-import { getLangFromUrl, useTranslations, localizedPath } from '../i18n/utils';
+import SiteLayout from '@layouts/SiteLayout.astro';
+import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
 const tr = useTranslations(lang);

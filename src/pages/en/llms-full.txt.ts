@@ -1,7 +1,7 @@
 import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
-import { SITE } from '../../consts';
-import { toISODate } from '../../utils/format-date';
+import { SITE } from '@/consts';
+import { toISODate } from '@/utils/format-date';
 
 export const GET: APIRoute = async () => {
   const posts = (

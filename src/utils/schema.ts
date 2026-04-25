@@ -1,7 +1,7 @@
-import { SITE } from '../consts';
-import { LANG_META, type Lang } from '../i18n/config';
-import { localizedPath } from '../i18n/utils';
-import { ui } from '../i18n/ui';
+import { SITE } from '@/consts';
+import { LANG_META, type Lang } from '@/i18n/config';
+import { localizedPath } from '@/i18n/utils';
+import { ui } from '@/i18n/ui';
 
 const PERSON_ID = `${SITE.url}/#person`;
 const ORG_ID = `${SITE.url}/#organization`;
