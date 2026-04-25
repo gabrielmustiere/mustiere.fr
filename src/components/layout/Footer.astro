@@ -19,7 +19,7 @@ const copyright = tr.footer.copyright.replace('{year}', String(year));
   variant === 'home' ? (
     <footer class="mt-16 flex items-center justify-between text-[11px] text-[color:var(--color-muted)]">
       <span>{copyright}</span>
-      <span class="tnum">{tr.footer.handmade}</span>
+      <span class="tnum" set:html={tr.footer.handmade} />
     </footer>
   ) : (
     <footer

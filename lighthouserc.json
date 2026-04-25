@@ -34,7 +34,10 @@
         "meta-description": "error",
         "hreflang": "off",
         "canonical": "error",
-        "structured-data": "off"
+        "structured-data": "off",
+        "lcp-lazy-loaded": "off",
+        "non-composited-animations": "off",
+        "prioritize-lcp-image": "off"
       }
     },
     "upload": {

@@ -109,7 +109,7 @@ export const ui = {
     },
     footer: {
       copyright: '© {year} Gabriel Mustiere',
-      handmade: 'Fait main · Nantes',
+      handmade: 'Fait <s>main</s> avec Claude · Nantes',
       backHome: "← Retour à l'accueil",
     },
     toggle: {
@@ -239,7 +239,7 @@ export const ui = {
     },
     footer: {
       copyright: '© {year} Gabriel Mustiere',
-      handmade: 'Handmade · Nantes',
+      handmade: '<s>Hand</s>made with Claude · Nantes',
       backHome: '← Back to home',
     },
     toggle: {
