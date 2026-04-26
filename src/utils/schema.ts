@@ -195,12 +195,12 @@ const PARCOURS_FAQ: Record<
     {
       question: 'Tu travailles avec des stacks autres que Symfony et Sylius ?',
       answer:
-        "Oui. Symfony et Sylius sont mes spécialités, mais j'ai travaillé avec Node.js, TypeScript, React et l'écosystème JS moderne (Astro, Next). Sur une mission, l'enjeu est plus souvent le contexte produit et l'équipe que le langage exact.",
+        "Je travaille principalement avec Symfony et son écosystème (Doctrine, API Platform, Sylius). Côté front, j'ai aussi de l'expérience avec Vue.js et Nuxt. Sur une mission, l'enjeu est plus souvent le contexte produit et l'équipe que le langage exact.",
     },
     {
       question: 'Tu acceptes les missions de cofondation ou equity ?',
       answer:
-        "Au cas par cas. La trajectoire Passion Barbecue m'a appris ce que ça implique. Aujourd'hui je privilégie les missions freelance facturées, mais reste ouvert pour des projets early stage avec un fit produit-fondateur fort.",
+        'Je suis ouvert à toute proposition honnête et intelligente.',
     },
     {
       question: 'Combien coûte une mission ?',
@@ -228,12 +228,12 @@ const PARCOURS_FAQ: Record<
     {
       question: 'Do you work with stacks other than Symfony and Sylius?',
       answer:
-        "Yes. Symfony and Sylius are my specialties, but I've worked with Node.js, TypeScript, React and the modern JS ecosystem (Astro, Next). On an engagement, the product context and team usually matter more than the exact language.",
+        "I work primarily with Symfony and its ecosystem (Doctrine, API Platform, Sylius). On the front-end side, I also have experience with Vue.js and Nuxt. On an engagement, the product context and team usually matter more than the exact language.",
     },
     {
       question: 'Do you take co-founder or equity engagements?',
       answer:
-        'Case by case. The Passion Barbecue trajectory taught me what that involves. I currently favour invoiced freelance engagements, but stay open to early-stage projects with strong product-founder fit.',
+        "I'm open to any honest, well-thought-out proposal.",
     },
     {
       question: 'How much does an engagement cost?',
