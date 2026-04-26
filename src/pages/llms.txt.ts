@@ -30,7 +30,7 @@ export const GET: APIRoute = async () => {
   lines.push('## Languages');
   lines.push('');
   lines.push(
-    `- Français (default): [${SITE.url}/fr/llms.txt](${SITE.url}/fr/llms.txt)`
+    `- Français (default): [${SITE.url}/llms.txt](${SITE.url}/llms.txt)`
   );
   lines.push(`- English: [${SITE.url}/en/llms.txt](${SITE.url}/en/llms.txt)`);
   lines.push('');
@@ -49,15 +49,15 @@ export const GET: APIRoute = async () => {
   lines.push('## Pages principales');
   lines.push('');
   lines.push(
-    `- [Accueil](${SITE.url}/fr/) : présentation, parcours, domaines d'expertise (IA, architecture, leadership).`
+    `- [Accueil](${SITE.url}/) : présentation, parcours, domaines d'expertise (IA, architecture, leadership).`
   );
   lines.push(
-    `- [Blog](${SITE.url}/fr/blog/) : notes et essais d'un CTO freelance sur la tech, l'IA, le leadership et le business.`
+    `- [Blog](${SITE.url}/blog/) : notes et essais d'un CTO freelance sur la tech, l'IA, le leadership et le business.`
   );
   lines.push(
     `- [CV PDF](${SITE.url}/cv.pdf) : CV détaillé, dernière mise à jour avril 2026.`
   );
-  lines.push(`- [Flux RSS](${SITE.url}/fr/rss.xml) : mises à jour du blog.`);
+  lines.push(`- [Flux RSS](${SITE.url}/rss.xml) : mises à jour du blog.`);
   lines.push(`- [English version](${SITE.url}/en/) : same content in English.`);
   lines.push('');
 
@@ -66,7 +66,7 @@ export const GET: APIRoute = async () => {
   for (const post of posts) {
     const date = toISODate(post.data.publishedAt);
     lines.push(
-      `- [${post.data.title}](${SITE.url}/fr/blog/${post.id}/) (${date}, ${post.data.category}) : ${post.data.excerpt}`
+      `- [${post.data.title}](${SITE.url}/blog/${post.id}/) (${date}, ${post.data.category}) : ${post.data.excerpt}`
     );
   }
   lines.push('');
@@ -76,7 +76,7 @@ export const GET: APIRoute = async () => {
     lines.push('');
     for (const project of projects) {
       lines.push(
-        `- [${project.data.title}](${SITE.url}/fr/projects/${project.id}/) (${project.data.kind} · ${project.data.year} · ${project.data.status}) : ${project.data.excerpt}`
+        `- [${project.data.title}](${SITE.url}/projects/${project.id}/) (${project.data.kind} · ${project.data.year} · ${project.data.status}) : ${project.data.excerpt}`
       );
     }
     lines.push('');

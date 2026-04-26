@@ -72,7 +72,7 @@ const ogImageURL = new URL(image, SITE.url).href;
 const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
 const altPath = otherLangHref ?? swapLang(normalizedPath, otherLang);
 const altUrl = new URL(altPath, SITE.url).href;
-const rssHref = lang === 'fr' ? '/fr/rss.xml' : '/en/rss.xml';
+const rssHref = lang === 'fr' ? '/rss.xml' : '/en/rss.xml';
 
 const baseGraph = [organizationSchema(), websiteSchema(), personSchema(lang)];
 ---

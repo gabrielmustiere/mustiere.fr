@@ -10,9 +10,9 @@
   },
   "urls": [
     "http://localhost:4321/",
-    "http://localhost:4321/fr/",
-    "http://localhost:4321/fr/blog/",
-    "http://localhost:4321/fr/blog/construire-ce-site-avec-claude-et-astro/",
+    "http://localhost:4321/blog/",
+    "http://localhost:4321/blog/construire-ce-site-avec-claude-et-astro/",
+    "http://localhost:4321/en/",
     "http://localhost:4321/404.html"
   ]
 }

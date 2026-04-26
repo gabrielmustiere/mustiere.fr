@@ -3,9 +3,9 @@
     "collect": {
       "staticDistDir": "./dist",
       "url": [
-        "http://localhost/fr/",
-        "http://localhost/fr/blog/",
-        "http://localhost/fr/blog/construire-ce-site-avec-claude-et-astro/",
+        "http://localhost/",
+        "http://localhost/blog/",
+        "http://localhost/blog/construire-ce-site-avec-claude-et-astro/",
         "http://localhost/en/",
         "http://localhost/en/blog/",
         "http://localhost/en/blog/building-this-site-with-claude-and-astro/"

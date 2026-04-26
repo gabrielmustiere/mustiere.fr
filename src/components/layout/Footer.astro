@@ -3,7 +3,7 @@ import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 
 interface Props {
-  variant?: 'home' | 'blog' | 'article';
+  variant?: 'home' | 'blog' | 'article' | 'project';
   maxWidth?: string;
   lang?: Lang;
 }
@@ -33,6 +33,13 @@ const copyright = tr.footer.copyright.replace('{year}', String(year));
           class="hover:text-[color:var(--color-ink)]"
         >
           {tr.article.backToBlog}
+        </a>
+      ) : variant === 'project' ? (
+        <a
+          href={`${localizedPath(lang, '/')}#projects`}
+          class="hover:text-[color:var(--color-ink)]"
+        >
+          {tr.project.backToProjects}
         </a>
       ) : (
         <a

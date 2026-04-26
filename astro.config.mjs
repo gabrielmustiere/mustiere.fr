@@ -42,18 +42,39 @@ function buildTranslationIndex() {
 
 const TRANSLATIONS = buildTranslationIndex();
 
+// Avec prefixDefaultLocale: false, le FR n'a pas de préfixe (/blog/slug/),
+// l'EN garde son préfixe (/en/blog/slug/).
+function buildLocalizedUrl(origin, lang, collection, slug) {
+  return lang === 'fr'
+    ? `${origin}/${collection}/${slug}/`
+    : `${origin}/${lang}/${collection}/${slug}/`;
+}
+
 function findTranslationLinks(itemUrl) {
   const url = new URL(itemUrl);
   const parts = url.pathname.split('/').filter(Boolean);
-  if (parts.length !== 3) return null;
-  const [lang, collection, slug] = parts;
+  let lang, collection, slug;
+  if (parts.length === 3 && parts[0] === 'en') {
+    [, collection, slug] = parts;
+    lang = 'en';
+  } else if (parts.length === 2) {
+    [collection, slug] = parts;
+    lang = 'fr';
+  } else {
+    return null;
+  }
   if (!TRANSLATED_COLLECTIONS.includes(collection)) return null;
   const meta = TRANSLATIONS.get(`${collection}/${slug}`);
   if (!meta || meta.lang !== lang) return null;
   const otherLang = lang === 'fr' ? 'en' : 'fr';
   const otherMeta = TRANSLATIONS.get(`${collection}/${meta.translationOf}`);
   if (!otherMeta || otherMeta.lang !== otherLang) return null;
-  const otherUrl = `${url.origin}/${otherLang}/${collection}/${meta.translationOf}/`;
+  const otherUrl = buildLocalizedUrl(
+    url.origin,
+    otherLang,
+    collection,
+    meta.translationOf
+  );
   return [
     { url: itemUrl, lang: LOCALE_TAGS[lang] },
     { url: otherUrl, lang: LOCALE_TAGS[otherLang] },
@@ -75,15 +96,20 @@ export default defineConfig({
     defaultLocale: 'fr',
     locales: ['fr', 'en'],
     routing: {
-      prefixDefaultLocale: true,
-      redirectToDefaultLocale: false,
+      prefixDefaultLocale: false,
     },
   },
   redirects: {
-    '/': '/fr/',
-    '/blog/': '/fr/blog/',
-    '/blog/[...slug]': '/fr/blog/[...slug]',
-    '/projects/[...slug]': '/fr/projects/[...slug]',
+    // Compat avec les anciennes URLs préfixées /fr/* (avant suppression du
+    // prefixDefaultLocale). On préserve l'indexation Google et les liens
+    // externes existants en redirigeant vers les nouvelles URLs racine.
+    '/fr/': '/',
+    '/fr/blog/': '/blog/',
+    '/fr/blog/[...slug]': '/blog/[...slug]',
+    '/fr/projects/[...slug]': '/projects/[...slug]',
+    '/fr/rss.xml': '/rss.xml',
+    '/fr/llms.txt': '/llms.txt',
+    '/fr/llms-full.txt': '/llms-full.txt',
   },
   integrations: [
     mdx(),

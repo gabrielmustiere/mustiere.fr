@@ -1,10 +1,13 @@
 import { DEFAULT_LANG, LANGUAGES, isLang, type Lang } from './config';
 import { ui, type UiDict } from './ui';
 
+// Le FR (langue par défaut) est servi sans préfixe (`/`, `/blog/`, …).
+// Seul l'anglais est préfixé (`/en/`, `/en/blog/`, …).
+
 export function getLangFromUrl(url: URL): Lang {
   const segments = url.pathname.split('/').filter(Boolean);
   const first = segments[0];
-  if (first && isLang(first)) return first;
+  if (first === 'en') return 'en';
   return DEFAULT_LANG;
 }
 
@@ -14,10 +17,13 @@ export function useTranslations(lang: Lang): UiDict {
 
 export function localizedPath(lang: Lang, path: string = '/'): string {
   const normalized = path.startsWith('/') ? path : `/${path}`;
-  if (normalized === '/') return `/${lang}/`;
-  // On distingue un chemin vers un fichier statique (ex: rss.xml, llms.txt)
-  // d'une route de page — seules les routes de page reçoivent un trailing slash.
   const isFile = /\.[a-z0-9]+$/i.test(normalized);
+  if (lang === DEFAULT_LANG) {
+    if (normalized === '/') return '/';
+    if (isFile) return normalized;
+    return normalized.endsWith('/') ? normalized : `${normalized}/`;
+  }
+  if (normalized === '/') return `/${lang}/`;
   if (isFile) return `/${lang}${normalized}`;
   const withSlash = normalized.endsWith('/') ? normalized : `${normalized}/`;
   return `/${lang}${withSlash}`;
@@ -27,21 +33,22 @@ export function stripLangFromPath(pathname: string): {
   lang: Lang;
   rest: string;
 } {
-  // Supporte à la fois /fr, /fr/, /fr/blog/, et les artefacts /fr.html hérités.
+  // Supporte les artefacts `.html` hérités d'anciens builds.
   const normalized = pathname.replace(/\.html$/i, '');
   const segments = normalized.split('/').filter(Boolean);
   const first = segments[0];
-  if (first && isLang(first)) {
+  if (first === 'en') {
     const rest = '/' + segments.slice(1).join('/');
     const withSlash =
       rest === '/' || pathname.endsWith('/') ? (rest === '/' ? '/' : `${rest}/`) : rest;
-    return { lang: first, rest: withSlash };
+    return { lang: 'en', rest: withSlash };
   }
   return { lang: DEFAULT_LANG, rest: normalized || '/' };
 }
 
 export function swapLang(pathname: string, target: Lang): string {
   const { rest } = stripLangFromPath(pathname);
+  if (target === DEFAULT_LANG) return rest === '/' ? '/' : rest;
   if (rest === '/') return `/${target}/`;
   return `/${target}${rest}`;
 }

@@ -3,9 +3,8 @@ import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
 
-// Racine `llms-full.txt` — contenu intégral (FR par défaut) destiné aux LLMs
-// qui consomment les pages complètes pour l'entraînement / le RAG.
-// Les versions localisées restent disponibles sur /fr/llms-full.txt et /en/llms-full.txt.
+// Racine `llms-full.txt` — contenu intégral FR (langue par défaut, sans
+// préfixe). La variante anglaise reste disponible sur /en/llms-full.txt.
 export const GET: APIRoute = async () => {
   const posts = (
     await getCollection(
@@ -27,7 +26,7 @@ export const GET: APIRoute = async () => {
   );
   parts.push('');
   parts.push(
-    `Localized variants: ${SITE.url}/fr/llms-full.txt (default) · ${SITE.url}/en/llms-full.txt`
+    `Localized variants: ${SITE.url}/llms-full.txt (default) · ${SITE.url}/en/llms-full.txt`
   );
   parts.push('');
   parts.push('---');
@@ -58,7 +57,7 @@ export const GET: APIRoute = async () => {
     parts.push(`### ${post.data.title}`);
     parts.push('');
     parts.push(
-      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}/fr/blog/${post.id}/*`
+      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}/blog/${post.id}/*`
     );
     parts.push('');
     if (post.data.tldr) {

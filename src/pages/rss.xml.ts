@@ -4,9 +4,8 @@ import type { APIContext } from 'astro';
 import { SITE } from '@/consts';
 import { ui } from '@/i18n/ui';
 
-// Flux RSS racine — contenu FR (langue par défaut du site).
-// Les lecteurs qui pointent `https://mustiere.fr/rss.xml` tombent ici
-// sans dépendre d'une redirection serveur. Le flux EN reste sur /en/rss.xml.
+// Flux RSS racine — contenu FR (langue par défaut du site, servi sans préfixe).
+// Le flux EN reste sur /en/rss.xml.
 export async function GET(context: APIContext) {
   const posts = (
     await getCollection(
@@ -27,7 +26,7 @@ export async function GET(context: APIContext) {
       title: post.data.title,
       pubDate: post.data.publishedAt,
       description: post.data.excerpt,
-      link: `/fr/blog/${post.id}/`,
+      link: `/blog/${post.id}/`,
       categories: [post.data.category, ...post.data.tags],
       author: `${SITE.author.email} (${SITE.author.name})`,
     })),
