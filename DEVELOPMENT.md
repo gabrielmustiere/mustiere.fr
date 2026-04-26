@@ -4,7 +4,7 @@ Site Astro statique déployé sur Cloudflare Pages. Portfolio éditorial + blog 
 
 ## Stack
 
-- [Astro 5](https://astro.build) · output `static`
+- [Astro 6](https://astro.build) · output `static`
 - [Tailwind CSS 4](https://tailwindcss.com) via `@tailwindcss/vite`
 - [MDX](https://mdxjs.com) · [Shiki](https://shiki.style) (syntax highlight build-time)
 - `@fontsource` — Instrument Serif, Inter, JetBrains Mono (self-hosted)
