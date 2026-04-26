@@ -5,7 +5,7 @@ Site Astro statique déployé sur Cloudflare Pages. Portfolio éditorial + blog 
 ## Stack
 
 - [Astro 6](https://astro.build) · output `static`
-- [Tailwind CSS 4](https://tailwindcss.com) via `@tailwindcss/vite`
+- [Tailwind CSS 4](https://tailwindcss.com) via `@tailwindcss/postcss` (`postcss.config.mjs`)
 - [MDX](https://mdxjs.com) · [Shiki](https://shiki.style) (syntax highlight build-time)
 - `@fontsource` — Instrument Serif, Inter, JetBrains Mono (self-hosted)
 - `@astrojs/sitemap`, `@astrojs/rss`, `astro-robots-txt`
@@ -80,6 +80,20 @@ order: 4
 ---
 Description optionnelle.
 ```
+
+## Brouillons (drafts)
+
+Ajouter `draft: true` au frontmatter d'un article (`src/content/blog/*.mdx`) ou d'un side-project (`src/content/projects/*.md`) pour le tenir hors publication tout en pouvant le relire localement.
+
+| Commande | Drafts |
+| --- | --- |
+| `make serve` (= `astro dev`) | **visibles** — page détail, listings home, archive blog |
+| `make build` (= `astro build`) | **invisibles partout** — pages, sitemap, RSS, llms.txt |
+| `npm run preview` | drafts cachés (sert le `dist/` déjà buildé en mode prod) |
+
+Le filtre vit dans `src/utils/content.ts` (`isPublished(entry, lang)`) — seul point qui combine `draft` + `lang`. Toute nouvelle page consommant les collections `blog` ou `projects` doit passer par ce helper plutôt que d'inliner `!data.draft && data.lang === ...`.
+
+Le mode est porté par `import.meta.env.DEV` : pas de variable d'env à actionner, pas de feature flag. Pour rebasculer un draft en publié, retirer (ou mettre à `false`) le champ `draft` du frontmatter.
 
 ## SEO — ce qui est couvert
 

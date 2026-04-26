@@ -54,6 +54,7 @@ const projects = defineCollection({
     url: z.url().optional(),
     order: z.number().int().default(0),
     faq: z.array(faqItem).default([]),
+    draft: z.boolean().default(false),
     lang: langEnum.default('fr'),
     translationOf: z.string().optional(),
   }),

@@ -3,6 +3,7 @@ import SectionHead from '@components/ui/SectionHead.astro';
 import { getCollection } from 'astro:content';
 import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
+import { isPublished } from '@/utils/content';
 
 interface Props {
   lang?: Lang;
@@ -12,7 +13,7 @@ const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
 const tr = useTranslations(lang);
 
 const projects = (
-  await getCollection('projects', ({ data }) => (data.lang ?? 'fr') === lang)
+  await getCollection('projects', (entry) => isPublished(entry, lang))
 ).sort((a, b) => a.data.order - b.data.order);
 ---
 

@@ -1,11 +1,11 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ProjectLayout from '@layouts/ProjectLayout.astro';
+import { isPublished } from '@/utils/content';
 
 export async function getStaticPaths() {
-  const projects = await getCollection(
-    'projects',
-    ({ data }) => (data.lang ?? 'fr') === 'fr'
+  const projects = await getCollection('projects', (entry) =>
+    isPublished(entry, 'fr')
   );
   const sorted = [...projects].sort((a, b) => a.data.order - b.data.order);
 

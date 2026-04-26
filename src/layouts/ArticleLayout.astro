@@ -19,7 +19,8 @@ import { formatDateDottedFull, toISODate } from '@/utils/format-date';
 import { SITE } from '@/consts';
 import { useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { isPublished } from '@/utils/content';
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
@@ -38,8 +39,20 @@ const blogHref = localizedPath(lang, '/blog');
 const homeHref = localizedPath(lang, '/');
 
 const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
-const otherLangHref = data.translationOf
-  ? localizedPath(otherLang, `/blog/${data.translationOf}`)
+// `data.translationOf` n'est pas une garantie de publication : la traduction
+// peut être en draft (donc absente du build prod). On ne pointe vers la page
+// traduite que si elle passe `isPublished` dans le mode courant.
+const translatedPost = data.translationOf
+  ? (
+      await getCollection(
+        'blog',
+        (entry) =>
+          entry.id === data.translationOf && isPublished(entry, otherLang)
+      )
+    )[0]
+  : undefined;
+const otherLangHref = translatedPost
+  ? localizedPath(otherLang, `/blog/${translatedPost.id}`)
   : localizedPath(otherLang, '/blog');
 
 const relatedUrls = nextPosts.map(

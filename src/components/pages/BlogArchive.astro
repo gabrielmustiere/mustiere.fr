@@ -11,6 +11,7 @@ import type { Category } from '@/content.config';
 import { useTranslations, localizedPath } from '@/i18n/utils';
 import { BLOG_CATEGORIES } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
+import { isPublished } from '@/utils/content';
 
 interface Props {
   lang: Lang;
@@ -22,10 +23,7 @@ const blogHref = localizedPath(lang, '/blog');
 const homeHref = localizedPath(lang, '/');
 
 const all = (
-  await getCollection(
-    'blog',
-    ({ data }) => !data.draft && (data.lang ?? 'fr') === lang
-  )
+  await getCollection('blog', (entry) => isPublished(entry, lang))
 ).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
 const featured = all[0];

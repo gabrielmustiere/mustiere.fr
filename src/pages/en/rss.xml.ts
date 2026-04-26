@@ -3,10 +3,11 @@ import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
 import { SITE } from '@/consts';
 import { ui } from '@/i18n/ui';
+import { isPublished } from '@/utils/content';
 
 export async function GET(context: APIContext) {
   const posts = (
-    await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en')
+    await getCollection('blog', (entry) => isPublished(entry, 'en'))
   )
     .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
     .slice(0, 20);

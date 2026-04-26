@@ -20,7 +20,7 @@ Aucun runner de tests : la CI repose sur `astro check` + Lighthouse CI (`lightho
 
 ## Architecture
 
-**Astro 5 SSG bilingue** (FR/EN) déployé statiquement sur Cloudflare Pages. Aucune île JS framework — quelques scripts inline (~1 KB gzip total) pour scroll-spy, progress bar, filtres blog. Tailwind CSS 4 via `@tailwindcss/vite` ; tous les tokens design (couleurs oklch, typo, spacing) vivent dans `src/styles/global.css` sous `@theme`.
+**Astro 6 SSG bilingue** (FR/EN) déployé statiquement sur Cloudflare Pages. Aucune île JS framework — quelques scripts inline (~1 KB gzip total) pour scroll-spy, progress bar, filtres blog. Tailwind CSS 4 via `@tailwindcss/postcss` (configuré dans `postcss.config.mjs`) ; tous les tokens design (couleurs oklch, typo, spacing) vivent dans `src/styles/global.css` sous `@theme`.
 
 ### i18n — ce qui rend ce projet non-trivial
 
@@ -52,7 +52,7 @@ JSON-LD émis par `src/utils/schema.ts` selon le type de page (`Person`, `WebSit
 
 ## Conventions
 
-- TypeScript strict ; imports relatifs, pas d'alias configurés.
+- TypeScript strict ; alias configurés dans `tsconfig.json` : `@/*` → `src/*`, `@components/*` → `src/components/*`, `@layouts/*` → `src/layouts/*`, `@styles/*` → `src/styles/*`. Utiliser ces alias plutôt que des chemins relatifs.
 - Prettier : single quotes, semi, trailing commas es5 ; plugin `prettier-plugin-astro` actif.
 - Ne pas porter le panneau "Tweaks" des maquettes `designs/*.html` — outil interne uniquement.
 - Couleurs accents : utiliser les classes utilitaires `.acc-about|blog|projects|contact|cv` ou `var(--a-*)`, jamais hex en dur.

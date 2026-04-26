@@ -33,6 +33,8 @@ function buildTranslationIndex() {
       const translationOf = fm
         .match(/^translationOf:\s*["']?([^"'\n]+?)["']?\s*$/m)?.[1]
         ?.trim();
+      const draft = /^draft:\s*true\s*$/m.test(fm);
+      if (draft) continue;
       if (!lang || !translationOf) continue;
       entries.set(`${collection}/${slug}`, { lang, translationOf });
     }

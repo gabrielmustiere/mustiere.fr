@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import { formatDateShort, toISODate } from '@/utils/format-date';
 import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
+import { isPublished } from '@/utils/content';
 
 interface Props {
   lang?: Lang;
@@ -13,10 +14,7 @@ const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
 const tr = useTranslations(lang);
 
 const posts = (
-  await getCollection(
-    'blog',
-    ({ data }) => !data.draft && (data.lang ?? 'fr') === lang
-  )
+  await getCollection('blog', (entry) => isPublished(entry, lang))
 )
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
   .slice(0, 4);

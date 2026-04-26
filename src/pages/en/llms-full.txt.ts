@@ -2,10 +2,11 @@ import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
+import { isPublished } from '@/utils/content';
 
 export const GET: APIRoute = async () => {
   const posts = (
-    await getCollection('blog', ({ data }) => !data.draft && data.lang === 'en')
+    await getCollection('blog', (entry) => isPublished(entry, 'en'))
   ).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
   const parts: string[] = [];

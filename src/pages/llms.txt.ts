@@ -2,6 +2,7 @@ import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
+import { isPublished } from '@/utils/content';
 
 // Racine `llms.txt` — contenu FR (langue par défaut du site), avec un pointeur
 // explicite vers la variante localisée anglaise. Servi en text/plain pour que
@@ -9,14 +10,11 @@ import { toISODate } from '@/utils/format-date';
 // contenu attendu sans meta-refresh intermédiaire.
 export const GET: APIRoute = async () => {
   const posts = (
-    await getCollection(
-      'blog',
-      ({ data }) => !data.draft && (data.lang ?? 'fr') === 'fr'
-    )
+    await getCollection('blog', (entry) => isPublished(entry, 'fr'))
   ).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
   const projects = (
-    await getCollection('projects', ({ data }) => (data.lang ?? 'fr') === 'fr')
+    await getCollection('projects', (entry) => isPublished(entry, 'fr'))
   ).sort((a, b) => a.data.order - b.data.order);
 
   const lines: string[] = [];
