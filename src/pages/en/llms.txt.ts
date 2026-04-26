@@ -37,6 +37,9 @@ export const GET: APIRoute = async () => {
     `- [Home](${SITE.url}/en/): introduction, background, areas of expertise (AI, architecture, leadership).`
   );
   lines.push(
+    `- [Background](${SITE.url}/en/background/): detailed background, experience (Anytime, Passion Barbecue, Progicar), expertise (Symfony, Sylius, product builder), engagement modes, FAQ.`
+  );
+  lines.push(
     `- [Blog posts](${SITE.url}/en/blog/): notes and essays from a freelance CTO on tech, AI, leadership and business.`
   );
   lines.push(

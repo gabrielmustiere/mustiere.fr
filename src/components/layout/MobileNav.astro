@@ -18,6 +18,7 @@ const { current = 'home', otherLangHref } = Astro.props;
 const isHome = current === 'home';
 const homePath = localizedPath(lang, '/');
 const blogPath = localizedPath(lang, '/blog');
+const parcoursPath = localizedPath(lang, lang === 'fr' ? '/parcours' : '/background');
 const activeKey =
   current === 'blog' || current === 'article'
     ? 'blog'
@@ -25,12 +26,14 @@ const activeKey =
       ? 'projects'
       : null;
 
+const isOnParcours = current === 'about';
+const parcoursLinkHref = isHome ? '#about' : parcoursPath;
+
 const index = [
   { key: 'blog', num: '01', label: tr.nav.items.blog, home: '#blog', away: blogPath },
-  { key: 'about', num: '02', label: tr.nav.items.about, home: '#about', away: `${homePath}#about` },
-  { key: 'projects', num: '03', label: tr.nav.items.projects, home: '#projects', away: `${homePath}#projects` },
-  { key: 'contact', num: '04', label: tr.nav.items.contact, home: '#contact', away: `${homePath}#contact` },
-  { key: 'cv', num: '05', label: tr.nav.items.cv, home: '#cv', away: `${homePath}#cv` },
+  { key: 'projects', num: '02', label: tr.nav.items.projects, home: '#projects', away: `${homePath}#projects` },
+  { key: 'contact', num: '03', label: tr.nav.items.contact, home: '#contact', away: `${homePath}#contact` },
+  { key: 'cv', num: '04', label: tr.nav.items.cv, home: '#cv', away: `${homePath}#cv` },
 ] as const;
 ---
 
@@ -94,6 +97,18 @@ const index = [
       {tr.site.role}<br /><em class="acc-about">{tr.site.roleSuffix}</em>
     </div>
     <p class="brand-sub">{tr.site.tagline} {tr.site.taglineLocation}</p>
+
+    <a
+      href={parcoursLinkHref}
+      class:list={['mobile-parcours-link', { 'is-active': isOnParcours }]}
+      data-close-on-click
+      aria-current={isOnParcours ? 'page' : undefined}
+    >
+      <span class="parcours-arrow" aria-hidden="true">→</span>
+      <span class="parcours-label font-serif" style="font-family: var(--font-serif)">
+        {tr.nav.items.about}
+      </span>
+    </a>
 
     <nav class="mobile-nav-links" aria-label={tr.nav.ariaSections}>
       <ol>
@@ -360,6 +375,32 @@ const index = [
   .m-link[data-key='projects'].is-active .label,
   .m-link[data-key='projects'].is-active .num {
     color: var(--a-projects);
+  }
+
+  .mobile-parcours-link {
+    margin-top: 24px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 12px;
+    color: var(--a-about);
+    text-decoration: none;
+  }
+  .mobile-parcours-link .parcours-arrow {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--a-about);
+  }
+  .mobile-parcours-link .parcours-label {
+    font-size: 22px;
+    line-height: 1.1;
+    letter-spacing: -0.005em;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 1px;
+    transition: border-color 0.15s ease;
+  }
+  .mobile-parcours-link:hover .parcours-label,
+  .mobile-parcours-link.is-active .parcours-label {
+    border-bottom-color: var(--a-about);
   }
 
   .mobile-lang-row {

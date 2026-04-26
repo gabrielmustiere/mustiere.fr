@@ -50,6 +50,7 @@ export const ui = {
         availability: 'Q3 2026',
         location: 'Nantes · remote',
         roles: 'CTO, Tech Lead, Architecte',
+        moreCta: 'Voir le parcours détaillé',
       },
       projects: {
         title: 'Side projects',
@@ -180,6 +181,7 @@ export const ui = {
         availability: 'Q3 2026',
         location: 'Nantes · remote',
         roles: 'CTO, Tech Lead, Architect',
+        moreCta: 'See the full background',
       },
       projects: {
         title: 'Side projects',

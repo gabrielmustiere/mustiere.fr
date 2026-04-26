@@ -1,6 +1,5 @@
 ---
 import SiteLayout from '@layouts/SiteLayout.astro';
-import AboutSection from '@components/home/AboutSection.astro';
 import BlogSection from '@components/home/BlogSection.astro';
 import ProjectsSection from '@components/home/ProjectsSection.astro';
 import ContactSection from '@components/home/ContactSection.astro';
@@ -8,7 +7,7 @@ import CvSection from '@components/home/CvSection.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
 import { profilePageSchema } from '@/utils/schema';
 import { SITE } from '@/consts';
-import { useTranslations } from '@/i18n/utils';
+import { useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 
 interface Props {
@@ -17,6 +16,10 @@ interface Props {
 
 const { lang } = Astro.props;
 const tr = useTranslations(lang);
+const parcoursHref = localizedPath(
+  lang,
+  lang === 'fr' ? '/parcours' : '/background'
+);
 ---
 
 <SiteLayout
@@ -35,11 +38,25 @@ const tr = useTranslations(lang);
     class="mx-auto px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
     style="max-width: var(--w-home)"
   >
-    <header class="mt-10 sm:mt-24">
+    <header
+      id="about"
+      data-key="about"
+      class="mt-6 sm:mt-12"
+    >
+      <img
+        src="/avatar.jpeg"
+        alt={tr.portrait}
+        width="96"
+        height="96"
+        class="about-portrait"
+        loading="eager"
+        decoding="async"
+      />
+
       {
         lang === 'fr' ? (
           <h1
-            class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
+            class="mt-8 sm:mt-10 font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
             style="font-family: var(--font-serif)"
           >
             CTO &amp; lead{' '}
@@ -48,7 +65,7 @@ const tr = useTranslations(lang);
           </h1>
         ) : (
           <h1
-            class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
+            class="mt-8 sm:mt-10 font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
             style="font-family: var(--font-serif)"
           >
             Freelance{' '}
@@ -58,41 +75,101 @@ const tr = useTranslations(lang);
         )
       }
 
-      {
-        lang === 'fr' ? (
-          <p
-            class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[560px]"
-          >
-            <span class="tnum">14 ans</span> à construire, mettre en production
-            et <em class="acc-about">faire tenir</em> des produits tech.
-            J'interviens sur de <span class="hl acc-about">l'architecture</span>,
-            du <span class="hl acc-blog">lead technique</span> et des sujets
-            <span class="hl acc-projects">SaaS &amp; e-commerce</span> — en
-            mission, en audit, ou en sparring-partner de fondateurs.
-          </p>
-        ) : (
-          <p
-            class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[560px]"
-          >
-            <span class="tnum">14 years</span> building, shipping and
-            <em class="acc-about">sustaining</em> tech products. I work on
-            <span class="hl acc-about">architecture</span>,
-            <span class="hl acc-blog">technical leadership</span> and
-            <span class="hl acc-projects">SaaS &amp; e-commerce</span> — on
-            missions, audits, or as a sparring partner for founders.
-          </p>
-        )
-      }
+      <div
+        class="mt-6 sm:mt-8 space-y-5 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[640px]"
+      >
+        {
+          lang === 'fr' ? (
+            <>
+              <p>
+                <span class="tnum">14 ans</span> dans la tech,{' '}
+                <em class="acc-about">CTO depuis 2017</em>. J'ai bâti la filiale
+                SaaS <em class="acc-about">Progicar</em> (Groupe GEMY) de zéro à
+                plus de 25 personnes, cofondé{' '}
+                <em class="acc-about">Passion Barbecue</em> sur{' '}
+                <span class="hl acc-about">Sylius</span>, et accompagne aujourd'hui{' '}
+                <em class="acc-about">Anytime</em> sur la conformité PSD2/SCA via{' '}
+                <span class="hl acc-about">WebAuthn</span> (passkeys, biométrie,
+                clés de sécurité).
+              </p>
+              <p>
+                Mon terrain : la{' '}
+                <span class="hl acc-projects">construction de produits SaaS et e-commerce</span>{' '}
+                from scratch, et leur mise à l'échelle. J'interviens en mission
+                longue, audit, CTO fractional ou sparring de fondateurs.
+              </p>
+            </>
+          ) : (
+            <>
+              <p>
+                <span class="tnum">14 years</span> in tech,{' '}
+                <em class="acc-about">CTO since 2017</em>. I built the SaaS
+                subsidiary <em class="acc-about">Progicar</em> (Groupe GEMY)
+                from zero to more than 25 people, co-founded{' '}
+                <em class="acc-about">Passion Barbecue</em> on{' '}
+                <span class="hl acc-about">Sylius</span>, and currently support{' '}
+                <em class="acc-about">Anytime</em> on PSD2/SCA compliance via{' '}
+                <span class="hl acc-about">WebAuthn</span> (passkeys, biometrics,
+                security keys).
+              </p>
+              <p>
+                My terrain:{' '}
+                <span class="hl acc-projects">building SaaS and e-commerce products</span>{' '}
+                from scratch, then scaling them. I work on long engagements,
+                audits, fractional CTO seats, or founder sparring.
+              </p>
+            </>
+          )
+        }
+      </div>
 
-      <div class="mt-6 sm:mt-8 flex items-center gap-5 text-[13px]">
+      <dl
+        class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[color:var(--color-muted)] max-w-[640px]"
+      >
+        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+          <dt>{tr.home.about.experienceLabel}</dt>
+          <dd class="tnum acc-about">
+            {lang === 'fr' ? '14 ans · CTO depuis 2017' : '14 years · CTO since 2017'}
+          </dd>
+        </div>
+        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+          <dt>{tr.home.about.rolesLabel}</dt>
+          <dd class="text-[color:var(--color-ink)]">CTO · Lead · IC</dd>
+        </div>
+        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+          <dt>{tr.home.about.locationLabel}</dt>
+          <dd class="text-[color:var(--color-ink)]">{tr.home.about.location}</dd>
+        </div>
+        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+          <dt>{tr.home.about.availabilityLabel}</dt>
+          <dd class="acc-about">{tr.home.about.availability}</dd>
+        </div>
+      </dl>
+
+      <div
+        class="mt-8 flex items-center gap-5 text-[13px] flex-wrap"
+      >
+        <a
+          href={parcoursHref}
+          class="link-u acc-about font-medium"
+        >
+          {tr.home.about.moreCta} →
+        </a>
+        <span
+          class="text-[color:var(--color-rule-strong)]"
+          aria-hidden="true">·</span>
         <a href="#contact" class="link-u text-[color:var(--color-ink)]">
           {lang === 'fr' ? 'Me contacter' : 'Get in touch'}
         </a>
-        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
+        <span
+          class="text-[color:var(--color-rule-strong)]"
+          aria-hidden="true">·</span>
         <a href="#cv" class="link-u text-[color:var(--color-muted)]">
           {lang === 'fr' ? 'CV (PDF)' : 'Résumé (PDF)'}
         </a>
-        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
+        <span
+          class="text-[color:var(--color-rule-strong)]"
+          aria-hidden="true">·</span>
         <a
           href={SITE.author.github}
           target="_blank"
@@ -114,12 +191,20 @@ const tr = useTranslations(lang);
       </div>
     </header>
 
-    <hr class="mt-14 sm:mt-24 border-0 border-t border-[color:var(--color-rule)]" />
-
     <BlogSection lang={lang} />
-    <AboutSection lang={lang} />
     <ProjectsSection lang={lang} />
     <ContactSection lang={lang} />
     <CvSection lang={lang} />
   </main>
 </SiteLayout>
+
+<style>
+  .about-portrait {
+    width: 96px;
+    height: 96px;
+    border-radius: 999px;
+    object-fit: cover;
+    border: 1px solid var(--color-rule-strong);
+    display: block;
+  }
+</style>

@@ -52,6 +52,9 @@ export const GET: APIRoute = async () => {
     `- [Accueil](${SITE.url}/) : présentation, parcours, domaines d'expertise (IA, architecture, leadership).`
   );
   lines.push(
+    `- [Parcours](${SITE.url}/parcours/) : parcours détaillé, expériences (Anytime, Passion Barbecue, Progicar), expertises (Symfony, Sylius, product builder), modes d'intervention, FAQ.`
+  );
+  lines.push(
     `- [Blog](${SITE.url}/blog/) : notes et essais d'un CTO freelance sur la tech, l'IA, le leadership et le business.`
   );
   lines.push(

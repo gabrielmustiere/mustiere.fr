@@ -35,15 +35,19 @@ export const GET: APIRoute = async () => {
   parts.push('## À propos');
   parts.push('');
   parts.push(
-    `${SITE.author.name} est CTO freelance basé à ${SITE.author.city}. Il écrit du code depuis 2009, dirige des équipes depuis 2014, et travaille en indépendant depuis 2021 avec des scale-ups, studios et fondateurs. Son terrain : les produits techniques où la donnée, le tempo et la lisibilité de l'architecture comptent autant que la feature.`
+    `${SITE.author.name} est CTO freelance basé à ${SITE.author.city}. 14 ans dans la tech, CTO depuis 2017. Expert Symfony et Sylius, builder de produits SaaS et e-commerce from scratch.`
   );
   parts.push('');
   parts.push(
-    `Il a été CTO dans deux startups (séries A et B), Lead Engineer dans un groupe média, et contribue encore régulièrement en IC — TypeScript, Python, Go quand il faut, et PostgreSQL quand c'est possible.`
+    `Il a bâti la filiale SaaS Progicar (Groupe GEMY) de zéro à plus de 25 personnes en cinq ans (CTO fondateur, 2017 → 2022), puis cofondé Passion Barbecue où il a porté la plateforme e-commerce Sylius de bout en bout (2022 → 2025).`
   );
   parts.push('');
   parts.push(
-    `Il s'intéresse actuellement à l'outillage autour des LLMs : orchestration, évaluation, intégration produit.`
+    `Depuis septembre 2025, freelance. Mission en cours : Anytime, conformité PSD2/SCA via WebAuthn (passkeys, biométrie, clés de sécurité matérielles). Disponibilité prochaine : Q3 2026, en mission longue, CTO fractional pour startup early stage, audit ou sparring.`
+  );
+  parts.push('');
+  parts.push(
+    `Parcours détaillé : ${SITE.url}/parcours/`
   );
   parts.push('');
   parts.push('---');

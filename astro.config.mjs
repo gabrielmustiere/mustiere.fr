@@ -50,8 +50,29 @@ function buildLocalizedUrl(origin, lang, collection, slug) {
     : `${origin}/${lang}/${collection}/${slug}/`;
 }
 
+// Pages statiques traduites (pages racine sans collection — ex. /parcours,
+// /en/background). Les paires sont déclarées explicitement pour générer les
+// hreflang dans le sitemap.
+const STATIC_PAGE_PAIRS = [
+  ['/parcours/', '/en/background/'],
+];
+
+function findStaticPageLinks(pathname, origin) {
+  for (const [fr, en] of STATIC_PAGE_PAIRS) {
+    if (pathname === fr || pathname === en) {
+      return [
+        { url: `${origin}${fr}`, lang: LOCALE_TAGS.fr },
+        { url: `${origin}${en}`, lang: LOCALE_TAGS.en },
+      ];
+    }
+  }
+  return null;
+}
+
 function findTranslationLinks(itemUrl) {
   const url = new URL(itemUrl);
+  const staticMatch = findStaticPageLinks(url.pathname, url.origin);
+  if (staticMatch) return staticMatch;
   const parts = url.pathname.split('/').filter(Boolean);
   let lang, collection, slug;
   if (parts.length === 3 && parts[0] === 'en') {
@@ -83,7 +104,7 @@ function findTranslationLinks(itemUrl) {
 
 export default defineConfig({
   site: SITE.url,
-  trailingSlash: 'always',
+  // trailingSlash: 'always',
   build: {
     inlineStylesheets: 'auto',
     format: 'directory',
@@ -106,6 +127,7 @@ export default defineConfig({
     '/fr/': '/',
     '/fr/blog/': '/blog/',
     '/fr/blog/[...slug]': '/blog/[...slug]',
+    '/fr/parcours/': '/parcours/',
     '/fr/projects/[...slug]': '/projects/[...slug]',
     '/fr/rss.xml': '/rss.xml',
     '/fr/llms.txt': '/llms.txt',

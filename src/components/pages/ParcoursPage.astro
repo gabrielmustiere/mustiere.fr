@@ -1,0 +1,1086 @@
+---
+import SiteLayout from '@layouts/SiteLayout.astro';
+import StructuredData from '@components/seo/StructuredData.astro';
+import Footer from '@components/layout/Footer.astro';
+import {
+  parcoursPageSchema,
+  parcoursFaqSchema,
+  breadcrumbSchema,
+} from '@/utils/schema';
+import { SITE } from '@/consts';
+import { useTranslations, localizedPath } from '@/i18n/utils';
+import type { Lang } from '@/i18n/config';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const tr = useTranslations(lang);
+
+const homeUrl = `${SITE.url}${localizedPath(lang, '/')}`;
+const parcoursUrl = `${SITE.url}${localizedPath(
+  lang,
+  lang === 'fr' ? '/parcours' : '/background'
+)}`;
+// hreflang doit pointer vers le slug traduit ; sans ça, swapLang renverrait
+// /en/parcours/ qui n'existe pas.
+const otherLangHref = localizedPath(
+  lang === 'fr' ? 'en' : 'fr',
+  lang === 'fr' ? '/background' : '/parcours'
+);
+
+const breadcrumbs =
+  lang === 'fr'
+    ? [
+        { name: 'Accueil', url: homeUrl },
+        { name: 'Parcours', url: parcoursUrl },
+      ]
+    : [
+        { name: 'Home', url: homeUrl },
+        { name: 'Background', url: parcoursUrl },
+      ];
+
+const title =
+  lang === 'fr'
+    ? 'Parcours — CTO freelance, expert Symfony & Sylius à Nantes'
+    : 'Background — Freelance CTO, Symfony & Sylius expert in Nantes';
+
+const description =
+  lang === 'fr'
+    ? 'Parcours de Gabriel Mustiere, CTO freelance à Nantes. 14 ans dans la tech, CTO depuis 2017. Expert Symfony et Sylius. Builder de produits SaaS et e-commerce from scratch, des startups early stage aux scale-ups.'
+    : 'Background of Gabriel Mustiere, freelance CTO in Nantes. 14 years in tech, CTO since 2017. Symfony and Sylius expert. Product builder for SaaS and e-commerce, from early-stage startups to scale-ups.';
+---
+
+<SiteLayout
+  title={lang === 'fr' ? 'Parcours' : 'Background'}
+  description={description}
+  type="website"
+  current="about"
+  lang={lang}
+  otherLangHref={otherLangHref}
+>
+  <StructuredData
+    slot="head"
+    schemas={[
+      parcoursPageSchema(lang, title, description),
+      parcoursFaqSchema(lang),
+      breadcrumbSchema(breadcrumbs),
+    ]}
+  />
+
+  <main
+    id="main"
+    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
+    style="max-width: var(--w-home)"
+  >
+    <header class="mt-10 sm:mt-24">
+      <div class="text-[11px] tracking-[0.12em] uppercase font-mono acc-about">
+        <span class="acc-dot"></span>{lang === 'fr' ? 'Parcours' : 'Background'}
+      </div>
+      <h1
+        class="font-serif mt-3 leading-[1.05] tracking-[-0.015em] text-[40px] sm:text-[64px]"
+        style="font-family: var(--font-serif)"
+      >
+        {
+          lang === 'fr' ? (
+            <>
+              <em class="acc-about">CTO freelance.</em>
+              <br />
+              Expert Symfony &amp; Sylius.
+              <br />
+              Basé à Nantes.
+            </>
+          ) : (
+            <>
+              <em class="acc-about">Freelance CTO.</em>
+              <br />
+              Symfony &amp; Sylius expert.
+              <br />
+              Based in Nantes.
+            </>
+          )
+        }
+      </h1>
+
+      <p
+        class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[640px]"
+      >
+        {
+          lang === 'fr' ? (
+            <>
+              <span class="hl acc-about">Développeur Symfony</span> depuis{' '}
+              <span class="tnum">2012</span>, CTO depuis{' '}
+              <span class="tnum">2017</span>. Mon métier : construire des
+              produits <span class="hl acc-projects">SaaS</span> et{' '}
+              <span class="hl acc-projects">e-commerce</span> from scratch, du
+              MVP early stage à la mise à l'échelle de plusieurs équipes.
+            </>
+          ) : (
+            <>
+              <span class="hl acc-about">Developer Symfony</span> since{' '}
+              <span class="tnum">2012</span>, CTO since{' '}
+              <span class="tnum">2017</span>. My craft: building{' '}
+              <span class="hl acc-projects">SaaS</span> and{' '}
+              <span class="hl acc-projects">e-commerce</span> products from
+              scratch, from early-stage MVPs to scaling multiple teams.
+            </>
+          )
+        }
+      </p>
+
+      <div class="mt-6 sm:mt-8 flex items-center gap-5 text-[13px] flex-wrap">
+        <a
+          href={`mailto:${SITE.author.email}`}
+          class="link-u text-[color:var(--color-ink)]"
+        >
+          {lang === 'fr' ? 'Me contacter' : 'Get in touch'}
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >·</span
+        >
+        <a href="/cv.pdf" class="link-u text-[color:var(--color-muted)]">
+          {lang === 'fr' ? 'CV (PDF)' : 'Résumé (PDF)'}
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >·</span
+        >
+        <a
+          href={localizedPath(lang, '/')}
+          class="link-u text-[color:var(--color-muted)]"
+        >
+          {lang === 'fr' ? "Retour à l'accueil" : 'Back to home'}
+        </a>
+      </div>
+    </header>
+
+    <hr
+      class="mt-14 sm:mt-24 border-0 border-t border-[color:var(--color-rule)]"
+    />
+
+    <section id="experiences">
+      <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+        <span
+          class="tnum text-[11px] tracking-[0.12em] uppercase font-mono acc-about"
+        >
+          <span class="acc-dot"></span>§ 01
+        </span>
+        <h2
+          class="font-serif text-[28px] sm:text-[36px] leading-[1.1] tracking-[-0.01em]"
+          style="font-family: var(--font-serif)"
+        >
+          {lang === 'fr' ? 'Expériences' : 'Experience'}
+        </h2>
+      </div>
+
+      <ol class="mt-8 space-y-12 max-w-[720px]">
+        <li>
+          <div
+            class="text-[11px] tracking-[0.1em] uppercase font-mono text-[color:var(--color-muted)]"
+          >
+            {
+              lang === 'fr'
+                ? "Sept. 2025 → aujourd'hui"
+                : 'Sept 2025 → present'
+            }
+          </div>
+          <h3
+            class="font-serif mt-1 text-[22px] sm:text-[26px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {
+              lang === 'fr'
+                ? 'Anytime — Lead WebAuthn & PSD2'
+                : 'Anytime — WebAuthn & PSD2 Lead'
+            }
+          </h3>
+          <div
+            class="mt-1 text-[12.5px] text-[color:var(--color-muted)] font-mono"
+          >
+            {
+              lang === 'fr'
+                ? 'Banque digitale · Symfony · sécurité bancaire'
+                : 'Digital bank · Symfony · banking security'
+            }
+          </div>
+          <ul
+            class="mt-3 space-y-2 text-[14.5px] text-[#2a2622] leading-[1.65] list-disc pl-5"
+          >
+            {
+              lang === 'fr' ? (
+                <>
+                  <li>
+                    Mise en conformité <em>Strong Customer Authentication</em>{' '}
+                    (PSD2) avec WebAuthn
+                  </li>
+                  <li>Intégration passkeys, biométrie</li>
+                  <li>
+                    Coordination avec les équipes produit, conformité et
+                    plateforme
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    <em>Strong Customer Authentication</em> (PSD2) compliance
+                    with WebAuthn
+                  </li>
+                  <li>Passkey, biometric integration</li>
+                  <li>
+                    Cross-team coordination with product, compliance and
+                    platform
+                  </li>
+                </>
+              )
+            }
+          </ul>
+        </li>
+
+        <li>
+          <div
+            class="text-[11px] tracking-[0.1em] uppercase font-mono text-[color:var(--color-muted)]"
+          >
+            {lang === 'fr' ? '2022 → 2025' : '2022 → 2025'}
+          </div>
+          <h3
+            class="font-serif mt-1 text-[22px] sm:text-[26px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {
+              lang === 'fr'
+                ? 'Passion Barbecue — Cofondateur & CTO'
+                : 'Passion Barbecue — Co-founder & CTO'
+            }
+          </h3>
+          <div
+            class="mt-1 text-[12.5px] text-[color:var(--color-muted)] font-mono"
+          >
+            {
+              lang === 'fr'
+                ? 'E-commerce premium · Sylius'
+                : 'Premium e-commerce · Sylius'
+            }
+          </div>
+          <div
+            class="mt-3 space-y-3 text-[14.5px] text-[#2a2622] leading-[1.65]"
+          >
+            {
+              lang === 'fr' ? (
+                <>
+                  <p>
+                    Cofondateur et CTO de Passion Barbecue. J'ai porté la
+                    vision technique du produit : conception et pilotage de
+                    l'architecture e-commerce sous{' '}
+                    <span class="hl acc-about">Sylius</span>, robustesse,
+                    scalabilité, et intégration dans tout l'écosystème
+                    logistique, marketing et éditorial.
+                  </p>
+                  <ul class="space-y-2 list-disc pl-5">
+                    <li>
+                      <strong>Socle e-commerce</strong> : développement sur
+                      Sylius (Symfony) avec extensions et fonctionnalités
+                      métier adaptées au retail spécialisé
+                    </li>
+                    <li>
+                      <strong>Logistique & marketplaces</strong> : intégrations
+                      BoostMyShop (commandes, stocks, expéditions) et
+                      Sellermania (flux produits, commandes, états)
+                    </li>
+                    <li>
+                      <strong>Recherche & contenu</strong> : Meilisearch pour
+                      la recherche produit, architecture headless Directus +
+                      CDN pour une gestion éditoriale indépendante du
+                      back-office
+                    </li>
+                    <li>
+                      <strong>Industrialisation & CRM</strong> : chaîne CI/CD
+                      GitLab, Mailjet pour emails transactionnels et campagnes
+                      marketing
+                    </li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p>
+                    Co-founded Passion Barbecue. As founding partner and CTO,
+                    I drove the product's technical vision: design and
+                    ownership of the{' '}
+                    <span class="hl acc-about">Sylius</span> e-commerce
+                    architecture, focused on robustness, scalability, and
+                    integration across the logistics, marketing and editorial
+                    stack.
+                  </p>
+                  <ul class="space-y-2 list-disc pl-5">
+                    <li>
+                      <strong>E-commerce core</strong>: build on Sylius
+                      (Symfony) with extensions and business features tailored
+                      to specialised retail
+                    </li>
+                    <li>
+                      <strong>Logistics & marketplaces</strong>: BoostMyShop
+                      integration (orders, stock, shipping) and Sellermania
+                      (product feeds, orders, statuses)
+                    </li>
+                    <li>
+                      <strong>Search & content</strong>: Meilisearch for
+                      product search, headless Directus + CDN architecture for
+                      editorial management decoupled from the back office
+                    </li>
+                    <li>
+                      <strong>CI/CD & CRM</strong>: GitLab pipelines, Mailjet
+                      for transactional emails and marketing campaigns
+                    </li>
+                  </ul>
+                </>
+              )
+            }
+          </div>
+        </li>
+
+        <li>
+          <div
+            class="text-[11px] tracking-[0.1em] uppercase font-mono text-[color:var(--color-muted)]"
+          >
+            2017 → 2023
+          </div>
+          <h3
+            class="font-serif mt-1 text-[22px] sm:text-[26px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {
+              lang === 'fr'
+                ? 'Progicar / Groupe GEMY — CTO fondateur'
+                : 'Progicar / Groupe GEMY — Founding CTO'
+            }
+          </h3>
+          <div
+            class="mt-1 text-[12.5px] text-[color:var(--color-muted)] font-mono"
+          >
+            {
+              lang === 'fr'
+                ? 'Filiale SaaS B2B · Symfony · 0 → 20+ personnes'
+                : 'B2B SaaS subsidiary · Symfony · 0 → 20+ people'
+            }
+          </div>
+          <div
+            class="mt-3 space-y-3 text-[14.5px] text-[#2a2622] leading-[1.65]"
+          >
+            {
+              lang === 'fr' ? (
+                <>
+                  <p>
+                    Premier collaborateur technique de Progicar, filiale SaaS
+                    construite <em>from scratch</em> au sein du Groupe GEMY
+                    (réseau de concessions automobiles). Mission stratégique :
+                    transformer les applications métiers historiques en
+                    plateforme SaaS moderne, d'abord pour un usage interne au
+                    réseau, puis pour une commercialisation auprès d'acteurs
+                    tiers de la distribution automobile.
+                  </p>
+                  <ul class="space-y-2 list-disc pl-5">
+                    <li>
+                      <strong>Stratégie & architecture</strong> : définition de
+                      la stratégie technologique et de l'architecture cible,
+                      standardisation de la stack (frameworks, tests
+                      automatisés, CI/CD, tooling), culture d'ingénierie
+                      orientée qualité, testabilité et observabilité
+                    </li>
+                    <li>
+                      <strong>Stack</strong> : Symfony, API Platform, VueJs,
+                      Docker, CheckMK, Scaleway
+                    </li>
+                    <li>
+                      <strong>Engineering 0 → n</strong> : recrutement et
+                      structuration jusqu'à 20+ personnes en 3 équipes produit
+                      pluridisciplinaires (PO, Lead Devs, Devs) + transverses
+                      (SRE/infra, design, marketing)
+                    </li>
+                    <li>
+                      <strong>Direction opérationnelle</strong> : 5 ans à
+                      diriger Progicar en coordination avec les fonctions
+                      support du groupe (Finance, RH, Juridique, IT) ;
+                      recentrage sur l'ingénierie et le produit à l'arrivée
+                      d'un CEO commercial
+                    </li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p>
+                    First technical hire at Progicar, a SaaS subsidiary built{' '}
+                    <em>from scratch</em> inside Groupe GEMY (car dealership
+                    network). Strategic mission: turn the group's legacy
+                    in-house apps into a modern SaaS platform — first for
+                    internal use, then commercialised to third-party players in
+                    the automotive distribution sector.
+                  </p>
+                  <ul class="space-y-2 list-disc pl-5">
+                    <li>
+                      <strong>Strategy & architecture</strong>: tech strategy
+                      and target architecture, stack standardisation
+                      (frameworks, automated tests, CI/CD, tooling), engineering
+                      culture geared towards quality, testability and
+                      observability
+                    </li>
+                    <li>
+                      <strong>Stack</strong>: Symfony, API Platform, VueJs,
+                      Docker, CheckMK, Scaleway
+                    </li>
+                    <li>
+                      <strong>Engineering 0 → n</strong>: hired and structured
+                      20+ people across 3 cross-functional product teams (PO,
+                      Lead Devs, Devs) + transverse functions (SRE/infra,
+                      design, marketing)
+                    </li>
+                    <li>
+                      <strong>Operational leadership</strong>: 5 years running
+                      Progicar alongside the group's support functions
+                      (Finance, HR, Legal, IT); refocused on engineering and
+                      product when a commercial CEO joined
+                    </li>
+                  </ul>
+                </>
+              )
+            }
+          </div>
+        </li>
+
+        <li>
+          <div
+            class="text-[11px] tracking-[0.1em] uppercase font-mono text-[color:var(--color-muted)]"
+          >
+            2013 → 2017
+          </div>
+          <h3
+            class="font-serif mt-1 text-[22px] sm:text-[26px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {
+              lang === 'fr'
+                ? 'XL Soft — Développeur web & pilote certification NF 525'
+                : 'XL Soft — Web developer & NF 525 certification lead'
+            }
+          </h3>
+          <div
+            class="mt-1 text-[12.5px] text-[color:var(--color-muted)] font-mono"
+          >
+            {
+              lang === 'fr'
+                ? 'Éditeur logiciel retail · PHP · NF 525 / AFNOR'
+                : 'Retail software vendor · PHP · NF 525 / AFNOR'
+            }
+          </div>
+          <div
+            class="mt-3 space-y-3 text-[14.5px] text-[#2a2622] leading-[1.65]"
+          >
+            {
+              lang === 'fr' ? (
+                <>
+                  <p>
+                    Chez XL Soft (éditeur de solutions de caisse et de gestion
+                    magasin), j'ai d'abord conçu et développé des applications
+                    web pour les acteurs du retail, puis pris le pilotage du
+                    programme de mise en conformité <strong>NF 525</strong> de
+                    la solution XL POS jusqu'à l'obtention de la certification
+                    <em> AFNOR</em> en janvier 2017.
+                  </p>
+                  <ul class="space-y-2 list-disc pl-5">
+                    <li>
+                      <strong>Pilotage NF 525</strong> : analyse du cahier des
+                      charges AFNOR, rétroplanning, déploiement de Squash TM
+                      pour la stratégie de tests, conduite de l'audit final
+                    </li>
+                    <li>
+                      <strong>XL Analytics</strong> : conception et
+                      développement complet d'une application de Business
+                      Intelligence pour piloter la performance des réseaux
+                      retail
+                    </li>
+                    <li>
+                      <strong>Vente accompagnée</strong> : refonte du catalogue
+                      produit avec une interface responsive optimisée pour
+                      tablettes en magasin
+                    </li>
+                    <li>
+                      <strong>Thèse industrielle</strong> (titre Manager des
+                      Systèmes d'Information) sur la fiabilité des applications
+                      en production : qualité logicielle, gestion d'incidents,
+                      observabilité
+                    </li>
+                  </ul>
+                </>
+              ) : (
+                <>
+                  <p>
+                    At XL Soft (point-of-sale and retail management software
+                    vendor), I first designed and built web applications for
+                    retail players, then took the lead on the{' '}
+                    <strong>NF 525</strong> compliance programme for the XL POS
+                    solution, all the way to <em>AFNOR</em> certification in
+                    January 2017.
+                  </p>
+                  <ul class="space-y-2 list-disc pl-5">
+                    <li>
+                      <strong>NF 525 lead</strong>: AFNOR specification
+                      analysis, project planning, Squash TM rollout for the
+                      test strategy, final audit
+                    </li>
+                    <li>
+                      <strong>XL Analytics</strong>: full design and build of a
+                      Business Intelligence app to steer retail network
+                      performance
+                    </li>
+                    <li>
+                      <strong>Vente accompagnée</strong>: rebuilt the product
+                      catalog with a responsive UI optimised for in-store
+                      tablet use
+                    </li>
+                    <li>
+                      <strong>Industrial thesis</strong> (Information Systems
+                      Manager title) on the reliability of production
+                      applications: software quality, incident management,
+                      observability
+                    </li>
+                  </ul>
+                </>
+              )
+            }
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section id="expertises">
+      <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+        <span
+          class="tnum text-[11px] tracking-[0.12em] uppercase font-mono acc-about"
+        >
+          <span class="acc-dot"></span>§ 02
+        </span>
+        <h2
+          class="font-serif text-[28px] sm:text-[36px] leading-[1.1] tracking-[-0.01em]"
+          style="font-family: var(--font-serif)"
+        >
+          {lang === 'fr' ? 'Expertises' : 'Expertise'}
+        </h2>
+      </div>
+
+      <div class="mt-8 space-y-12 max-w-[720px]">
+        <div>
+          <h3
+            class="font-serif text-[22px] sm:text-[24px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {lang === 'fr' ? 'Symfony — depuis 2012' : 'Symfony — since 2012'}
+          </h3>
+          <p class="mt-3 text-[14.5px] text-[#2a2622] leading-[1.65]">
+            {
+              lang === 'fr' ? (
+                <>
+                  14 ans de pratique sur{' '}
+                  <span class="hl acc-about">Symfony</span>, du 2.x au 7.x.{' '}
+                  <em>Doctrine ORM</em>, <em>Messenger</em>,{' '}
+                  <em>API Platform</em>, formulaires, sécurité, événements, bus
+                  de commandes. Capable d'auditer une codebase Symfony
+                  existante, de définir une stratégie de migration LTS, de
+                  former une équipe, ou de démarrer un projet from scratch avec
+                  les bons choix dès le jour 1.
+                </>
+              ) : (
+                <>
+                  14 years of practice on{' '}
+                  <span class="hl acc-about">Symfony</span>, from 2.x to 7.x.{' '}
+                  <em>Doctrine ORM</em>, <em>Messenger</em>,{' '}
+                  <em>API Platform</em>, forms, security, events, command buses.
+                  Able to audit an existing Symfony codebase, define an LTS
+                  migration strategy, train a team, or start a project from
+                  scratch with the right calls on day one.
+                </>
+              )
+            }
+          </p>
+        </div>
+
+        <div>
+          <h3
+            class="font-serif text-[22px] sm:text-[24px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {
+              lang === 'fr'
+                ? 'Sylius — e-commerce sur mesure'
+                : 'Sylius — bespoke e-commerce'
+            }
+          </h3>
+          <p class="mt-3 text-[14.5px] text-[#2a2622] leading-[1.65]">
+            {
+              lang === 'fr' ? (
+                <>
+                  Conception et exploitation d'une plateforme{' '}
+                  <span class="hl acc-about">Sylius</span> en production sur
+                  Passion Barbecue. Personnalisation du catalogue, du checkout,
+                  du paiement, intégrations marketing et logistique.{' '}
+                  <strong>Sylius</strong> est mon framework e-commerce de
+                  référence quand le besoin métier sort des cases d'un Shopify :
+                  produits configurables, taxinomies métier, parcours d'achat
+                  spécifiques, back-office personnalisé.
+                </>
+              ) : (
+                <>
+                  Designed and operated a{' '}
+                  <span class="hl acc-about">Sylius</span> platform in
+                  production on Passion Barbecue. Custom catalog, checkout,
+                  payment, marketing and logistics integrations.{' '}
+                  <strong>Sylius</strong> is my e-commerce framework of choice
+                  when the business need outgrows Shopify: configurable
+                  products, business-specific taxonomies, custom purchase paths,
+                  tailored back office.
+                </>
+              )
+            }
+          </p>
+        </div>
+
+        <div>
+          <h3
+            class="font-serif text-[22px] sm:text-[24px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {
+              lang === 'fr'
+                ? 'Product builder — 0 → 1 et 1 → n'
+                : 'Product builder — 0 → 1 and 1 → n'
+            }
+          </h3>
+          <div
+            class="mt-3 space-y-3 text-[14.5px] text-[#2a2622] leading-[1.65]"
+          >
+            {
+              lang === 'fr' ? (
+                <>
+                  <p>
+                    Construire un produit de zéro jusqu'à la première mise en
+                    production, puis l'amener à plusieurs équipes et des
+                    dizaines de milliers d'utilisateurs — j'ai fait les deux
+                    trajets sur Progicar (SaaS B2B) et Passion Barbecue
+                    (e-commerce). Choix de stack, time-to-MVP, dette acceptée vs
+                    subie, premier recrutement, premier client, premier euro.
+                  </p>
+                  <p>
+                    Particulièrement utile pour :{' '}
+                    <strong>
+                      startups early stage qui cherchent un CTO fondateur ou
+                      fractional
+                    </strong>
+                    , fondateurs non-techniques qui veulent éviter les pièges du
+                    premier MVP, équipes qui ont fait un MVP et qui ne savent
+                    pas comment passer à l'échelle sans tout réécrire.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    Building a product from zero to first production release,
+                    then scaling it to multiple teams and tens of thousands of
+                    users — I've walked both paths on Progicar (B2B SaaS) and
+                    Passion Barbecue (e-commerce). Stack choices, time-to-MVP,
+                    accepted vs. inherited debt, first hire, first customer,
+                    first euro.
+                  </p>
+                  <p>
+                    Particularly useful for:{' '}
+                    <strong>
+                      early-stage startups looking for a founding or fractional
+                      CTO
+                    </strong>
+                    , non-technical founders who want to avoid the classic
+                    first-MVP pitfalls, and teams who have shipped an MVP but
+                    don't know how to scale without a full rewrite.
+                  </p>
+                </>
+              )
+            }
+          </div>
+        </div>
+
+        <div>
+          <h3
+            class="font-serif text-[22px] sm:text-[24px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {
+              lang === 'fr'
+                ? 'Architecture & lead technique'
+                : 'Architecture & technical leadership'
+            }
+          </h3>
+          <ul
+            class="mt-3 space-y-2 text-[14.5px] text-[#2a2622] leading-[1.65] list-disc pl-5"
+          >
+            {
+              lang === 'fr' ? (
+                <>
+                  <li>
+                    Architecture évolutive : hexagonale, DDD light, monolithe
+                    modulaire avant micro-services
+                  </li>
+                  <li>
+                    DevOps : industrialisation CI/CD, déploiements progressifs,
+                    monitoring
+                  </li>
+                  <li>
+                    Recrutement et structuration d'équipes 5 → 25 personnes
+                  </li>
+                  <li>
+                    Cadrage produit-tech, alignement avec le business, arbitrage
+                    dette / vélocité
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    Evolutive architecture: hexagonal, light DDD, modular
+                    monolith before microservices
+                  </li>
+                  <li>
+                    DevOps: CI/CD industrialisation, progressive delivery,
+                    monitoring
+                  </li>
+                  <li>Hiring and structuring teams from 5 to 25 people</li>
+                  <li>
+                    Product-tech framing, business alignment, debt vs. velocity
+                    trade-offs
+                  </li>
+                </>
+              )
+            }
+          </ul>
+        </div>
+
+        <div>
+          <h3
+            class="font-serif text-[22px] sm:text-[24px] tracking-[-0.005em]"
+            style="font-family: var(--font-serif)"
+          >
+            {lang === 'fr' ? 'Sécurité & conformité' : 'Security & compliance'}
+          </h3>
+          <ul
+            class="mt-3 space-y-2 text-[14.5px] text-[#2a2622] leading-[1.65] list-disc pl-5"
+          >
+            <li>
+              <strong>WebAuthn</strong>{' '}
+              {
+                lang === 'fr'
+                  ? '/ passkeys / biométrie / clés matérielles'
+                  : '/ passkeys / biometrics / hardware keys'
+              }
+            </li>
+            <li>
+              <strong>PSD2 / SCA</strong>{' '}
+              {
+                lang === 'fr'
+                  ? '(Strong Customer Authentication)'
+                  : '(Strong Customer Authentication)'
+              }
+            </li>
+            <li>
+              <strong>RGPD</strong>{' '}
+              {
+                lang === 'fr'
+                  ? '(données personnelles, sous-traitance, consentement)'
+                  : '(personal data, sub-processors, consent)'
+              }
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="modes">
+      <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+        <span
+          class="tnum text-[11px] tracking-[0.12em] uppercase font-mono acc-about"
+        >
+          <span class="acc-dot"></span>§ 03
+        </span>
+        <h2
+          class="font-serif text-[28px] sm:text-[36px] leading-[1.1] tracking-[-0.01em]"
+          style="font-family: var(--font-serif)"
+        >
+          {lang === 'fr' ? "Modes d'intervention" : 'How I work'}
+        </h2>
+      </div>
+
+      <div
+        class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-8 max-w-[720px]"
+      >
+        <div>
+          <h3 class="text-[15px] font-medium text-[color:var(--color-ink)]">
+            {
+              lang === 'fr'
+                ? 'Mission longue (3-12 mois)'
+                : 'Long engagement (3-12 months)'
+            }
+          </h3>
+          <p class="mt-2 text-[14px] text-[#2a2622] leading-[1.65]">
+            {
+              lang === 'fr'
+                ? 'Lead technique sur un projet structurant, intégré à votre équipe. Format actuel sur Anytime.'
+                : 'Technical lead on a structuring project, embedded in your team. Current format with Anytime.'
+            }
+          </p>
+        </div>
+        <div>
+          <h3 class="text-[15px] font-medium text-[color:var(--color-ink)]">
+            {
+              lang === 'fr'
+                ? 'CTO fractional — startup early stage'
+                : 'Fractional CTO — early-stage startup'
+            }
+          </h3>
+          <p class="mt-2 text-[14px] text-[#2a2622] leading-[1.65]">
+            {
+              lang === 'fr'
+                ? "1 à 3 jours par semaine, en complément d'un fondateur non-tech ou d'une équipe junior. Pour passer du MVP à la première traction sans recruter de CTO permanent trop tôt."
+                : '1 to 3 days a week, alongside a non-technical founder or a junior team. To go from MVP to first traction without hiring a permanent CTO too early.'
+            }
+          </p>
+        </div>
+        <div>
+          <h3 class="text-[15px] font-medium text-[color:var(--color-ink)]">
+            {lang === 'fr' ? 'Audit (1-3 semaines)' : 'Audit (1-3 weeks)'}
+          </h3>
+          <p class="mt-2 text-[14px] text-[#2a2622] leading-[1.65]">
+            {
+              lang === 'fr'
+                ? "Audit de codebase, d'architecture, d'organisation tech. Livrable écrit, recommandations priorisées, restitution orale."
+                : 'Codebase, architecture or tech-organisation audit. Written deliverable with prioritised recommendations and a live debrief.'
+            }
+          </p>
+        </div>
+        <div>
+          <h3 class="text-[15px] font-medium text-[color:var(--color-ink)]">
+            {lang === 'fr' ? 'Sparring partner' : 'Sparring partner'}
+          </h3>
+          <p class="mt-2 text-[14px] text-[#2a2622] leading-[1.65]">
+            {
+              lang === 'fr'
+                ? 'Sessions régulières (1h/semaine ou 1/2j/mois) pour challenger vos décisions tech et produit. Pour fondateurs ou CTOs en place qui veulent un regard extérieur.'
+                : 'Regular sessions (1h/week or 1/2 day a month) to challenge your tech and product decisions. For founders or incumbent CTOs who want an outside perspective.'
+            }
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="localisation">
+      <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+        <span
+          class="tnum text-[11px] tracking-[0.12em] uppercase font-mono acc-about"
+        >
+          <span class="acc-dot"></span>§ 04
+        </span>
+        <h2
+          class="font-serif text-[28px] sm:text-[36px] leading-[1.1] tracking-[-0.01em]"
+          style="font-family: var(--font-serif)"
+        >
+          {
+            lang === 'fr'
+              ? 'Localisation & disponibilité'
+              : 'Location & availability'
+          }
+        </h2>
+      </div>
+
+      <dl
+        class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[color:var(--color-muted)] max-w-[720px]"
+      >
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
+          <dt>{lang === 'fr' ? 'Basé à' : 'Based in'}</dt>
+          <dd class="text-[color:var(--color-ink)]">Nantes (44)</dd>
+        </div>
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
+          <dt>Remote</dt>
+          <dd class="text-[color:var(--color-ink)]">
+            {lang === 'fr' ? 'France · Europe' : 'France · Europe'}
+          </dd>
+        </div>
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
+          <dt>{lang === 'fr' ? 'On-site' : 'On-site'}</dt>
+          <dd class="text-[color:var(--color-ink)]">
+            {
+              lang === 'fr'
+                ? 'Nantes · Paris ponctuel'
+                : 'Nantes · Paris occasionally'
+            }
+          </dd>
+        </div>
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
+          <dt>{lang === 'fr' ? 'Disponibilité' : 'Availability'}</dt>
+          <dd class="acc-about">Q3 2026</dd>
+        </div>
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
+          <dt>Email</dt>
+          <dd>
+            <a
+              href={`mailto:${SITE.author.email}`}
+              class="link-u text-[color:var(--color-ink)]"
+            >
+              {SITE.author.email}
+            </a>
+          </dd>
+        </div>
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
+          <dt>LinkedIn</dt>
+          <dd>
+            <a
+              href={SITE.author.linkedin}
+              target="_blank"
+              rel="noopener"
+              class="link-u text-[color:var(--color-ink)]"
+            >
+              gabrielmustiere
+            </a>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section id="faq">
+      <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+        <span
+          class="tnum text-[11px] tracking-[0.12em] uppercase font-mono acc-about"
+        >
+          <span class="acc-dot"></span>§ 05
+        </span>
+        <h2
+          class="font-serif text-[28px] sm:text-[36px] leading-[1.1] tracking-[-0.01em]"
+          style="font-family: var(--font-serif)"
+        >
+          {lang === 'fr' ? 'Questions fréquentes' : 'FAQ'}
+        </h2>
+      </div>
+
+      <dl class="mt-8 space-y-8 max-w-[720px]">
+        {
+          (lang === 'fr'
+            ? [
+                {
+                  q: "Pourquoi un CTO freelance plutôt qu'un CTO en CDI ?",
+                  a: "Pour les phases où l'équipe ne justifie pas un CDI plein temps (early stage, transition, audit), un CTO freelance livre l'expertise sans bloquer un poste permanent. Et sur des missions longues ciblées (mise en conformité, scale-up, refonte), un freelance senior va à la cible plus vite qu'un recrutement.",
+                },
+                {
+                  q: "Qu'est-ce qui différencie un expert Symfony d'un développeur Symfony senior ?",
+                  a: "Un dev senior code bien. Un expert tient compte de la dette de l'écosystème (versions LTS, montée Symfony 6 → 7, dépendances Doctrine ou API Platform), arbitre les choix architecturaux long terme, et sait lire / refactorer une codebase existante sans tout casser.",
+                },
+                {
+                  q: 'Tu travailles avec des stacks autres que Symfony et Sylius ?',
+                  a: "Oui. Symfony et Sylius sont mes spécialités, mais j'ai travaillé avec Node.js, TypeScript, React et l'écosystème JS moderne (Astro, Next). Sur une mission, l'enjeu est plus souvent le contexte produit et l'équipe que le langage exact.",
+                },
+                {
+                  q: 'Tu acceptes les missions de cofondation / equity ?',
+                  a: "Au cas par cas. La trajectoire Passion Barbecue m'a appris ce que ça implique. Aujourd'hui je privilégie les missions freelance facturées, mais reste ouvert pour des projets early stage avec un fit produit-fondateur fort.",
+                },
+                {
+                  q: 'Combien coûte une mission ?',
+                  a: 'TJM en ligne avec le marché senior CTO freelance Nantes / remote. Forfaits possibles sur audit. On en parle après un premier échange pour cadrer le besoin.',
+                },
+                {
+                  q: 'Pourquoi Nantes ?',
+                  a: "J'y vis. Le tissu tech nantais est dense (Lengow, iAdvize, Akeneo, Manzana…) avec une vraie communauté Symfony / PHP. La plupart de mes missions se font en remote ou hybride.",
+                },
+              ]
+            : [
+                {
+                  q: 'Why a freelance CTO rather than a permanent CTO?',
+                  a: "For phases where the team doesn't justify a full-time hire (early stage, transition, audit), a freelance CTO delivers the expertise without freezing a permanent seat. And on focused long engagements (compliance, scale-up, rewrite), a senior freelance reaches the target faster than a hire.",
+                },
+                {
+                  q: 'What sets a Symfony expert apart from a senior Symfony developer?',
+                  a: 'A senior writes good code. An expert factors in ecosystem debt (LTS versions, Symfony 6 → 7 upgrade, Doctrine and API Platform dependencies), arbitrates long-term architectural choices, and can read / refactor an existing codebase without breaking everything.',
+                },
+                {
+                  q: 'Do you work with stacks other than Symfony and Sylius?',
+                  a: "Yes. Symfony and Sylius are my specialties, but I've worked with Node.js, TypeScript, React and the modern JS ecosystem (Astro, Next). On an engagement, the product context and team usually matter more than the exact language.",
+                },
+                {
+                  q: 'Do you take co-founder / equity engagements?',
+                  a: 'Case by case. The Passion Barbecue trajectory taught me what that involves. I currently favour invoiced freelance engagements, but stay open to early-stage projects with strong product-founder fit.',
+                },
+                {
+                  q: 'How much does an engagement cost?',
+                  a: 'Day rate aligned with senior freelance CTO market in Nantes / remote. Fixed fees possible for audits. We discuss it after a first call to frame the need.',
+                },
+                {
+                  q: 'Why Nantes?',
+                  a: 'I live here. The Nantes tech ecosystem is dense (Lengow, iAdvize, Akeneo, Manzana…) with a real Symfony / PHP community. Most of my engagements run remote or hybrid.',
+                },
+              ]
+          ).map((item) => (
+            <div>
+              <dt
+                class="font-serif text-[18px] sm:text-[20px] tracking-[-0.005em]"
+                style="font-family: var(--font-serif)"
+              >
+                {item.q}
+              </dt>
+              <dd class="mt-2 text-[14.5px] text-[#2a2622] leading-[1.7]">
+                {item.a}
+              </dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section
+      class="mt-14 sm:mt-24 border-t border-[color:var(--color-rule-strong)] pt-8 flex items-center justify-between gap-6 flex-wrap"
+    >
+      <div>
+        <div
+          class="text-[11px] tracking-[0.12em] uppercase acc-about font-mono"
+        >
+          <span class="acc-dot"></span>§ 06 ·{' '}
+          {lang === 'fr' ? 'Et maintenant ?' : 'Next?'}
+        </div>
+        <h2
+          class="font-serif mt-1 text-[28px] sm:text-[36px] tracking-[-0.01em]"
+          style="font-family: var(--font-serif)"
+        >
+          {lang === 'fr' ? 'On en parle.' : "Let's talk."}
+        </h2>
+        <p
+          class="mt-2 text-[14px] text-[color:var(--color-muted)] max-w-[480px]"
+        >
+          {
+            lang === 'fr'
+              ? 'Mission longue, fractional, audit, sparring : un mail suffit. Réponse sous 48h.'
+              : 'Long engagement, fractional, audit or sparring: a single email is enough. Response within 48h.'
+          }
+        </p>
+      </div>
+      <a
+        href={`mailto:${SITE.author.email}`}
+        class="inline-flex items-center gap-2 text-[13px] border px-4 py-2 rounded-full hover:bg-white transition acc-about"
+        style="border-color: var(--a-about)"
+      >
+        <span>{lang === 'fr' ? 'Écrire un mail' : 'Write an email'}</span>
+        <span class="font-mono text-[11px]">→</span>
+      </a>
+    </section>
+
+    <Footer variant="home" lang={lang} />
+  </main>
+</SiteLayout>
