@@ -199,8 +199,7 @@ const PARCOURS_FAQ: Record<
     },
     {
       question: 'Tu acceptes les missions de cofondation ou equity ?',
-      answer:
-        'Je suis ouvert à toute proposition honnête et intelligente.',
+      answer: 'Je suis ouvert à toute proposition honnête et intelligente.',
     },
     {
       question: 'Combien coûte une mission ?',
@@ -228,12 +227,11 @@ const PARCOURS_FAQ: Record<
     {
       question: 'Do you work with stacks other than Symfony and Sylius?',
       answer:
-        "I work primarily with Symfony and its ecosystem (Doctrine, API Platform, Sylius). On the front-end side, I also have experience with Vue.js and Nuxt. On an engagement, the product context and team usually matter more than the exact language.",
+        'I work primarily with Symfony and its ecosystem (Doctrine, API Platform, Sylius). On the front-end side, I also have experience with Vue.js and Nuxt. On an engagement, the product context and team usually matter more than the exact language.',
     },
     {
       question: 'Do you take co-founder or equity engagements?',
-      answer:
-        "I'm open to any honest, well-thought-out proposal.",
+      answer: "I'm open to any honest, well-thought-out proposal.",
     },
     {
       question: 'How much does an engagement cost?',
@@ -318,7 +316,8 @@ export function blogPostingSchema(p: BlogPostingInput) {
       '@type': 'SpeakableSpecification',
       cssSelector: ['[data-speakable]'],
     },
-    relatedLink: p.relatedUrls && p.relatedUrls.length > 0 ? p.relatedUrls : undefined,
+    relatedLink:
+      p.relatedUrls && p.relatedUrls.length > 0 ? p.relatedUrls : undefined,
     author: { '@id': PERSON_ID },
     publisher: { '@id': ORG_ID },
     isPartOf: { '@id': WEBSITE_ID },
@@ -368,7 +367,8 @@ export function softwareSourceCodeSchema(p: SoftwareSourceCodeInput) {
       '@type': 'SpeakableSpecification',
       cssSelector: ['[data-speakable]'],
     },
-    relatedLink: p.relatedUrls && p.relatedUrls.length > 0 ? p.relatedUrls : undefined,
+    relatedLink:
+      p.relatedUrls && p.relatedUrls.length > 0 ? p.relatedUrls : undefined,
     isPartOf: { '@id': WEBSITE_ID },
   };
 }
@@ -390,9 +390,7 @@ export function faqPageSchema(
   };
 }
 
-export function breadcrumbSchema(
-  items: Array<{ name: string; url: string }>
-) {
+export function breadcrumbSchema(items: Array<{ name: string; url: string }>) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',

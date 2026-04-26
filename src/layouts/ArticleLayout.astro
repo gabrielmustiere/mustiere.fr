@@ -15,10 +15,7 @@ import {
   breadcrumbSchema,
   faqPageSchema,
 } from '@/utils/schema';
-import {
-  formatDateDottedFull,
-  toISODate,
-} from '@/utils/format-date';
+import { formatDateDottedFull, toISODate } from '@/utils/format-date';
 import { SITE } from '@/consts';
 import { useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
@@ -122,17 +119,21 @@ const endLabel = lang === 'fr' ? '§ fin' : '§ end';
           <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
             >·</span
           >
-          <time
-            class="acc-blog tnum"
-            datetime={toISODate(data.publishedAt)}
-          >
+          <time class="acc-blog tnum" datetime={toISODate(data.publishedAt)}>
             {formatDateDottedFull(data.publishedAt)}
           </time>
           {
             data.readingTime && (
               <>
-                <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
-                <span class="tnum text-[color:var(--color-muted)]">{data.readingTime} min</span>
+                <span
+                  class="text-[color:var(--color-rule-strong)]"
+                  aria-hidden="true"
+                >
+                  ·
+                </span>
+                <span class="tnum text-[color:var(--color-muted)]">
+                  {data.readingTime} min
+                </span>
               </>
             )
           }
@@ -170,11 +171,7 @@ const endLabel = lang === 'fr' ? '§ fin' : '§ end';
         />
       </header>
 
-      <TableOfContents
-        headings={headings}
-        title={tocTitle}
-        accent="blog"
-      />
+      <TableOfContents headings={headings} title={tocTitle} accent="blog" />
 
       <div class="prose mt-10">
         <slot />
@@ -182,11 +179,7 @@ const endLabel = lang === 'fr' ? '§ fin' : '§ end';
 
       {
         data.faq.length > 0 && (
-          <Faq
-            items={data.faq}
-            title={tr.project.faqTitle}
-            accent="blog"
-          />
+          <Faq items={data.faq} title={tr.project.faqTitle} accent="blog" />
         )
       }
 

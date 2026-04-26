@@ -8,7 +8,7 @@ import {
   breadcrumbSchema,
 } from '@/utils/schema';
 import { SITE } from '@/consts';
-import { useTranslations, localizedPath } from '@/i18n/utils';
+import { localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 
 interface Props {
@@ -16,7 +16,6 @@ interface Props {
 }
 
 const { lang } = Astro.props;
-const tr = useTranslations(lang);
 
 const homeUrl = `${SITE.url}${localizedPath(lang, '/')}`;
 const parcoursUrl = `${SITE.url}${localizedPath(
@@ -71,7 +70,7 @@ const description =
 
   <main
     id="main"
-    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
+    class="mx-auto px-6 sm:px-10 pt-8 sm:pt-18 pb-16 sm:pb-28"
     style="max-width: var(--w-home)"
   >
     <header class="mt-10 sm:mt-24">
@@ -178,11 +177,7 @@ const description =
           <div
             class="text-[11px] tracking-[0.1em] uppercase font-mono text-[color:var(--color-muted)]"
           >
-            {
-              lang === 'fr'
-                ? "Sept. 2025 → aujourd'hui"
-                : 'Sept 2025 → present'
-            }
+            {lang === 'fr' ? "Sept. 2025 → aujourd'hui" : 'Sept 2025 → present'}
           </div>
           <h3
             class="font-serif mt-1 text-[22px] sm:text-[26px] tracking-[-0.005em]"
@@ -268,8 +263,8 @@ const description =
               lang === 'fr' ? (
                 <>
                   <p>
-                    Cofondateur et CTO de Passion Barbecue. J'ai porté la
-                    vision technique du produit : conception et pilotage de
+                    Cofondateur et CTO de Passion Barbecue. J'ai porté la vision
+                    technique du produit : conception et pilotage de
                     l'architecture e-commerce sous{' '}
                     <span class="hl acc-about">Sylius</span>, robustesse,
                     scalabilité, et intégration dans tout l'écosystème
@@ -278,8 +273,8 @@ const description =
                   <ul class="space-y-2 list-disc pl-5">
                     <li>
                       <strong>Socle e-commerce</strong> : développement sur
-                      Sylius (Symfony) avec extensions et fonctionnalités
-                      métier adaptées au retail spécialisé
+                      Sylius (Symfony) avec extensions et fonctionnalités métier
+                      adaptées au retail spécialisé
                     </li>
                     <li>
                       <strong>Logistique & marketplaces</strong> : intégrations
@@ -287,10 +282,9 @@ const description =
                       Sellermania (flux produits, commandes, états)
                     </li>
                     <li>
-                      <strong>Recherche & contenu</strong> : Meilisearch pour
-                      la recherche produit, architecture headless Directus +
-                      CDN pour une gestion éditoriale indépendante du
-                      back-office
+                      <strong>Recherche & contenu</strong> : Meilisearch pour la
+                      recherche produit, architecture headless Directus + CDN
+                      pour une gestion éditoriale indépendante du back-office
                     </li>
                     <li>
                       <strong>Industrialisation & CRM</strong> : chaîne CI/CD
@@ -302,10 +296,9 @@ const description =
               ) : (
                 <>
                   <p>
-                    Co-founded Passion Barbecue. As founding partner and CTO,
-                    I drove the product's technical vision: design and
-                    ownership of the{' '}
-                    <span class="hl acc-about">Sylius</span> e-commerce
+                    Co-founded Passion Barbecue. As founding partner and CTO, I
+                    drove the product's technical vision: design and ownership
+                    of the <span class="hl acc-about">Sylius</span> e-commerce
                     architecture, focused on robustness, scalability, and
                     integration across the logistics, marketing and editorial
                     stack.
@@ -322,9 +315,9 @@ const description =
                       (product feeds, orders, statuses)
                     </li>
                     <li>
-                      <strong>Search & content</strong>: Meilisearch for
-                      product search, headless Directus + CDN architecture for
-                      editorial management decoupled from the back office
+                      <strong>Search & content</strong>: Meilisearch for product
+                      search, headless Directus + CDN architecture for editorial
+                      management decoupled from the back office
                     </li>
                     <li>
                       <strong>CI/CD & CRM</strong>: GitLab pipelines, Mailjet
@@ -399,8 +392,8 @@ const description =
                       <strong>Direction opérationnelle</strong> : 5 ans à
                       diriger Progicar en coordination avec les fonctions
                       support du groupe (Finance, RH, Juridique, IT) ;
-                      recentrage sur l'ingénierie et le produit à l'arrivée
-                      d'un CEO commercial
+                      recentrage sur l'ingénierie et le produit à l'arrivée d'un
+                      CEO commercial
                     </li>
                   </ul>
                 </>
@@ -434,9 +427,9 @@ const description =
                     </li>
                     <li>
                       <strong>Operational leadership</strong>: 5 years running
-                      Progicar alongside the group's support functions
-                      (Finance, HR, Legal, IT); refocused on engineering and
-                      product when a commercial CEO joined
+                      Progicar alongside the group's support functions (Finance,
+                      HR, Legal, IT); refocused on engineering and product when
+                      a commercial CEO joined
                     </li>
                   </ul>
                 </>
@@ -522,8 +515,8 @@ const description =
                   <ul class="space-y-2 list-disc pl-5">
                     <li>
                       <strong>NF 525 lead</strong>: AFNOR specification
-                      analysis, project planning, Squash TM rollout for the
-                      test strategy, final audit
+                      analysis, project planning, Squash TM rollout for the test
+                      strategy, final audit
                     </li>
                     <li>
                       <strong>XL Analytics</strong>: full design and build of a
@@ -532,8 +525,8 @@ const description =
                     </li>
                     <li>
                       <strong>Vente accompagnée</strong>: rebuilt the product
-                      catalog with a responsive UI optimised for in-store
-                      tablet use
+                      catalog with a responsive UI optimised for in-store tablet
+                      use
                     </li>
                     <li>
                       <strong>Industrial thesis</strong> (Information Systems
@@ -660,9 +653,9 @@ const description =
                 <>
                   <p>
                     De zéro au premier client, puis du premier client à
-                    plusieurs équipes et des milliers d'utilisateurs : j'ai
-                    fait ce trajet deux fois, sur Progicar (SaaS B2B) et
-                    Passion Barbecue (e-commerce).
+                    plusieurs équipes et des milliers d'utilisateurs : j'ai fait
+                    ce trajet deux fois, sur Progicar (SaaS B2B) et Passion
+                    Barbecue (e-commerce).
                   </p>
                   <p>
                     Au démarrage, ça veut dire choisir une stack qu'on saura
@@ -673,23 +666,20 @@ const description =
                     était bricolé, et passer la main sur les sujets qu'un seul
                     fondateur ne peut plus porter.
                   </p>
-                  <p>
-                    Concrètement utile pour :
-                  </p>
+                  <p>Concrètement utile pour :</p>
                   <ul class="space-y-2 list-disc pl-5">
                     <li>
-                      <strong>les startups early stage</strong> qui cherchent
-                      un CTO fondateur ou fractional pour cadrer leurs premiers
+                      <strong>les startups early stage</strong> qui cherchent un
+                      CTO fondateur ou fractional pour cadrer leurs premiers
                       choix techniques ;
                     </li>
                     <li>
-                      <strong>les fondateurs non-techniques</strong> qui
-                      veulent éviter les pièges classiques du premier MVP ;
+                      <strong>les fondateurs non-techniques</strong> qui veulent
+                      éviter les pièges classiques du premier MVP ;
                     </li>
                     <li>
                       <strong>les équipes qui ont livré un MVP</strong> et qui
-                      se demandent comment changer d'échelle sans tout
-                      réécrire.
+                      se demandent comment changer d'échelle sans tout réécrire.
                     </li>
                   </ul>
                 </>
@@ -697,8 +687,8 @@ const description =
                 <>
                   <p>
                     From zero to first customer, then from first customer to
-                    multiple teams and thousands of users: I've walked that
-                    path twice, on Progicar (B2B SaaS) and Passion Barbecue
+                    multiple teams and thousands of users: I've walked that path
+                    twice, on Progicar (B2B SaaS) and Passion Barbecue
                     (e-commerce).
                   </p>
                   <p>
@@ -722,8 +712,8 @@ const description =
                       the classic first-MVP pitfalls;
                     </li>
                     <li>
-                      <strong>teams that shipped an MVP</strong> and aren't
-                      sure how to scale up without a full rewrite.
+                      <strong>teams that shipped an MVP</strong> and aren't sure
+                      how to scale up without a full rewrite.
                     </li>
                   </ul>
                 </>
@@ -1042,7 +1032,7 @@ const description =
                 },
                 {
                   q: 'Do you work with stacks other than Symfony and Sylius?',
-                  a: "I work primarily with Symfony and its ecosystem (Doctrine, API Platform, Sylius). On the front-end side, I also have experience with Vue.js and Nuxt. On an engagement, the product context and team usually matter more than the exact language.",
+                  a: 'I work primarily with Symfony and its ecosystem (Doctrine, API Platform, Sylius). On the front-end side, I also have experience with Vue.js and Nuxt. On an engagement, the product context and team usually matter more than the exact language.',
                 },
                 {
                   q: 'Do you take co-founder / equity engagements?',

@@ -53,9 +53,7 @@ function buildLocalizedUrl(origin, lang, collection, slug) {
 // Pages statiques traduites (pages racine sans collection — ex. /parcours,
 // /en/background). Les paires sont déclarées explicitement pour générer les
 // hreflang dans le sitemap.
-const STATIC_PAGE_PAIRS = [
-  ['/parcours/', '/en/background/'],
-];
+const STATIC_PAGE_PAIRS = [['/parcours/', '/en/background/']];
 
 function findStaticPageLinks(pathname, origin) {
   for (const [fr, en] of STATIC_PAGE_PAIRS) {

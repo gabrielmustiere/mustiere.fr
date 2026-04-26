@@ -18,7 +18,10 @@ const { current = 'home', otherLangHref } = Astro.props;
 const isHome = current === 'home';
 const homePath = localizedPath(lang, '/');
 const blogPath = localizedPath(lang, '/blog');
-const parcoursPath = localizedPath(lang, lang === 'fr' ? '/parcours' : '/background');
+const parcoursPath = localizedPath(
+  lang,
+  lang === 'fr' ? '/parcours' : '/background'
+);
 const activeKey =
   current === 'blog' || current === 'article'
     ? 'blog'
@@ -30,10 +33,34 @@ const isOnParcours = current === 'about';
 const parcoursLinkHref = isHome ? '#about' : parcoursPath;
 
 const index = [
-  { key: 'blog', num: '01', label: tr.nav.items.blog, home: '#blog', away: blogPath },
-  { key: 'projects', num: '02', label: tr.nav.items.projects, home: '#projects', away: `${homePath}#projects` },
-  { key: 'contact', num: '03', label: tr.nav.items.contact, home: '#contact', away: `${homePath}#contact` },
-  { key: 'cv', num: '04', label: tr.nav.items.cv, home: '#cv', away: `${homePath}#cv` },
+  {
+    key: 'blog',
+    num: '01',
+    label: tr.nav.items.blog,
+    home: '#blog',
+    away: blogPath,
+  },
+  {
+    key: 'projects',
+    num: '02',
+    label: tr.nav.items.projects,
+    home: '#projects',
+    away: `${homePath}#projects`,
+  },
+  {
+    key: 'contact',
+    num: '03',
+    label: tr.nav.items.contact,
+    home: '#contact',
+    away: `${homePath}#contact`,
+  },
+  {
+    key: 'cv',
+    num: '04',
+    label: tr.nav.items.cv,
+    home: '#cv',
+    away: `${homePath}#cv`,
+  },
 ] as const;
 ---
 
@@ -90,10 +117,7 @@ const index = [
       loading="eager"
       decoding="async"
     />
-    <div
-      class="font-serif brand-big"
-      style="font-family: var(--font-serif)"
-    >
+    <div class="font-serif brand-big" style="font-family: var(--font-serif)">
       {tr.site.role}<br /><em class="acc-about">{tr.site.roleSuffix}</em>
     </div>
     <p class="brand-sub">{tr.site.tagline} {tr.site.taglineLocation}</p>
@@ -105,7 +129,10 @@ const index = [
       aria-current={isOnParcours ? 'page' : undefined}
     >
       <span class="parcours-arrow" aria-hidden="true">→</span>
-      <span class="parcours-label font-serif" style="font-family: var(--font-serif)">
+      <span
+        class="parcours-label font-serif"
+        style="font-family: var(--font-serif)"
+      >
         {tr.nav.items.about}
       </span>
     </a>
@@ -146,22 +173,14 @@ const index = [
 
     <footer class="mobile-dialog-footer">
       <div class="socials">
-        <a
-          href={SITE.author.github}
-          target="_blank"
-          rel="noopener">GitHub</a
-        >
+        <a href={SITE.author.github} target="_blank" rel="noopener">GitHub</a>
         <span aria-hidden="true" class="sep">·</span>
-        <a
-          href={SITE.author.linkedin}
-          target="_blank"
-          rel="noopener">LinkedIn</a
+        <a href={SITE.author.linkedin} target="_blank" rel="noopener"
+          >LinkedIn</a
         >
       </div>
       <div class="availability">
-        <span
-          class="dot"
-          aria-hidden="true"></span>
+        <span class="dot" aria-hidden="true"></span>
         <span>{tr.availability}</span>
       </div>
     </footer>
@@ -212,7 +231,9 @@ const index = [
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--color-muted);
-    transition: color 0.15s ease, border-color 0.15s ease;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
   }
   .hamburger:hover {
     color: var(--color-ink);

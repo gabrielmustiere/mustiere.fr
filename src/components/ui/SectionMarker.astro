@@ -28,7 +28,10 @@ const accentClass = accent === 'blog' ? 'acc-blog' : 'acc-projects';
     aria-hidden="true"></span>
   {
     trailing && trailingDateTime && (
-      <time class="tnum text-[color:var(--color-muted)]" datetime={trailingDateTime}>
+      <time
+        class="tnum text-[color:var(--color-muted)]"
+        datetime={trailingDateTime}
+      >
         {trailing}
       </time>
     )

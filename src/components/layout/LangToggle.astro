@@ -137,7 +137,9 @@ const hrefFor = (code: Lang): string => {
     border-radius: 1px;
     overflow: hidden;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
-    transition: opacity 0.15s ease, filter 0.15s ease;
+    transition:
+      opacity 0.15s ease,
+      filter 0.15s ease;
   }
   .lang-toggle__flag > svg {
     width: 100%;
@@ -165,18 +167,20 @@ const hrefFor = (code: Lang): string => {
 
 <script>
   // Preserve hash when swapping language
-  document.querySelectorAll<HTMLAnchorElement>('.lang-toggle__item').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      if (a.getAttribute('aria-current') === 'true') {
-        e.preventDefault();
-        return;
-      }
-      const hash = window.location.hash;
-      if (hash) {
-        e.preventDefault();
-        const base = a.getAttribute('href') ?? '';
-        window.location.href = base + hash;
-      }
+  document
+    .querySelectorAll<HTMLAnchorElement>('.lang-toggle__item')
+    .forEach((a) => {
+      a.addEventListener('click', (e) => {
+        if (a.getAttribute('aria-current') === 'true') {
+          e.preventDefault();
+          return;
+        }
+        const hash = window.location.hash;
+        if (hash) {
+          e.preventDefault();
+          const base = a.getAttribute('href') ?? '';
+          window.location.href = base + hash;
+        }
+      });
     });
-  });
 </script>

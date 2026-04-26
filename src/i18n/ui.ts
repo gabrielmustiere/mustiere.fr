@@ -59,7 +59,7 @@ export const ui = {
       contact: {
         title: 'Contact',
         intro:
-          "Missions, audits, sparring : un mail suffit. Je réponds sous 48h, jamais aux sollicitations commerciales.",
+          'Missions, audits, sparring : un mail suffit. Je réponds sous 48h, jamais aux sollicitations commerciales.',
         emailLabel: 'Email',
         linkedinLabel: 'LinkedIn',
         githubLabel: 'GitHub',
@@ -167,7 +167,7 @@ export const ui = {
       blog: {
         title: 'Blog posts',
         intro:
-          "Notes on tech, business and AI. No schedule — only when I have something to say.",
+          'Notes on tech, business and AI. No schedule — only when I have something to say.',
         seeAll: 'All posts',
         readMore: 'Read',
       },
@@ -190,7 +190,7 @@ export const ui = {
       contact: {
         title: 'Contact',
         intro:
-          "Missions, audits, sparring: a single email is enough. I reply within 48h, never to cold sales.",
+          'Missions, audits, sparring: a single email is enough. I reply within 48h, never to cold sales.',
         emailLabel: 'Email',
         linkedinLabel: 'LinkedIn',
         githubLabel: 'GitHub',
@@ -204,7 +204,7 @@ export const ui = {
     blogIndex: {
       title: 'Blog posts',
       description:
-        "Notes on tech, business and AI. No schedule — only when I have something to say.",
+        'Notes on tech, business and AI. No schedule — only when I have something to say.',
       allCategories: 'All',
       empty: 'Nothing in this category yet.',
       filterLabel: 'Filter by category',
@@ -253,7 +253,7 @@ export const ui = {
       eyebrow: 'Error 404',
       title: "This page doesn't exist",
       description:
-        "It was either moved, or it never existed. These things happen.",
+        'It was either moved, or it never existed. These things happen.',
       backHome: 'Back to home',
       goToBlog: 'Go to blog',
     },

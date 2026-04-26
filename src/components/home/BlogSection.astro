@@ -24,9 +24,7 @@ const posts = (
 
 <section data-key="blog" id="blog">
   <SectionHead number="01" title={tr.home.blog.title} accent="blog" />
-  <p
-    class="mt-4 text-[14px] text-[color:var(--color-muted)] max-w-[480px]"
-  >
+  <p class="mt-4 text-[14px] text-[color:var(--color-muted)] max-w-[480px]">
     {tr.home.blog.intro}
   </p>
 
@@ -75,7 +73,8 @@ const posts = (
     >
       {lang === 'fr' ? 'Extrait — eval harness' : 'Excerpt — eval harness'}
     </figcaption>
-    <pre class="code-block"><code>{`// tiny scoring loop
+    <pre
+      class="code-block"><code>{`// tiny scoring loop
 for (const c of suite) {
   const out = await model.run(c.input)
   const s   = score(out, c.expected)

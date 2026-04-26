@@ -40,7 +40,11 @@ export function stripLangFromPath(pathname: string): {
   if (first === 'en') {
     const rest = '/' + segments.slice(1).join('/');
     const withSlash =
-      rest === '/' || pathname.endsWith('/') ? (rest === '/' ? '/' : `${rest}/`) : rest;
+      rest === '/' || pathname.endsWith('/')
+        ? rest === '/'
+          ? '/'
+          : `${rest}/`
+        : rest;
     return { lang: 'en', rest: withSlash };
   }
   return { lang: DEFAULT_LANG, rest: normalized || '/' };

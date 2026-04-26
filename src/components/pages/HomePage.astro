@@ -28,39 +28,21 @@ const parcoursHref = localizedPath(
   current="home"
   lang={lang}
 >
-  <StructuredData
-    slot="head"
-    schemas={[profilePageSchema(lang)]}
-  />
+  <StructuredData slot="head" schemas={[profilePageSchema(lang)]} />
 
   <main
     id="main"
-    class="mx-auto px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
+    class="mx-auto px-6 sm:px-10 pt-8 sm:pt-18 pb-16 sm:pb-28"
     style="max-width: var(--w-home)"
   >
-    <header
-      id="about"
-      data-key="about"
-      class="mt-6 sm:mt-12"
-    >
-      <img
-        src="/avatar.jpeg"
-        alt={tr.portrait}
-        width="96"
-        height="96"
-        class="about-portrait"
-        loading="eager"
-        decoding="async"
-      />
-
+    <header id="about" data-key="about">
       {
         lang === 'fr' ? (
           <h1
             class="mt-8 sm:mt-10 font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
             style="font-family: var(--font-serif)"
           >
-            CTO &amp; lead{' '}
-            <br />
+            CTO &amp; lead <br />
             <em class="acc-about">en freelance.</em>
           </h1>
         ) : (
@@ -68,8 +50,7 @@ const parcoursHref = localizedPath(
             class="mt-8 sm:mt-10 font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
             style="font-family: var(--font-serif)"
           >
-            Freelance{' '}
-            <br />
+            Freelance <br />
             <em class="acc-about">CTO &amp; lead.</em>
           </h1>
         )
@@ -87,14 +68,16 @@ const parcoursHref = localizedPath(
                 SaaS <em class="acc-about">Progicar</em> (Groupe GEMY) de zéro à
                 plus de 25 personnes, cofondé{' '}
                 <em class="acc-about">Passion Barbecue</em> sur{' '}
-                <span class="hl acc-about">Sylius</span>, et accompagne aujourd'hui{' '}
-                <em class="acc-about">Anytime</em> sur la conformité PSD2/SCA via{' '}
-                <span class="hl acc-about">WebAuthn</span> (passkeys, biométrie,
-                clés de sécurité).
+                <span class="hl acc-about">Sylius</span>, et accompagne
+                aujourd'hui <em class="acc-about">Anytime</em> sur la conformité
+                PSD2/SCA via <span class="hl acc-about">WebAuthn</span>{' '}
+                (passkeys, biométrie, clés de sécurité).
               </p>
               <p>
                 Mon terrain : la{' '}
-                <span class="hl acc-projects">construction de produits SaaS et e-commerce</span>{' '}
+                <span class="hl acc-projects">
+                  construction de produits SaaS et e-commerce
+                </span>{' '}
                 from scratch, et leur mise à l'échelle. J'interviens en mission
                 longue, audit, CTO fractional ou sparring de fondateurs.
               </p>
@@ -109,12 +92,14 @@ const parcoursHref = localizedPath(
                 <em class="acc-about">Passion Barbecue</em> on{' '}
                 <span class="hl acc-about">Sylius</span>, and currently support{' '}
                 <em class="acc-about">Anytime</em> on PSD2/SCA compliance via{' '}
-                <span class="hl acc-about">WebAuthn</span> (passkeys, biometrics,
-                security keys).
+                <span class="hl acc-about">WebAuthn</span> (passkeys,
+                biometrics, security keys).
               </p>
               <p>
                 My terrain:{' '}
-                <span class="hl acc-projects">building SaaS and e-commerce products</span>{' '}
+                <span class="hl acc-projects">
+                  building SaaS and e-commerce products
+                </span>{' '}
                 from scratch, then scaling them. I work on long engagements,
                 audits, fractional CTO seats, or founder sparring.
               </p>
@@ -126,50 +111,59 @@ const parcoursHref = localizedPath(
       <dl
         class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[color:var(--color-muted)] max-w-[640px]"
       >
-        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
           <dt>{tr.home.about.experienceLabel}</dt>
           <dd class="tnum acc-about">
-            {lang === 'fr' ? '14 ans · CTO depuis 2017' : '14 years · CTO since 2017'}
+            {
+              lang === 'fr'
+                ? '14 ans · CTO depuis 2017'
+                : '14 years · CTO since 2017'
+            }
           </dd>
         </div>
-        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
           <dt>{tr.home.about.rolesLabel}</dt>
           <dd class="text-[color:var(--color-ink)]">CTO · Lead · IC</dd>
         </div>
-        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
           <dt>{tr.home.about.locationLabel}</dt>
-          <dd class="text-[color:var(--color-ink)]">{tr.home.about.location}</dd>
+          <dd class="text-[color:var(--color-ink)]">
+            {tr.home.about.location}
+          </dd>
         </div>
-        <div class="flex justify-between border-b border-[color:var(--color-rule)] py-2">
+        <div
+          class="flex justify-between border-b border-[color:var(--color-rule)] py-2"
+        >
           <dt>{tr.home.about.availabilityLabel}</dt>
           <dd class="acc-about">{tr.home.about.availability}</dd>
         </div>
       </dl>
 
-      <div
-        class="mt-8 flex items-center gap-5 text-[13px] flex-wrap"
-      >
-        <a
-          href={parcoursHref}
-          class="link-u acc-about font-medium"
-        >
+      <div class="mt-8 flex items-center gap-5 text-[13px] flex-wrap">
+        <a href={parcoursHref} class="link-u acc-about font-medium">
           {tr.home.about.moreCta} →
         </a>
-        <span
-          class="text-[color:var(--color-rule-strong)]"
-          aria-hidden="true">·</span>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >·</span
+        >
         <a href="#contact" class="link-u text-[color:var(--color-ink)]">
           {lang === 'fr' ? 'Me contacter' : 'Get in touch'}
         </a>
-        <span
-          class="text-[color:var(--color-rule-strong)]"
-          aria-hidden="true">·</span>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >·</span
+        >
         <a href="#cv" class="link-u text-[color:var(--color-muted)]">
           {lang === 'fr' ? 'CV (PDF)' : 'Résumé (PDF)'}
         </a>
-        <span
-          class="text-[color:var(--color-rule-strong)]"
-          aria-hidden="true">·</span>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >·</span
+        >
         <a
           href={SITE.author.github}
           target="_blank"

@@ -18,9 +18,7 @@ const tr = useTranslations(lang);
     class="mx-auto px-6 sm:px-10 pt-24 pb-24 min-h-[60vh]"
     style="max-width: var(--w-home)"
   >
-    <p
-      class="text-[11px] tracking-[0.12em] uppercase acc-blog font-mono"
-    >
+    <p class="text-[11px] tracking-[0.12em] uppercase acc-blog font-mono">
       <span class="acc-dot"></span>§ {tr.error404.eyebrow}
     </p>
     <h1
@@ -29,16 +27,19 @@ const tr = useTranslations(lang);
     >
       {tr.error404.title}
     </h1>
-    <p
-      class="mt-6 text-[16px] text-[#2a2622] leading-relaxed max-w-[480px]"
-    >
+    <p class="mt-6 text-[16px] text-[#2a2622] leading-relaxed max-w-[480px]">
       {tr.error404.description}
     </p>
     <p class="mt-8 flex gap-5 text-[13px]">
-      <a href={localizedPath(lang, '/')} class="link-u text-[color:var(--color-ink)]">
+      <a
+        href={localizedPath(lang, '/')}
+        class="link-u text-[color:var(--color-ink)]"
+      >
         ← {tr.error404.backHome}
       </a>
-      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true">·</span>
+      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+        >·</span
+      >
       <a href={localizedPath(lang, '/blog')} class="link-u acc-blog">
         {tr.error404.goToBlog}
       </a>

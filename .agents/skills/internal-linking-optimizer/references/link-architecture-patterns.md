@@ -28,23 +28,23 @@ Architecture models with implementation guides and measurement frameworks for in
 
 ### Link Rules
 
-| Link Type | Direction | Anchor Text Strategy |
-|-----------|-----------|---------------------|
-| Pillar -> Cluster | Pillar links to each cluster | "learn about [subtopic]" |
-| Cluster -> Pillar | Every cluster links back | "our complete [topic] guide" |
-| Cluster <-> Cluster | Between related clusters in same hub | "as we covered in [related article]" |
-| Hub <-> Hub (bridge) | Between related pillars | "see also our [topic] resource" |
+| Link Type            | Direction                            | Anchor Text Strategy                 |
+| -------------------- | ------------------------------------ | ------------------------------------ |
+| Pillar -> Cluster    | Pillar links to each cluster         | "learn about [subtopic]"             |
+| Cluster -> Pillar    | Every cluster links back             | "our complete [topic] guide"         |
+| Cluster <-> Cluster  | Between related clusters in same hub | "as we covered in [related article]" |
+| Hub <-> Hub (bridge) | Between related pillars              | "see also our [topic] resource"      |
 
 **When to Use**: Content marketing sites, SaaS, publishers, 50-500 content pages.
 
 ### Measurement
 
-| Metric | Target |
-|--------|--------|
-| Pillar rankings for head terms | Top 10 |
-| Cluster rankings for long-tail | Top 20 |
-| Internal links per cluster | 3-5 minimum |
-| Click depth homepage to cluster | <=3 clicks |
+| Metric                          | Target      |
+| ------------------------------- | ----------- |
+| Pillar rankings for head terms  | Top 10      |
+| Cluster rankings for long-tail  | Top 20      |
+| Internal links per cluster      | 3-5 minimum |
+| Click depth homepage to cluster | <=3 clicks  |
 
 ---
 
@@ -76,12 +76,12 @@ Architecture models with implementation guides and measurement frameworks for in
 
 ### Link Rules
 
-| Link Type | Direction | Allowed? |
-|-----------|-----------|----------|
-| Parent -> Child | Downward within silo | Always |
-| Child -> Parent | Upward within silo | Always |
-| Sibling <-> Sibling | Horizontal within same parent | Yes |
-| Cross-silo | Between different silos | Strict: No. Modified: Sparingly |
+| Link Type           | Direction                     | Allowed?                        |
+| ------------------- | ----------------------------- | ------------------------------- |
+| Parent -> Child     | Downward within silo          | Always                          |
+| Child -> Parent     | Upward within silo            | Always                          |
+| Sibling <-> Sibling | Horizontal within same parent | Yes                             |
+| Cross-silo          | Between different silos       | Strict: No. Modified: Sparingly |
 
 **When to Use**: Large e-commerce (100+ categories), directory sites, distinct topic categories, separate business lines.
 
@@ -105,12 +105,12 @@ Architecture models with implementation guides and measurement frameworks for in
 3. Cross-link freely between related pages
 4. Use comprehensive navigation menus or HTML sitemaps
 
-| Site Size | Feasibility |
-|-----------|-------------|
-| <50 pages | Ideal |
-| 50-100 pages | Manageable |
+| Site Size     | Feasibility                       |
+| ------------- | --------------------------------- |
+| <50 pages     | Ideal                             |
+| 50-100 pages  | Manageable                        |
 | 100-500 pages | Difficult; consider hub-and-spoke |
-| 500+ pages | Not recommended |
+| 500+ pages    | Not recommended                   |
 
 ---
 
@@ -159,12 +159,12 @@ Level 3:  P1  P2   P3  P4   P5  P6  P7  P8
 
 ### Governance Rules
 
-| Rule | Purpose |
-|------|---------|
-| Every link must have topical relevance | Prevents link dilution |
-| Max 15 contextual links per 1,000 words | Prevents link farms |
-| Review links quarterly | Prunes outdated connections |
-| Descriptive anchor text only | Maintains semantic value |
+| Rule                                    | Purpose                     |
+| --------------------------------------- | --------------------------- |
+| Every link must have topical relevance  | Prevents link dilution      |
+| Max 15 contextual links per 1,000 words | Prevents link farms         |
+| Review links quarterly                  | Prunes outdated connections |
+| Descriptive anchor text only            | Maintains semantic value    |
 
 **When to Use**: Knowledge bases, wikis, research repositories, FAQ/help centers.
 
@@ -172,12 +172,12 @@ Level 3:  P1  P2   P3  P4   P5  P6  P7  P8
 
 ## Migration Between Models
 
-| From | To | Difficulty |
-|------|----|-----------|
-| Flat -> Hub-and-Spoke | Site grew beyond 100 pages | Medium |
-| Silo -> Hub-and-Spoke | Silos too rigid | Medium |
-| Pyramid -> Hub-and-Spoke | Want topical clusters | High |
-| No structure -> Any model | Starting disorganized | High |
+| From                      | To                         | Difficulty |
+| ------------------------- | -------------------------- | ---------- |
+| Flat -> Hub-and-Spoke     | Site grew beyond 100 pages | Medium     |
+| Silo -> Hub-and-Spoke     | Silos too rigid            | Medium     |
+| Pyramid -> Hub-and-Spoke  | Want topical clusters      | High       |
+| No structure -> Any model | Starting disorganized      | High       |
 
 ### Migration Steps
 
@@ -195,23 +195,23 @@ Level 3:  P1  P2   P3  P4   P5  P6  P7  P8
 
 ### Key Metrics by Model
 
-| Metric | Hub-Spoke | Silo | Flat | Pyramid | Mesh |
-|--------|-----------|------|------|---------|------|
-| Avg click depth | <=3 | <=4 | <=2 | <=4 | <=3 |
-| Orphan pages | 0 | 0 | 0 | 0 | 0 |
-| Avg internal links/page | 5-10 | 3-7 | 8-15 | 3-5 | 8-15 |
-| Cross-section links | Many | Few | N/A | Some | Many |
+| Metric                  | Hub-Spoke | Silo | Flat | Pyramid | Mesh |
+| ----------------------- | --------- | ---- | ---- | ------- | ---- |
+| Avg click depth         | <=3       | <=4  | <=2  | <=4     | <=3  |
+| Orphan pages            | 0         | 0    | 0    | 0       | 0    |
+| Avg internal links/page | 5-10      | 3-7  | 8-15 | 3-5     | 8-15 |
+| Cross-section links     | Many      | Few  | N/A  | Some    | Many |
 
 ### Monthly Monitoring Checklist
 
-| Check | Action if Failing |
-|-------|-------------------|
-| Orphan pages count | Add internal links immediately |
-| Average click depth | Add shortcuts to deep pages |
-| Internal link count per page | Add links to under-linked pages |
-| Anchor text diversity | Vary anchors for over-optimized pages |
-| Broken internal links | Fix or remove |
-| New content linked within 48 hours | Add to related pages upon publishing |
+| Check                              | Action if Failing                     |
+| ---------------------------------- | ------------------------------------- |
+| Orphan pages count                 | Add internal links immediately        |
+| Average click depth                | Add shortcuts to deep pages           |
+| Internal link count per page       | Add links to under-linked pages       |
+| Anchor text diversity              | Vary anchors for over-optimized pages |
+| Broken internal links              | Fix or remove                         |
+| New content linked within 48 hours | Add to related pages upon publishing  |
 
 ---
 

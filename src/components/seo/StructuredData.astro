@@ -36,6 +36,10 @@ const payload = schemas.map((s) => normalize(s));
 
 {
   payload.map((schema) => (
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(schema)}
+    />
   ))
 }

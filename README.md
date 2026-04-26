@@ -1,8 +1,10 @@
 # Handoff — Portfolio Gabriel Mustiere
 
 ## Overview
+
 Portfolio mono-page pour Gabriel Mustiere, CTO freelance basé à Nantes.
 Le site comprend :
+
 - **Page d'accueil** (`v3-quiet-nav.html`) — identité, parcours, extraits d'articles de blog, projets, contact, CV, avec une sidebar sticky contenant un index §01–§05 et un scroll-spy coloré.
 - **Liste des articles de blog** (`blog.html`) — 12 articles avec filtres par catégorie (IA / Tech / Lead / Business), article mis en avant en tête.
 - **Page d'article** (`article.html`) — lecture longue éditoriale avec barre de progression, drop cap, citations, blocs de code stylés, « à lire ensuite ».
@@ -10,11 +12,13 @@ Le site comprend :
 Ton éditorial, minimaliste, typographie mixte (serif + sans + mono), palette beige + accents colorés sobres.
 
 ## About the Design Files
+
 Les fichiers dans `designs/` sont des **références design réalisées en HTML pur + Tailwind CDN**. Ce ne sont **pas** du code de production à copier-coller. L'objectif est de **recréer fidèlement ces maquettes dans un projet Astro neuf** en utilisant les patterns idiomatiques Astro (composants `.astro`, content collections pour le blog, assets optimisés).
 
 Le style Tailwind utilisé dans les maquettes est Tailwind v4 via CDN (`@tailwindcss/browser@4`) avec un bloc `@theme` custom. Dans Astro, il faudra installer l'intégration Tailwind officielle et déplacer les tokens dans `tailwind.config` ou un `global.css`.
 
 ## Fidelity
+
 **High-fidelity.** Les maquettes sont pixel-perfect : couleurs, typographies, espacements, interactions sont finaux. À respecter strictement. Les seules libertés : optimisations techniques (chargement fonts, code-splitting, images responsives).
 
 ---
@@ -64,28 +68,28 @@ src/
 
 ### Couleurs de base (beige + encre)
 
-| Token | Hex | Usage |
-|---|---|---|
-| `--color-bg` | `#fafaf7` | Fond principal |
-| `--color-bg-2` | `#f3f1ec` | Fond secondaire (code blocks) |
-| `--color-ink` | `#181613` | Texte titres, principal |
-| `--color-ink-2` | `#2a2622` | Texte corps |
-| `--color-muted` | `#6b655d` | Texte secondaire |
-| *(inline)* | `#8d8578` | Labels uppercase / metadata |
-| `--color-rule` | `#e4dfd6` | Filets fins |
+| Token                 | Hex       | Usage                               |
+| --------------------- | --------- | ----------------------------------- |
+| `--color-bg`          | `#fafaf7` | Fond principal                      |
+| `--color-bg-2`        | `#f3f1ec` | Fond secondaire (code blocks)       |
+| `--color-ink`         | `#181613` | Texte titres, principal             |
+| `--color-ink-2`       | `#2a2622` | Texte corps                         |
+| `--color-muted`       | `#6b655d` | Texte secondaire                    |
+| _(inline)_            | `#8d8578` | Labels uppercase / metadata         |
+| `--color-rule`        | `#e4dfd6` | Filets fins                         |
 | `--color-rule-strong` | `#bdb6a8` | Filets forts (séparateurs sections) |
 
 ### Palette d'accents (un par section)
 
 Définie en **oklch** pour une chromaticité et une luminosité uniformes. Ne pas convertir en hex — garder oklch.
 
-| Token | Valeur | Section | Description |
-|---|---|---|---|
-| `--a-about` | `oklch(0.62 0.13 40)` | § 01 Parcours | Terre cuite |
-| `--a-blog` | `oklch(0.55 0.13 250)` | § 02 Articles de blog | Encre bleue |
-| `--a-projects` | `oklch(0.55 0.10 145)` | § 03 Projets | Vert sauge |
-| `--a-contact` | `oklch(0.52 0.13 330)` | § 04 Contact | Prune |
-| `--a-cv` | `oklch(0.58 0.13 75)` | § 05 CV | Ocre |
+| Token          | Valeur                 | Section               | Description |
+| -------------- | ---------------------- | --------------------- | ----------- |
+| `--a-about`    | `oklch(0.62 0.13 40)`  | § 01 Parcours         | Terre cuite |
+| `--a-blog`     | `oklch(0.55 0.13 250)` | § 02 Articles de blog | Encre bleue |
+| `--a-projects` | `oklch(0.55 0.10 145)` | § 03 Projets          | Vert sauge  |
+| `--a-contact`  | `oklch(0.52 0.13 330)` | § 04 Contact          | Prune       |
+| `--a-cv`       | `oklch(0.58 0.13 75)`  | § 05 CV               | Ocre        |
 
 Classes utilitaires associées : `.acc-about`, `.acc-blog`, `.acc-projects`, `.acc-contact`, `.acc-cv` — chacune applique `color: var(--a-X)`.
 
@@ -98,6 +102,7 @@ Le pastille (dot) à gauche des titres de section : `.acc-dot` — 7px × 7px, r
 - **Mono (métadonnées, code, chiffres)** : `'JetBrains Mono', ui-monospace, monospace` — via Google Fonts `JetBrains Mono:wght@400;500`
 
 Echelle de titres (page d'accueil, desktop) :
+
 - H1 hero : `80px / 1.02 / -0.015em` (serif)
 - H2 section : `36–56px / 1.05 / -0.01em` (serif)
 - H3 item : `22px / 1.25 / -0.005em` (serif)
@@ -118,14 +123,17 @@ Italique serif = `em` (pas `i`) — stylé via la variante italique d'Instrument
 - Filets : systématiquement `border-t border-[#e4dfd6]` (fins) ou `border-t border-[#bdb6a8]` (forts)
 
 ### Border radius
+
 - Pilules (boutons, chips) : `border-radius: 999px`
 - Code blocks : `6–8px`
 - Pas d'autres arrondis.
 
 ### Souligné custom (`.link-u`)
+
 Souligné animé avec `background-image: linear-gradient(currentColor, currentColor)` + `background-size: 100% 1px`. Au hover : `background-size: 0% 1px` + `background-position: 100% 100%` (le souligné se rétracte de droite à gauche).
 
 ### Highlight colorié (`.hl`)
+
 Souligné 2px de la couleur courante (utilisé pour surligner des mots-clés dans le texte intro). Même technique que `.link-u` mais fixe.
 
 ---
@@ -135,10 +143,12 @@ Souligné 2px de la couleur courante (utilisé pour surligner des mots-clés dan
 ### 1. Page d'accueil — `src/pages/index.astro` (d'après `v3-quiet-nav.html`)
 
 **Layout desktop (≥1024px)** :
+
 - Grid 2 colonnes : sidebar 260px + main fluide
 - Sidebar : sticky, 100vh, padding-top 176px (pour aligner le bloc identité avec le H1 du main)
 
 **Sidebar (desktop uniquement — cachée en mobile)** :
+
 1. Petit label uppercase "Gabriel Mustiere"
 2. Lien H-like en serif : `CTO / freelance` (freelance en italique terre cuite)
 3. Paragraphe meta : "Tech · Business · IA. Nantes — remote."
@@ -148,13 +158,14 @@ Souligné 2px de la couleur courante (utilisé pour surligner des mots-clés dan
    - `§03 Projets` → `#projects`
    - `§04 Contact` → `#contact`
    - `§05 CV` → `#cv`
-   Numéro en JetBrains Mono 10px, label en Inter 13px.
+     Numéro en JetBrains Mono 10px, label en Inter 13px.
 5. Bas de sidebar : `mt-auto`
    - Liens GitHub + LinkedIn (externes, `target="_blank"`)
    - Indicateur dispo (point vert + "Disponible Q3 2026")
    - Version "v. 2026.04 — Nantes"
 
 **Main column (identique mobile/desktop)** :
+
 - **Meta row** (mobile only, `.lg:hidden`) : `Gabriel Mustiere` / `2026 · Nantes`
 - **Hero** :
   - H1 : `CTO & lead / <em class="acc-about">en freelance.</em>` — 48px mobile / 80px desktop
@@ -168,6 +179,7 @@ Sections (toutes ont un en-tête `SectionHead` : `§ 0X · Titre` + sous-titre d
 **§01 Parcours** — bio détaillée, liste stats "Expérience / Rôles / Basé à / Disponibilité" en `<ul>` avec filets.
 
 **§02 Articles de blog** — 5 articles récents :
+
 - Chaque item : date à gauche (acc-blog, font-mono, 11px, tracking .1em, width 80px), titre serif, temps de lecture
 - Lien entier `<a href="/blog/[slug]">` avec `group-hover:text-[color:var(--a-blog)]`
 - Sous la liste : lien "Voir tous les articles de blog →" (acc-blog)
@@ -183,6 +195,7 @@ Sections (toutes ont un en-tête `SectionHead` : `§ 0X · Titre` + sous-titre d
 ### Scroll-spy (critique)
 
 La sidebar `.idx-link` doit recevoir la classe `.is-active` quand la section correspondante est dans le viewport. Quand active :
+
 - Le label gagne un dot à gauche (via `::before content: ""` avec `background: currentColor`)
 - La couleur passe à la teinte d'accent de la section
 
@@ -192,20 +205,25 @@ Implémentation recommandée en Astro :
 <!-- src/components/Sidebar.astro : script inline en bas -->
 <script>
   const links = document.querySelectorAll('.idx-link[data-key]');
-  const sections = ['about','blog','projects','contact','cv']
-    .map(k => document.getElementById(k))
+  const sections = ['about', 'blog', 'projects', 'contact', 'cv']
+    .map((k) => document.getElementById(k))
     .filter(Boolean);
 
-  const io = new IntersectionObserver((entries) => {
-    const visible = entries
-      .filter(e => e.isIntersecting)
-      .sort((a,b) => a.boundingClientRect.top - b.boundingClientRect.top);
-    if (!visible.length) return;
-    const key = visible[0].target.id;
-    links.forEach(a => a.classList.toggle('is-active', a.dataset.key === key));
-  }, { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] });
+  const io = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      if (!visible.length) return;
+      const key = visible[0].target.id;
+      links.forEach((a) =>
+        a.classList.toggle('is-active', a.dataset.key === key)
+      );
+    },
+    { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] }
+  );
 
-  sections.forEach(s => io.observe(s));
+  sections.forEach((s) => io.observe(s));
 </script>
 ```
 
@@ -270,23 +288,28 @@ Layout centré sur 680px.
 ## Interactions & Behavior
 
 ### Page d'accueil
+
 - Smooth scroll sur tous les liens d'ancre internes (`html { scroll-behavior: smooth }`)
 - Scroll-margin-top sur les sections : `24px`
 - Scroll-spy : IntersectionObserver avec rootMargin `-20% 0px -60% 0px`
 
 ### Blog list
+
 - Click sur chip filtre → toggle `.chip-active` sur le bouton, toggle `.hidden` sur `<li[data-tags]>` selon match
 - Chip "Tout" = reset
 - Message "Rien dans cette catégorie pour l'instant." si 0 matches
 
 ### Article
+
 - Barre de progression : `scrollTop / (scrollHeight - clientHeight) * 100 → width %`
 - Listener `scroll` passif + `resize`
 
 ### Liens externes
+
 - Tous les GitHub / LinkedIn : `target="_blank"` + `rel="noopener"`
 
 ### Hover states
+
 - Titres de posts (list + card) : couleur passe à `var(--a-blog)` avec `transition-colors`
 - Liens `.link-u` : le souligné se rétracte (effet wipe)
 - Boutons pilule : `hover:bg-white`
@@ -298,6 +321,7 @@ Layout centré sur 680px.
 Aucun état serveur. Astro est SSG.
 
 State client minimal :
+
 - Scroll-spy (active link) — géré par IntersectionObserver
 - Filtres blog — DOM class toggling
 - Barre de progression article — listener scroll
@@ -307,6 +331,7 @@ State client minimal :
 ## Assets
 
 Aucun asset bitmap à ce stade — toutes les illustrations sont typographiques. Prévoir :
+
 - `public/favicon.svg` — à créer (proposer un monogramme GM)
 - `public/og-image.png` — pour social sharing (1200×630) — à créer
 - `public/cv-gabriel-mustiere.pdf` — fourni par le client
@@ -317,6 +342,7 @@ Aucun asset bitmap à ce stade — toutes les illustrations sont typographiques.
 ## Copy / contenu
 
 Tout le texte est en **français**. Les articles blog sont des stubs de démo à remplacer par le vrai contenu client. Les titres/handles sont placeholder :
+
 - `hello@gabrielmustiere.fr` — email
 - `github.com/gmustiere` — à valider avec Gabriel
 - `linkedin.com/in/gabrielmustiere` — à valider avec Gabriel
@@ -326,6 +352,7 @@ Tout le texte est en **français**. Les articles blog sont des stubs de démo à
 ## Files
 
 Dans `designs/` :
+
 - `v3-quiet-nav.html` — page d'accueil avec sidebar navigation
 - `blog.html` — liste des articles de blog
 - `article.html` — page d'article
@@ -353,6 +380,7 @@ npm run dev
 ```
 
 Dans `src/layouts/BaseLayout.astro`, importer les fonts :
+
 ```astro
 ---
 import '@fontsource/instrument-serif/400.css';

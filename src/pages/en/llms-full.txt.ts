@@ -37,9 +37,7 @@ export const GET: APIRoute = async () => {
     `Since September 2025, freelance. Current engagement: Anytime, PSD2/SCA compliance via WebAuthn (passkeys, biometrics, hardware security keys). Next availability: Q3 2026, for long engagements, fractional CTO seats for early-stage startups, audits or sparring.`
   );
   parts.push('');
-  parts.push(
-    `Detailed background: ${SITE.url}/en/background/`
-  );
+  parts.push(`Detailed background: ${SITE.url}/en/background/`);
   parts.push('');
   parts.push('---');
   parts.push('');

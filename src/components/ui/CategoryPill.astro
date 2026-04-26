@@ -26,7 +26,9 @@ const accentMap: Record<Category, string> = {
   class:list={[
     'font-mono uppercase',
     accentMap[category],
-    size === 'sm' ? 'text-[10px] tracking-[0.14em]' : 'text-[11px] tracking-[0.12em]',
+    size === 'sm'
+      ? 'text-[10px] tracking-[0.14em]'
+      : 'text-[11px] tracking-[0.12em]',
   ]}
 >
   {label}

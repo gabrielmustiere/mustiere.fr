@@ -10,7 +10,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@astrojs/mdx": "^5.0.4",
@@ -28,8 +30,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
+    "@eslint/js": "^10.0.1",
+    "@typescript-eslint/parser": "^8.59.0",
+    "eslint": "^10.2.1",
+    "eslint-plugin-astro": "^1.7.0",
+    "globals": "^17.5.0",
     "prettier": "^3.4.0",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.59.0"
   }
 }

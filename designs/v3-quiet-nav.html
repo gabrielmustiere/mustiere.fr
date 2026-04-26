@@ -1,666 +1,1060 @@
 <!doctype html>
 <html lang="fr">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Gabriel Mustiere — CTO freelance · V3</title>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gabriel Mustiere — CTO freelance · V3</title>
 
-<!-- Tailwind v4 (CDN) -->
-<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <!-- Tailwind v4 (CDN) -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Inter:wght@300;400;500;600&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Inter:wght@300;400;500;600&family=Geist:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
 
-<style type="text/tailwindcss">
-  @theme {
-    --color-bg: #fafaf7;
-    --color-bg-2: #f3f1ec;
-    --color-ink: #181613;
-    --color-ink-2: #2a2622;
-    --color-muted: #6b655d;
-    --color-rule: #e4dfd6;
-    --color-rule-strong: #bdb6a8;
+    <style type="text/tailwindcss">
+      @theme {
+        --color-bg: #fafaf7;
+        --color-bg-2: #f3f1ec;
+        --color-ink: #181613;
+        --color-ink-2: #2a2622;
+        --color-muted: #6b655d;
+        --color-rule: #e4dfd6;
+        --color-rule-strong: #bdb6a8;
 
-    --font-serif: 'Instrument Serif', Georgia, serif;
-    --font-body: 'Inter', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  }
+        --font-serif: 'Instrument Serif', Georgia, serif;
+        --font-body: 'Inter', system-ui, sans-serif;
+        --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+      }
 
-  /* theme-driven root so tweaks can swap fonts by flipping data-font */
-  html[data-font="instrument"] { --font-serif: 'Instrument Serif', Georgia, serif; --font-body: 'Inter', system-ui, sans-serif; }
-  html[data-font="fraunces"]   { --font-serif: 'Fraunces', Georgia, serif;          --font-body: 'Inter', system-ui, sans-serif; }
-  html[data-font="newsreader"] { --font-serif: 'Newsreader', Georgia, serif;        --font-body: 'Geist', system-ui, sans-serif; }
+      /* theme-driven root so tweaks can swap fonts by flipping data-font */
+      html[data-font='instrument'] {
+        --font-serif: 'Instrument Serif', Georgia, serif;
+        --font-body: 'Inter', system-ui, sans-serif;
+      }
+      html[data-font='fraunces'] {
+        --font-serif: 'Fraunces', Georgia, serif;
+        --font-body: 'Inter', system-ui, sans-serif;
+      }
+      html[data-font='newsreader'] {
+        --font-serif: 'Newsreader', Georgia, serif;
+        --font-body: 'Geist', system-ui, sans-serif;
+      }
 
-  body {
-    background: var(--color-bg);
-    color: var(--color-ink);
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-  }
-  .font-serif { font-family: var(--font-serif); }
-  .font-mono  { font-family: var(--font-mono); }
+      body {
+        background: var(--color-bg);
+        color: var(--color-ink);
+        font-family: var(--font-body);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+      }
+      .font-serif {
+        font-family: var(--font-serif);
+      }
+      .font-mono {
+        font-family: var(--font-mono);
+      }
 
-  .tnum { font-variant-numeric: tabular-nums; }
+      .tnum {
+        font-variant-numeric: tabular-nums;
+      }
 
-  .link-u {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-size: 100% 1px;
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    padding-bottom: 1px;
-    transition: background-size .25s ease;
-  }
-  .link-u:hover { background-size: 0% 1px; background-position: 100% 100%; }
+      .link-u {
+        background-image: linear-gradient(currentColor, currentColor);
+        background-size: 100% 1px;
+        background-repeat: no-repeat;
+        background-position: 0 100%;
+        padding-bottom: 1px;
+        transition: background-size 0.25s ease;
+      }
+      .link-u:hover {
+        background-size: 0% 1px;
+        background-position: 100% 100%;
+      }
 
-  .code-block {
-    background: #f3f1ec;
-    border: 1px solid var(--color-rule);
-    border-radius: 6px;
-    font-family: var(--font-mono);
-    font-size: 12.5px;
-    line-height: 1.65;
-    color: #2a2622;
-    padding: 14px 16px;
-    overflow-x: auto;
-    white-space: pre;
-  }
-  .code-block .c-com { color: #8d8578; font-style: italic; }
-  .code-block .c-key { color: #8a5a1a; }
-  .code-block .c-str { color: #3f5d3a; }
+      .code-block {
+        background: #f3f1ec;
+        border: 1px solid var(--color-rule);
+        border-radius: 6px;
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        line-height: 1.65;
+        color: #2a2622;
+        padding: 14px 16px;
+        overflow-x: auto;
+        white-space: pre;
+      }
+      .code-block .c-com {
+        color: #8d8578;
+        font-style: italic;
+      }
+      .code-block .c-key {
+        color: #8a5a1a;
+      }
+      .code-block .c-str {
+        color: #3f5d3a;
+      }
 
-  .placeholder-stripe {
-    background-image: repeating-linear-gradient(135deg,#ebe7de 0 6px,#e4dfd4 6px 12px);
-  }
+      .placeholder-stripe {
+        background-image: repeating-linear-gradient(
+          135deg,
+          #ebe7de 0 6px,
+          #e4dfd4 6px 12px
+        );
+      }
 
-  .smallcaps { font-variant: all-small-caps; letter-spacing: .08em; }
+      .smallcaps {
+        font-variant: all-small-caps;
+        letter-spacing: 0.08em;
+      }
 
-  /* Tweaks panel */
-  .tw-panel {
-    position: fixed; right: 14px; bottom: 14px; z-index: 50;
-    width: 272px; background: #fff; border: 1px solid #d9d4c8;
-    border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.08);
-    padding: 14px; font-size: 12px;
-  }
-  .tw-panel.hidden { display: none; }
-  .tw-panel h3 { font-family: var(--font-serif); font-size: 20px; letter-spacing: -.01em; }
-  .tw-panel label { display:block; font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:#8d8578; margin:10px 0 6px; }
-  .tw-panel select { width:100%; background:#fafaf7; border:1px solid #d9d4c8; border-radius:6px; padding:6px 8px; font:inherit; color:inherit; }
-  .order-list { display:flex; flex-direction:column; gap:4px; }
-  .order-list li { background:#fafaf7; border:1px solid #e4dfd6; border-radius:6px; padding:6px 8px; display:flex; align-items:center; justify-content:space-between; }
-  .order-list button { padding:2px 6px; border-radius:4px; color:#6b655d; }
-  .order-list button:hover { background:#e4dfd6; color:#181613; }
+      /* Tweaks panel */
+      .tw-panel {
+        position: fixed;
+        right: 14px;
+        bottom: 14px;
+        z-index: 50;
+        width: 272px;
+        background: #fff;
+        border: 1px solid #d9d4c8;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        padding: 14px;
+        font-size: 12px;
+      }
+      .tw-panel.hidden {
+        display: none;
+      }
+      .tw-panel h3 {
+        font-family: var(--font-serif);
+        font-size: 20px;
+        letter-spacing: -0.01em;
+      }
+      .tw-panel label {
+        display: block;
+        font-size: 10px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8d8578;
+        margin: 10px 0 6px;
+      }
+      .tw-panel select {
+        width: 100%;
+        background: #fafaf7;
+        border: 1px solid #d9d4c8;
+        border-radius: 6px;
+        padding: 6px 8px;
+        font: inherit;
+        color: inherit;
+      }
+      .order-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .order-list li {
+        background: #fafaf7;
+        border: 1px solid #e4dfd6;
+        border-radius: 6px;
+        padding: 6px 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .order-list button {
+        padding: 2px 6px;
+        border-radius: 4px;
+        color: #6b655d;
+      }
+      .order-list button:hover {
+        background: #e4dfd6;
+        color: #181613;
+      }
 
-  /* Tweaks toggle pill */
-  .tw-toggle {
-    position: fixed; right: 14px; bottom: 14px; z-index: 50;
-    background:#fff; border:1px solid #d9d4c8; border-radius:999px;
-    padding:8px 14px; font-size:12px; box-shadow:0 4px 14px rgba(0,0,0,.06);
-  }
+      /* Tweaks toggle pill */
+      .tw-toggle {
+        position: fixed;
+        right: 14px;
+        bottom: 14px;
+        z-index: 50;
+        background: #fff;
+        border: 1px solid #d9d4c8;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      }
 
-  em { font-style: italic; }
+      em {
+        font-style: italic;
+      }
 
-  /* ─ Accent palette (oklch, same chroma/lightness) ─ */
-  :root {
-    --a-about:    oklch(0.62 0.13  40); /* terre cuite */
-    --a-blog:     oklch(0.55 0.13 250); /* encre bleue */
-    --a-projects: oklch(0.55 0.10 145); /* vert sauge */
-    --a-contact:  oklch(0.52 0.13 330); /* prune */
-    --a-cv:       oklch(0.58 0.13  75); /* ocre */
-  }
-  .acc-about    { color: var(--a-about); }
-  .acc-blog     { color: var(--a-blog); }
-  .acc-projects { color: var(--a-projects); }
-  .acc-contact  { color: var(--a-contact); }
-  .acc-cv       { color: var(--a-cv); }
+      /* ─ Accent palette (oklch, same chroma/lightness) ─ */
+      :root {
+        --a-about: oklch(0.62 0.13 40); /* terre cuite */
+        --a-blog: oklch(0.55 0.13 250); /* encre bleue */
+        --a-projects: oklch(0.55 0.1 145); /* vert sauge */
+        --a-contact: oklch(0.52 0.13 330); /* prune */
+        --a-cv: oklch(0.58 0.13 75); /* ocre */
+      }
+      .acc-about {
+        color: var(--a-about);
+      }
+      .acc-blog {
+        color: var(--a-blog);
+      }
+      .acc-projects {
+        color: var(--a-projects);
+      }
+      .acc-contact {
+        color: var(--a-contact);
+      }
+      .acc-cv {
+        color: var(--a-cv);
+      }
 
-  /* dot marker next to section heads */
-  .acc-dot {
-    display:inline-block; width:7px; height:7px; border-radius:999px;
-    background: currentColor; margin-right: 10px; vertical-align: 2px;
-  }
+      /* dot marker next to section heads */
+      .acc-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: currentColor;
+        margin-right: 10px;
+        vertical-align: 2px;
+      }
 
-  /* highlight for key words — colored underline only, text stays dark */
-  .hl {
-    background-image: linear-gradient(currentColor, currentColor);
-    background-size: 100% 2px;
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    padding-bottom: 1px;
-  }
+      /* highlight for key words — colored underline only, text stays dark */
+      .hl {
+        background-image: linear-gradient(currentColor, currentColor);
+        background-size: 100% 2px;
+        background-repeat: no-repeat;
+        background-position: 0 100%;
+        padding-bottom: 1px;
+      }
 
-  /* ─ V3 sidebar ─ */
-  .layout { display: block; }
-  @media (min-width: 1024px) {
-    .layout {
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      min-height: 100vh;
-    }
-  }
-  .sidebar {
-    display: none;
-  }
-  @media (min-width: 1024px) {
-    .sidebar {
-      display: flex; flex-direction: column;
-      border-right: 1px solid #bdb6a8;
-      padding: 176px 32px 40px; /* align sidebar top with hero h1 in main col */
-      position: sticky; top: 0; height: 100vh;
-    }
-  }
-  .idx-link {
-    display: grid;
-    grid-template-columns: 22px 1fr;
-    align-items: baseline;
-    padding: 7px 0;
-    font-size: 13px;
-    color: #2a2622;
-    transition: color .15s ease;
-  }
-  .idx-link .num {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-    font-size: 10px;
-    letter-spacing: .08em;
-    color: #8d8578;
-  }
-  .idx-link:hover { color: #181613; }
-  .idx-link.is-active { color: #181613; }
-  .idx-link.is-active .label::before {
-    content: "";
-    display: inline-block;
-    width: 6px; height: 6px; border-radius: 999px;
-    background: currentColor;
-    margin-right: 8px; vertical-align: 2px;
-  }
-  /* active section color matches accent */
-  .idx-link[data-key="about"].is-active    { color: var(--a-about); }
-  .idx-link[data-key="blog"].is-active     { color: var(--a-blog); }
-  .idx-link[data-key="projects"].is-active { color: var(--a-projects); }
-  .idx-link[data-key="contact"].is-active  { color: var(--a-contact); }
-  .idx-link[data-key="cv"].is-active       { color: var(--a-cv); }
+      /* ─ V3 sidebar ─ */
+      .layout {
+        display: block;
+      }
+      @media (min-width: 1024px) {
+        .layout {
+          display: grid;
+          grid-template-columns: 260px 1fr;
+          min-height: 100vh;
+        }
+      }
+      .sidebar {
+        display: none;
+      }
+      @media (min-width: 1024px) {
+        .sidebar {
+          display: flex;
+          flex-direction: column;
+          border-right: 1px solid #bdb6a8;
+          padding: 176px 32px 40px; /* align sidebar top with hero h1 in main col */
+          position: sticky;
+          top: 0;
+          height: 100vh;
+        }
+      }
+      .idx-link {
+        display: grid;
+        grid-template-columns: 22px 1fr;
+        align-items: baseline;
+        padding: 7px 0;
+        font-size: 13px;
+        color: #2a2622;
+        transition: color 0.15s ease;
+      }
+      .idx-link .num {
+        font-family: 'JetBrains Mono', ui-monospace, monospace;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: #8d8578;
+      }
+      .idx-link:hover {
+        color: #181613;
+      }
+      .idx-link.is-active {
+        color: #181613;
+      }
+      .idx-link.is-active .label::before {
+        content: '';
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: currentColor;
+        margin-right: 8px;
+        vertical-align: 2px;
+      }
+      /* active section color matches accent */
+      .idx-link[data-key='about'].is-active {
+        color: var(--a-about);
+      }
+      .idx-link[data-key='blog'].is-active {
+        color: var(--a-blog);
+      }
+      .idx-link[data-key='projects'].is-active {
+        color: var(--a-projects);
+      }
+      .idx-link[data-key='contact'].is-active {
+        color: var(--a-contact);
+      }
+      .idx-link[data-key='cv'].is-active {
+        color: var(--a-cv);
+      }
 
-  /* mobile top bar with just brand + nav link */
-  .mob-top {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 24px;
-    border-bottom: 1px solid #e4dfd6;
-    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
-    color: #8d8578;
-  }
-  @media (min-width: 1024px) { .mob-top { display: none; } }
+      /* mobile top bar with just brand + nav link */
+      .mob-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 24px;
+        border-bottom: 1px solid #e4dfd6;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #8d8578;
+      }
+      @media (min-width: 1024px) {
+        .mob-top {
+          display: none;
+        }
+      }
 
-  .main-col {
-    min-width: 0;
-  }
-  @media (min-width: 1024px) {
-    .main-col {
-      padding: 40px 64px;
-    }
-  }
+      .main-col {
+        min-width: 0;
+      }
+      @media (min-width: 1024px) {
+        .main-col {
+          padding: 40px 64px;
+        }
+      }
 
-  /* scroll offset for anchor nav */
-  section[id], h2[id] { scroll-margin-top: 24px; }
-</style>
-</head>
-<body class="antialiased">
+      /* scroll offset for anchor nav */
+      section[id],
+      h2[id] {
+        scroll-margin-top: 24px;
+      }
+    </style>
+  </head>
+  <body class="antialiased">
+    <!-- mobile top strip removed — V1's own meta row (lg:hidden) covers mobile -->
 
-<!-- mobile top strip removed — V1's own meta row (lg:hidden) covers mobile -->
+    <div class="layout">
+      <!-- sticky sidebar (desktop only) -->
+      <aside class="sidebar">
+        <div class="text-[11px] tracking-[.12em] uppercase text-[#8d8578]">
+          Gabriel Mustiere
+        </div>
+        <a
+          href="#top"
+          class="font-serif mt-2 text-[34px] leading-[1.05] tracking-[-0.01em] block"
+        >
+          CTO<br /><em class="acc-about">freelance</em>
+        </a>
+        <p class="mt-4 text-[12.5px] text-[#6b655d] leading-[1.55]">
+          Tech · Business · IA.<br />Nantes — remote.
+        </p>
 
-<div class="layout">
+        <nav class="mt-10">
+          <div
+            class="text-[10px] tracking-[.14em] uppercase mb-2 text-[#8d8578]"
+          >
+            Index
+          </div>
+          <ul>
+            <li>
+              <a href="#about" class="idx-link" data-key="about"
+                ><span class="num">01</span
+                ><span class="label">Parcours</span></a
+              >
+            </li>
+            <li>
+              <a href="#blog" class="idx-link" data-key="blog"
+                ><span class="num">02</span><span class="label">Écrits</span></a
+              >
+            </li>
+            <li>
+              <a href="#projects" class="idx-link" data-key="projects"
+                ><span class="num">03</span
+                ><span class="label">Projets</span></a
+              >
+            </li>
+            <li>
+              <a href="#contact" class="idx-link" data-key="contact"
+                ><span class="num">04</span
+                ><span class="label">Contact</span></a
+              >
+            </li>
+            <li>
+              <a href="#cv" class="idx-link" data-key="cv"
+                ><span class="num">05</span><span class="label">CV</span></a
+              >
+            </li>
+          </ul>
+        </nav>
 
-  <!-- sticky sidebar (desktop only) -->
-  <aside class="sidebar">
-    <div class="text-[11px] tracking-[.12em] uppercase text-[#8d8578]">Gabriel Mustiere</div>
-    <a href="#top" class="font-serif mt-2 text-[34px] leading-[1.05] tracking-[-0.01em] block">
-      CTO<br><em class="acc-about">freelance</em>
-    </a>
-    <p class="mt-4 text-[12.5px] text-[#6b655d] leading-[1.55]">
-      Tech · Business · IA.<br>Nantes — remote.
-    </p>
+        <div
+          class="mt-auto text-[10px] tracking-[.12em] uppercase text-[#8d8578]"
+        >
+          <div class="flex items-center gap-3 mb-3">
+            <a
+              href="https://github.com/gmustiere"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-[#181613]"
+              >GitHub</a
+            >
+            <span class="text-[#bdb6a8]">·</span>
+            <a
+              href="https://www.linkedin.com/in/gabrielmustiere"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-[#181613]"
+              >LinkedIn</a
+            >
+          </div>
+          <div class="flex items-center gap-2 mb-1">
+            <span
+              class="inline-block w-[6px] h-[6px] rounded-full bg-[#5a7a4a]"
+            ></span>
+            <span>Disponible Q3 2026</span>
+          </div>
+          <div>v. 2026.04 — Nantes</div>
+        </div>
+      </aside>
 
-    <nav class="mt-10">
-      <div class="text-[10px] tracking-[.14em] uppercase mb-2 text-[#8d8578]">Index</div>
-      <ul>
-        <li><a href="#about"    class="idx-link" data-key="about"><span class="num">01</span><span class="label">Parcours</span></a></li>
-        <li><a href="#blog"     class="idx-link" data-key="blog"><span class="num">02</span><span class="label">Écrits</span></a></li>
-        <li><a href="#projects" class="idx-link" data-key="projects"><span class="num">03</span><span class="label">Projets</span></a></li>
-        <li><a href="#contact"  class="idx-link" data-key="contact"><span class="num">04</span><span class="label">Contact</span></a></li>
-        <li><a href="#cv"       class="idx-link" data-key="cv"><span class="num">05</span><span class="label">CV</span></a></li>
-      </ul>
-    </nav>
+      <div class="main-col" id="top">
+        <main
+          class="mx-auto max-w-[640px] px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28"
+        >
+          <!-- Meta (mobile only — sidebar shows identity on desktop) -->
+          <div
+            class="lg:hidden flex items-center justify-between text-[11px] tracking-[.12em] uppercase text-[#6b655d]"
+          >
+            <span>Gabriel Mustiere</span>
+            <span class="tnum">2026 · Nantes</span>
+          </div>
 
-    <div class="mt-auto text-[10px] tracking-[.12em] uppercase text-[#8d8578]">
-      <div class="flex items-center gap-3 mb-3">
-        <a href="https://github.com/gmustiere" target="_blank" rel="noopener" class="hover:text-[#181613]">GitHub</a>
-        <span class="text-[#bdb6a8]">·</span>
-        <a href="https://www.linkedin.com/in/gabrielmustiere" target="_blank" rel="noopener" class="hover:text-[#181613]">LinkedIn</a>
+          <!-- Hero -->
+          <header class="mt-14 sm:mt-24">
+            <h1
+              class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
+            >
+              CTO &amp; lead<br />
+              <em class="acc-about">en freelance.</em>
+            </h1>
+            <p
+              class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[520px]"
+            >
+              <span class="tnum">15 ans</span> à construire, mettre en
+              production et <em class="acc-about">faire tenir</em> des produits
+              tech. J'interviens sur de
+              <span class="hl acc-about">l'architecture</span>, du
+              <span class="hl acc-blog">lead technique</span> et des sujets
+              <span class="hl acc-projects">IA</span> — en mission, en audit, ou
+              en sparring-partner de fondateurs.
+            </p>
+            <div class="mt-6 sm:mt-8 flex items-center gap-5 text-[13px]">
+              <a href="#contact" class="link-u text-[#181613]">Me contacter</a>
+              <span class="text-[#bdb6a8]">·</span>
+              <a href="#cv" class="link-u text-[#6b655d]">CV (PDF)</a>
+              <span class="text-[#bdb6a8]">·</span>
+              <a
+                href="https://github.com/gmustiere"
+                target="_blank"
+                rel="noopener"
+                class="link-u text-[#6b655d]"
+                aria-label="GitHub"
+                >GitHub</a
+              >
+              <a
+                href="https://www.linkedin.com/in/gabrielmustiere"
+                target="_blank"
+                rel="noopener"
+                class="link-u text-[#6b655d]"
+                aria-label="LinkedIn"
+                >LinkedIn</a
+              >
+            </div>
+          </header>
+
+          <hr class="mt-14 sm:mt-24 border-0 border-t border-[#e4dfd6]" />
+
+          <!-- Sections (injected in order) -->
+          <div id="sections"></div>
+        </main>
       </div>
-      <div class="flex items-center gap-2 mb-1">
-        <span class="inline-block w-[6px] h-[6px] rounded-full bg-[#5a7a4a]"></span>
-        <span>Disponible Q3 2026</span>
-      </div>
-      <div>v. 2026.04 — Nantes</div>
+      <!-- /main-col -->
     </div>
-  </aside>
+    <!-- /layout -->
 
-  <div class="main-col" id="top">
+    <!-- Templates for reorderable sections -->
+    <template id="tpl-about">
+      <section data-key="about" id="about">
+        <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+          <span class="tnum text-[11px] tracking-[.12em] uppercase acc-about"
+            ><span class="acc-dot"></span>§ 01</span
+          >
+          <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">
+            À propos
+          </h2>
+        </div>
 
-<main class="mx-auto max-w-[640px] px-6 sm:px-10 pt-10 sm:pt-20 pb-16 sm:pb-28">
+        <div class="mt-6 space-y-5 text-[15px] text-[#2a2622] leading-[1.75]">
+          <p>
+            J'écris du code depuis <span class="tnum acc-about">2009</span>, je
+            dirige des équipes depuis <span class="tnum acc-about">2014</span>,
+            et depuis <span class="tnum acc-about">2021</span> je travaille en
+            indépendant avec des scale-ups, studios et fondateurs. Mon terrain :
+            les produits techniques où la donnée, le tempo et la
+            <em class="acc-about">lisibilité de l'architecture</em> comptent
+            autant que la feature.
+          </p>
+          <p>
+            J'ai été <em class="acc-about">CTO</em> dans deux startups (séries A
+            et B), <em class="acc-about">Lead Engineer</em> dans un groupe
+            média, et je contribue encore régulièrement en IC — TypeScript,
+            Python, Go quand il faut, et PostgreSQL quand c'est possible.
+          </p>
+          <p>
+            Aujourd'hui je m'intéresse à l'outillage autour des
+            <span class="hl acc-projects">LLMs</span> : orchestration,
+            évaluation, intégration produit. Pas le hype — la plomberie.
+          </p>
+        </div>
 
-  <!-- Meta (mobile only — sidebar shows identity on desktop) -->
-  <div class="lg:hidden flex items-center justify-between text-[11px] tracking-[.12em] uppercase text-[#6b655d]">
-    <span>Gabriel Mustiere</span>
-    <span class="tnum">2026 · Nantes</span>
-  </div>
+        <ul
+          class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[#6b655d]"
+        >
+          <li class="flex justify-between border-b border-[#e4dfd6] py-2">
+            <span>Expérience</span><span class="tnum acc-about">15 ans</span>
+          </li>
+          <li class="flex justify-between border-b border-[#e4dfd6] py-2">
+            <span>Rôles</span
+            ><span class="text-[#181613]">CTO · Lead · IC</span>
+          </li>
+          <li class="flex justify-between border-b border-[#e4dfd6] py-2">
+            <span>Basé à</span
+            ><span class="text-[#181613]">Nantes · remote</span>
+          </li>
+          <li class="flex justify-between border-b border-[#e4dfd6] py-2">
+            <span>Disponibilité</span><span class="acc-about">Q3 2026</span>
+          </li>
+        </ul>
+      </section>
+    </template>
 
-  <!-- Hero -->
-  <header class="mt-14 sm:mt-24">
-    <h1 class="font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]">
-      CTO &amp; lead<br>
-      <em class="acc-about">en freelance.</em>
-    </h1>
-    <p class="mt-6 sm:mt-8 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[520px]">
-      <span class="tnum">15 ans</span> à construire, mettre en production
-      et <em class="acc-about">faire tenir</em> des produits tech.
-      J'interviens sur de <span class="hl acc-about">l'architecture</span>,
-      du <span class="hl acc-blog">lead technique</span> et des sujets
-      <span class="hl acc-projects">IA</span> — en mission, en audit, ou en
-      sparring-partner de fondateurs.
-    </p>
-    <div class="mt-6 sm:mt-8 flex items-center gap-5 text-[13px]">
-      <a href="#contact" class="link-u text-[#181613]">Me contacter</a>
-      <span class="text-[#bdb6a8]">·</span>
-      <a href="#cv" class="link-u text-[#6b655d]">CV (PDF)</a>
-      <span class="text-[#bdb6a8]">·</span>
-      <a href="https://github.com/gmustiere" target="_blank" rel="noopener" class="link-u text-[#6b655d]" aria-label="GitHub">GitHub</a>
-      <a href="https://www.linkedin.com/in/gabrielmustiere" target="_blank" rel="noopener" class="link-u text-[#6b655d]" aria-label="LinkedIn">LinkedIn</a>
-    </div>
-  </header>
+    <template id="tpl-blog">
+      <section data-key="blog" id="blog">
+        <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+          <span class="tnum text-[11px] tracking-[.12em] uppercase acc-blog"
+            ><span class="acc-dot"></span>§ 02</span
+          >
+          <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">
+            Écrits
+          </h2>
+        </div>
+        <p class="mt-4 text-[14px] text-[#6b655d] max-w-[480px]">
+          Notes sur la tech, le business et l'IA. Pas de fréquence, juste quand
+          j'ai quelque chose à dire.
+        </p>
 
-  <hr class="mt-14 sm:mt-24 border-0 border-t border-[#e4dfd6]">
+        <ul class="mt-8">
+          <li class="py-4 border-t border-[#e4dfd6]">
+            <a href="article.html" class="flex items-baseline gap-4 group">
+              <span
+                class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog"
+                >14 Avr 26</span
+              >
+              <div class="flex-1">
+                <h3
+                  class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
+                >
+                  Pourquoi vos évaluations LLM ne valent rien (et comment s'en
+                  sortir)
+                </h3>
+                <span class="text-[11px] tnum text-[#8d8578]"
+                  >11 min de lecture</span
+                >
+              </div>
+            </a>
+          </li>
+          <li class="py-4 border-t border-[#e4dfd6]">
+            <a href="article.html" class="flex items-baseline gap-4 group">
+              <span
+                class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog"
+                >03 Mar 26</span
+              >
+              <div class="flex-1">
+                <h3
+                  class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
+                >
+                  Architecture d'une équipe de 4 à 20 : ce que personne ne dit
+                </h3>
+                <span class="text-[11px] tnum text-[#8d8578]"
+                  >8 min de lecture</span
+                >
+              </div>
+            </a>
+          </li>
+          <li class="py-4 border-t border-[#e4dfd6]">
+            <a href="article.html" class="flex items-baseline gap-4 group">
+              <span
+                class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog"
+                >12 Fév 26</span
+              >
+              <div class="flex-1">
+                <h3
+                  class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
+                >
+                  Postgres, pgvector et la tentation du silver bullet
+                </h3>
+                <span class="text-[11px] tnum text-[#8d8578]"
+                  >14 min de lecture</span
+                >
+              </div>
+            </a>
+          </li>
+          <li class="py-4 border-t border-[#e4dfd6]">
+            <a href="article.html" class="flex items-baseline gap-4 group">
+              <span
+                class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog"
+                >27 Jan 26</span
+              >
+              <div class="flex-1">
+                <h3
+                  class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
+                >
+                  Le coût réel d'une mauvaise décision technique
+                </h3>
+                <span class="text-[11px] tnum text-[#8d8578]"
+                  >6 min de lecture</span
+                >
+              </div>
+            </a>
+          </li>
+          <li class="border-t border-[#e4dfd6]"></li>
+        </ul>
+        <div class="mt-6">
+          <a href="blog.html" class="text-[13px] acc-blog link-u"
+            >Voir tous les écrits →</a
+          >
+        </div>
 
-  <!-- Sections (injected in order) -->
-  <div id="sections"></div>
-
-</main>
-
-  </div><!-- /main-col -->
-</div><!-- /layout -->
-
-<!-- Templates for reorderable sections -->
-<template id="tpl-about">
-  <section data-key="about" id="about">
-    <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
-      <span class="tnum text-[11px] tracking-[.12em] uppercase acc-about"><span class="acc-dot"></span>§ 01</span>
-      <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">À propos</h2>
-    </div>
-
-    <div class="mt-6 space-y-5 text-[15px] text-[#2a2622] leading-[1.75]">
-      <p>
-        J'écris du code depuis <span class="tnum acc-about">2009</span>, je
-        dirige des équipes depuis <span class="tnum acc-about">2014</span>,
-        et depuis <span class="tnum acc-about">2021</span> je travaille en
-        indépendant avec des scale-ups, studios et fondateurs. Mon
-        terrain : les produits techniques où la donnée, le tempo et la
-        <em class="acc-about">lisibilité de l'architecture</em> comptent
-        autant que la feature.
-      </p>
-      <p>
-        J'ai été <em class="acc-about">CTO</em> dans deux startups (séries
-        A et B), <em class="acc-about">Lead Engineer</em> dans un groupe
-        média, et je contribue encore régulièrement en IC — TypeScript,
-        Python, Go quand il faut, et PostgreSQL quand c'est possible.
-      </p>
-      <p>
-        Aujourd'hui je m'intéresse à l'outillage autour des
-        <span class="hl acc-projects">LLMs</span> : orchestration,
-        évaluation, intégration produit. Pas le hype — la plomberie.
-      </p>
-    </div>
-
-    <ul class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[#6b655d]">
-      <li class="flex justify-between border-b border-[#e4dfd6] py-2"><span>Expérience</span><span class="tnum acc-about">15 ans</span></li>
-      <li class="flex justify-between border-b border-[#e4dfd6] py-2"><span>Rôles</span><span class="text-[#181613]">CTO · Lead · IC</span></li>
-      <li class="flex justify-between border-b border-[#e4dfd6] py-2"><span>Basé à</span><span class="text-[#181613]">Nantes · remote</span></li>
-      <li class="flex justify-between border-b border-[#e4dfd6] py-2"><span>Disponibilité</span><span class="acc-about">Q3 2026</span></li>
-    </ul>
-  </section>
-</template>
-
-<template id="tpl-blog">
-  <section data-key="blog" id="blog">
-    <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
-      <span class="tnum text-[11px] tracking-[.12em] uppercase acc-blog"><span class="acc-dot"></span>§ 02</span>
-      <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">Écrits</h2>
-    </div>
-    <p class="mt-4 text-[14px] text-[#6b655d] max-w-[480px]">
-      Notes sur la tech, le business et l'IA. Pas de fréquence, juste quand
-      j'ai quelque chose à dire.
-    </p>
-
-    <ul class="mt-8">
-      <li class="py-4 border-t border-[#e4dfd6]">
-        <a href="article.html" class="flex items-baseline gap-4 group">
-          <span class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog">14 Avr 26</span>
-          <div class="flex-1">
-            <h3 class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors">Pourquoi vos évaluations LLM ne valent rien (et comment s'en sortir)</h3>
-            <span class="text-[11px] tnum text-[#8d8578]">11 min de lecture</span>
-          </div>
-        </a>
-      </li>
-      <li class="py-4 border-t border-[#e4dfd6]">
-        <a href="article.html" class="flex items-baseline gap-4 group">
-          <span class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog">03 Mar 26</span>
-          <div class="flex-1">
-            <h3 class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors">Architecture d'une équipe de 4 à 20 : ce que personne ne dit</h3>
-            <span class="text-[11px] tnum text-[#8d8578]">8 min de lecture</span>
-          </div>
-        </a>
-      </li>
-      <li class="py-4 border-t border-[#e4dfd6]">
-        <a href="article.html" class="flex items-baseline gap-4 group">
-          <span class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog">12 Fév 26</span>
-          <div class="flex-1">
-            <h3 class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors">Postgres, pgvector et la tentation du silver bullet</h3>
-            <span class="text-[11px] tnum text-[#8d8578]">14 min de lecture</span>
-          </div>
-        </a>
-      </li>
-      <li class="py-4 border-t border-[#e4dfd6]">
-        <a href="article.html" class="flex items-baseline gap-4 group">
-          <span class="tnum text-[11px] tracking-[.1em] uppercase shrink-0 w-20 acc-blog">27 Jan 26</span>
-          <div class="flex-1">
-            <h3 class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors">Le coût réel d'une mauvaise décision technique</h3>
-            <span class="text-[11px] tnum text-[#8d8578]">6 min de lecture</span>
-          </div>
-        </a>
-      </li>
-      <li class="border-t border-[#e4dfd6]"></li>
-    </ul>
-    <div class="mt-6">
-      <a href="blog.html" class="text-[13px] acc-blog link-u">Voir tous les écrits →</a>
-    </div>
-
-    <figure class="mt-10">
-      <figcaption class="text-[11px] tracking-[.12em] uppercase mb-2 text-[#8d8578]">Extrait — eval harness</figcaption>
-<pre class="code-block"><span class="c-com">// tiny scoring loop</span>
+        <figure class="mt-10">
+          <figcaption
+            class="text-[11px] tracking-[.12em] uppercase mb-2 text-[#8d8578]"
+          >
+            Extrait — eval harness
+          </figcaption>
+          <pre
+            class="code-block"
+          ><span class="c-com">// tiny scoring loop</span>
 <span class="c-key">for</span> (<span class="c-key">const</span> c <span class="c-key">of</span> suite) {
   <span class="c-key">const</span> out = <span class="c-key">await</span> model.run(c.input)
   <span class="c-key">const</span> s   = score(out, c.expected)
   <span class="c-key">yield</span> { id: c.id, score: s }
 }</pre>
-    </figure>
-  </section>
-</template>
+        </figure>
+      </section>
+    </template>
 
-<template id="tpl-projects">
-  <section data-key="projects" id="projects">
-    <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
-      <span class="tnum text-[11px] tracking-[.12em] uppercase acc-projects"><span class="acc-dot"></span>§ 03</span>
-      <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">Side projects</h2>
-    </div>
-
-    <div class="mt-8 space-y-10">
-      <article>
-        <div class="placeholder-stripe rounded-md aspect-[21/9] sm:aspect-[21/9]"></div>
-        <div class="mt-3 flex items-baseline justify-between gap-4">
-          <h3 class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em]">Modulo</h3>
-          <span class="text-[11px] tracking-[.1em] uppercase tnum text-[#8d8578]">actif</span>
+    <template id="tpl-projects">
+      <section data-key="projects" id="projects">
+        <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+          <span class="tnum text-[11px] tracking-[.12em] uppercase acc-projects"
+            ><span class="acc-dot"></span>§ 03</span
+          >
+          <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">
+            Side projects
+          </h2>
         </div>
-        <div class="text-[11px] tracking-[.1em] uppercase text-[#8d8578]">Side project · 2025</div>
-        <p class="mt-2 text-[14px] text-[#2a2622] leading-[1.65] max-w-[520px]">Un petit runtime pour orchestrer des agents LLM avec un graphe explicite, en TypeScript.</p>
-      </article>
 
-      <article>
-        <div class="placeholder-stripe rounded-md aspect-[21/9]"></div>
-        <div class="mt-3 flex items-baseline justify-between gap-4">
-          <h3 class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em]">Paperweight</h3>
-          <span class="text-[11px] tracking-[.1em] uppercase tnum text-[#8d8578]">v1.3</span>
+        <div class="mt-8 space-y-10">
+          <article>
+            <div
+              class="placeholder-stripe rounded-md aspect-[21/9] sm:aspect-[21/9]"
+            ></div>
+            <div class="mt-3 flex items-baseline justify-between gap-4">
+              <h3
+                class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em]"
+              >
+                Modulo
+              </h3>
+              <span
+                class="text-[11px] tracking-[.1em] uppercase tnum text-[#8d8578]"
+                >actif</span
+              >
+            </div>
+            <div class="text-[11px] tracking-[.1em] uppercase text-[#8d8578]">
+              Side project · 2025
+            </div>
+            <p
+              class="mt-2 text-[14px] text-[#2a2622] leading-[1.65] max-w-[520px]"
+            >
+              Un petit runtime pour orchestrer des agents LLM avec un graphe
+              explicite, en TypeScript.
+            </p>
+          </article>
+
+          <article>
+            <div class="placeholder-stripe rounded-md aspect-[21/9]"></div>
+            <div class="mt-3 flex items-baseline justify-between gap-4">
+              <h3
+                class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em]"
+              >
+                Paperweight
+              </h3>
+              <span
+                class="text-[11px] tracking-[.1em] uppercase tnum text-[#8d8578]"
+                >v1.3</span
+              >
+            </div>
+            <div class="text-[11px] tracking-[.1em] uppercase text-[#8d8578]">
+              OSS · 2024
+            </div>
+            <p
+              class="mt-2 text-[14px] text-[#2a2622] leading-[1.65] max-w-[520px]"
+            >
+              Convertisseur markdown → PDF éditorial, typographie française
+              soignée.
+            </p>
+          </article>
+
+          <article>
+            <div class="placeholder-stripe rounded-md aspect-[21/9]"></div>
+            <div class="mt-3 flex items-baseline justify-between gap-4">
+              <h3
+                class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em]"
+              >
+                Nota
+              </h3>
+              <span
+                class="text-[11px] tracking-[.1em] uppercase tnum text-[#8d8578]"
+                >archivé</span
+              >
+            </div>
+            <div class="text-[11px] tracking-[.1em] uppercase text-[#8d8578]">
+              Expériment · 2023
+            </div>
+            <p
+              class="mt-2 text-[14px] text-[#2a2622] leading-[1.65] max-w-[520px]"
+            >
+              App de prise de notes locale-first avec résumé LLM on-device.
+            </p>
+          </article>
         </div>
-        <div class="text-[11px] tracking-[.1em] uppercase text-[#8d8578]">OSS · 2024</div>
-        <p class="mt-2 text-[14px] text-[#2a2622] leading-[1.65] max-w-[520px]">Convertisseur markdown → PDF éditorial, typographie française soignée.</p>
-      </article>
+      </section>
+    </template>
 
-      <article>
-        <div class="placeholder-stripe rounded-md aspect-[21/9]"></div>
-        <div class="mt-3 flex items-baseline justify-between gap-4">
-          <h3 class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em]">Nota</h3>
-          <span class="text-[11px] tracking-[.1em] uppercase tnum text-[#8d8578]">archivé</span>
+    <template id="tpl-contact">
+      <section data-key="contact" id="contact">
+        <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
+          <span class="tnum text-[11px] tracking-[.12em] uppercase acc-contact"
+            ><span class="acc-dot"></span>§ 04</span
+          >
+          <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">
+            Contact
+          </h2>
         </div>
-        <div class="text-[11px] tracking-[.1em] uppercase text-[#8d8578]">Expériment · 2023</div>
-        <p class="mt-2 text-[14px] text-[#2a2622] leading-[1.65] max-w-[520px]">App de prise de notes locale-first avec résumé LLM on-device.</p>
-      </article>
-    </div>
-  </section>
-</template>
+        <p class="mt-4 text-[15px] text-[#2a2622] leading-[1.75] max-w-[520px]">
+          Missions, audits, sparring : un mail suffit. Je réponds sous 48h,
+          jamais aux sollicitations commerciales.
+        </p>
+        <div class="mt-6 space-y-0 text-[15px]">
+          <div class="flex items-baseline gap-4 border-t border-[#e4dfd6] py-3">
+            <span
+              class="text-[11px] tracking-[.1em] uppercase w-20 text-[#8d8578]"
+              >Email</span
+            >
+            <a href="mailto:hello@gabrielmustiere.fr" class="link-u acc-contact"
+              >hello@gabrielmustiere.fr</a
+            >
+          </div>
+          <div class="flex items-baseline gap-4 border-t border-[#e4dfd6] py-3">
+            <span
+              class="text-[11px] tracking-[.1em] uppercase w-20 text-[#8d8578]"
+              >LinkedIn</span
+            >
+            <a
+              href="https://www.linkedin.com/in/gabrielmustiere"
+              target="_blank"
+              rel="noopener"
+              class="link-u"
+              >/in/gabrielmustiere</a
+            >
+          </div>
+          <div
+            class="flex items-baseline gap-4 border-t border-b border-[#e4dfd6] py-3"
+          >
+            <span
+              class="text-[11px] tracking-[.1em] uppercase w-20 text-[#8d8578]"
+              >GitHub</span
+            >
+            <a
+              href="https://github.com/gmustiere"
+              target="_blank"
+              rel="noopener"
+              class="link-u"
+              >@gmustiere</a
+            >
+          </div>
+        </div>
+      </section>
+    </template>
 
-<template id="tpl-contact">
-  <section data-key="contact" id="contact">
-    <div class="mt-14 sm:mt-24 flex items-baseline gap-4">
-      <span class="tnum text-[11px] tracking-[.12em] uppercase acc-contact"><span class="acc-dot"></span>§ 04</span>
-      <h2 class="font-serif text-[32px] sm:text-[44px] tracking-[-0.01em]">Contact</h2>
-    </div>
-    <p class="mt-4 text-[15px] text-[#2a2622] leading-[1.75] max-w-[520px]">
-      Missions, audits, sparring : un mail suffit. Je réponds sous 48h,
-      jamais aux sollicitations commerciales.
-    </p>
-    <div class="mt-6 space-y-0 text-[15px]">
-      <div class="flex items-baseline gap-4 border-t border-[#e4dfd6] py-3">
-        <span class="text-[11px] tracking-[.1em] uppercase w-20 text-[#8d8578]">Email</span>
-        <a href="mailto:hello@gabrielmustiere.fr" class="link-u acc-contact">hello@gabrielmustiere.fr</a>
+    <template id="tpl-cv">
+      <section data-key="cv" id="cv">
+        <div
+          class="mt-14 sm:mt-24 border-t border-[#bdb6a8] pt-8 flex items-center justify-between gap-6 flex-wrap"
+        >
+          <div>
+            <div class="text-[11px] tracking-[.12em] uppercase acc-cv">
+              <span class="acc-dot"></span>§ 05 · Document
+            </div>
+            <h2
+              class="font-serif mt-1 text-[28px] sm:text-[36px] tracking-[-0.01em]"
+            >
+              CV en PDF
+            </h2>
+            <p class="mt-2 text-[14px] text-[#6b655d]">
+              Dernière mise à jour : avril 2026 · 2 pages · 180 ko
+            </p>
+          </div>
+          <a
+            href="#"
+            class="inline-flex items-center gap-2 text-[13px] border px-4 py-2 rounded-full hover:bg-white transition acc-cv"
+            style="border-color: var(--a-cv)"
+          >
+            <span>Télécharger</span>
+            <span class="font-mono text-[11px]">.pdf ↓</span>
+          </a>
+        </div>
+        <div
+          class="mt-16 flex items-center justify-between text-[11px] text-[#8d8578]"
+        >
+          <span>© 2026 Gabriel Mustiere</span>
+          <span class="tnum">Fait main · Nantes</span>
+        </div>
+      </section>
+    </template>
+
+    <!-- Tweaks: toggle + panel -->
+    <button id="tw-toggle" class="tw-toggle hidden">Tweaks</button>
+    <aside id="tw-panel" class="tw-panel hidden" aria-label="Tweaks">
+      <div class="flex items-start justify-between">
+        <h3>Tweaks</h3>
+        <button
+          id="tw-close"
+          class="text-[#8d8578] hover:text-[#181613]"
+          aria-label="Fermer"
+        >
+          ×
+        </button>
       </div>
-      <div class="flex items-baseline gap-4 border-t border-[#e4dfd6] py-3">
-        <span class="text-[11px] tracking-[.1em] uppercase w-20 text-[#8d8578]">LinkedIn</span>
-        <a href="https://www.linkedin.com/in/gabrielmustiere" target="_blank" rel="noopener" class="link-u">/in/gabrielmustiere</a>
-      </div>
-      <div class="flex items-baseline gap-4 border-t border-b border-[#e4dfd6] py-3">
-        <span class="text-[11px] tracking-[.1em] uppercase w-20 text-[#8d8578]">GitHub</span>
-        <a href="https://github.com/gmustiere" target="_blank" rel="noopener" class="link-u">@gmustiere</a>
-      </div>
-    </div>
-  </section>
-</template>
+      <label for="tw-font">Font pairing</label>
+      <select id="tw-font">
+        <option value="instrument">Instrument Serif + Inter</option>
+        <option value="fraunces">Fraunces + Inter</option>
+        <option value="newsreader">Newsreader + Geist</option>
+      </select>
+      <label>Ordre des sections</label>
+      <ul id="tw-order" class="order-list"></ul>
+    </aside>
 
-<template id="tpl-cv">
-  <section data-key="cv" id="cv">
-    <div class="mt-14 sm:mt-24 border-t border-[#bdb6a8] pt-8 flex items-center justify-between gap-6 flex-wrap">
-      <div>
-        <div class="text-[11px] tracking-[.12em] uppercase acc-cv"><span class="acc-dot"></span>§ 05 · Document</div>
-        <h2 class="font-serif mt-1 text-[28px] sm:text-[36px] tracking-[-0.01em]">CV en PDF</h2>
-        <p class="mt-2 text-[14px] text-[#6b655d]">Dernière mise à jour : avril 2026 · 2 pages · 180 ko</p>
-      </div>
-      <a href="#" class="inline-flex items-center gap-2 text-[13px] border px-4 py-2 rounded-full hover:bg-white transition acc-cv" style="border-color: var(--a-cv)">
-        <span>Télécharger</span>
-        <span class="font-mono text-[11px]">.pdf ↓</span>
-      </a>
-    </div>
-    <div class="mt-16 flex items-center justify-between text-[11px] text-[#8d8578]">
-      <span>© 2026 Gabriel Mustiere</span>
-      <span class="tnum">Fait main · Nantes</span>
-    </div>
-  </section>
-</template>
+    <script>
+      const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/ {
+        fontPair: 'instrument',
+        order: ['about', 'blog', 'projects', 'contact', 'cv'],
+      }; /*EDITMODE-END*/
 
-<!-- Tweaks: toggle + panel -->
-<button id="tw-toggle" class="tw-toggle hidden">Tweaks</button>
-<aside id="tw-panel" class="tw-panel hidden" aria-label="Tweaks">
-  <div class="flex items-start justify-between">
-    <h3>Tweaks</h3>
-    <button id="tw-close" class="text-[#8d8578] hover:text-[#181613]" aria-label="Fermer">×</button>
-  </div>
-  <label for="tw-font">Font pairing</label>
-  <select id="tw-font">
-    <option value="instrument">Instrument Serif + Inter</option>
-    <option value="fraunces">Fraunces + Inter</option>
-    <option value="newsreader">Newsreader + Geist</option>
-  </select>
-  <label>Ordre des sections</label>
-  <ul id="tw-order" class="order-list"></ul>
-</aside>
+      const LABELS = {
+        about: 'À propos',
+        blog: 'Écrits',
+        projects: 'Side projects',
+        contact: 'Contact',
+        cv: 'CV',
+      };
 
-<script>
-  const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-    "fontPair": "instrument",
-    "order": ["about","blog","projects","contact","cv"]
-  }/*EDITMODE-END*/;
+      // Persistence via localStorage so refreshes survive
+      const LS_KEY = 'gm-v1-tweaks';
+      const readState = () => {
+        try {
+          return {
+            ...TWEAK_DEFAULTS,
+            ...JSON.parse(localStorage.getItem(LS_KEY) || '{}'),
+          };
+        } catch {
+          return { ...TWEAK_DEFAULTS };
+        }
+      };
+      const writeState = (s) => {
+        localStorage.setItem(LS_KEY, JSON.stringify(s));
+      };
 
-  const LABELS = { about:"À propos", blog:"Écrits", projects:"Side projects", contact:"Contact", cv:"CV" };
+      const state = readState();
 
-  // Persistence via localStorage so refreshes survive
-  const LS_KEY = "gm-v1-tweaks";
-  const readState = () => {
-    try { return { ...TWEAK_DEFAULTS, ...JSON.parse(localStorage.getItem(LS_KEY) || "{}") }; }
-    catch { return { ...TWEAK_DEFAULTS }; }
-  };
-  const writeState = (s) => { localStorage.setItem(LS_KEY, JSON.stringify(s)); };
-
-  const state = readState();
-
-  // ── Apply state ────────────────────────────────────────────
-  function applyFont() {
-    document.documentElement.setAttribute("data-font", state.fontPair);
-  }
-  function renderSections() {
-    const host = document.getElementById("sections");
-    host.innerHTML = "";
-    state.order.forEach((key, i) => {
-      const tpl = document.getElementById("tpl-" + key);
-      if (!tpl) return;
-      const node = tpl.content.firstElementChild.cloneNode(true);
-      // rewrite section number while preserving the accent dot
-      const numEl = node.querySelector(".tnum");
-      if (numEl && numEl.textContent.includes("§")) {
-        const dot = numEl.querySelector(".acc-dot");
-        numEl.textContent = "§ " + String(i+1).padStart(2,"0");
-        if (dot) numEl.prepend(dot);
+      // ── Apply state ────────────────────────────────────────────
+      function applyFont() {
+        document.documentElement.setAttribute('data-font', state.fontPair);
       }
-      host.appendChild(node);
-    });
-  }
-  function renderOrderList() {
-    const ul = document.getElementById("tw-order");
-    ul.innerHTML = "";
-    state.order.forEach((key, i) => {
-      const li = document.createElement("li");
-      li.innerHTML = `
-        <span><span class="tnum text-[10px] text-[#8d8578] mr-2">${String(i+1).padStart(2,"0")}</span>${LABELS[key]}</span>
+      function renderSections() {
+        const host = document.getElementById('sections');
+        host.innerHTML = '';
+        state.order.forEach((key, i) => {
+          const tpl = document.getElementById('tpl-' + key);
+          if (!tpl) return;
+          const node = tpl.content.firstElementChild.cloneNode(true);
+          // rewrite section number while preserving the accent dot
+          const numEl = node.querySelector('.tnum');
+          if (numEl && numEl.textContent.includes('§')) {
+            const dot = numEl.querySelector('.acc-dot');
+            numEl.textContent = '§ ' + String(i + 1).padStart(2, '0');
+            if (dot) numEl.prepend(dot);
+          }
+          host.appendChild(node);
+        });
+      }
+      function renderOrderList() {
+        const ul = document.getElementById('tw-order');
+        ul.innerHTML = '';
+        state.order.forEach((key, i) => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+        <span><span class="tnum text-[10px] text-[#8d8578] mr-2">${String(i + 1).padStart(2, '0')}</span>${LABELS[key]}</span>
         <span class="flex gap-1">
-          <button data-act="up"   data-key="${key}" ${i===0?"disabled style='opacity:.3'":""}>↑</button>
-          <button data-act="down" data-key="${key}" ${i===state.order.length-1?"disabled style='opacity:.3'":""}>↓</button>
+          <button data-act="up"   data-key="${key}" ${i === 0 ? "disabled style='opacity:.3'" : ''}>↑</button>
+          <button data-act="down" data-key="${key}" ${i === state.order.length - 1 ? "disabled style='opacity:.3'" : ''}>↓</button>
         </span>`;
-      ul.appendChild(li);
-    });
-  }
+          ul.appendChild(li);
+        });
+      }
 
-  function persist() {
-    writeState(state);
-    try {
-      window.parent.postMessage({ type: "__edit_mode_set_keys", edits: state }, "*");
-    } catch {}
-  }
+      function persist() {
+        writeState(state);
+        try {
+          window.parent.postMessage(
+            { type: '__edit_mode_set_keys', edits: state },
+            '*'
+          );
+        } catch {}
+      }
 
-  // ── Initial render ─────────────────────────────────────────
-  applyFont();
-  renderSections();
-  renderOrderList();
+      // ── Initial render ─────────────────────────────────────────
+      applyFont();
+      renderSections();
+      renderOrderList();
 
-  // ── Tweaks wiring ──────────────────────────────────────────
-  const panel = document.getElementById("tw-panel");
-  const toggle = document.getElementById("tw-toggle");
-  const fontSel = document.getElementById("tw-font");
-  const orderUl = document.getElementById("tw-order");
-  const closeBtn = document.getElementById("tw-close");
+      // ── Tweaks wiring ──────────────────────────────────────────
+      const panel = document.getElementById('tw-panel');
+      const toggle = document.getElementById('tw-toggle');
+      const fontSel = document.getElementById('tw-font');
+      const orderUl = document.getElementById('tw-order');
+      const closeBtn = document.getElementById('tw-close');
 
-  fontSel.value = state.fontPair;
+      fontSel.value = state.fontPair;
 
-  let tweaksEnabled = false;
-  function setPanelOpen(open) {
-    if (!tweaksEnabled) return;
-    panel.classList.toggle("hidden", !open);
-    toggle.classList.toggle("hidden", open);
-  }
+      let tweaksEnabled = false;
+      function setPanelOpen(open) {
+        if (!tweaksEnabled) return;
+        panel.classList.toggle('hidden', !open);
+        toggle.classList.toggle('hidden', open);
+      }
 
-  fontSel.addEventListener("change", () => {
-    state.fontPair = fontSel.value;
-    applyFont();
-    persist();
-  });
+      fontSel.addEventListener('change', () => {
+        state.fontPair = fontSel.value;
+        applyFont();
+        persist();
+      });
 
-  orderUl.addEventListener("click", (e) => {
-    const btn = e.target.closest("button[data-act]");
-    if (!btn || btn.disabled) return;
-    const key = btn.dataset.key;
-    const act = btn.dataset.act;
-    const i = state.order.indexOf(key);
-    if (i < 0) return;
-    const j = act === "up" ? i-1 : i+1;
-    if (j < 0 || j >= state.order.length) return;
-    [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
-    renderSections();
-    renderOrderList();
-    persist();
-  });
+      orderUl.addEventListener('click', (e) => {
+        const btn = e.target.closest('button[data-act]');
+        if (!btn || btn.disabled) return;
+        const key = btn.dataset.key;
+        const act = btn.dataset.act;
+        const i = state.order.indexOf(key);
+        if (i < 0) return;
+        const j = act === 'up' ? i - 1 : i + 1;
+        if (j < 0 || j >= state.order.length) return;
+        [state.order[i], state.order[j]] = [state.order[j], state.order[i]];
+        renderSections();
+        renderOrderList();
+        persist();
+      });
 
-  toggle.addEventListener("click", () => setPanelOpen(true));
-  closeBtn.addEventListener("click", () => setPanelOpen(false));
+      toggle.addEventListener('click', () => setPanelOpen(true));
+      closeBtn.addEventListener('click', () => setPanelOpen(false));
 
-  // ── Host bridge ────────────────────────────────────────────
-  window.addEventListener("message", (ev) => {
-    const d = ev.data || {};
-    if (d.type === "__activate_edit_mode") {
-      tweaksEnabled = true;
-      toggle.classList.remove("hidden");
-    } else if (d.type === "__deactivate_edit_mode") {
-      tweaksEnabled = false;
-      panel.classList.add("hidden");
-      toggle.classList.add("hidden");
-    }
-  });
-  try { window.parent.postMessage({ type: "__edit_mode_available" }, "*"); } catch {}
-</script>
+      // ── Host bridge ────────────────────────────────────────────
+      window.addEventListener('message', (ev) => {
+        const d = ev.data || {};
+        if (d.type === '__activate_edit_mode') {
+          tweaksEnabled = true;
+          toggle.classList.remove('hidden');
+        } else if (d.type === '__deactivate_edit_mode') {
+          tweaksEnabled = false;
+          panel.classList.add('hidden');
+          toggle.classList.add('hidden');
+        }
+      });
+      try {
+        window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+      } catch {}
+    </script>
 
-<!-- V3 sidebar scroll-spy -->
-<script>
-(function () {
-  const links = document.querySelectorAll('.idx-link[data-key]');
-  if (!links.length) return;
+    <!-- V3 sidebar scroll-spy -->
+    <script>
+      (function () {
+        const links = document.querySelectorAll('.idx-link[data-key]');
+        if (!links.length) return;
 
-  function wireSpy() {
-    const map = {};
-    links.forEach(a => map[a.dataset.key] = a);
+        function wireSpy() {
+          const map = {};
+          links.forEach((a) => (map[a.dataset.key] = a));
 
-    const sections = ['about', 'blog', 'projects', 'contact', 'cv']
-      .map(k => document.getElementById(k))
-      .filter(Boolean);
-    if (!sections.length) return false;
+          const sections = ['about', 'blog', 'projects', 'contact', 'cv']
+            .map((k) => document.getElementById(k))
+            .filter(Boolean);
+          if (!sections.length) return false;
 
-    let current = null;
-    const io = new IntersectionObserver((entries) => {
-      // pick the section closest to top of viewport that's intersecting
-      const visible = entries
-        .filter(e => e.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
-      if (!visible.length) return;
-      const key = visible[0].target.id;
-      if (key === current) return;
-      current = key;
-      links.forEach(a => a.classList.toggle('is-active', a.dataset.key === key));
-    }, { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] });
+          let current = null;
+          const io = new IntersectionObserver(
+            (entries) => {
+              // pick the section closest to top of viewport that's intersecting
+              const visible = entries
+                .filter((e) => e.isIntersecting)
+                .sort(
+                  (a, b) => a.boundingClientRect.top - b.boundingClientRect.top
+                );
+              if (!visible.length) return;
+              const key = visible[0].target.id;
+              if (key === current) return;
+              current = key;
+              links.forEach((a) =>
+                a.classList.toggle('is-active', a.dataset.key === key)
+              );
+            },
+            { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] }
+          );
 
-    sections.forEach(s => io.observe(s));
-    return true;
-  }
+          sections.forEach((s) => io.observe(s));
+          return true;
+        }
 
-  // sections are injected by the main script — retry until they appear
-  let tries = 0;
-  const timer = setInterval(() => {
-    if (wireSpy() || ++tries > 40) clearInterval(timer);
-  }, 75);
-})();
-</script>
-
-</body>
+        // sections are injected by the main script — retry until they appear
+        let tries = 0;
+        const timer = setInterval(() => {
+          if (wireSpy() || ++tries > 40) clearInterval(timer);
+        }, 75);
+      })();
+    </script>
+  </body>
 </html>

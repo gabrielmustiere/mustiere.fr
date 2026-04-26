@@ -88,11 +88,21 @@ body {
   top: 1rem;
 }
 
-.acc-about { color: var(--a-about); }
-.acc-blog { color: var(--a-blog); }
-.acc-projects { color: var(--a-projects); }
-.acc-contact { color: var(--a-contact); }
-.acc-cv { color: var(--a-cv); }
+.acc-about {
+  color: var(--a-about);
+}
+.acc-blog {
+  color: var(--a-blog);
+}
+.acc-projects {
+  color: var(--a-projects);
+}
+.acc-contact {
+  color: var(--a-contact);
+}
+.acc-cv {
+  color: var(--a-cv);
+}
 
 .acc-dot::before {
   content: '';
@@ -272,12 +282,12 @@ body {
 /* Shiki github-light — override des tokens qui tombent sous 4.5:1 sur fond blanc.
    L'orange (variables/paramètres) et le gris pâle (commentaires) sont les seuls
    colors problématiques de la palette. */
-.astro-code span[style*="#E36209"],
-.astro-code span[style*="#e36209"] {
+.astro-code span[style*='#E36209'],
+.astro-code span[style*='#e36209'] {
   color: #b4500a !important;
 }
-.astro-code span[style*="#6A737D"],
-.astro-code span[style*="#6a737d"] {
+.astro-code span[style*='#6A737D'],
+.astro-code span[style*='#6a737d'] {
   color: #57606a !important;
 }
 

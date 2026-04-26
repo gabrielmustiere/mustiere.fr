@@ -4,10 +4,7 @@ import Footer from '@components/layout/Footer.astro';
 import CategoryPill from '@components/ui/CategoryPill.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
 import { getCollection } from 'astro:content';
-import {
-  blogSchema,
-  breadcrumbSchema,
-} from '@/utils/schema';
+import { blogSchema, breadcrumbSchema } from '@/utils/schema';
 import { formatDateDotted, toISODate } from '@/utils/format-date';
 import { SITE } from '@/consts';
 import type { Category } from '@/content.config';
@@ -68,7 +65,10 @@ const description =
     schemas={[
       blogSchema(lang),
       breadcrumbSchema([
-        { name: lang === 'fr' ? 'Accueil' : 'Home', url: `${SITE.url}${homeHref}` },
+        {
+          name: lang === 'fr' ? 'Accueil' : 'Home',
+          url: `${SITE.url}${homeHref}`,
+        },
         { name: tr.home.blog.title, url: `${SITE.url}${blogHref}` },
       ]),
     ]}
@@ -82,12 +82,16 @@ const description =
     <div
       class="flex items-center justify-between text-[11px] tracking-[0.12em] uppercase font-mono"
     >
-      <span class="acc-blog"><span class="acc-dot"></span>§ 02 · {tr.home.blog.title}</span>
+      <span class="acc-blog"
+        ><span class="acc-dot"></span>§ 02 · {tr.home.blog.title}</span
+      >
       <span class="tnum text-[color:var(--color-muted)]">
         {totalCount}
-        {lang === 'fr'
-          ? ` billet${totalCount > 1 ? 's' : ''}`
-          : ` post${totalCount > 1 ? 's' : ''}`}
+        {
+          lang === 'fr'
+            ? ` billet${totalCount > 1 ? 's' : ''}`
+            : ` post${totalCount > 1 ? 's' : ''}`
+        }
       </span>
     </div>
 
@@ -97,35 +101,40 @@ const description =
           class="font-serif mt-6 text-[52px] sm:text-[72px] leading-[1.02] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
         >
-          Articles de blog <br /><em class="acc-blog">au long cours.</em>
+          Articles de blog{' '}
+          <>
+            <br />
+            <em class="acc-blog">au long cours.</em>
+          </>
         </h1>
       ) : (
         <h1
           class="font-serif mt-6 text-[52px] sm:text-[72px] leading-[1.02] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
         >
-          Blog posts <br /><em class="acc-blog">at length.</em>
+          Blog posts{' '}
+          <>
+            <br />
+            <em class="acc-blog">at length.</em>
+          </>
         </h1>
       )
     }
 
     {
       lang === 'fr' ? (
-        <p
-          class="mt-6 text-[15px] sm:text-[16px] text-[#2a2622] leading-[1.7] max-w-[560px]"
-        >
+        <p class="mt-6 text-[15px] sm:text-[16px] text-[#2a2622] leading-[1.7] max-w-[560px]">
           Notes et essais sur la <span class="acc-blog">tech</span>, le
-          <span class="acc-about">business</span> et l'<span class="acc-projects"
-            >IA</span
-          >. Pas de fréquence — juste quand j'ai quelque chose à dire.
+          <span class="acc-about">business</span> et l'
+          <span class="acc-projects">IA</span>. Pas de fréquence — juste quand
+          j'ai quelque chose à dire.
         </p>
       ) : (
-        <p
-          class="mt-6 text-[15px] sm:text-[16px] text-[#2a2622] leading-[1.7] max-w-[560px]"
-        >
+        <p class="mt-6 text-[15px] sm:text-[16px] text-[#2a2622] leading-[1.7] max-w-[560px]">
           Notes and essays on <span class="acc-blog">tech</span>,
-          <span class="acc-about">business</span> and <span class="acc-projects">AI</span>.
-          No schedule — only when I have something to say.
+          <span class="acc-about">business</span> and{' '}
+          <span class="acc-projects">AI</span>. No schedule — only when I have
+          something to say.
         </p>
       )
     }
@@ -168,12 +177,20 @@ const description =
 
     {
       featured && (
-        <section class="mt-12 border-t border-[color:var(--color-rule-strong)] pt-6" data-tags={featured.data.category}>
+        <section
+          class="mt-12 border-t border-[color:var(--color-rule-strong)] pt-6"
+          data-tags={featured.data.category}
+        >
           <div class="flex items-baseline justify-between text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] font-mono">
             <span>{lang === 'fr' ? 'À la une' : 'Featured'}</span>
-            <span class="tnum">№ {String(featured.data.number).padStart(2, '0')}</span>
+            <span class="tnum">
+              № {String(featured.data.number).padStart(2, '0')}
+            </span>
           </div>
-          <a href={localizedPath(lang, `/blog/${featured.id}`)} class="block mt-3 group">
+          <a
+            href={localizedPath(lang, `/blog/${featured.id}`)}
+            class="block mt-3 group"
+          >
             <h2
               class="font-serif text-[30px] sm:text-[42px] leading-[1.08] tracking-[-0.015em] group-hover:text-[color:var(--a-blog)] transition-colors"
               style="font-family: var(--font-serif)"
@@ -182,11 +199,18 @@ const description =
             </h2>
           </a>
           <div class="mt-4 flex items-center gap-4 text-[11px] tracking-[0.1em] uppercase text-[color:var(--color-muted)] font-mono">
-            <time class="tnum acc-blog" datetime={toISODate(featured.data.publishedAt)}>
+            <time
+              class="tnum acc-blog"
+              datetime={toISODate(featured.data.publishedAt)}
+            >
               {formatDateDotted(featured.data.publishedAt)}
             </time>
             <span aria-hidden="true">·</span>
-            <CategoryPill category={featured.data.category} size="sm" lang={lang} />
+            <CategoryPill
+              category={featured.data.category}
+              size="sm"
+              lang={lang}
+            />
             {featured.data.readingTime && (
               <>
                 <span aria-hidden="true">·</span>
@@ -231,7 +255,11 @@ const description =
                   {post.data.title}
                 </h3>
                 <span class="hidden sm:inline">
-                  <CategoryPill category={post.data.category} size="sm" lang={lang} />
+                  <CategoryPill
+                    category={post.data.category}
+                    size="sm"
+                    lang={lang}
+                  />
                 </span>
                 {post.data.readingTime && (
                   <span class="hidden sm:inline text-[11px] tnum text-right text-[color:var(--color-muted)]">

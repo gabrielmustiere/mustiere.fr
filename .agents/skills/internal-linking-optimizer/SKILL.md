@@ -1,16 +1,16 @@
 ---
 name: internal-linking-optimizer
 description: 'Optimize internal links: site architecture, authority distribution, orphan pages, crawl depth analysis. 内链优化/站内架构'
-version: "9.1.0"
+version: '9.1.0'
 license: Apache-2.0
-compatibility: "Claude Code, skills.sh, ClawHub, Vercel Labs, Cursor, Windsurf, Codex CLI, Amp, Gemini CLI, Kimi Code, Qwen Code, CodeBuddy"
-homepage: "https://github.com/aaron-he-zhu/seo-geo-claude-skills"
-when_to_use: "Use when improving internal link structure, anchor text distribution, orphan pages, or site architecture."
-argument-hint: "<URL or sitemap>"
+compatibility: 'Claude Code, skills.sh, ClawHub, Vercel Labs, Cursor, Windsurf, Codex CLI, Amp, Gemini CLI, Kimi Code, Qwen Code, CodeBuddy'
+homepage: 'https://github.com/aaron-he-zhu/seo-geo-claude-skills'
+when_to_use: 'Use when improving internal link structure, anchor text distribution, orphan pages, or site architecture.'
+argument-hint: '<URL or sitemap>'
 metadata:
   author: aaron-he-zhu
-  version: "9.1.0"
-  geo-relevance: "low"
+  version: '9.1.0'
+  geo-relevance: 'low'
   tags:
     - seo
     - internal-linking
@@ -25,53 +25,52 @@ metadata:
     - enlaces-internos
   triggers:
     # EN-formal
-    - "fix internal links"
-    - "improve site architecture"
-    - "internal linking strategy"
-    - "link equity"
+    - 'fix internal links'
+    - 'improve site architecture'
+    - 'internal linking strategy'
+    - 'link equity'
     # EN-casual
-    - "orphan pages"
-    - "site architecture is messy"
-    - "pages have no links"
+    - 'orphan pages'
+    - 'site architecture is messy'
+    - 'pages have no links'
     # EN-question
-    - "how to improve internal linking"
-    - "how to fix orphan pages"
+    - 'how to improve internal linking'
+    - 'how to fix orphan pages'
     # ZH-pro
-    - "内链优化"
-    - "站内链接"
-    - "网站架构"
-    - "权重传递"
-    - "锚文本优化"
+    - '内链优化'
+    - '站内链接'
+    - '网站架构'
+    - '权重传递'
+    - '锚文本优化'
     # ZH-casual
-    - "内链怎么做"
-    - "孤立页面"
-    - "网站结构乱"
+    - '内链怎么做'
+    - '孤立页面'
+    - '网站结构乱'
     # JA
-    - "内部リンク最適化"
-    - "サイト構造"
-    - "サイト構造改善"
-    - "孤立ページ"
-    - "内部リンク戦略"
-    - "アンカーテキスト最適化"
+    - '内部リンク最適化'
+    - 'サイト構造'
+    - 'サイト構造改善'
+    - '孤立ページ'
+    - '内部リンク戦略'
+    - 'アンカーテキスト最適化'
     # KO
-    - "내부 링크 최적화"
-    - "사이트 구조"
-    - "사이트 구조 개선"
-    - "고아 페이지"
-    - "앵커 텍스트"
+    - '내부 링크 최적화'
+    - '사이트 구조'
+    - '사이트 구조 개선'
+    - '고아 페이지'
+    - '앵커 텍스트'
     # ES
-    - "enlaces internos"
-    - "arquitectura del sitio"
-    - "páginas huérfanas"
-    - "estructura del sitio"
+    - 'enlaces internos'
+    - 'arquitectura del sitio'
+    - 'páginas huérfanas'
+    - 'estructura del sitio'
     # PT
-    - "links internos"
-    - "arquitetura do site"
-    - "páginas órfãs"
+    - 'links internos'
+    - 'arquitetura do site'
+    - 'páginas órfãs'
 ---
 
 # Internal Linking Optimizer
-
 
 This skill analyzes your site's internal link structure and provides recommendations to improve SEO through strategic internal linking. It helps distribute authority, establish topical relevance, and improve crawlability.
 
@@ -138,39 +137,39 @@ When a user requests internal linking optimization:
 
    ```markdown
    ## Internal Link Structure Analysis
-   
+
    ### Overview
-   
+
    **Domain**: [domain]
    **Total Pages Analyzed**: [X]
    **Total Internal Links**: [X]
    **Average Links per Page**: [X]
-   
+
    ### Link Distribution
-   
+
    | Links per Page | Page Count | Percentage |
-   |----------------|------------|------------|
-   | 0 (Orphan) | [X] | [X]% |
-   | 1-5 | [X] | [X]% |
-   | 6-10 | [X] | [X]% |
-   | 11-20 | [X] | [X]% |
-   | 20+ | [X] | [X]% |
-   
+   | -------------- | ---------- | ---------- |
+   | 0 (Orphan)     | [X]        | [X]%       |
+   | 1-5            | [X]        | [X]%       |
+   | 6-10           | [X]        | [X]%       |
+   | 11-20          | [X]        | [X]%       |
+   | 20+            | [X]        | [X]%       |
+
    ### Top Linked Pages
-   
-   | Page | Internal Links | Authority | Notes |
-   |------|----------------|-----------|-------|
-   | [URL 1] | [X] | High | [notes] |
-   | [URL 2] | [X] | High | [notes] |
-   | [URL 3] | [X] | Medium | [notes] |
-   
+
+   | Page    | Internal Links | Authority | Notes   |
+   | ------- | -------------- | --------- | ------- |
+   | [URL 1] | [X]            | High      | [notes] |
+   | [URL 2] | [X]            | High      | [notes] |
+   | [URL 3] | [X]            | Medium    | [notes] |
+
    ### Under-Linked Important Pages
-   
-   | Page | Current Links | Traffic | Recommended Links |
-   |------|---------------|---------|-------------------|
-   | [URL 1] | [X] | [X]/mo | [X]+ |
-   | [URL 2] | [X] | [X]/mo | [X]+ |
-   
+
+   | Page    | Current Links | Traffic | Recommended Links |
+   | ------- | ------------- | ------- | ----------------- |
+   | [URL 1] | [X]           | [X]/mo  | [X]+              |
+   | [URL 2] | [X]           | [X]/mo  | [X]+              |
+
    **Structure Score**: [X]/10
    ```
 
@@ -178,30 +177,34 @@ When a user requests internal linking optimization:
 
    ```markdown
    ## Orphan Page Analysis
-   
+
    ### Definition
-   Orphan pages have no internal links pointing to them, making them 
+
+   Orphan pages have no internal links pointing to them, making them
    hard for users and search engines to discover.
-   
+
    ### Orphan Pages Found: [X]
-   
-   | Page | Traffic | Priority | Recommended Action |
-   |------|---------|----------|-------------------|
-   | [URL 1] | [X]/mo | High | Link from [pages] |
-   | [URL 2] | [X]/mo | Medium | Add to navigation |
-   | [URL 3] | 0 | Low | Consider deleting/redirecting |
-   
+
+   | Page    | Traffic | Priority | Recommended Action            |
+   | ------- | ------- | -------- | ----------------------------- |
+   | [URL 1] | [X]/mo  | High     | Link from [pages]             |
+   | [URL 2] | [X]/mo  | Medium   | Add to navigation             |
+   | [URL 3] | 0       | Low      | Consider deleting/redirecting |
+
    ### Fix Strategy
-   
+
    **High Priority Orphans** (have traffic/rankings):
+
    1. [URL] - Add links from: [relevant pages]
    2. [URL] - Add links from: [relevant pages]
-   
+
    **Medium Priority Orphans** (potentially valuable):
+
    1. [URL] - Add to category/tag page
    2. [URL] - Link from related content
-   
+
    **Low Priority Orphans** (consider removing):
+
    1. [URL] - Redirect to [better page]
    2. [URL] - Delete or noindex
    ```
@@ -226,7 +229,6 @@ When a user requests internal linking optimization:
 
    > **Reference**: See [references/linking-templates.md](https://github.com/aaron-he-zhu/seo-geo-claude-skills/blob/main/optimize/internal-linking-optimizer/references/linking-templates.md) for the full implementation plan template (Step 7).
 
-
 ## Example
 
 **User**: "Find internal linking opportunities for my blog post on 'email marketing best practices'"
@@ -242,7 +244,6 @@ When a user requests internal linking optimization:
 3. **Vary anchor text** - Avoid over-optimization
 4. **Link to important pages** - Distribute authority strategically
 5. **Regular audits** - Internal links need maintenance as content grows
-
 
 ### Save Results
 

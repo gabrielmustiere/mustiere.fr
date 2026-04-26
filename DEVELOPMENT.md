@@ -48,16 +48,15 @@ Créer un fichier dans `src/content/blog/mon-slug.mdx` avec le frontmatter :
 
 ```yaml
 ---
-title: "Titre (≤120 chars)"
-excerpt: "Chapô de 80–220 caractères, réutilisé comme meta description."
+title: 'Titre (≤120 chars)'
+excerpt: 'Chapô de 80–220 caractères, réutilisé comme meta description.'
 publishedAt: 2026-04-23
-category: IA    # IA | Tech | Lead | Business
+category: IA # IA | Tech | Lead | Business
 tags: [LLM, production]
 keywords: [mot-clé intent SEO]
 number: 8
 tldr: "Résumé 60–320 caractères (lu en tête d'article, utile pour LLMs)."
 ---
-
 # Titre au besoin
 
 Contenu Markdown/MDX.
@@ -71,15 +70,14 @@ Le schéma Zod impose la cohérence — le build échoue sur un champ invalide.
 
 ```yaml
 ---
-title: "Nom"
-subtitle: "Tagline"
-status: "actif"   # actif | archivé | v1.x | beta
-kind: "OSS"       # ou Side project, Expériment
+title: 'Nom'
+subtitle: 'Tagline'
+status: 'actif' # actif | archivé | v1.x | beta
+kind: 'OSS' # ou Side project, Expériment
 year: 2026
-excerpt: "Une ligne."
+excerpt: 'Une ligne.'
 order: 4
 ---
-
 Description optionnelle.
 ```
 
@@ -104,12 +102,12 @@ Description optionnelle.
 
 ## Performance — budgets
 
-| Metric | Objectif |
-|---|---|
-| LCP (mobile) | < 1.5 s |
-| CLS | < 0.05 |
-| INP | < 100 ms |
-| JS total gzip | < 10 KB |
+| Metric        | Objectif |
+| ------------- | -------- |
+| LCP (mobile)  | < 1.5 s  |
+| CLS           | < 0.05   |
+| INP           | < 100 ms |
+| JS total gzip | < 10 KB  |
 
 État actuel : JS page-level ≈ 1 KB gzip (scroll-spy + progress bar + filtre blog + share), polices self-hostées, CSS critique inline, compression Brotli via Cloudflare.
 

@@ -46,9 +46,7 @@ export const GET: APIRoute = async () => {
     `Depuis septembre 2025, freelance. Mission en cours : Anytime, conformité PSD2/SCA via WebAuthn (passkeys, biométrie, clés de sécurité matérielles). Disponibilité prochaine : Q3 2026, en mission longue, CTO fractional pour startup early stage, audit ou sparring.`
   );
   parts.push('');
-  parts.push(
-    `Parcours détaillé : ${SITE.url}/parcours/`
-  );
+  parts.push(`Parcours détaillé : ${SITE.url}/parcours/`);
   parts.push('');
   parts.push('---');
   parts.push('');
