@@ -1,0 +1,23 @@
+## L'outillage qui rend la qualité industrielle
+
+C'est le segment où le préjugé tient encore le plus, et où la réalité s'en est le plus écartée. Ce qu'un projet PHP sérieux embarque aujourd'hui :
+
+- **[PHPStan](https://phpstan.org/)** — analyse statique. Le mode strict (level 9) attrape déjà la quasi-totalité des erreurs typées ; le level 10, sorti avec PHPStan 2.0, traque jusqu'aux types `mixed` non résolus et est devenu un badge qualité dans l'OSS PHP. Une codebase Symfony sérieuse passe au minimum level 8 en CI.
+- **[Rector](https://getrector.com/)** — refactoring automatisé. C'est l'outil qui m'a fait passer plusieurs codebases de PHP 7.4 + Symfony 4 à PHP 8.4 + Symfony 7 sans semaines perdues. Il connaît les règles de migration de PHP, de Symfony, de Doctrine, et il les applique sur des centaines de fichiers d'une commande. Pour la longévité d'un produit sur dix ans, c'est une assurance vie.
+- **[Pest](https://pestphp.com/)** — framework de test moderne, syntaxe expressive, plus de 39 millions d'installations début 2026. La version 4 a intégré [Playwright](https://pestphp.com/docs/browser-testing) pour les tests browser et la régression visuelle, sans installer de stack JavaScript séparée. Pour les puristes, **PHPUnit** continue d'évoluer en parallèle avec une qualité irréprochable.
+- **Pint / php-cs-fixer** — formatters. Configuration zéro, intégration CI/IDE, fin du débat sur le style. C'est le `prettier` du monde PHP.
+- **[`composer audit`](https://getcomposer.org/doc/03-cli.md#audit)** — sécu intégrée à Composer depuis 2.4, basée sur la base FriendsOfPHP. À mettre en CI, point.
+
+Une CI minimale sur un projet 2026 ressemble à ça :
+
+```yaml
+# .github/workflows/ci.yml (extrait)
+- run: composer install --no-progress
+- run: vendor/bin/pint --test            # style
+- run: vendor/bin/phpstan analyse        # types (level 8+)
+- run: vendor/bin/rector --dry-run       # déprécations à venir
+- run: vendor/bin/pest --coverage --min=80
+- run: composer audit                    # CVE
+```
+
+Cinq commandes, cinq garanties : style propre, types corrects, code aligné sur la prochaine version, comportement testé, pas de dépendance vulnérable. C'est très exactement le niveau que j'attends d'un projet TypeScript sérieux. Et l'expérience cumulée sur ces outils me fait dire que l'outillage PHP est en réalité **plus stable** que son pendant JavaScript, où chaque trimestre amène un nouveau plugin ESLint ou un changement de paradigme dans le runner de test.

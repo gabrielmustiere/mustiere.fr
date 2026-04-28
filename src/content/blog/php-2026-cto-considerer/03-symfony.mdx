@@ -1,0 +1,18 @@
+## Symfony, et un écosystème qui couvre tout
+
+Symfony 7 est mon socle de travail depuis cinq versions majeures. C'est un framework HTTP générique, mature, fortement typé, qui propose un container DI puissant, un système d'événements, un Messenger pour les jobs asynchrones, un Workflow pour les machines à états, un Validator, un Form, un Security — chacun de ces composants étant utilisable indépendamment du reste. Cette modularité est ce qui m'a permis, sur quatorze ans, de monter des produits très différents avec une architecture homogène.
+
+Mais le vrai argument en 2026 ce n'est plus Symfony seul, c'est ce qui s'est construit autour :
+
+| Besoin                | Composant principal       | Ce qui sort de la boîte                                                                  |
+| --------------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+| API REST / GraphQL    | API Platform              | CRUD générés, OpenAPI auto, filtres, pagination, sérialisation, GraphQL natif            |
+| E-commerce            | Sylius                    | Catalogue, panier, checkout, taxes, promotions, multi-canal, multi-devise, headless      |
+| Back-office admin     | EasyAdmin                 | CRUD complet sur entités Doctrine en quelques lignes, dashboard, filtres, exports        |
+| Temps réel            | Mercure                   | Server-sent events, intégration native API Platform                                      |
+| UI réactive sans JS   | Symfony UX Live Component | Composants Twig avec état serveur, mises à jour AJAX automatiques                        |
+| Mobile (iOS/Android)  | Turbo + Hotwire Native    | App native qui réutilise le HTML serveur, sans React Native ni Flutter                   |
+
+Cette table est ce que j'oppose à l'objection « PHP, c'est juste du web 2010 ». Sur la plupart des produits que je vois passer — SaaS B2B, marketplace, plateforme métier — chacune de ces briques s'utilise sans glue code. **API Platform** en particulier mérite qu'on s'y arrête : on déclare une entité Doctrine, on annote, on a une API REST + GraphQL + OpenAPI documentée + Mercure-pushable, sans écrire un controller. Le gain de productivité se compte en facteurs, pas en pourcentages.
+
+Je n'ai pas pratiqué **Laravel** sur la durée, mais il faut le mentionner : l'autre grand framework PHP, communauté massive, DX très soignée, écosystème (Forge, Vapor, Livewire, Reverb) cohérent et orienté product. Pour une petite équipe qui privilégie la convention sur la configuration, c'est un choix qui se défend très bien. **WordPress**, que je n'ai pas non plus en main au quotidien, reste un incontournable de l'écosystème — environ 40 % du web tourne dessus, le marché de plugins commerciaux est mature, et il propose désormais une vraie API REST/GraphQL via WPGraphQL pour qui veut l'utiliser comme headless CMS. L'écosystème PHP ne se résume pas à Symfony, et ses différentes branches couvrent l'ensemble du spectre des produits web modernes.

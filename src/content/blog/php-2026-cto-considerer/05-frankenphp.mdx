@@ -1,0 +1,18 @@
+## FrankenPHP — la rupture qui change l'équation infra
+
+C'est probablement la transformation la plus brutale de ces deux dernières années. [FrankenPHP](https://frankenphp.dev/), porté par Kévin Dunglas (le créateur d'API Platform), est un serveur d'application PHP construit sur Caddy, distribué en binaire unique, et qui propose un **worker mode** : le process PHP reste en mémoire entre les requêtes, le bootstrap du framework n'est exécuté qu'une fois.
+
+Le résultat n'est pas une amélioration marginale. Voici un benchmark publié sur Symfony 7.4 ([source DEV.to, début 2026](https://dev.to/mattleads/from-45ms-to-8ms-benchmarking-symfony-74-on-frankenphp-ekk)) :
+
+| Setup                    | Throughput | Latence p95 |
+| ------------------------ | ---------- | ----------- |
+| Nginx + PHP-FPM          | 1 240 RPS  | 45 ms       |
+| FrankenPHP (worker mode) | 3 850 RPS  | 8 ms        |
+
+Trois fois plus de requêtes par seconde, latence p95 divisée par cinq. Sur Laravel, des migrations en worker mode rapportées par la communauté font passer la latence moyenne de 7 secondes à 66 millisecondes sur des endpoints lents. Ces chiffres datent (à reconfirmer dans les conditions de votre charge), mais l'ordre de grandeur est là.
+
+L'**implication infra** est simple : à trafic constant, on divise par trois ou quatre le nombre de workers nécessaires. Sur un SaaS B2B servant quelques milliers d'utilisateurs concurrents, ça se traduit en passage de quatre à six instances applicatives à une ou deux. Le coût mensuel suit. Et le déploiement est plus simple : un binaire FrankenPHP embarque l'app, Caddy, HTTPS automatique, HTTP/3, Mercure. Plus de stack Nginx + PHP-FPM + opcache + reverse proxy à orchestrer.
+
+La **migration** est étonnamment peu coûteuse. La plupart des apps Symfony tournent en worker mode sans changement, à condition de respecter une règle simple : ne pas garder d'état mutable au niveau service. Les rares services qui cachent de la donnée request-scoped doivent implémenter `ResetInterface`, ce qui prend quelques minutes par service. Sur le SaaS d'environ 1000 controllers que j'ai converti récemment, ça a représenté **un** service à modifier.
+
+L'argument historique de la « lenteur PHP » reposait sur le modèle process-par-requête de PHP-FPM. Ce modèle n'est plus la seule option — et au moins dans le contexte web applicatif, le sujet performance peut être considéré comme réglé.

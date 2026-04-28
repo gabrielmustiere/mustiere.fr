@@ -262,7 +262,10 @@ async function loadFolder(args: {
           `Place les imports dans index${indexExt}.`
       );
     }
-    chapterBodies.push(cc);
+    // Trim pour neutraliser les newlines de fin de fichier (et début) qui
+    // produiraient un séparateur `\n\n\n` lors du join et casseraient
+    // l'équivalence byte-à-byte avec la forme plate.
+    chapterBodies.push(cc.trim());
   }
 
   if (chapterBodies.length === 0 && !indexBody.trim()) {

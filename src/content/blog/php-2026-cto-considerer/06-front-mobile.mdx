@@ -1,0 +1,44 @@
+## Front, mobile et temps réel sans empiler de stack JS
+
+C'est probablement le segment où, pendant longtemps, PHP a été objectivement à la traîne. Une application web moderne implique de l'interactivité côté client, et la réponse historique côté PHP n'a jamais été pleinement convaincante. C'est ce qui a changé.
+
+**[Symfony UX Live Components](https://ux.symfony.com/live-component)** est l'approche que j'utilise désormais par défaut sur les SaaS B2B. Un composant Twig porté par une classe PHP, qui se met à jour côté serveur en réponse aux interactions utilisateur, rendu HTML envoyé par fragments, état conservé via attributs HTML signés. Pas de framework JavaScript, pas de bundle, pas de duplication de logique métier entre front et back. Concrètement :
+
+```php
+// src/Twig/Components/UserSearch.php
+#[AsLiveComponent]
+final class UserSearch
+{
+    use DefaultActionTrait;
+
+    #[LiveProp(writable: true)]
+    public string $query = '';
+
+    public function __construct(private UserRepository $users) {}
+
+    public function getResults(): array
+    {
+        return $this->users->searchByName($this->query, limit: 20);
+    }
+}
+```
+
+```twig
+{# templates/components/UserSearch.html.twig #}
+<div {{ attributes }}>
+    <input type="search" data-model="query" placeholder="Chercher un utilisateur…">
+    <ul>
+        {% for user in this.results %}
+            <li>{{ user.fullName }}</li>
+        {% endfor %}
+    </ul>
+</div>
+```
+
+C'est tout. Le `data-model` lie l'input à `$query`, le rendu se met à jour à chaque frappe (avec debounce). Pour 80 % des écrans d'admin et de SaaS B2B que je vois passer, ce niveau d'interactivité suffit largement, et on a écrit zéro JavaScript.
+
+Pour le **temps réel**, Mercure est intégré nativement à Symfony et API Platform. Un push depuis le serveur, un consommateur SSE côté navigateur, et on a des notifications, du collaborative editing, du status update temps réel — sans WebSocket à gérer.
+
+Pour le **mobile**, l'arrivée du **bridge Hotwire Native côté Symfony** (via [`symfony/turbo`](https://symfony.com/bundles/TurboBundle/current/index.html) couplé au shell natif Hotwire de 37signals) change l'arbitrage. Au lieu de maintenir trois codebases — web React, app iOS Swift, app Android Kotlin — on maintient une codebase Symfony qui rend du HTML, et deux shells natifs minimaux qui chargent ce HTML dans des WebView optimisées. Quand on a besoin de natif (caméra, notifications push, capteurs), on l'expose via des bridges JS↔natif. C'est l'approche de Basecamp pour HEY, et elle est désormais pleinement utilisable en stack Symfony.
+
+Sur un produit SaaS B2B avec une app mobile companion, c'est souvent **la** bonne réponse : équipe unique, codebase unique, parité de feature gratuite.
