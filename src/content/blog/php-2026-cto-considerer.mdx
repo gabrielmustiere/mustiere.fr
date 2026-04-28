@@ -1,0 +1,210 @@
+---
+title: 'PHP en 2026 : pourquoi un CTO devrait sérieusement le considérer'
+excerpt: "Symfony, FrankenPHP, PHPStan, Hotwire Native, Symfony AI : l'écosystème PHP couvre désormais l'ensemble du spectre — API, SaaS, e-commerce, mobile, IA. Grille de décision pour un comité d'archi en 2026."
+publishedAt: 2026-04-27
+category: Tech
+tags: [PHP, Symfony, FrankenPHP, Architecture]
+keywords:
+  [
+    PHP 2026,
+    Symfony CTO,
+    FrankenPHP performance,
+    écosystème PHP,
+    choix de stack,
+    Hotwire Native Symfony,
+  ]
+number: 2
+tldr: "PHP 8.5, Symfony 7, FrankenPHP en worker mode (3× PHP-FPM), outillage industriel (PHPStan, Rector, Pest), Live Components et Hotwire Native pour front et mobile, Symfony AI pour l'IA : l'écosystème couvre tout. Pour un CTO en 2026, c'est une option par défaut, pas un compromis."
+draft: true
+lang: fr
+faq:
+  - question: 'Faut-il vraiment démarrer un nouveau projet en PHP/Symfony plutôt qu''en Node ou Python en 2026 ?'
+    answer: "Ça dépend du produit. Pour une app web qui consomme principalement des LLM via API et qui a besoin d'une couverture API + back-office + e-commerce + mobile, Symfony est aujourd'hui le choix le plus rapide à mettre en route. Pour un produit fortement orienté ML (entraînement, inférence custom, traitement de données massif), Python reste mieux placé. Pour un service très realtime sub-100 ms, Node ou Go peuvent tirer leur épingle du jeu. Le piège est de raisonner par genre plutôt que par cas d'usage."
+  - question: 'FrankenPHP vs Laravel Octane ou RoadRunner — que choisir ?'
+    answer: "FrankenPHP est aujourd'hui le plus simple à déployer (binaire unique, Caddy intégré, HTTP/3, Mercure) et c'est celui que je privilégie sur Symfony. Octane est l'équivalent côté Laravel et reste une excellente option si on est déjà dans cet écosystème. RoadRunner est plus ancien, plus mature sur la gestion fine des workers, utilisé par des grosses prod. Les trois reposent sur la même idée — process PHP en mémoire — et les écarts entre eux sont faibles devant l'écart avec PHP-FPM classique."
+  - question: 'Combien de temps pour qu''une équipe Node ou Python devienne productive en Symfony ?'
+    answer: "Sur les équipes que j'ai vu basculer, un développeur sénior à l'aise avec un framework full-stack typé (Spring, Rails, NestJS, Django) atteint un niveau correct en deux à quatre semaines, et la productivité maximale en deux à trois mois. Le frein principal n'est pas le langage mais la familiarisation avec les conventions Symfony (DI, services, Doctrine, Messenger). C'est un investissement modeste comparé aux gains de productivité de l'écosystème complet."
+---
+
+Quatorze ans que j'écris du PHP. Une cinquantaine de projets traversés depuis 2012 — du e-commerce sous Sylius qui tourne depuis trois ans, à l'API B2B refondue en API Platform, jusqu'au SaaS passé en worker mode FrankenPHP cette année. Le fil constant : Symfony.
+
+Cet article n'est pas une comparaison ni une réponse à un autre écosystème. C'est ce que je vois aujourd'hui, en 2026, depuis l'intérieur : un langage devenu strict et rapide, des frameworks qui couvrent désormais le spectre entier — API, SaaS, e-commerce, back-office, temps réel, mobile, IA — un outillage devenu industriel, et une infra qui a effacé sans bruit l'argument historique de la performance.
+
+Je l'écris pour les CTO et lead tech qui veulent une carte à jour de l'écosystème PHP, et pour les développeurs PHP qui ont parfois besoin de remettre à plat ce que leur langage permet. C'est un retour de terrain, pas un plaidoyer.
+
+## Ce que j'ai vu se transformer en quatorze ans
+
+Je travaille en PHP/Symfony depuis 2012. C'est une spécialisation assumée : à force d'enchaîner les projets dans le même écosystème, on accumule une intuition qui rend chaque nouveau cadrage plus rapide, chaque livraison plus prévisible, chaque maintenance plus simple. Ce n'est pas un choix d'opportunité — c'est ce qui permet, sur la plupart des projets que j'attaque, de livrer en jours ce qui mériterait des semaines ailleurs.
+
+Sur ces quatorze ans, l'écosystème a connu plusieurs transformations qui méritent d'être vues ensemble plutôt que séparément :
+
+- Le langage est passé d'un terrain permissif à un langage typé, strict, et désormais rapide. PHP 8.5 n'a plus grand-chose à voir avec le PHP 5.3 du début de ma carrière.
+- Symfony s'est imposé comme socle, puis a essaimé un écosystème complet — API Platform, Sylius, UX, Mercure — qui couvre la plupart des besoins sans qu'on ait à recoller des morceaux entre projets.
+- L'outillage est devenu sérieux. PHPStan, Rector, Pest, Pint, `composer audit` : la qualité ne dépend plus de la discipline individuelle, elle est portée par des outils intégrés à la CI.
+- L'infra a fait un saut tardif mais marquant avec FrankenPHP en worker mode. La performance, longtemps présentée comme la faiblesse structurelle du langage, n'en est plus une.
+- Plus récemment, des initiatives comme Symfony AI ou le bridge Hotwire Native prolongent l'écosystème vers des terrains où on l'attendait moins : les apps IA-first et le mobile.
+
+Les sections qui suivent reprennent ces mouvements un par un, avec ce que j'utilise réellement en production. Le langage, les frameworks, l'outillage, l'infra, le front et le mobile, l'IA. À la fin, une grille à cinq critères pour situer où l'écosystème PHP est particulièrement pertinent.
+
+## Le langage a rattrapé — et dépassé — ce qu'on en attendait
+
+Le PHP que j'écris en 2026 ne ressemble pas à celui que j'écrivais en 2012. C'est l'une des transformations les plus discrètes mais les plus profondes de l'écosystème : le langage est devenu strict, expressif, et performant.
+
+Côté **typage**, on est passé de l'absence totale de types à un système qui rivalise avec ce qu'on attend d'un langage moderne : types scalaires, unions, intersections, types nullables, `readonly`, enums avec méthodes, property hooks. PHPStan en mode strict (j'y reviens en section dédiée) attrape la quasi-totalité des erreurs avant l'exécution. Un service écrit aujourd'hui ressemble à ça :
+
+```php
+// src/Domain/Pricing/PriceCalculator.php
+final readonly class PriceCalculator
+{
+    public function __construct(
+        private TaxRateRepository $taxRates,
+        private DiscountPolicy $discounts,
+    ) {}
+
+    public function compute(Cart $cart, Customer $customer): Money
+    {
+        return $cart->lines
+            |> array_map($this->priceLine(...), ...)
+            |> array_reduce(..., Money::zero())
+            |> fn ($total) => $this->discounts->apply($total, $customer)
+            |> fn ($total) => $this->taxRates->applyFor($customer->country, $total);
+    }
+}
+```
+
+Property hooks (PHP 8.4), pipe operator `|>` (PHP 8.5), `readonly` sur la classe entière, types stricts partout, services injectés via constructor promotion. C'est le PHP moderne — et il ressemble beaucoup à du Kotlin ou du TypeScript bien tenu.
+
+Côté **performance**, le JIT IR introduit en 8.4 et raffiné en 8.5 a fait gagner 5 à 15 % sur les charges arithmétiques par rapport à 8.3, et la base de PHP 8.x est déjà environ trois fois plus rapide que le PHP 7.4 que beaucoup ont en tête quand ils parlent de « lenteur PHP ». Pour les besoins **asynchrones**, les Fibers introduites en 8.1 sont stables depuis trois versions et utilisables en production via [AmPHP](https://amphp.org/) ou [ReactPHP](https://reactphp.org/) — pas la même ergonomie que `async/await` en JavaScript, mais le même résultat fonctionnel : I/O concurrentes sans threads.
+
+Le langage que je présente à un junior aujourd'hui est plus proche d'un C# moderne que du PHP 5 qu'il imagine. Ça change immédiatement la nature de tout débat sur sa robustesse.
+
+## Symfony, et un écosystème qui couvre tout
+
+Symfony 7 est mon socle de travail depuis cinq versions majeures. C'est un framework HTTP générique, mature, fortement typé, qui propose un container DI puissant, un système d'événements, un Messenger pour les jobs asynchrones, un Workflow pour les machines à états, un Validator, un Form, un Security — chacun de ces composants étant utilisable indépendamment du reste. Cette modularité est ce qui m'a permis, sur quatorze ans, de monter des produits très différents avec une architecture homogène.
+
+Mais le vrai argument en 2026 ce n'est plus Symfony seul, c'est ce qui s'est construit autour :
+
+| Besoin                | Composant principal       | Ce qui sort de la boîte                                                                  |
+| --------------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+| API REST / GraphQL    | API Platform              | CRUD générés, OpenAPI auto, filtres, pagination, sérialisation, GraphQL natif            |
+| E-commerce            | Sylius                    | Catalogue, panier, checkout, taxes, promotions, multi-canal, multi-devise, headless      |
+| Back-office admin     | EasyAdmin                 | CRUD complet sur entités Doctrine en quelques lignes, dashboard, filtres, exports        |
+| Temps réel            | Mercure                   | Server-sent events, intégration native API Platform                                      |
+| UI réactive sans JS   | Symfony UX Live Component | Composants Twig avec état serveur, mises à jour AJAX automatiques                        |
+| Mobile (iOS/Android)  | Turbo + Hotwire Native    | App native qui réutilise le HTML serveur, sans React Native ni Flutter                   |
+
+Cette table est ce que j'oppose à l'objection « PHP, c'est juste du web 2010 ». Sur la plupart des produits que je vois passer — SaaS B2B, marketplace, plateforme métier — chacune de ces briques s'utilise sans glue code. **API Platform** en particulier mérite qu'on s'y arrête : on déclare une entité Doctrine, on annote, on a une API REST + GraphQL + OpenAPI documentée + Mercure-pushable, sans écrire un controller. Le gain de productivité se compte en facteurs, pas en pourcentages.
+
+Je n'ai pas pratiqué **Laravel** sur la durée, mais il faut le mentionner : l'autre grand framework PHP, communauté massive, DX très soignée, écosystème (Forge, Vapor, Livewire, Reverb) cohérent et orienté product. Pour une petite équipe qui privilégie la convention sur la configuration, c'est un choix qui se défend très bien. **WordPress**, que je n'ai pas non plus en main au quotidien, reste un incontournable de l'écosystème — environ 40 % du web tourne dessus, le marché de plugins commerciaux est mature, et il propose désormais une vraie API REST/GraphQL via WPGraphQL pour qui veut l'utiliser comme headless CMS. L'écosystème PHP ne se résume pas à Symfony, et ses différentes branches couvrent l'ensemble du spectre des produits web modernes.
+
+## L'outillage qui rend la qualité industrielle
+
+C'est le segment où le préjugé tient encore le plus, et où la réalité s'en est le plus écartée. Ce qu'un projet PHP sérieux embarque aujourd'hui :
+
+- **[PHPStan](https://phpstan.org/)** — analyse statique. Le mode strict (level 9) attrape déjà la quasi-totalité des erreurs typées ; le level 10, sorti avec PHPStan 2.0, traque jusqu'aux types `mixed` non résolus et est devenu un badge qualité dans l'OSS PHP. Une codebase Symfony sérieuse passe au minimum level 8 en CI.
+- **[Rector](https://getrector.com/)** — refactoring automatisé. C'est l'outil qui m'a fait passer plusieurs codebases de PHP 7.4 + Symfony 4 à PHP 8.4 + Symfony 7 sans semaines perdues. Il connaît les règles de migration de PHP, de Symfony, de Doctrine, et il les applique sur des centaines de fichiers d'une commande. Pour la longévité d'un produit sur dix ans, c'est une assurance vie.
+- **[Pest](https://pestphp.com/)** — framework de test moderne, syntaxe expressive, plus de 39 millions d'installations début 2026. La version 4 a intégré [Playwright](https://pestphp.com/docs/browser-testing) pour les tests browser et la régression visuelle, sans installer de stack JavaScript séparée. Pour les puristes, **PHPUnit** continue d'évoluer en parallèle avec une qualité irréprochable.
+- **Pint / php-cs-fixer** — formatters. Configuration zéro, intégration CI/IDE, fin du débat sur le style. C'est le `prettier` du monde PHP.
+- **[`composer audit`](https://getcomposer.org/doc/03-cli.md#audit)** — sécu intégrée à Composer depuis 2.4, basée sur la base FriendsOfPHP. À mettre en CI, point.
+
+Une CI minimale sur un projet 2026 ressemble à ça :
+
+```yaml
+# .github/workflows/ci.yml (extrait)
+- run: composer install --no-progress
+- run: vendor/bin/pint --test            # style
+- run: vendor/bin/phpstan analyse        # types (level 8+)
+- run: vendor/bin/rector --dry-run       # déprécations à venir
+- run: vendor/bin/pest --coverage --min=80
+- run: composer audit                    # CVE
+```
+
+Cinq commandes, cinq garanties : style propre, types corrects, code aligné sur la prochaine version, comportement testé, pas de dépendance vulnérable. C'est très exactement le niveau que j'attends d'un projet TypeScript sérieux. Et l'expérience cumulée sur ces outils me fait dire que l'outillage PHP est en réalité **plus stable** que son pendant JavaScript, où chaque trimestre amène un nouveau plugin ESLint ou un changement de paradigme dans le runner de test.
+
+## FrankenPHP — la rupture qui change l'équation infra
+
+C'est probablement la transformation la plus brutale de ces deux dernières années. [FrankenPHP](https://frankenphp.dev/), porté par Kévin Dunglas (le créateur d'API Platform), est un serveur d'application PHP construit sur Caddy, distribué en binaire unique, et qui propose un **worker mode** : le process PHP reste en mémoire entre les requêtes, le bootstrap du framework n'est exécuté qu'une fois.
+
+Le résultat n'est pas une amélioration marginale. Voici un benchmark publié sur Symfony 7.4 ([source DEV.to, début 2026](https://dev.to/mattleads/from-45ms-to-8ms-benchmarking-symfony-74-on-frankenphp-ekk)) :
+
+| Setup                    | Throughput | Latence p95 |
+| ------------------------ | ---------- | ----------- |
+| Nginx + PHP-FPM          | 1 240 RPS  | 45 ms       |
+| FrankenPHP (worker mode) | 3 850 RPS  | 8 ms        |
+
+Trois fois plus de requêtes par seconde, latence p95 divisée par cinq. Sur Laravel, des migrations en worker mode rapportées par la communauté font passer la latence moyenne de 7 secondes à 66 millisecondes sur des endpoints lents. Ces chiffres datent (à reconfirmer dans les conditions de votre charge), mais l'ordre de grandeur est là.
+
+L'**implication infra** est simple : à trafic constant, on divise par trois ou quatre le nombre de workers nécessaires. Sur un SaaS B2B servant quelques milliers d'utilisateurs concurrents, ça se traduit en passage de quatre à six instances applicatives à une ou deux. Le coût mensuel suit. Et le déploiement est plus simple : un binaire FrankenPHP embarque l'app, Caddy, HTTPS automatique, HTTP/3, Mercure. Plus de stack Nginx + PHP-FPM + opcache + reverse proxy à orchestrer.
+
+La **migration** est étonnamment peu coûteuse. La plupart des apps Symfony tournent en worker mode sans changement, à condition de respecter une règle simple : ne pas garder d'état mutable au niveau service. Les rares services qui cachent de la donnée request-scoped doivent implémenter `ResetInterface`, ce qui prend quelques minutes par service. Sur le SaaS d'environ 1000 controllers que j'ai converti récemment, ça a représenté **un** service à modifier.
+
+L'argument historique de la « lenteur PHP » reposait sur le modèle process-par-requête de PHP-FPM. Ce modèle n'est plus la seule option — et au moins dans le contexte web applicatif, le sujet performance peut être considéré comme réglé.
+
+## Front, mobile et temps réel sans empiler de stack JS
+
+C'est probablement le segment où, pendant longtemps, PHP a été objectivement à la traîne. Une application web moderne implique de l'interactivité côté client, et la réponse historique côté PHP n'a jamais été pleinement convaincante. C'est ce qui a changé.
+
+**[Symfony UX Live Components](https://ux.symfony.com/live-component)** est l'approche que j'utilise désormais par défaut sur les SaaS B2B. Un composant Twig porté par une classe PHP, qui se met à jour côté serveur en réponse aux interactions utilisateur, rendu HTML envoyé par fragments, état conservé via attributs HTML signés. Pas de framework JavaScript, pas de bundle, pas de duplication de logique métier entre front et back. Concrètement :
+
+```php
+// src/Twig/Components/UserSearch.php
+#[AsLiveComponent]
+final class UserSearch
+{
+    use DefaultActionTrait;
+
+    #[LiveProp(writable: true)]
+    public string $query = '';
+
+    public function __construct(private UserRepository $users) {}
+
+    public function getResults(): array
+    {
+        return $this->users->searchByName($this->query, limit: 20);
+    }
+}
+```
+
+```twig
+{# templates/components/UserSearch.html.twig #}
+<div {{ attributes }}>
+    <input type="search" data-model="query" placeholder="Chercher un utilisateur…">
+    <ul>
+        {% for user in this.results %}
+            <li>{{ user.fullName }}</li>
+        {% endfor %}
+    </ul>
+</div>
+```
+
+C'est tout. Le `data-model` lie l'input à `$query`, le rendu se met à jour à chaque frappe (avec debounce). Pour 80 % des écrans d'admin et de SaaS B2B que je vois passer, ce niveau d'interactivité suffit largement, et on a écrit zéro JavaScript.
+
+Pour le **temps réel**, Mercure est intégré nativement à Symfony et API Platform. Un push depuis le serveur, un consommateur SSE côté navigateur, et on a des notifications, du collaborative editing, du status update temps réel — sans WebSocket à gérer.
+
+Pour le **mobile**, l'arrivée du **bridge Hotwire Native côté Symfony** (via [`symfony/turbo`](https://symfony.com/bundles/TurboBundle/current/index.html) couplé au shell natif Hotwire de 37signals) change l'arbitrage. Au lieu de maintenir trois codebases — web React, app iOS Swift, app Android Kotlin — on maintient une codebase Symfony qui rend du HTML, et deux shells natifs minimaux qui chargent ce HTML dans des WebView optimisées. Quand on a besoin de natif (caméra, notifications push, capteurs), on l'expose via des bridges JS↔natif. C'est l'approche de Basecamp pour HEY, et elle est désormais pleinement utilisable en stack Symfony.
+
+Sur un produit SaaS B2B avec une app mobile companion, c'est souvent **la** bonne réponse : équipe unique, codebase unique, parité de feature gratuite.
+
+## L'IA, et pourquoi tout ça compte pour un CTO
+
+L'objection dernière, que j'entends de plus en plus, c'est que les apps IA-first se font en Python — c'est là que sont les bibliothèques, c'est là que sont les benchmarks. C'est en partie vrai pour la R&D et l'inférence custom. Ce ne l'est pas pour la **majorité des apps qui consomment des LLM via API**, ce qui couvre l'écrasante majorité des produits IA aujourd'hui : chatbots métier, RAG, agents, tool use, copilotes intégrés.
+
+L'[**Initiative Symfony AI**](https://symfony.com/blog/kicking-off-the-symfony-ai-initiative) lancée par Christopher Hertel formalise ce qui était déjà bricolé dans plusieurs projets — composants pour appeler des LLM (OpenAI, Anthropic, Mistral, Ollama), gestion des messages et des tool calls, embeddings et stores vectoriels (Pinecone, Qdrant, pgvector), pipeline RAG, agents avec planification. C'est jeune, en mouvement, mais déjà utilisable pour la majorité des cas applicatifs côté produit.
+
+Sur un projet récent où il fallait ajouter un assistant métier RAG sur une base documentaire client, j'ai monté la chose en Symfony : ingestion des documents en background via Messenger, embeddings stockés en pgvector, retrieval + génération côté Symfony AI, UI Live Component pour le chat avec streaming SSE via Mercure. Tout dans la même codebase. Pas de service Python séparé à orchestrer, pas de double déploiement.
+
+### La grille de décision en cinq critères
+
+Ce que je dis aujourd'hui à un CTO ou un lead tech qui se demande quelle place donner à l'écosystème PHP/Symfony pour un nouveau produit :
+
+| Critère                  | Verdict PHP/Symfony en 2026                                                         |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| Vélocité de delivery     | API Platform + EasyAdmin + Live Components → un MVP solide en quelques semaines     |
+| Coût d'infra             | FrankenPHP worker mode → 3-4× le throughput de PHP-FPM, infra divisée d'autant      |
+| Profil de recrutement    | Pool large, séniors stables, écoles qui forment encore, freelances disponibles      |
+| Longévité du code        | Rector + PHPStan → migrations automatisées, code maintenable sur dix ans et plus    |
+| Couverture fonctionnelle | API, SaaS, e-commerce, back-office, temps réel, mobile, IA — tout est couvert       |
+
+Il existe des cas où une autre stack est mieux placée. Pour de la recherche IA pure, du calcul scientifique, du temps réel sub-milliseconde, ou du tooling système, PHP n'est pas le bon choix — et personne ne prétendra le contraire. Mais pour ce qui constitue 80 % de ce qu'une équipe produit moderne livre — du SaaS B2B, du e-commerce, du back-office métier, des API exposées, des assistants IA branchés sur des données business — l'écosystème PHP est aujourd'hui une option **par défaut** parfaitement défendable. Pas un compromis nostalgique : un choix de praticien, ancré dans quatorze ans d'observation directe.
+
+C'est ce que je voulais mettre noir sur blanc.
