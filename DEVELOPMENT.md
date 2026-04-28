@@ -44,7 +44,19 @@ src/
 
 ## Ajouter un article
 
-Créer un fichier dans `src/content/blog/mon-slug.mdx` avec le frontmatter :
+Deux formes possibles, choisies selon la longueur prévue.
+
+### Forme dossier (recommandée pour les articles longs ou rédigés à plusieurs mains avec un LLM)
+
+```
+src/content/blog/mon-slug/
+├── index.mdx          frontmatter complet + intro éventuelle
+├── 01-premier-h2.mdx  un H2 par chapitre, kebab-case
+├── 02-second-h2.mdx
+└── ...
+```
+
+`index.mdx` :
 
 ```yaml
 ---
@@ -57,16 +69,21 @@ keywords: [mot-clé intent SEO]
 number: 8
 tldr: "Résumé 60–320 caractères (lu en tête d'article, utile pour LLMs)."
 ---
-# Titre au besoin
 
-Contenu Markdown/MDX.
+Paragraphes d'introduction (optionnels).
 ```
 
-Le schéma Zod impose la cohérence — le build échoue sur un champ invalide.
+Chaque fichier chapitre commence par son `## Heading`, sans frontmatter ni `import`/`export` au top-level (le loader lève une erreur build sinon). Les chapitres sont concaténés dans l'ordre alphabétique du nom de fichier ; le préfixe `NN-` à 2 chiffres force cet ordre.
+
+### Forme plate (toujours valide pour les articles courts)
+
+`src/content/blog/mon-slug.mdx` avec le même frontmatter, suivi du contenu d'un seul tenant.
+
+Le schéma Zod impose la cohérence — le build échoue sur un champ invalide. Voir aussi `CLAUDE.md` pour la commande de vérification de non-régression `scripts/snapshot-build.mjs` + `scripts/diff-snapshot.mjs` quand on édite un chapitre existant.
 
 ## Ajouter un projet
 
-`src/content/projects/mon-projet.md` :
+Mêmes deux formes que pour un article (forme plate `src/content/projects/mon-projet.md` ou forme dossier `src/content/projects/mon-projet/index.md` + chapitres `NN-*.md`).
 
 ```yaml
 ---

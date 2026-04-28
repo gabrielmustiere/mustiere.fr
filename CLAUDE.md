@@ -35,6 +35,23 @@ Aucun runner de tests : la CI repose sur `astro check` + Lighthouse CI (`lightho
 - **`blog`** (`*.mdx`) — schéma Zod strict : `tldr` 60–320 chars (lu par les LLMs), `excerpt` 80–220, `number` requis, `category ∈ {IA, Tech, Lead, Business}`, `lang` + `translationOf` optionnels.
 - **`projects`** (`*.md`) — `status`, `kind`, `order` pour le tri.
 - Le build **échoue** si un frontmatter ne valide pas. C'est intentionnel : ne pas relâcher le schéma pour faire passer un article, corriger l'article.
+- **Loader** : `chapteredGlob` (`src/content-loaders/chaptered-glob.ts`) — remplace `glob`. Supporte deux formes pour chaque entrée :
+  - **Forme plate** : `<slug>.{md,mdx}` à la racine du dossier de collection. C'est la forme historique, encore valide.
+  - **Forme dossier** (recommandée pour les articles longs) : `<slug>/index.{md,mdx}` avec frontmatter, accompagné de chapitres `NN-<kebab>.{md,mdx}` (préfixe à 2 chiffres + tiret + kebab-case). Le `body` agrégé = `index.body` puis chapitres triés alphabétiquement, joints par `\n\n`. Les URLs publiques restent identiques (l'`id` de l'entrée = nom du dossier).
+- Règles **strictes** dans la forme dossier : un seul `index.{md,mdx}` autorisé ; les chapitres sont sans frontmatter et sans `import`/`export` au top-level (l'agrégateur lèvera une erreur build sinon, cf. plan 004-r option ii) ; pas d'autre `.md`/`.mdx` non conforme dans le dossier.
+
+### Vérifier la non-régression d'un chapitre
+
+Quand on édite un chapitre et qu'on veut s'assurer que le rendu publié n'a pas bougé (hors le chapitre touché évidemment) :
+
+```bash
+node scripts/snapshot-build.mjs before              # snapshot AVANT modif
+# ... éditer le(s) chapitre(s) ...
+node scripts/snapshot-build.mjs after               # snapshot APRÈS modif
+node scripts/diff-snapshot.mjs before after         # diff byte-à-byte
+```
+
+Le diff masque uniquement le `<lastmod>` du sitemap. Tout autre changement attendu doit être visible et compréhensible. Les snapshots sont sous `tmp/` (gitignored). Le double build (prod sans drafts + `SHOW_DRAFTS=1`) couvre aussi les articles draft.
 
 ### Pages dynamiques
 
