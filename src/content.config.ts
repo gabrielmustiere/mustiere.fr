@@ -1,6 +1,6 @@
 import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
 import { z } from 'zod';
+import { chapteredGlob } from '@/content-loaders/chaptered-glob';
 
 const categoryEnum = z.enum(['IA', 'Tech', 'Lead', 'Business']);
 
@@ -12,7 +12,10 @@ const faqItem = z.object({
 });
 
 const blog = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
+  loader: chapteredGlob({
+    base: './src/content/blog',
+    extensions: ['.mdx', '.md'],
+  }),
   schema: z.object({
     title: z.string().max(120),
     excerpt: z.string().min(80).max(220),
@@ -33,7 +36,10 @@ const blog = defineCollection({
 });
 
 const projects = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
+  loader: chapteredGlob({
+    base: './src/content/projects',
+    extensions: ['.md', '.mdx'],
+  }),
   schema: z.object({
     title: z.string(),
     subtitle: z.string(),
