@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -17,16 +17,36 @@ function buildTranslationIndex() {
   const entries = new Map();
 
   for (const collection of TRANSLATED_COLLECTIONS) {
-    let files;
+    let dirEntries;
     try {
-      files = readdirSync(join(root, collection));
+      dirEntries = readdirSync(join(root, collection), { withFileTypes: true });
     } catch {
       continue;
     }
-    for (const file of files) {
-      if (!/\.(md|mdx)$/.test(file)) continue;
-      const slug = file.replace(/\.(md|mdx)$/, '');
-      const raw = readFileSync(join(root, collection, file), 'utf8');
+    for (const entry of dirEntries) {
+      // Forme plate (`<slug>.mdx`) ou forme dossier (`<slug>/index.{md,mdx}`),
+      // alignée sur le loader chapteredGlob (cf. plan 004-r). Le frontmatter
+      // est lu par regex sur le fichier source pour rester indépendant du
+      // pipeline Astro à la phase config.
+      let slug;
+      let raw;
+      if (entry.isFile() && /\.(md|mdx)$/.test(entry.name)) {
+        slug = entry.name.replace(/\.(md|mdx)$/, '');
+        raw = readFileSync(join(root, collection, entry.name), 'utf8');
+      } else if (entry.isDirectory()) {
+        const indexFile = ['index.mdx', 'index.md'].find((f) =>
+          existsSync(join(root, collection, entry.name, f))
+        );
+        if (!indexFile) continue;
+        slug = entry.name;
+        raw = readFileSync(
+          join(root, collection, entry.name, indexFile),
+          'utf8'
+        );
+      } else {
+        continue;
+      }
+
       const fm = raw.match(/^---\n([\s\S]*?)\n---/)?.[1];
       if (!fm) continue;
       const lang = fm.match(/^lang:\s*["']?([a-z-]+)["']?\s*$/m)?.[1];
