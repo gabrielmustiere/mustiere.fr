@@ -1,39 +1,3 @@
----
-title: "How I built this site with Claude and Astro"
-excerpt: "A look back at how mustiere.fr came together: design with Claude, implementation with Claude Code and Astro, and why the SEO work happened inside the content schema rather than in keyword stuffing."
-publishedAt: 2026-04-24
-category: Tech
-tags: [Astro, Claude, SEO, i18n]
-keywords: [Astro SEO, Claude Code Astro, static site SEO, JSON-LD Astro, Astro hreflang, llms.txt]
-number: 1
-tldr: "Claude Design produced the mockups, Claude Code turned them into a static Astro site. Serious SEO sits in six building blocks: a Zod schema, hreflang, JSON-LD, sitemap, llms.txt, and a site fast enough that Google has nothing to complain about."
-lang: en
-translationOf: "construire-ce-site-avec-claude-et-astro"
----
-
-This site had existed for three years as a single frozen HTML page. I wanted a real blog, bilingual, clean on SEO, without turning myself into a full-time frontend dev. Two weekends got me there, powered by two tools: **Claude Design** for the design, **Claude Code** for the Astro implementation. Here is what I kept from the process, with a strong focus on search — that's where most CTO portfolios quietly fail.
-
-## Step 1 — design with Claude Design, not with Figma
-
-I am not a designer. Opening Figma to iterate on a homepage has a high friction cost. Claude Design, on the other hand, produces HTML + Tailwind that renders in a browser immediately. The loop:
-
-1. I describe the visual identity (editorial, sober, mixed typography serif + sans + mono) and the expected sections.
-2. Claude Design returns three standalone HTML artifacts: home, blog list, article.
-3. I iterate in plain language ("the sidebar is too dense", "drop the Tweaks panel", "shift this section's accent to ochre").
-4. At the end, I ask Claude to write a **handoff document**: design tokens, oklch palette, recommended Astro structure, JS behaviors.
-
-That handoff lives in the repo's `README.md` — I use it as the brief feeding Claude Code. The HTML mockups become the pixel-perfect fidelity reference; Claude Code just has to reimplement them as idiomatic Astro components.
-
-## Step 2 — implement with Claude Code and Astro
-
-**Why Astro?** Three concrete reasons for a content site:
-
-- **Zero JS by default.** What I don't ship can't break, won't tank Core Web Vitals, and won't force me to hydrate islands just to render text.
-- **Typed content collections.** Each article is an `.mdx` file validated by a Zod schema. The build fails if a field is missing — no forgotten date silently breaking the sitemap in production.
-- **First-class i18n.** A single block in `astro.config.mjs` gives me two clean trees `/fr` and `/en` with no bespoke router.
-
-Claude Code thrives on this kind of codebase: wide reads of the structure, targeted edits, respect for the project's conventions. I work plan-then-execute: I ask for a breakdown into small tasks first, review it, then let the agent run.
-
 ## SEO focus — six non-negotiable building blocks
 
 For a freelance CTO site, SEO is not a marketing plan. It's the hygiene that makes Google, Perplexity, ChatGPT and recruiters find the right pages in the right order. Here is what carries 90% of the outcome.
@@ -176,13 +140,3 @@ trailingSlash: 'never',
 ```
 
 `inlineStylesheets: 'auto'` inlines the critical CSS into the initial HTML — no round-trip before first paint. `prefetch` on hover preloads the target page the moment the mouse enters a link. `trailingSlash: 'never'` avoids the 301 hops between `/blog/` and `/blog` that wreck PageSpeed scores.
-
-## What I'd do differently
-
-- **Start with the schema, not the design.** A `keywords` field forgotten up front gets paid back as a migration later.
-- **Write the `/llms.txt` page on day one.** It's five lines of code and it forces clean excerpts everywhere.
-- **Measure mobile Lighthouse on every commit.** I have a `pa11yci` and a `lighthouserc.json` in the repo; I should have wired them in sooner.
-
-## The code is open
-
-The full repo is public: [github.com/gabrielmustiere/mustiere.fr](https://github.com/gabrielmustiere/mustiere.fr). If you want to clone the structure for your own consultant site, help yourself — the schema, the SEO utilities and the i18n skeleton are directly reusable.

@@ -1,39 +1,3 @@
----
-title: "Comment j'ai construit ce site avec Claude et Astro"
-excerpt: "Retour d'expérience sur la fabrication de mustiere.fr : design avec Claude, implémentation avec Claude Code et Astro, et pourquoi le SEO s'est joué dans le schéma de contenu plutôt que dans les mots-clés."
-publishedAt: 2026-04-24
-category: Tech
-tags: [Astro, Claude, SEO, i18n]
-keywords: [Astro SEO, Claude Code Astro, site statique SEO, JSON-LD Astro, hreflang Astro, llms.txt]
-number: 1
-tldr: "Claude Deisgn a produit les maquettes, Claude Code les a transformées en site Astro statique. Le SEO sérieux tient dans six briques : schéma Zod, hreflang, JSON-LD, sitemap, llms.txt, et un site assez rapide pour que Google n'ait rien à redire."
-lang: fr
-translationOf: "building-this-site-with-claude-and-astro"
----
-
-Ce site existait depuis trois ans sous forme d'une page HTML figée. Je voulais un vrai blog, bilingue, propre sur le SEO, sans me transformer en développeur frontend à temps plein. Je m'en suis sorti en deux week-ends grâce à deux outils : **Claude** pour le design, **Claude Code** pour l'implémentation en Astro. Voici ce que j'ai retenu, avec un focus appuyé sur la partie référencement — c'est là que la plupart des portfolios de CTO se plantent.
-
-## Étape 1 — designer avec Claude Design, pas avec Figma
-
-Je ne suis pas designer. Ouvrir Figma pour itérer sur une page d'accueil coûte cher en friction. Claude Design, lui, sait produire une maquette, du HTML + Tailwind qui s'affiche immédiatement dans un navigateur. Le processus :
-
-1. Je décris l'identité visuelle (éditoriale, sobre, typographie mixte serif + sans + mono) et les sections attendues.
-2. Claude Deisgn me rend trois artifacts HTML autonomes : accueil, liste d'articles, article.
-3. J'itère en langage naturel (« la sidebar est trop dense », « fais sauter le bandeau Tweaks », « passe l'accent de cette section en ocre »).
-4. À la fin, je demande à Claude de rédiger un **handoff document** : tokens de design, palette oklch, structure Astro recommandée, comportements JS.
-
-Ce handoff, c'est le fichier `README.md` du repo — je l'utilise comme brief à l'entrée de Claude Code. Les maquettes HTML deviennent la référence de fidélité pixel-perfect ; Claude Code n'a plus qu'à les recoder en composants Astro idiomatiques.
-
-## Étape 2 — implémenter avec Claude Code et Astro
-
-**Pourquoi Astro ?** Trois raisons concrètes pour un site de contenu :
-
-- **Zéro JS par défaut.** Ce que je n'écris pas ne peut pas casser, ne ralentit pas les Core Web Vitals, et ne m'oblige pas à hydrater des îlots pour afficher du texte.
-- **Content Collections typées.** Chaque article est un `.mdx` validé par un schéma Zod. Le build casse si un champ manque — pas de date manquante qui plombe le sitemap en prod.
-- **i18n natif.** Un simple bloc dans `astro.config.mjs` et je tiens deux arbres `/fr` et `/en` sans router maison.
-
-Claude Code, lui, est à son aise sur ce genre de codebase : lecture large de la structure, édits ciblés, respect des conventions du projet. Je travaille en plan-then-execute : je lui demande d'abord de planifier un découpage en petites tâches, je relis, puis je laisse exécuter.
-
 ## Focus SEO — six briques non négociables
 
 Pour un site de CTO freelance, le SEO n'est pas un plan marketing. C'est l'hygiène qui fait que Google, Perplexity, ChatGPT et les recruteurs trouvent les bonnes pages dans le bon ordre. Voici ce qui porte 90 % du résultat.
@@ -176,13 +140,3 @@ trailingSlash: 'never',
 ```
 
 Le `inlineStylesheets: 'auto'` embarque le CSS critique dans le HTML initial — zéro aller-retour pour le premier paint. Le `prefetch` au hover précharge la page au moment où la souris entre sur un lien. `trailingSlash: 'never'` évite les redirections 301 entre `/blog/` et `/blog` qui plombent les scores PageSpeed.
-
-## Ce que je ferais différemment
-
-- **Commencer par le schéma**, pas par le design. Un champ `keywords` oublié au départ se paie en migration plus tard.
-- **Écrire la page `/llms.txt` dès le jour 1.** C'est cinq lignes de code et ça force à avoir des excerpts propres partout.
-- **Mesurer le Lighthouse sur mobile à chaque commit.** J'ai un `pa11yci` et un `lighthouserc.json` dans le repo ; je les aurais posés plus tôt.
-
-## Le code est ouvert
-
-Le repo complet est public : [github.com/gabrielmustiere/mustiere.fr](https://github.com/gabrielmustiere/mustiere.fr). Si vous voulez cloner la structure pour votre propre site de consultant, servez-vous — le schéma, les utils SEO et le squelette i18n sont directement réutilisables.

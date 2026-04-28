@@ -1,0 +1,9 @@
+## Étape 2 — implémenter avec Claude Code et Astro
+
+**Pourquoi Astro ?** Trois raisons concrètes pour un site de contenu :
+
+- **Zéro JS par défaut.** Ce que je n'écris pas ne peut pas casser, ne ralentit pas les Core Web Vitals, et ne m'oblige pas à hydrater des îlots pour afficher du texte.
+- **Content Collections typées.** Chaque article est un `.mdx` validé par un schéma Zod. Le build casse si un champ manque — pas de date manquante qui plombe le sitemap en prod.
+- **i18n natif.** Un simple bloc dans `astro.config.mjs` et je tiens deux arbres `/fr` et `/en` sans router maison.
+
+Claude Code, lui, est à son aise sur ce genre de codebase : lecture large de la structure, édits ciblés, respect des conventions du projet. Je travaille en plan-then-execute : je lui demande d'abord de planifier un découpage en petites tâches, je relis, puis je laisse exécuter.
