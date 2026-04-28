@@ -10,6 +10,7 @@ export default [
       '.astro/**',
       'node_modules/**',
       'public/**',
+      'tmp/**',
       '.idea/**',
       '.agents/**',
       '.junie/**',

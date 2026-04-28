@@ -7,10 +7,15 @@ type PublishableEntry = CollectionEntry<'blog'> | CollectionEntry<'projects'>;
 // - en dev (`make serve`), les drafts sont visibles pour relecture locale ;
 // - en build prod (`make build`), ils sont exclus de toutes les sorties
 //   (pages, sitemap, RSS, llms.txt). Le mode est porté par `import.meta.env.DEV`.
+// - `SHOW_DRAFTS=1 npm run build` force la visibilité des drafts en build, utilisé
+//   par `scripts/snapshot-build.mjs` pour verrouiller aussi le rendu des drafts.
 // Toujours passer par ce helper plutôt que d'inliner `!data.draft && data.lang === ...`
 // pour éviter le drift constaté historiquement (cf. plan t-001).
 export function isPublished(entry: PublishableEntry, lang: Lang): boolean {
-  const showDraft = import.meta.env.DEV || !entry.data.draft;
+  const showDraft =
+    import.meta.env.DEV ||
+    process.env.SHOW_DRAFTS === '1' ||
+    !entry.data.draft;
   const matchesLang = (entry.data.lang ?? 'fr') === lang;
   return showDraft && matchesLang;
 }
