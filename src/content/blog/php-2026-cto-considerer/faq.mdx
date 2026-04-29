@@ -1,0 +1,20 @@
+---
+questions:
+  - q: "Faut-il vraiment démarrer un nouveau projet en PHP/Symfony plutôt qu'en Node ou Python en 2026 ?"
+    r: |
+      Ça dépend du produit. Pour une app web qui consomme principalement des LLM via API et qui a besoin d'une couverture API + back-office + e-commerce +
+      mobile, Symfony est aujourd'hui le choix le plus rapide à mettre en route. Pour un produit fortement orienté ML (entraînement, inférence custom,
+      traitement de données massif), Python reste mieux placé. Pour un service très realtime sub-100 ms, Node ou Go peuvent tirer leur épingle du jeu. Le piège
+      est de raisonner par genre plutôt que par cas d'usage.
+  - q: "FrankenPHP vs Laravel Octane ou RoadRunner — que choisir ?"
+    r: |
+      FrankenPHP est aujourd'hui le plus simple à déployer (binaire unique, Caddy intégré, HTTP/3, Mercure) et c'est celui que je privilégie sur Symfony.
+      Octane est l'équivalent côté Laravel et reste une excellente option si on est déjà dans cet écosystème. RoadRunner est plus ancien, plus mature sur la
+      gestion fine des workers, utilisé par des grosses prod. Les trois reposent sur la même idée — process PHP en mémoire — et les écarts entre eux sont
+      faibles devant l'écart avec PHP-FPM classique.
+  - q: "Combien de temps pour qu'une équipe Node ou Python devienne productive en Symfony ?"
+    r: |
+      Sur les équipes que j'ai vu basculer, un développeur sénior à l'aise avec un framework full-stack typé (Spring, Rails, NestJS, Django) atteint un niveau
+      correct en deux à quatre semaines, et la productivité maximale en deux à trois mois. Le frein principal n'est pas le langage mais la familiarisation avec
+      les conventions Symfony (DI, services, Doctrine, Messenger). C'est un investissement modeste comparé aux gains de productivité de l'écosystème complet.
+---

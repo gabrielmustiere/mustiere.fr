@@ -30,6 +30,7 @@ function buildTranslationIndex() {
       // pipeline Astro à la phase config.
       let slug;
       let raw;
+      let dirPath = null;
       if (entry.isFile() && /\.(md|mdx)$/.test(entry.name)) {
         slug = entry.name.replace(/\.(md|mdx)$/, '');
         raw = readFileSync(join(root, collection, entry.name), 'utf8');
@@ -39,10 +40,8 @@ function buildTranslationIndex() {
         );
         if (!indexFile) continue;
         slug = entry.name;
-        raw = readFileSync(
-          join(root, collection, entry.name, indexFile),
-          'utf8'
-        );
+        dirPath = join(root, collection, entry.name);
+        raw = readFileSync(join(dirPath, indexFile), 'utf8');
       } else {
         continue;
       }
@@ -56,7 +55,45 @@ function buildTranslationIndex() {
       const draft = /^draft:\s*true\s*$/m.test(fm);
       if (draft) continue;
       if (!lang || !translationOf) continue;
-      entries.set(`${collection}/${slug}`, { lang, translationOf });
+      // Présence des sections SEO optionnelles (cf. plan 005-f). On stocke
+      // pour la validation de parité ci-dessous : si une langue les a,
+      // l'autre langue de la paire doit aussi les avoir.
+      const hasFaq = dirPath ? existsSync(join(dirPath, 'faq.mdx')) : false;
+      const hasSources = dirPath ? existsSync(join(dirPath, 'sources.mdx')) : false;
+      entries.set(`${collection}/${slug}`, {
+        lang,
+        translationOf,
+        hasFaq,
+        hasSources,
+        dirPath,
+        collection,
+        slug,
+      });
+    }
+  }
+  // Validation parité i18n des sections SEO (faq.mdx / sources.mdx).
+  // Asymétrie = build fail avec les deux chemins de fichiers concernés.
+  const checked = new Set();
+  for (const [key, meta] of entries) {
+    if (checked.has(key)) continue;
+    const otherKey = `${meta.collection}/${meta.translationOf}`;
+    const other = entries.get(otherKey);
+    if (!other) continue;
+    checked.add(key);
+    checked.add(otherKey);
+    for (const section of ['Faq', 'Sources']) {
+      const a = meta[`has${section}`];
+      const b = other[`has${section}`];
+      if (a !== b) {
+        const fileName = section.toLowerCase() + '.mdx';
+        const present = a ? meta : other;
+        const missing = a ? other : meta;
+        throw new Error(
+          `[i18n] Asymétrie ${fileName} entre paires translationOf : ` +
+            `"${present.dirPath}/${fileName}" existe mais pas "${missing.dirPath}/${fileName}". ` +
+            `Les sections SEO doivent être présentes dans les deux langues ou aucune.`
+        );
+      }
     }
   }
   return entries;

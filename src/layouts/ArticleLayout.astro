@@ -4,11 +4,12 @@ import Footer from '@components/layout/Footer.astro';
 import ReadingProgress from '@components/ui/ReadingProgress.astro';
 import CategoryPill from '@components/ui/CategoryPill.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
-import Callout from '@components/ui/Callout.astro';
+import Resume from '@components/ui/Resume.astro';
 import SectionMarker from '@components/ui/SectionMarker.astro';
 import AuthorCard from '@components/ui/AuthorCard.astro';
 import RelatedItems from '@components/ui/RelatedItems.astro';
 import Faq from '@components/ui/Faq.astro';
+import Sources from '@components/ui/Sources.astro';
 import TableOfContents from '@components/ui/TableOfContents.astro';
 import {
   blogPostingSchema,
@@ -70,7 +71,7 @@ const schemas = [
     keywords: data.keywords,
     readingTime: data.readingTime,
     image: data.ogImage,
-    tldr: data.tldr,
+    tldr: data.resume.plain,
     lang,
     relatedUrls,
   }),
@@ -164,17 +165,12 @@ const endLabel = lang === 'fr' ? '§ fin' : '§ end';
           {data.excerpt}
         </p>
 
-        {
-          data.tldr && (
-            <Callout
-              label={tr.article.tldrLabel}
-              accent="blog"
-              ariaLabel={tr.article.tldrLabel}
-            >
-              <span data-speakable>{data.tldr}</span>
-            </Callout>
-          )
-        }
+        <Resume
+          html={data.resume.html}
+          label={tr.article.summaryLabel}
+          accent="blog"
+          ariaLabel={tr.article.summaryAria}
+        />
 
         <AuthorCard
           shareTitle={data.title}
@@ -193,6 +189,16 @@ const endLabel = lang === 'fr' ? '§ fin' : '§ end';
       {
         data.faq.length > 0 && (
           <Faq items={data.faq} title={tr.project.faqTitle} accent="blog" />
+        )
+      }
+
+      {
+        data.sources.length > 0 && (
+          <Sources
+            items={data.sources}
+            title={tr.article.sourcesTitle}
+            accent="blog"
+          />
         )
       }
 

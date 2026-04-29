@@ -1,0 +1,47 @@
+---
+type Accent = 'blog' | 'projects';
+
+interface Props {
+  html: string;
+  label: string;
+  accent: Accent;
+  ariaLabel?: string;
+}
+
+const { html, label, accent, ariaLabel } = Astro.props;
+const accentVar = accent === 'blog' ? 'var(--a-blog)' : 'var(--a-projects)';
+---
+
+<aside
+  class="resume mt-8 p-4 sm:p-5 border-l-2 text-[15px] leading-[1.65] text-[#2a2622]"
+  style={`border-color: ${accentVar}; background: color-mix(in oklch, ${accentVar} 6%, transparent)`}
+  aria-label={ariaLabel ?? label}
+>
+  <span
+    class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-2"
+  >
+    {label}
+  </span>
+  <div data-speakable set:html={html} />
+</aside>
+
+<style>
+  .resume :global(p) {
+    margin: 0 0 0.6em 0;
+  }
+  .resume :global(p:last-child) {
+    margin-bottom: 0;
+  }
+  .resume :global(a) {
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+  }
+  .resume :global(strong) {
+    font-weight: 600;
+  }
+  .resume :global(em) {
+    font-style: italic;
+  }
+</style>

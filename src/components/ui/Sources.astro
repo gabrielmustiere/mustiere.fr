@@ -1,0 +1,71 @@
+---
+import SectionMarker from './SectionMarker.astro';
+
+type Accent = 'blog' | 'projects';
+
+interface SourceItem {
+  title: string;
+  url: string;
+  author?: string;
+  date?: string;
+}
+
+interface Props {
+  items: SourceItem[];
+  title: string;
+  accent: Accent;
+  id?: string;
+}
+
+const { items, title, accent, id = 'sources-title' } = Astro.props;
+
+function hostnameOf(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+}
+---
+
+<section class="mt-16" aria-labelledby={id}>
+  <SectionMarker label="§ sources" accent={accent} marginTop="" />
+  <h2
+    id={id}
+    class="font-serif mt-6 text-[28px] sm:text-[32px] leading-[1.15] tracking-[-0.01em] mb-6"
+    style="font-family: var(--font-serif)"
+  >
+    {title}
+  </h2>
+  <ol class="list-none p-0 m-0 space-y-4 text-[15px] leading-[1.55]">
+    {
+      items.map((item, i) => (
+        <li class="flex gap-3">
+          <span class="text-[color:var(--color-muted)] font-mono tnum text-[12px] mt-[3px] shrink-0">
+            {String(i + 1).padStart(2, '0')}
+          </span>
+          <span class="min-w-0">
+            <a
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-[color:var(--color-ink)] underline underline-offset-2 decoration-1 hover:opacity-70"
+            >
+              {item.title}
+            </a>
+            <span class="block mt-1 text-[12px] text-[color:var(--color-muted)] font-mono tracking-[0.04em]">
+              {item.author && <>{item.author} · </>}
+              {item.date && (
+                <>
+                  <time datetime={item.date}>{item.date}</time>
+                  {' · '}
+                </>
+              )}
+              <span aria-hidden="true">{hostnameOf(item.url)}</span>
+            </span>
+          </span>
+        </li>
+      ))
+    }
+  </ol>
+</section>

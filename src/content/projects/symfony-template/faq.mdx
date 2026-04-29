@@ -1,0 +1,32 @@
+---
+questions:
+  - q: "À qui s'adresse ce template ?"
+    r: |
+      Aux développeurs qui démarrent régulièrement de nouveaux projets Symfony et qui perdent systématiquement une journée à recâbler les mêmes décisions :
+      base de données locale, outil de mails, tests E2E, analyse statique. Il s'adresse aussi aux équipes qui veulent un point de départ cohérent plutôt que de
+      négocier ces choix à chaque kickoff.
+  - q: "Pourquoi SQLite plutôt que PostgreSQL par défaut ?"
+    r: |
+      La plupart des projets n'ont pas besoin de PostgreSQL pendant les premières semaines. SQLite permet de cloner, lancer composer install, migrer et coder
+      sans container ni port à ouvrir. Le jour où une feature exige JSONB, FTS ou une extension Postgres, Doctrine abstrait suffisamment pour que la migration
+      soit courte.
+  - q: "Pourquoi Playwright plutôt que Symfony Panther ?"
+    r: |
+      Panther reste bloqué sur ChromeDriver et atteint vite ses limites dès qu'il y a du JavaScript un peu dense. Playwright couvre plus de navigateurs,
+      embarque de meilleurs outils de debug (trace viewer, codegen) et la communauté est incomparablement plus active. La migration est assumée — plus lent à
+      l'exécution, mais beaucoup plus fiable.
+  - q: "Pourquoi PHPStan niveau 9 dès le départ ?"
+    r: |
+      Commencer à un niveau bas avec l'idée de monter plus tard ne se fait jamais en pratique. Démarrer à 9 oblige à typer correctement tout de suite, et le
+      coût marginal est nul quand le code est neuf. Sur un projet existant, rattraper la dette typage fait partie des pires chantiers — autant éviter de la
+      créer.
+  - q: "Que manque-t-il intentionnellement ?"
+    r: |
+      Pas de Redis ou RabbitMQ préconfiguré, pas de CI GitHub Actions livrée, pas de design system, pas d'API Platform. Ces pièces sont trop dépendantes du
+      contexte pour qu'un template impose un choix générique qui finira à la poubelle. Elles s'ajoutent en quelques minutes le jour où le projet en a réellement
+      besoin.
+  - q: "Comment l'utiliser concrètement ?"
+    r: |
+      Via le bouton « Use this template » sur GitHub, puis cinq commandes : composer install, npm install, copier le .env, lancer les migrations et fixtures,
+      puis symfony serve. Compter une dizaine de minutes avant d'écrire la première ligne de code métier.
+---

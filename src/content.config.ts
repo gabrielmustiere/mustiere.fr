@@ -6,9 +6,26 @@ const categoryEnum = z.enum(['IA', 'Tech', 'Lead', 'Business']);
 
 const langEnum = z.enum(['fr', 'en']);
 
+// Schémas des sections SEO injectées par chapteredGlob (cf. seo-sections.ts).
+// Le loader lit resume.mdx / faq.mdx / sources.mdx présents dans le dossier
+// de chaque entrée, parse leur contenu et l'injecte ici dans `data` avant la
+// validation Zod. Cf. plan 005-f-sections-seo-articles.
+const resumeSchema = z.object({
+  markdown: z.string().min(1),
+  html: z.string().min(1),
+  plain: z.string().min(60),
+});
+
 const faqItem = z.object({
-  question: z.string(),
-  answer: z.string(),
+  question: z.string().max(200),
+  answer: z.string().min(1),
+});
+
+const sourceItem = z.object({
+  title: z.string().min(1),
+  url: z.url(),
+  author: z.string().optional(),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 
 const blog = defineCollection({
@@ -27,8 +44,9 @@ const blog = defineCollection({
     ogImage: z.string().optional(),
     draft: z.boolean().default(false),
     keywords: z.array(z.string()).default([]),
-    tldr: z.string().min(60).max(320),
+    resume: resumeSchema,
     faq: z.array(faqItem).default([]),
+    sources: z.array(sourceItem).default([]),
     number: z.number().int().positive(),
     lang: langEnum.default('fr'),
     translationOf: z.string().optional(),
@@ -55,11 +73,12 @@ const projects = defineCollection({
     kind: z.string(),
     year: z.number().int(),
     excerpt: z.string(),
-    summary: z.string().optional(),
     cover: z.string().optional(),
     url: z.url().optional(),
     order: z.number().int().default(0),
+    resume: resumeSchema,
     faq: z.array(faqItem).default([]),
+    sources: z.array(sourceItem).default([]),
     draft: z.boolean().default(false),
     lang: langEnum.default('fr'),
     translationOf: z.string().optional(),

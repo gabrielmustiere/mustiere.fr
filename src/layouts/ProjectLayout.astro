@@ -3,11 +3,12 @@ import SiteLayout from './SiteLayout.astro';
 import Footer from '@components/layout/Footer.astro';
 import ReadingProgress from '@components/ui/ReadingProgress.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
-import Callout from '@components/ui/Callout.astro';
+import Resume from '@components/ui/Resume.astro';
 import SectionMarker from '@components/ui/SectionMarker.astro';
 import AuthorCard from '@components/ui/AuthorCard.astro';
 import RelatedItems from '@components/ui/RelatedItems.astro';
 import Faq from '@components/ui/Faq.astro';
+import Sources from '@components/ui/Sources.astro';
 import TableOfContents from '@components/ui/TableOfContents.astro';
 import {
   breadcrumbSchema,
@@ -66,7 +67,7 @@ const schemas = [
     repository: data.url,
     lang,
     cover: data.cover,
-    abstract: data.summary,
+    abstract: data.resume.plain,
     relatedUrls,
   }),
   breadcrumbSchema([
@@ -78,8 +79,6 @@ const schemas = [
 ];
 
 const tocTitle = lang === 'fr' ? 'sommaire' : 'contents';
-const summaryLabel = lang === 'fr' ? 'Résumé' : 'Summary';
-const summaryAria = lang === 'fr' ? 'Résumé du projet' : 'Project summary';
 const endLabel = lang === 'fr' ? '§ fin' : '§ end';
 ---
 
@@ -144,9 +143,12 @@ const endLabel = lang === 'fr' ? '§ fin' : '§ end';
           {data.subtitle}
         </p>
 
-        <Callout label={summaryLabel} accent="projects" ariaLabel={summaryAria}>
-          <span data-speakable>{data.summary ?? data.excerpt}</span>
-        </Callout>
+        <Resume
+          html={data.resume.html}
+          label={tr.project.summaryLabel}
+          accent="projects"
+          ariaLabel={tr.project.summaryAria}
+        />
 
         <AuthorCard
           shareTitle={data.title}
@@ -192,6 +194,16 @@ const endLabel = lang === 'fr' ? '§ fin' : '§ end';
       {
         data.faq.length > 0 && (
           <Faq items={data.faq} title={tr.project.faqTitle} accent="projects" />
+        )
+      }
+
+      {
+        data.sources.length > 0 && (
+          <Sources
+            items={data.sources}
+            title={tr.project.sourcesTitle}
+            accent="projects"
+          />
         )
       }
 

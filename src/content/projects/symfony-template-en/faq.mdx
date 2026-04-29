@@ -1,0 +1,27 @@
+---
+questions:
+  - q: "Who is this template for?"
+    r: |
+      Developers who regularly kick off new Symfony projects and keep losing a full day rewiring the same decisions: local database, mail tool, E2E tests,
+      static analysis. It's also for teams who want a consistent starting point instead of renegotiating those choices at every kickoff.
+  - q: "Why SQLite instead of PostgreSQL by default?"
+    r: |
+      Most projects don't need PostgreSQL in their first few weeks. SQLite lets you clone, run composer install, migrate, and start coding without a container
+      or an open port. The day a feature actually needs JSONB, FTS, or a Postgres extension, Doctrine abstracts things enough that the migration is short.
+  - q: "Why Playwright instead of Symfony Panther?"
+    r: |
+      Panther is still stuck on ChromeDriver and hits its limits quickly on JavaScript-heavy pages. Playwright covers more browsers, ships better debug tooling
+      (trace viewer, codegen), and the community is incomparably more active. The trade-off is owned — slower to run, but far more reliable.
+  - q: "Why PHPStan level 9 from day one?"
+    r: |
+      Starting at a low level with the plan to raise it later never happens in practice. Starting at 9 forces correct typing right away, and the marginal cost
+      is zero when the code is new. On an existing project, catching up on type debt is one of the worst possible clean-ups — better not to create it.
+  - q: "What's intentionally missing?"
+    r: |
+      No preconfigured Redis or RabbitMQ, no GitHub Actions CI shipped, no design system, no API Platform. Those pieces are too context-dependent for a
+      template to impose a generic choice that will end up being thrown away. They take minutes to add the day the project actually needs them.
+  - q: "How do I actually use it?"
+    r: |
+      Hit the "Use this template" button on GitHub, then five commands: composer install, npm install, copy the .env, run migrations and fixtures, then symfony
+      serve. Expect roughly ten minutes before you write the first line of business code.
+---

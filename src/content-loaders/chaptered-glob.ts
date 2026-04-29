@@ -2,6 +2,12 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { Loader, LoaderContext } from 'astro/loaders';
+import {
+  RESERVED_SECTION_FILES,
+  parseFaq,
+  parseResume,
+  parseSources,
+} from './seo-sections';
 
 // Loader maison qui remplace `glob` pour les collections `blog` et `projects`
 // du refacto 004-r-mdx-chapter-split. Supporte deux formes en parallèle :
@@ -227,9 +233,18 @@ async function loadFolder(args: {
   });
 
   const chapterFiles: string[] = [];
+  // Sections SEO réservées : resume.mdx (obligatoire), faq.mdx, sources.mdx.
+  // Elles sont parsées séparément (cf. seo-sections.ts), exposées dans `data`
+  // et n'intègrent jamais le body agrégé. Cf. plan 005-f-sections-seo-articles.
+  const sectionFilePaths: { resume?: string; faq?: string; sources?: string } = {};
   for (const f of files) {
     if (f === `index${indexExt}`) continue;
     if (f.startsWith('.') || f.startsWith('_')) continue;
+    if (RESERVED_SECTION_FILES.has(f)) {
+      const key = f.replace(/\.mdx$/, '') as 'resume' | 'faq' | 'sources';
+      sectionFilePaths[key] = join(dirPath, f);
+      continue;
+    }
     if (CHAPTER_NAME_RE.test(f)) {
       chapterFiles.push(f);
       continue;
@@ -237,8 +252,8 @@ async function loadFolder(args: {
     if (extensions.some((e) => f.endsWith(e))) {
       throw new Error(
         `[chaptered-glob] "${dirName}/${f}" non conforme. Attendu : ` +
-          `"index.{md,mdx}" ou un chapitre "NN-slug.{md,mdx}" (NN sur 2 chiffres, ` +
-          `slug en kebab-case).`
+          `"index.{md,mdx}", un chapitre "NN-slug.{md,mdx}" (NN sur 2 chiffres, ` +
+          `slug en kebab-case), ou un fichier réservé (resume.mdx, faq.mdx, sources.mdx).`
       );
     }
   }
@@ -282,9 +297,37 @@ async function loadFolder(args: {
   for (const cb of chapterBodies) parts.push(cb);
   const aggregatedBody = parts.join('\n\n');
 
+  // Parser les sections SEO réservées (resume.mdx, faq.mdx, sources.mdx).
+  // Le contenu brut de chaque fichier détecté entre dans le digestSource pour
+  // que le hot-reload se déclenche quand on les édite.
+  const sectionRawContents: string[] = [];
+  let resumeData: ReturnType<typeof parseResume> | undefined;
+  let faqData: ReturnType<typeof parseFaq> | undefined;
+  let sourcesData: ReturnType<typeof parseSources> | undefined;
+  if (sectionFilePaths.resume) {
+    sectionRawContents.push(readFileSync(sectionFilePaths.resume, 'utf-8'));
+    resumeData = parseResume(sectionFilePaths.resume);
+  }
+  if (sectionFilePaths.faq) {
+    sectionRawContents.push(readFileSync(sectionFilePaths.faq, 'utf-8'));
+    faqData = parseFaq(sectionFilePaths.faq);
+  }
+  if (sectionFilePaths.sources) {
+    sectionRawContents.push(readFileSync(sectionFilePaths.sources, 'utf-8'));
+    sourcesData = parseSources(sectionFilePaths.sources);
+  }
+  if (resumeData) data.resume = resumeData;
+  if (faqData) data.faq = faqData;
+  if (sourcesData) data.sources = sourcesData;
+
   const assembledRel = `.astro/chaptered/${collection}/${dirName}${indexExt}`;
   const assembledAbs = join(rootPath, assembledRel);
-  const digestSource = indexContents + '\n' + chapterBodies.join('\n');
+  const digestSource =
+    indexContents +
+    '\n' +
+    chapterBodies.join('\n') +
+    '\n' +
+    sectionRawContents.join('\n');
   const digest = ctx.generateDigest(digestSource);
 
   // Court-circuit no-change : conserve l'entrée existante et réinscrit le

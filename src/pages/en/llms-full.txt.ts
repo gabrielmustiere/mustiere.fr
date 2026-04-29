@@ -54,8 +54,8 @@ export const GET: APIRoute = async () => {
       `*Published on ${date} · Category: ${post.data.category} · URL: ${SITE.url}/en/blog/${post.id}/*`
     );
     parts.push('');
-    if (post.data.tldr) {
-      parts.push(`**TL;DR.** ${post.data.tldr}`);
+    if (post.data.resume?.markdown) {
+      parts.push(`**Summary.** ${post.data.resume.markdown}`);
       parts.push('');
     }
     if (post.body) {
