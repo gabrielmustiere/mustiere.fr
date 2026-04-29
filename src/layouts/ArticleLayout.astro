@@ -17,6 +17,7 @@ import {
   faqPageSchema,
 } from '@/utils/schema';
 import { formatDateDottedFull, toISODate } from '@/utils/format-date';
+import { truncateForMeta } from '@/utils/meta';
 import { SITE } from '@/consts';
 import { useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
@@ -86,11 +87,12 @@ const schemas = [
 const tocTitle = lang === 'fr' ? 'sommaire' : 'contents';
 const upNextTitle = lang === 'fr' ? 'À lire ensuite' : 'Up next';
 const endLabel = lang === 'fr' ? '§ fin' : '§ end';
+const metaDescription = truncateForMeta(data.resume.plain);
 ---
 
 <SiteLayout
   title={data.title}
-  description={data.excerpt}
+  description={metaDescription}
   type="article"
   publishedTime={data.publishedAt}
   modifiedTime={data.updatedAt}

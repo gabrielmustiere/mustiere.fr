@@ -15,6 +15,7 @@ import {
   faqPageSchema,
   softwareSourceCodeSchema,
 } from '@/utils/schema';
+import { truncateForMeta } from '@/utils/meta';
 import { SITE } from '@/consts';
 import { useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
@@ -80,11 +81,12 @@ const schemas = [
 
 const tocTitle = lang === 'fr' ? 'sommaire' : 'contents';
 const endLabel = lang === 'fr' ? '§ fin' : '§ end';
+const metaDescription = truncateForMeta(data.resume.plain);
 ---
 
 <SiteLayout
   title={data.title}
-  description={data.excerpt}
+  description={metaDescription}
   image={data.cover}
   type="article"
   current="project"

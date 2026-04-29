@@ -300,6 +300,16 @@ async function loadFolder(args: {
   // Parser les sections SEO réservées (resume.mdx, faq.mdx, sources.mdx).
   // Le contenu brut de chaque fichier détecté entre dans le digestSource pour
   // que le hot-reload se déclenche quand on les édite.
+  // resume.mdx est obligatoire dans la forme dossier (cf. plan 005-f) : on
+  // produit ici une erreur claire pointant le dossier, plutôt qu'une erreur
+  // générique de validation Zod sur l'index.mdx.
+  if (!sectionFilePaths.resume) {
+    throw new Error(
+      `[chaptered-glob] dossier "${dirName}" : fichier "resume.mdx" obligatoire ` +
+        `(cf. plan 005-f-sections-seo-articles). Crée "${join(dirPath, 'resume.mdx')}" ` +
+        `avec un résumé en markdown léger (≥ 60 caractères).`
+    );
+  }
   const sectionRawContents: string[] = [];
   let resumeData: ReturnType<typeof parseResume> | undefined;
   let faqData: ReturnType<typeof parseFaq> | undefined;

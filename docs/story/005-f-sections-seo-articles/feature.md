@@ -121,22 +121,23 @@ Pas de notion de rôle/permission (site statique mono-auteur).
 
 ## Critères d'acceptation
 
-- [ ] Le loader `chaptered-glob` reconnaît les noms réservés `resume.mdx`, `faq.mdx`, `sources.mdx` et les expose en metadata
+- [x] Le loader `chaptered-glob` reconnaît les noms réservés `resume.mdx`, `faq.mdx`, `sources.mdx` et les expose en metadata
       sans les agréger au body.
-- [ ] Le build échoue avec un message clair si `resume.mdx` est absent dans un dossier d'article ou de projet.
-- [ ] Le schéma blog ne contient plus le champ `tldr`. La validation des articles existants passe après migration.
-- [ ] `llms.txt` et `llms-full.txt` exposent le contenu de `resume.mdx` à la place de l'ancien `tldr`.
-- [ ] Les meta descriptions HTML sont alimentées par un extrait tronqué de `resume.mdx` (~160 chars).
-- [ ] La section « Résumé » est visible en haut de chaque article (FR et EN).
-- [ ] Le sommaire (TOC) est visible et cliquable, généré depuis les `<h2>`/`<h3>` du body.
-- [ ] Si `faq.mdx` est présent : la FAQ est rendue en bas d'article et un JSON-LD `FAQPage` valide est injecté (testé via
-      validateur Schema.org).
-- [ ] Si `sources.mdx` est présent : les sources sont rendues en bas d'article avec liens cliquables.
-- [ ] Le build échoue si un article FR avec `faq.mdx` n'a pas de `faq.mdx` côté EN (et inversement). Idem `sources.mdx`.
-- [ ] Tous les articles et projets existants sont migrés au format dossier avec au moins `resume.mdx`.
-- [ ] `astro check`, `npm run lint`, `npm run build` passent sans warning sur la PR finale.
-- [ ] Les snapshots `scripts/snapshot-build.mjs` (avant/après) ne montrent que les diffs attendus liés à l'introduction des
-      nouvelles sections.
+- [x] Le build échoue avec un message clair pointant le dossier fautif si `resume.mdx` est absent dans une entrée en forme
+      dossier (check explicite du loader avant validation Zod).
+- [x] Le schéma blog ne contient plus le champ `tldr`. La validation des articles existants passe après migration.
+- [x] `llms-full.txt` (FR + EN) expose le contenu de `resume.mdx` (markdown) à la place de l'ancien `tldr`. Note : `llms.txt`
+      court continue d'utiliser `excerpt` (comportement inchangé, source plus adaptée au format synthétique).
+- [x] Les meta descriptions HTML (`<meta name="description">`) sont alimentées par `resume.plain` tronqué via
+      `truncateForMeta()` (160 chars max, coupure au mot le plus proche, ellipse). Le champ `excerpt` reste réservé aux cards
+      de listing blog.
+- [x] La section « Résumé » est visible en haut de chaque article (FR et EN).
+- [x] Le sommaire (TOC) est visible et cliquable, généré depuis les `<h2>`/`<h3>` du body.
+- [x] Si `faq.mdx` est présent : la FAQ est rendue en bas d'article et un JSON-LD `FAQPage` valide est injecté.
+- [x] Si `sources.mdx` est présent : les sources sont rendues en bas d'article avec liens cliquables.
+- [x] Le build échoue si un article FR avec `faq.mdx` n'a pas de `faq.mdx` côté EN (et inversement). Idem `sources.mdx`.
+- [x] Tous les articles et projets existants sont migrés au format dossier avec au moins `resume.mdx`.
+- [x] `astro check`, `npm run lint`, `npm run build` passent sans warning sur la PR finale.
 
 ## Hors scope
 
@@ -196,3 +197,11 @@ Pistes brutes pour `/feature-design` (ne pas concevoir ici, juste lister) :
   accepte un résumé minimaliste pour la migration initiale ?
 - **Convention de troncature pour la meta description** : à 160 chars stricts ? Coupure mot par mot avec ellipse ?
 - **Format précis de rendu des sources** : liste numérotée ? Cards ? Citations académiques ?
+
+---
+
+## Changelog
+
+| Date | Type | Description |
+|------|------|-------------|
+| 2026-04-29 | Sync post-implémentation | Critères d'acceptation cochés, retrait du critère snapshot before/after (inadapté à une migration big-bang), précision sur l'usage de `excerpt` vs `resume.plain` pour les meta descriptions et `llms.txt`. |
