@@ -69,21 +69,23 @@ keywords: [mot-clé intent SEO]
 number: 8
 tldr: "Résumé 60–320 caractères (lu en tête d'article, utile pour LLMs)."
 ---
-
 Paragraphes d'introduction (optionnels).
 ```
 
-Chaque fichier chapitre commence par son `## Heading`, sans frontmatter ni `import`/`export` au top-level (le loader lève une erreur build sinon). Les chapitres sont concaténés dans l'ordre alphabétique du nom de fichier ; le préfixe `NN-` à 2 chiffres force cet ordre.
+Chaque fichier chapitre commence par son `## Heading`, sans frontmatter ni `import`/`export` au top-level (le loader lève une erreur build sinon). Les chapitres
+sont concaténés dans l'ordre alphabétique du nom de fichier ; le préfixe `NN-` à 2 chiffres force cet ordre.
 
 ### Forme plate (toujours valide pour les articles courts)
 
 `src/content/blog/mon-slug.mdx` avec le même frontmatter, suivi du contenu d'un seul tenant.
 
-Le schéma Zod impose la cohérence — le build échoue sur un champ invalide. Voir aussi `CLAUDE.md` pour la commande de vérification de non-régression `scripts/snapshot-build.mjs` + `scripts/diff-snapshot.mjs` quand on édite un chapitre existant.
+Le schéma Zod impose la cohérence — le build échoue sur un champ invalide. Voir aussi `CLAUDE.md` pour la commande de vérification de non-régression
+`scripts/snapshot-build.mjs` + `scripts/diff-snapshot.mjs` quand on édite un chapitre existant.
 
 ## Ajouter un projet
 
-Mêmes deux formes que pour un article (forme plate `src/content/projects/mon-projet.md` ou forme dossier `src/content/projects/mon-projet/index.md` + chapitres `NN-*.md`).
+Mêmes deux formes que pour un article (forme plate `src/content/projects/mon-projet.md` ou forme dossier `src/content/projects/mon-projet/index.md` + chapitres
+`NN-*.md`).
 
 ```yaml
 ---
@@ -100,17 +102,20 @@ Description optionnelle.
 
 ## Brouillons (drafts)
 
-Ajouter `draft: true` au frontmatter d'un article (`src/content/blog/*.mdx`) ou d'un side-project (`src/content/projects/*.md`) pour le tenir hors publication tout en pouvant le relire localement.
+Ajouter `draft: true` au frontmatter d'un article (`src/content/blog/*.mdx`) ou d'un side-project (`src/content/projects/*.md`) pour le tenir hors publication
+tout en pouvant le relire localement.
 
-| Commande | Drafts |
-| --- | --- |
-| `make serve` (= `astro dev`) | **visibles** — page détail, listings home, archive blog |
-| `make build` (= `astro build`) | **invisibles partout** — pages, sitemap, RSS, llms.txt |
-| `npm run preview` | drafts cachés (sert le `dist/` déjà buildé en mode prod) |
+| Commande                       | Drafts                                                   |
+| ------------------------------ | -------------------------------------------------------- |
+| `make serve` (= `astro dev`)   | **visibles** — page détail, listings home, archive blog  |
+| `make build` (= `astro build`) | **invisibles partout** — pages, sitemap, RSS, llms.txt   |
+| `npm run preview`              | drafts cachés (sert le `dist/` déjà buildé en mode prod) |
 
-Le filtre vit dans `src/utils/content.ts` (`isPublished(entry, lang)`) — seul point qui combine `draft` + `lang`. Toute nouvelle page consommant les collections `blog` ou `projects` doit passer par ce helper plutôt que d'inliner `!data.draft && data.lang === ...`.
+Le filtre vit dans `src/utils/content.ts` (`isPublished(entry, lang)`) — seul point qui combine `draft` + `lang`. Toute nouvelle page consommant les collections
+`blog` ou `projects` doit passer par ce helper plutôt que d'inliner `!data.draft && data.lang === ...`.
 
-Le mode est porté par `import.meta.env.DEV` : pas de variable d'env à actionner, pas de feature flag. Pour rebasculer un draft en publié, retirer (ou mettre à `false`) le champ `draft` du frontmatter.
+Le mode est porté par `import.meta.env.DEV` : pas de variable d'env à actionner, pas de feature flag. Pour rebasculer un draft en publié, retirer (ou mettre à
+`false`) le champ `draft` du frontmatter.
 
 ## SEO — ce qui est couvert
 
@@ -127,7 +132,8 @@ Le mode est porté par `import.meta.env.DEV` : pas de variable d'env à actionne
 
 - **`/llms.txt`** (standard Jeremy Howard) — index markdown du site pour LLMs. Généré au build depuis les Content Collections.
 - **`/llms-full.txt`** — corpus complet des articles en markdown, concaténé.
-- **`/robots.txt`** autorise explicitement `GPTBot`, `ClaudeBot`, `anthropic-ai`, `Claude-Web`, `PerplexityBot`, `Perplexity-User`, `Google-Extended`, `Applebot-Extended`, `CCBot`, `cohere-ai`. Bloque `Bytespider`.
+- **`/robots.txt`** autorise explicitement `GPTBot`, `ClaudeBot`, `anthropic-ai`, `Claude-Web`, `PerplexityBot`, `Perplexity-User`, `Google-Extended`,
+  `Applebot-Extended`, `CCBot`, `cohere-ai`. Bloque `Bytespider`.
 - **TL;DR en tête d'article** — chaque post affiche un résumé 60–320 caractères structuré pour citation par LLM.
 - **Sémantique HTML pro-LLM** — `<article>`, `<section>`, `<time>`, `<dl>` pour les données factuelles.
 
@@ -140,7 +146,8 @@ Le mode est porté par `import.meta.env.DEV` : pas de variable d'env à actionne
 | INP           | < 100 ms |
 | JS total gzip | < 10 KB  |
 
-État actuel : JS page-level ≈ 1 KB gzip (scroll-spy + progress bar + filtre blog + share), polices self-hostées, CSS critique inline, compression Brotli via Cloudflare.
+État actuel : JS page-level ≈ 1 KB gzip (scroll-spy + progress bar + filtre blog + share), polices self-hostées, CSS critique inline, compression Brotli via
+Cloudflare.
 
 ## Déploiement (Cloudflare Pages)
 

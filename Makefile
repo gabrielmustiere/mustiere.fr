@@ -2,7 +2,7 @@ HOST := mustiere.wip
 PORT := 4321
 URL  := http://$(HOST):$(PORT)
 
-.PHONY: help install serve dev build preview check format clean hosts-add hosts-remove
+.PHONY: help install serve dev build preview check format wrap-md clean hosts-add hosts-remove
 
 help:
 	@echo "Commandes disponibles :"
@@ -13,6 +13,7 @@ help:
 	@echo "  make preview       Prévisualiser le build"
 	@echo "  make check         Astro check (types + diagnostics)"
 	@echo "  make format        Prettier sur tout le projet"
+	@echo "  make wrap-md       Hard-wrap des fichiers .md / .mdx à 160 colonnes"
 	@echo "  make clean         Supprimer dist/ et node_modules/.astro"
 	@echo "  make hosts-add     Ajouter $(HOST) dans /etc/hosts (sudo)"
 	@echo "  make hosts-remove  Retirer $(HOST) de /etc/hosts (sudo)"
@@ -39,6 +40,11 @@ check:
 
 format:
 	npm run format
+
+wrap-md:
+	npx prettier --write --prose-wrap always --print-width 160 \
+		--ignore-path /dev/null \
+		"src/**/*.md" "src/**/*.mdx" "*.md"
 
 clean:
 	rm -rf dist node_modules/.astro

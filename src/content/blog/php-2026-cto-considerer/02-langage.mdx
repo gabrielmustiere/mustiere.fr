@@ -1,8 +1,11 @@
 ## Le langage a rattrapé — et dépassé — ce qu'on en attendait
 
-Le PHP que j'écris en 2026 ne ressemble pas à celui que j'écrivais en 2012. C'est l'une des transformations les plus discrètes mais les plus profondes de l'écosystème : le langage est devenu strict, expressif, et performant.
+Le PHP que j'écris en 2026 ne ressemble pas à celui que j'écrivais en 2012. C'est l'une des transformations les plus discrètes mais les plus profondes de
+l'écosystème : le langage est devenu strict, expressif, et performant.
 
-Côté **typage**, on est passé de l'absence totale de types à un système qui rivalise avec ce qu'on attend d'un langage moderne : types scalaires, unions, intersections, types nullables, `readonly`, enums avec méthodes, property hooks. PHPStan en mode strict (j'y reviens en section dédiée) attrape la quasi-totalité des erreurs avant l'exécution. Un service écrit aujourd'hui ressemble à ça :
+Côté **typage**, on est passé de l'absence totale de types à un système qui rivalise avec ce qu'on attend d'un langage moderne : types scalaires, unions,
+intersections, types nullables, `readonly`, enums avec méthodes, property hooks. PHPStan en mode strict (j'y reviens en section dédiée) attrape la
+quasi-totalité des erreurs avant l'exécution. Un service écrit aujourd'hui ressemble à ça :
 
 ```php
 // src/Domain/Pricing/PriceCalculator.php
@@ -24,8 +27,13 @@ final readonly class PriceCalculator
 }
 ```
 
-Property hooks (PHP 8.4), pipe operator `|>` (PHP 8.5), `readonly` sur la classe entière, types stricts partout, services injectés via constructor promotion. C'est le PHP moderne — et il ressemble beaucoup à du Kotlin ou du TypeScript bien tenu.
+Property hooks (PHP 8.4), pipe operator `|>` (PHP 8.5), `readonly` sur la classe entière, types stricts partout, services injectés via constructor promotion.
+C'est le PHP moderne — et il ressemble beaucoup à du Kotlin ou du TypeScript bien tenu.
 
-Côté **performance**, le JIT IR introduit en 8.4 et raffiné en 8.5 a fait gagner 5 à 15 % sur les charges arithmétiques par rapport à 8.3, et la base de PHP 8.x est déjà environ trois fois plus rapide que le PHP 7.4 que beaucoup ont en tête quand ils parlent de « lenteur PHP ». Pour les besoins **asynchrones**, les Fibers introduites en 8.1 sont stables depuis trois versions et utilisables en production via [AmPHP](https://amphp.org/) ou [ReactPHP](https://reactphp.org/) — pas la même ergonomie que `async/await` en JavaScript, mais le même résultat fonctionnel : I/O concurrentes sans threads.
+Côté **performance**, le JIT IR introduit en 8.4 et raffiné en 8.5 a fait gagner 5 à 15 % sur les charges arithmétiques par rapport à 8.3, et la base de PHP 8.x
+est déjà environ trois fois plus rapide que le PHP 7.4 que beaucoup ont en tête quand ils parlent de « lenteur PHP ». Pour les besoins **asynchrones**, les
+Fibers introduites en 8.1 sont stables depuis trois versions et utilisables en production via [AmPHP](https://amphp.org/) ou [ReactPHP](https://reactphp.org/) —
+pas la même ergonomie que `async/await` en JavaScript, mais le même résultat fonctionnel : I/O concurrentes sans threads.
 
-Le langage que je présente à un junior aujourd'hui est plus proche d'un C# moderne que du PHP 5 qu'il imagine. Ça change immédiatement la nature de tout débat sur sa robustesse.
+Le langage que je présente à un junior aujourd'hui est plus proche d'un C# moderne que du PHP 5 qu'il imagine. Ça change immédiatement la nature de tout débat
+sur sa robustesse.

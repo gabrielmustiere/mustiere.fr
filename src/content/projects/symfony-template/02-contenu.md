@@ -3,13 +3,15 @@
 ### Stack principale
 
 - **Symfony 8.0+** sur **PHP 8.4+**, avec le CLI Symfony pour le serveur local (proxy HTTPS `*.wip` inclus).
-- **SQLite** comme base par défaut. Zéro infra à installer, un fichier `var/data.db`, et la migration vers Postgres ou MySQL reste triviale le jour où c'est nécessaire.
+- **SQLite** comme base par défaut. Zéro infra à installer, un fichier `var/data.db`, et la migration vers Postgres ou MySQL reste triviale le jour où c'est
+  nécessaire.
 - **Tailwind CSS 4** via Symfony UX — pas de bundler externe, Tailwind tourne en watch automatiquement grâce au fichier `.symfony.local.yaml`.
 - **Mailpit** (via Docker Compose) pour intercepter les mails en dev, accessible sur `http://localhost:8027`.
 
 ### Authentification
 
-Un système d'authentification par formulaire (email / mot de passe) est livré fonctionnel : entité User, formulaire de login, firewall configuré, tests associés. Pas de magie : du Symfony standard, prêt à être étendu (2FA, OAuth, magic link) selon le besoin réel du projet.
+Un système d'authentification par formulaire (email / mot de passe) est livré fonctionnel : entité User, formulaire de login, firewall configuré, tests
+associés. Pas de magie : du Symfony standard, prêt à être étendu (2FA, OAuth, magic link) selon le besoin réel du projet.
 
 ### Tests
 
@@ -27,7 +29,8 @@ Trois niveaux, tous câblés :
 
 ### Asynchrone
 
-**Symfony Messenger** configuré avec un transport Doctrine. Pas de Redis ou RabbitMQ imposé — on reste sur l'infra zéro tant que la charge le permet, et on change de transport sans toucher au code métier quand il faut.
+**Symfony Messenger** configuré avec un transport Doctrine. Pas de Redis ou RabbitMQ imposé — on reste sur l'infra zéro tant que la charge le permet, et on
+change de transport sans toucher au code métier quand il faut.
 
 ### Assistance IA
 

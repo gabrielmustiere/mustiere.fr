@@ -1,10 +1,12 @@
 ## Focus SEO — six briques non négociables
 
-Pour un site de CTO freelance, le SEO n'est pas un plan marketing. C'est l'hygiène qui fait que Google, Perplexity, ChatGPT et les recruteurs trouvent les bonnes pages dans le bon ordre. Voici ce qui porte 90 % du résultat.
+Pour un site de CTO freelance, le SEO n'est pas un plan marketing. C'est l'hygiène qui fait que Google, Perplexity, ChatGPT et les recruteurs trouvent les
+bonnes pages dans le bon ordre. Voici ce qui porte 90 % du résultat.
 
 ### 1. Un schéma de contenu strict
 
-La première brique SEO n'est pas dans le HTML, elle est dans le modèle de données. Chaque article déclare des champs obligatoires via Zod, sinon le build casse :
+La première brique SEO n'est pas dans le HTML, elle est dans le modèle de données. Chaque article déclare des champs obligatoires via Zod, sinon le build casse
+:
 
 ```ts
 // src/content.config.ts
@@ -25,28 +27,28 @@ const blog = defineCollection({
 });
 ```
 
-`excerpt` est borné entre 80 et 220 caractères parce que c'est la longueur utile d'une meta description. `tldr` force un résumé exploitable par les LLM. `translationOf` relie deux versions linguistiques du même article : indispensable pour les balises `hreflang`.
+`excerpt` est borné entre 80 et 220 caractères parce que c'est la longueur utile d'une meta description. `tldr` force un résumé exploitable par les LLM.
+`translationOf` relie deux versions linguistiques du même article : indispensable pour les balises `hreflang`.
 
 ### 2. Hreflang et canonical systématiques
 
-Un site bilingue mal balisé se tire une balle dans le pied : Google indexe les deux versions comme des doublons. Le `BaseLayout` émet une balise canonique et deux `hreflang` sur **chaque page**, en se basant sur le `translationOf` du contenu :
+Un site bilingue mal balisé se tire une balle dans le pied : Google indexe les deux versions comme des doublons. Le `BaseLayout` émet une balise canonique et
+deux `hreflang` sur **chaque page**, en se basant sur le `translationOf` du contenu :
 
 ```astro
 <link rel="canonical" href={canonicalURL} />
 <link rel="alternate" hreflang={otherLang} href={altUrl} />
 <link rel="alternate" hreflang={lang} href={canonicalURL} />
-<link
-  rel="alternate"
-  hreflang="x-default"
-  href={lang === 'fr' ? canonicalURL : altUrl}
-/>
+<link rel="alternate" hreflang="x-default" href={lang === 'fr' ? canonicalURL : altUrl} />
 ```
 
-`x-default` pointe vers la version française — c'est ma version principale. Sans ce bloc, un moteur ne saurait pas laquelle des deux pages servir à un utilisateur anglophone.
+`x-default` pointe vers la version française — c'est ma version principale. Sans ce bloc, un moteur ne saurait pas laquelle des deux pages servir à un
+utilisateur anglophone.
 
 ### 3. JSON-LD pour chaque type d'entité
 
-Les données structurées sont encore sous-utilisées par les devs et lues par toutes les IA qui crawlent le web. J'émets trois schémas sur chaque article : `Person`, `BlogPosting`, `BreadcrumbList`.
+Les données structurées sont encore sous-utilisées par les devs et lues par toutes les IA qui crawlent le web. J'émets trois schémas sur chaque article :
+`Person`, `BlogPosting`, `BreadcrumbList`.
 
 ```ts
 // src/utils/schema.ts (extrait)
@@ -77,7 +79,8 @@ Le même `Person` est référencé partout via `@id`, pas dupliqué. C'est ce qu
 
 ### 4. Sitemap et robots.txt IA-friendly
 
-Deux intégrations Astro font 95 % du travail. Le sitemap est généré au build avec les locales déclarées ; `robots.txt` autorise explicitement les crawlers IA que je veux voir citer mon contenu.
+Deux intégrations Astro font 95 % du travail. Le sitemap est généré au build avec les locales déclarées ; `robots.txt` autorise explicitement les crawlers IA
+que je veux voir citer mon contenu.
 
 ```js
 // astro.config.mjs (extrait)
@@ -101,24 +104,25 @@ integrations: [
 ],
 ```
 
-Bloquer Bytespider n'est pas de l'idéologie : c'est un crawler bruyant qui consomme de la bande passante sans citer ses sources. Ouvrir GPTBot, ClaudeBot et PerplexityBot, au contraire, c'est accepter d'être cité par les assistants que mes prospects utilisent déjà.
+Bloquer Bytespider n'est pas de l'idéologie : c'est un crawler bruyant qui consomme de la bande passante sans citer ses sources. Ouvrir GPTBot, ClaudeBot et
+PerplexityBot, au contraire, c'est accepter d'être cité par les assistants que mes prospects utilisent déjà.
 
 ### 5. Un `llms.txt` pour l'ère des LLM
 
-Personne ne sait encore si le standard `llms.txt` va s'imposer, mais il coûte presque rien et résout un vrai problème : un LLM qui crawle mon site a besoin d'un plan éditorial, pas d'un sitemap XML.
+Personne ne sait encore si le standard `llms.txt` va s'imposer, mais il coûte presque rien et résout un vrai problème : un LLM qui crawle mon site a besoin d'un
+plan éditorial, pas d'un sitemap XML.
 
 ```ts
 // src/pages/fr/llms.txt.ts (extrait)
 export const GET: APIRoute = async () => {
-  const posts = (await getCollection('blog', ({ data }) =>
-    !data.draft && (data.lang ?? 'fr') === 'fr'
-  )).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+  const posts = (await getCollection('blog', ({ data }) => !data.draft && (data.lang ?? 'fr') === 'fr')).sort(
+    (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+  );
 
   const lines: string[] = [`# ${SITE.name}`, '', '## Articles', ''];
   for (const post of posts) {
     lines.push(
-      `- [${post.data.title}](${SITE.url}/fr/blog/${post.id}) ` +
-      `(${toISODate(post.data.publishedAt)}, ${post.data.category}) : ${post.data.excerpt}`
+      `- [${post.data.title}](${SITE.url}/fr/blog/${post.id}) ` + `(${toISODate(post.data.publishedAt)}, ${post.data.category}) : ${post.data.excerpt}`
     );
   }
   return new Response(lines.join('\n'), {
@@ -131,7 +135,8 @@ Les excerpts stricts du schéma Zod (point 1) deviennent ici des résumés utili
 
 ### 6. Statique, léger, rapide
 
-Les cinq premiers points ne valent rien si la page met 4 secondes à s'afficher. Astro sort du HTML pur, Tailwind v4 génère le CSS utilisé, et trois options dans `astro.config.mjs` achèvent le travail :
+Les cinq premiers points ne valent rien si la page met 4 secondes à s'afficher. Astro sort du HTML pur, Tailwind v4 génère le CSS utilisé, et trois options dans
+`astro.config.mjs` achèvent le travail :
 
 ```js
 build: { inlineStylesheets: 'auto', format: 'file' },
@@ -139,4 +144,5 @@ prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
 trailingSlash: 'never',
 ```
 
-Le `inlineStylesheets: 'auto'` embarque le CSS critique dans le HTML initial — zéro aller-retour pour le premier paint. Le `prefetch` au hover précharge la page au moment où la souris entre sur un lien. `trailingSlash: 'never'` évite les redirections 301 entre `/blog/` et `/blog` qui plombent les scores PageSpeed.
+Le `inlineStylesheets: 'auto'` embarque le CSS critique dans le HTML initial — zéro aller-retour pour le premier paint. Le `prefetch` au hover précharge la page
+au moment où la souris entre sur un lien. `trailingSlash: 'never'` évite les redirections 301 entre `/blog/` et `/blog` qui plombent les scores PageSpeed.

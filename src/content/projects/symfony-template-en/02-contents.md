@@ -9,7 +9,8 @@
 
 ### Authentication
 
-A form-based authentication system (email / password) ships working: User entity, login form, firewall configured, tests included. No magic: standard Symfony, ready to extend (2FA, OAuth, magic link) based on the project's real needs.
+A form-based authentication system (email / password) ships working: User entity, login form, firewall configured, tests included. No magic: standard Symfony,
+ready to extend (2FA, OAuth, magic link) based on the project's real needs.
 
 ### Tests
 
@@ -27,7 +28,8 @@ Three tiers, all wired:
 
 ### Async
 
-**Symfony Messenger** configured with a Doctrine transport. No Redis or RabbitMQ imposed — we stay at zero infra as long as the load allows, and we switch transports without touching business code when we need to.
+**Symfony Messenger** configured with a Doctrine transport. No Redis or RabbitMQ imposed — we stay at zero infra as long as the load allows, and we switch
+transports without touching business code when we need to.
 
 ### AI assistance
 

@@ -16,29 +16,38 @@ npm run format    # prettier --write .
 
 `make serve` lance dev sur `http://mustiere.wip:4321` (ajoute l'entrée /etc/hosts via sudo).
 
-Aucun runner de tests : la CI repose sur `astro check` + Lighthouse CI (`lighthouserc.json`) + pa11y-ci (`.pa11yci.json`). Pour reproduire localement : `npm run build && npx lhci autorun` ou `npx pa11y-ci`.
+Aucun runner de tests : la CI repose sur `astro check` + Lighthouse CI (`lighthouserc.json`) + pa11y-ci (`.pa11yci.json`). Pour reproduire localement :
+`npm run build && npx lhci autorun` ou `npx pa11y-ci`.
 
 ## Architecture
 
-**Astro 6 SSG bilingue** (FR/EN) déployé statiquement sur Cloudflare Pages. Aucune île JS framework — quelques scripts inline (~1 KB gzip total) pour scroll-spy, progress bar, filtres blog. Tailwind CSS 4 via `@tailwindcss/postcss` (configuré dans `postcss.config.mjs`) ; tous les tokens design (couleurs oklch, typo, spacing) vivent dans `src/styles/global.css` sous `@theme`.
+**Astro 6 SSG bilingue** (FR/EN) déployé statiquement sur Cloudflare Pages. Aucune île JS framework — quelques scripts inline (~1 KB gzip total) pour
+scroll-spy, progress bar, filtres blog. Tailwind CSS 4 via `@tailwindcss/postcss` (configuré dans `postcss.config.mjs`) ; tous les tokens design (couleurs
+oklch, typo, spacing) vivent dans `src/styles/global.css` sous `@theme`.
 
 ### i18n — ce qui rend ce projet non-trivial
 
 - `defaultLocale: 'fr'`, `prefixDefaultLocale: false` → FR servi sans préfixe (`/`, `/blog/`), EN préfixé (`/en/`, `/en/blog/`).
 - Pages EN dupliquées sous `src/pages/en/` ; chaque entrée de collection traduite porte `lang` + `translationOf` (slug du pendant FR) dans son frontmatter.
-- `astro.config.mjs` lit ces frontmatters au build (`buildTranslationIndex`) pour injecter les liens `hreflang` dans le sitemap via `serialize`. Les paires de **pages statiques** traduites (sans collection, ex. `/parcours/` ↔ `/en/background/`) sont déclarées en dur dans `STATIC_PAGE_PAIRS`.
-- Helpers dans `src/i18n/utils.ts` : `getLangFromUrl`, `localizedPath`, `swapLang`, `formatDate`. Les chaînes UI vivent dans `src/i18n/ui.ts`. Toujours router via ces helpers — ne pas concaténer les préfixes à la main.
+- `astro.config.mjs` lit ces frontmatters au build (`buildTranslationIndex`) pour injecter les liens `hreflang` dans le sitemap via `serialize`. Les paires de
+  **pages statiques** traduites (sans collection, ex. `/parcours/` ↔ `/en/background/`) sont déclarées en dur dans `STATIC_PAGE_PAIRS`.
+- Helpers dans `src/i18n/utils.ts` : `getLangFromUrl`, `localizedPath`, `swapLang`, `formatDate`. Les chaînes UI vivent dans `src/i18n/ui.ts`. Toujours router
+  via ces helpers — ne pas concaténer les préfixes à la main.
 - Anciennes URLs `/fr/*` redirigées vers la racine via `redirects` dans `astro.config.mjs` (préservation SEO).
 
 ### Content Collections (`src/content.config.ts`)
 
-- **`blog`** (`*.mdx`) — schéma Zod strict : `tldr` 60–320 chars (lu par les LLMs), `excerpt` 80–220, `number` requis, `category ∈ {IA, Tech, Lead, Business}`, `lang` + `translationOf` optionnels.
+- **`blog`** (`*.mdx`) — schéma Zod strict : `tldr` 60–320 chars (lu par les LLMs), `excerpt` 80–220, `number` requis, `category ∈ {IA, Tech, Lead, Business}`,
+  `lang` + `translationOf` optionnels.
 - **`projects`** (`*.md`) — `status`, `kind`, `order` pour le tri.
 - Le build **échoue** si un frontmatter ne valide pas. C'est intentionnel : ne pas relâcher le schéma pour faire passer un article, corriger l'article.
 - **Loader** : `chapteredGlob` (`src/content-loaders/chaptered-glob.ts`) — remplace `glob`. Supporte deux formes pour chaque entrée :
   - **Forme plate** : `<slug>.{md,mdx}` à la racine du dossier de collection. C'est la forme historique, encore valide.
-  - **Forme dossier** (recommandée pour les articles longs) : `<slug>/index.{md,mdx}` avec frontmatter, accompagné de chapitres `NN-<kebab>.{md,mdx}` (préfixe à 2 chiffres + tiret + kebab-case). Le `body` agrégé = `index.body` puis chapitres triés alphabétiquement, joints par `\n\n`. Les URLs publiques restent identiques (l'`id` de l'entrée = nom du dossier).
-- Règles **strictes** dans la forme dossier : un seul `index.{md,mdx}` autorisé ; les chapitres sont sans frontmatter et sans `import`/`export` au top-level (l'agrégateur lèvera une erreur build sinon, cf. plan 004-r option ii) ; pas d'autre `.md`/`.mdx` non conforme dans le dossier.
+  - **Forme dossier** (recommandée pour les articles longs) : `<slug>/index.{md,mdx}` avec frontmatter, accompagné de chapitres `NN-<kebab>.{md,mdx}` (préfixe à
+    2 chiffres + tiret + kebab-case). Le `body` agrégé = `index.body` puis chapitres triés alphabétiquement, joints par `\n\n`. Les URLs publiques restent
+    identiques (l'`id` de l'entrée = nom du dossier).
+- Règles **strictes** dans la forme dossier : un seul `index.{md,mdx}` autorisé ; les chapitres sont sans frontmatter et sans `import`/`export` au top-level
+  (l'agrégateur lèvera une erreur build sinon, cf. plan 004-r option ii) ; pas d'autre `.md`/`.mdx` non conforme dans le dossier.
 
 ### Vérifier la non-régression d'un chapitre
 
@@ -51,7 +60,8 @@ node scripts/snapshot-build.mjs after               # snapshot APRÈS modif
 node scripts/diff-snapshot.mjs before after         # diff byte-à-byte
 ```
 
-Le diff masque uniquement le `<lastmod>` du sitemap. Tout autre changement attendu doit être visible et compréhensible. Les snapshots sont sous `tmp/` (gitignored). Le double build (prod sans drafts + `SHOW_DRAFTS=1`) couvre aussi les articles draft.
+Le diff masque uniquement le `<lastmod>` du sitemap. Tout autre changement attendu doit être visible et compréhensible. Les snapshots sont sous `tmp/`
+(gitignored). Le double build (prod sans drafts + `SHOW_DRAFTS=1`) couvre aussi les articles draft.
 
 ### Pages dynamiques
 
@@ -61,15 +71,19 @@ Le diff masque uniquement le `<lastmod>` du sitemap. Tout autre changement atten
 
 ### Layouts
 
-`BaseLayout` (html/head, fonts self-hostées, JSON-LD via `components/seo/StructuredData.astro`) ← `SiteLayout` (sidebar + nav) ← `ArticleLayout` / `ProjectLayout` (prose, ReadingProgress, RelatedItems). Le composant `pages/HomePage.astro` est rendu depuis les deux `index.astro` (FR et EN) pour partager la composition.
+`BaseLayout` (html/head, fonts self-hostées, JSON-LD via `components/seo/StructuredData.astro`) ← `SiteLayout` (sidebar + nav) ← `ArticleLayout` /
+`ProjectLayout` (prose, ReadingProgress, RelatedItems). Le composant `pages/HomePage.astro` est rendu depuis les deux `index.astro` (FR et EN) pour partager la
+composition.
 
 ### SEO
 
-JSON-LD émis par `src/utils/schema.ts` selon le type de page (`Person`, `WebSite`, `Blog`, `BlogPosting` + `BreadcrumbList`). Sitemap auto avec `hreflang`. `robots.txt` autorise explicitement les crawlers IA majeurs et bloque `Bytespider`. Toute modification de meta passe d'abord par `src/consts.ts` (`SITE`).
+JSON-LD émis par `src/utils/schema.ts` selon le type de page (`Person`, `WebSite`, `Blog`, `BlogPosting` + `BreadcrumbList`). Sitemap auto avec `hreflang`.
+`robots.txt` autorise explicitement les crawlers IA majeurs et bloque `Bytespider`. Toute modification de meta passe d'abord par `src/consts.ts` (`SITE`).
 
 ## Conventions
 
-- TypeScript strict ; alias configurés dans `tsconfig.json` : `@/*` → `src/*`, `@components/*` → `src/components/*`, `@layouts/*` → `src/layouts/*`, `@styles/*` → `src/styles/*`. Utiliser ces alias plutôt que des chemins relatifs.
+- TypeScript strict ; alias configurés dans `tsconfig.json` : `@/*` → `src/*`, `@components/*` → `src/components/*`, `@layouts/*` → `src/layouts/*`, `@styles/*`
+  → `src/styles/*`. Utiliser ces alias plutôt que des chemins relatifs.
 - Prettier : single quotes, semi, trailing commas es5 ; plugin `prettier-plugin-astro` actif.
 - Ne pas porter le panneau "Tweaks" des maquettes `designs/*.html` — outil interne uniquement.
 - Couleurs accents : utiliser les classes utilitaires `.acc-about|blog|projects|contact|cv` ou `var(--a-*)`, jamais hex en dur.

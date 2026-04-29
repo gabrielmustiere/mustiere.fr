@@ -1,10 +1,12 @@
 ## Step 1 — design with Claude Design, not with Figma
 
-I am not a designer. Opening Figma to iterate on a homepage has a high friction cost. Claude Design, on the other hand, produces HTML + Tailwind that renders in a browser immediately. The loop:
+I am not a designer. Opening Figma to iterate on a homepage has a high friction cost. Claude Design, on the other hand, produces HTML + Tailwind that renders in
+a browser immediately. The loop:
 
 1. I describe the visual identity (editorial, sober, mixed typography serif + sans + mono) and the expected sections.
 2. Claude Design returns three standalone HTML artifacts: home, blog list, article.
 3. I iterate in plain language ("the sidebar is too dense", "drop the Tweaks panel", "shift this section's accent to ochre").
 4. At the end, I ask Claude to write a **handoff document**: design tokens, oklch palette, recommended Astro structure, JS behaviors.
 
-That handoff lives in the repo's `README.md` — I use it as the brief feeding Claude Code. The HTML mockups become the pixel-perfect fidelity reference; Claude Code just has to reimplement them as idiomatic Astro components.
+That handoff lives in the repo's `README.md` — I use it as the brief feeding Claude Code. The HTML mockups become the pixel-perfect fidelity reference; Claude
+Code just has to reimplement them as idiomatic Astro components.

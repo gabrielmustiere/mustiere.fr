@@ -1,33 +1,44 @@
 ---
 title: 'PHP en 2026 : pourquoi un CTO devrait sérieusement le considérer'
-excerpt: "Symfony, FrankenPHP, PHPStan, Hotwire Native, Symfony AI : l'écosystème PHP couvre désormais l'ensemble du spectre — API, SaaS, e-commerce, mobile, IA. Grille de décision pour un comité d'archi en 2026."
+excerpt:
+  "Symfony, FrankenPHP, PHPStan, Hotwire Native, Symfony AI : l'écosystème PHP couvre désormais l'ensemble du spectre — API, SaaS, e-commerce, mobile, IA.
+  Grille de décision pour un comité d'archi en 2026."
 publishedAt: 2026-04-27
 category: Tech
 tags: [PHP, Symfony, FrankenPHP, Architecture]
-keywords:
-  [
-    PHP 2026,
-    Symfony CTO,
-    FrankenPHP performance,
-    écosystème PHP,
-    choix de stack,
-    Hotwire Native Symfony,
-  ]
+keywords: [PHP 2026, Symfony CTO, FrankenPHP performance, écosystème PHP, choix de stack, Hotwire Native Symfony]
 number: 2
-tldr: "PHP 8.5, Symfony 7, FrankenPHP en worker mode (3× PHP-FPM), outillage industriel (PHPStan, Rector, Pest), Live Components et Hotwire Native pour front et mobile, Symfony AI pour l'IA : l'écosystème couvre tout. Pour un CTO en 2026, c'est une option par défaut, pas un compromis."
+tldr:
+  "PHP 8.5, Symfony 7, FrankenPHP en worker mode (3× PHP-FPM), outillage industriel (PHPStan, Rector, Pest), Live Components et Hotwire Native pour front et
+  mobile, Symfony AI pour l'IA : l'écosystème couvre tout. Pour un CTO en 2026, c'est une option par défaut, pas un compromis."
 draft: true
 lang: fr
 faq:
-  - question: 'Faut-il vraiment démarrer un nouveau projet en PHP/Symfony plutôt qu''en Node ou Python en 2026 ?'
-    answer: "Ça dépend du produit. Pour une app web qui consomme principalement des LLM via API et qui a besoin d'une couverture API + back-office + e-commerce + mobile, Symfony est aujourd'hui le choix le plus rapide à mettre en route. Pour un produit fortement orienté ML (entraînement, inférence custom, traitement de données massif), Python reste mieux placé. Pour un service très realtime sub-100 ms, Node ou Go peuvent tirer leur épingle du jeu. Le piège est de raisonner par genre plutôt que par cas d'usage."
+  - question: "Faut-il vraiment démarrer un nouveau projet en PHP/Symfony plutôt qu'en Node ou Python en 2026 ?"
+    answer:
+      "Ça dépend du produit. Pour une app web qui consomme principalement des LLM via API et qui a besoin d'une couverture API + back-office + e-commerce +
+      mobile, Symfony est aujourd'hui le choix le plus rapide à mettre en route. Pour un produit fortement orienté ML (entraînement, inférence custom,
+      traitement de données massif), Python reste mieux placé. Pour un service très realtime sub-100 ms, Node ou Go peuvent tirer leur épingle du jeu. Le piège
+      est de raisonner par genre plutôt que par cas d'usage."
   - question: 'FrankenPHP vs Laravel Octane ou RoadRunner — que choisir ?'
-    answer: "FrankenPHP est aujourd'hui le plus simple à déployer (binaire unique, Caddy intégré, HTTP/3, Mercure) et c'est celui que je privilégie sur Symfony. Octane est l'équivalent côté Laravel et reste une excellente option si on est déjà dans cet écosystème. RoadRunner est plus ancien, plus mature sur la gestion fine des workers, utilisé par des grosses prod. Les trois reposent sur la même idée — process PHP en mémoire — et les écarts entre eux sont faibles devant l'écart avec PHP-FPM classique."
-  - question: 'Combien de temps pour qu''une équipe Node ou Python devienne productive en Symfony ?'
-    answer: "Sur les équipes que j'ai vu basculer, un développeur sénior à l'aise avec un framework full-stack typé (Spring, Rails, NestJS, Django) atteint un niveau correct en deux à quatre semaines, et la productivité maximale en deux à trois mois. Le frein principal n'est pas le langage mais la familiarisation avec les conventions Symfony (DI, services, Doctrine, Messenger). C'est un investissement modeste comparé aux gains de productivité de l'écosystème complet."
+    answer:
+      "FrankenPHP est aujourd'hui le plus simple à déployer (binaire unique, Caddy intégré, HTTP/3, Mercure) et c'est celui que je privilégie sur Symfony.
+      Octane est l'équivalent côté Laravel et reste une excellente option si on est déjà dans cet écosystème. RoadRunner est plus ancien, plus mature sur la
+      gestion fine des workers, utilisé par des grosses prod. Les trois reposent sur la même idée — process PHP en mémoire — et les écarts entre eux sont
+      faibles devant l'écart avec PHP-FPM classique."
+  - question: "Combien de temps pour qu'une équipe Node ou Python devienne productive en Symfony ?"
+    answer:
+      "Sur les équipes que j'ai vu basculer, un développeur sénior à l'aise avec un framework full-stack typé (Spring, Rails, NestJS, Django) atteint un niveau
+      correct en deux à quatre semaines, et la productivité maximale en deux à trois mois. Le frein principal n'est pas le langage mais la familiarisation avec
+      les conventions Symfony (DI, services, Doctrine, Messenger). C'est un investissement modeste comparé aux gains de productivité de l'écosystème complet."
 ---
 
-Quatorze ans que j'écris du PHP. Une cinquantaine de projets traversés depuis 2012 — du e-commerce sous Sylius qui tourne depuis trois ans, à l'API B2B refondue en API Platform, jusqu'au SaaS passé en worker mode FrankenPHP cette année. Le fil constant : Symfony.
+Quatorze ans que j'écris du PHP. Une cinquantaine de projets traversés depuis 2012 — du e-commerce sous Sylius qui tourne depuis trois ans, à l'API B2B refondue
+en API Platform, jusqu'au SaaS passé en worker mode FrankenPHP cette année. Le fil constant : Symfony.
 
-Cet article n'est pas une comparaison ni une réponse à un autre écosystème. C'est ce que je vois aujourd'hui, en 2026, depuis l'intérieur : un langage devenu strict et rapide, des frameworks qui couvrent désormais le spectre entier — API, SaaS, e-commerce, back-office, temps réel, mobile, IA — un outillage devenu industriel, et une infra qui a effacé sans bruit l'argument historique de la performance.
+Cet article n'est pas une comparaison ni une réponse à un autre écosystème. C'est ce que je vois aujourd'hui, en 2026, depuis l'intérieur : un langage devenu
+strict et rapide, des frameworks qui couvrent désormais le spectre entier — API, SaaS, e-commerce, back-office, temps réel, mobile, IA — un outillage devenu
+industriel, et une infra qui a effacé sans bruit l'argument historique de la performance.
 
-Je l'écris pour les CTO et lead tech qui veulent une carte à jour de l'écosystème PHP, et pour les développeurs PHP qui ont parfois besoin de remettre à plat ce que leur langage permet. C'est un retour de terrain, pas un plaidoyer.
+Je l'écris pour les CTO et lead tech qui veulent une carte à jour de l'écosystème PHP, et pour les développeurs PHP qui ont parfois besoin de remettre à plat ce
+que leur langage permet. C'est un retour de terrain, pas un plaidoyer.

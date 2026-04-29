@@ -1,23 +1,33 @@
 ## L'IA, et pourquoi tout ça compte pour un CTO
 
-L'objection dernière, que j'entends de plus en plus, c'est que les apps IA-first se font en Python — c'est là que sont les bibliothèques, c'est là que sont les benchmarks. C'est en partie vrai pour la R&D et l'inférence custom. Ce ne l'est pas pour la **majorité des apps qui consomment des LLM via API**, ce qui couvre l'écrasante majorité des produits IA aujourd'hui : chatbots métier, RAG, agents, tool use, copilotes intégrés.
+L'objection dernière, que j'entends de plus en plus, c'est que les apps IA-first se font en Python — c'est là que sont les bibliothèques, c'est là que sont les
+benchmarks. C'est en partie vrai pour la R&D et l'inférence custom. Ce ne l'est pas pour la **majorité des apps qui consomment des LLM via API**, ce qui couvre
+l'écrasante majorité des produits IA aujourd'hui : chatbots métier, RAG, agents, tool use, copilotes intégrés.
 
-L'[**Initiative Symfony AI**](https://symfony.com/blog/kicking-off-the-symfony-ai-initiative) lancée par Christopher Hertel formalise ce qui était déjà bricolé dans plusieurs projets — composants pour appeler des LLM (OpenAI, Anthropic, Mistral, Ollama), gestion des messages et des tool calls, embeddings et stores vectoriels (Pinecone, Qdrant, pgvector), pipeline RAG, agents avec planification. C'est jeune, en mouvement, mais déjà utilisable pour la majorité des cas applicatifs côté produit.
+L'[**Initiative Symfony AI**](https://symfony.com/blog/kicking-off-the-symfony-ai-initiative) lancée par Christopher Hertel formalise ce qui était déjà bricolé
+dans plusieurs projets — composants pour appeler des LLM (OpenAI, Anthropic, Mistral, Ollama), gestion des messages et des tool calls, embeddings et stores
+vectoriels (Pinecone, Qdrant, pgvector), pipeline RAG, agents avec planification. C'est jeune, en mouvement, mais déjà utilisable pour la majorité des cas
+applicatifs côté produit.
 
-Sur un projet récent où il fallait ajouter un assistant métier RAG sur une base documentaire client, j'ai monté la chose en Symfony : ingestion des documents en background via Messenger, embeddings stockés en pgvector, retrieval + génération côté Symfony AI, UI Live Component pour le chat avec streaming SSE via Mercure. Tout dans la même codebase. Pas de service Python séparé à orchestrer, pas de double déploiement.
+Sur un projet récent où il fallait ajouter un assistant métier RAG sur une base documentaire client, j'ai monté la chose en Symfony : ingestion des documents en
+background via Messenger, embeddings stockés en pgvector, retrieval + génération côté Symfony AI, UI Live Component pour le chat avec streaming SSE via Mercure.
+Tout dans la même codebase. Pas de service Python séparé à orchestrer, pas de double déploiement.
 
 ### La grille de décision en cinq critères
 
 Ce que je dis aujourd'hui à un CTO ou un lead tech qui se demande quelle place donner à l'écosystème PHP/Symfony pour un nouveau produit :
 
-| Critère                  | Verdict PHP/Symfony en 2026                                                         |
-| ------------------------ | ----------------------------------------------------------------------------------- |
-| Vélocité de delivery     | API Platform + EasyAdmin + Live Components → un MVP solide en quelques semaines     |
-| Coût d'infra             | FrankenPHP worker mode → 3-4× le throughput de PHP-FPM, infra divisée d'autant      |
-| Profil de recrutement    | Pool large, séniors stables, écoles qui forment encore, freelances disponibles      |
-| Longévité du code        | Rector + PHPStan → migrations automatisées, code maintenable sur dix ans et plus    |
-| Couverture fonctionnelle | API, SaaS, e-commerce, back-office, temps réel, mobile, IA — tout est couvert       |
+| Critère                  | Verdict PHP/Symfony en 2026                                                      |
+| ------------------------ | -------------------------------------------------------------------------------- |
+| Vélocité de delivery     | API Platform + EasyAdmin + Live Components → un MVP solide en quelques semaines  |
+| Coût d'infra             | FrankenPHP worker mode → 3-4× le throughput de PHP-FPM, infra divisée d'autant   |
+| Profil de recrutement    | Pool large, séniors stables, écoles qui forment encore, freelances disponibles   |
+| Longévité du code        | Rector + PHPStan → migrations automatisées, code maintenable sur dix ans et plus |
+| Couverture fonctionnelle | API, SaaS, e-commerce, back-office, temps réel, mobile, IA — tout est couvert    |
 
-Il existe des cas où une autre stack est mieux placée. Pour de la recherche IA pure, du calcul scientifique, du temps réel sub-milliseconde, ou du tooling système, PHP n'est pas le bon choix — et personne ne prétendra le contraire. Mais pour ce qui constitue 80 % de ce qu'une équipe produit moderne livre — du SaaS B2B, du e-commerce, du back-office métier, des API exposées, des assistants IA branchés sur des données business — l'écosystème PHP est aujourd'hui une option **par défaut** parfaitement défendable. Pas un compromis nostalgique : un choix de praticien, ancré dans quatorze ans d'observation directe.
+Il existe des cas où une autre stack est mieux placée. Pour de la recherche IA pure, du calcul scientifique, du temps réel sub-milliseconde, ou du tooling
+système, PHP n'est pas le bon choix — et personne ne prétendra le contraire. Mais pour ce qui constitue 80 % de ce qu'une équipe produit moderne livre — du SaaS
+B2B, du e-commerce, du back-office métier, des API exposées, des assistants IA branchés sur des données business — l'écosystème PHP est aujourd'hui une option
+**par défaut** parfaitement défendable. Pas un compromis nostalgique : un choix de praticien, ancré dans quatorze ans d'observation directe.
 
 C'est ce que je voulais mettre noir sur blanc.

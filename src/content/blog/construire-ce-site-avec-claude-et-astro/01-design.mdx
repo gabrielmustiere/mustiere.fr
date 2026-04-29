@@ -1,10 +1,12 @@
 ## Étape 1 — designer avec Claude Design, pas avec Figma
 
-Je ne suis pas designer. Ouvrir Figma pour itérer sur une page d'accueil coûte cher en friction. Claude Design, lui, sait produire une maquette, du HTML + Tailwind qui s'affiche immédiatement dans un navigateur. Le processus :
+Je ne suis pas designer. Ouvrir Figma pour itérer sur une page d'accueil coûte cher en friction. Claude Design, lui, sait produire une maquette, du HTML +
+Tailwind qui s'affiche immédiatement dans un navigateur. Le processus :
 
 1. Je décris l'identité visuelle (éditoriale, sobre, typographie mixte serif + sans + mono) et les sections attendues.
 2. Claude Deisgn me rend trois artifacts HTML autonomes : accueil, liste d'articles, article.
 3. J'itère en langage naturel (« la sidebar est trop dense », « fais sauter le bandeau Tweaks », « passe l'accent de cette section en ocre »).
 4. À la fin, je demande à Claude de rédiger un **handoff document** : tokens de design, palette oklch, structure Astro recommandée, comportements JS.
 
-Ce handoff, c'est le fichier `README.md` du repo — je l'utilise comme brief à l'entrée de Claude Code. Les maquettes HTML deviennent la référence de fidélité pixel-perfect ; Claude Code n'a plus qu'à les recoder en composants Astro idiomatiques.
+Ce handoff, c'est le fichier `README.md` du repo — je l'utilise comme brief à l'entrée de Claude Code. Les maquettes HTML deviennent la référence de fidélité
+pixel-perfect ; Claude Code n'a plus qu'à les recoder en composants Astro idiomatiques.
