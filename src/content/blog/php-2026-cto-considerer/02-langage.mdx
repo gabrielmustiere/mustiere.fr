@@ -1,39 +1,54 @@
 ## Le langage a rattrapé — et dépassé — ce qu'on en attendait
 
-Le PHP que j'écris en 2026 ne ressemble pas à celui que j'écrivais en 2012. C'est l'une des transformations les plus discrètes mais les plus profondes de
-l'écosystème : le langage est devenu strict, expressif, et performant.
+Le PHP que j'écris en 2026 ne ressemble pas à celui que j'écrivais en 2012. La transformation s'est faite par deux paliers. PHP 7.0 fin 2015 a refondu le moteur
+(Zend Engine 3) et acté un saut de performance d'environ ×2 sur des charges typiques. PHP 8.0 fin 2020 a posé le système de types moderne et introduit le JIT.
+Tout ce qui s'est ajouté depuis, de 8.1 à 8.5, relève de l'épaisseur, pas de la rupture.
 
-Côté **typage**, on est passé de l'absence totale de types à un système qui rivalise avec ce qu'on attend d'un langage moderne : types scalaires, unions,
-intersections, types nullables, `readonly`, enums avec méthodes, property hooks. PHPStan en mode strict (j'y reviens en section dédiée) attrape la
-quasi-totalité des erreurs avant l'exécution. Un service écrit aujourd'hui ressemble à ça :
+Côté **typage**, sept versions ont transformé un langage permissif en un langage strict : types scalaires en 7.0, propriétés typées en 7.4, unions et `mixed` en
+8.0, enums et intersections en 8.1, readonly classes et DNF en 8.2, constantes de classe typées en 8.3, property hooks et visibilité asymétrique en 8.4. PHPStan
+en mode strict (j'y reviens en section dédiée) attrape la quasi-totalité des erreurs avant l'exécution. Concrètement, voici à quoi ressemble une entité
+moderne :
 
 ```php
-// src/Domain/Pricing/PriceCalculator.php
-final readonly class PriceCalculator
+final readonly class Order
 {
     public function __construct(
-        private TaxRateRepository $taxRates,
-        private DiscountPolicy $discounts,
+        public OrderId $id,
+        public Status $status,
+        public private(set) array $lines = [],
     ) {}
 
-    public function compute(Cart $cart, Customer $customer): Money
-    {
-        return $cart->lines
-            |> array_map($this->priceLine(...), ...)
-            |> array_reduce(..., Money::zero())
-            |> fn ($total) => $this->discounts->apply($total, $customer)
-            |> fn ($total) => $this->taxRates->applyFor($customer->country, $total);
+    public string $reference {
+        get => sprintf('ORD-%s-%s', $this->status->value, $this->id);
     }
 }
 ```
 
-Property hooks (PHP 8.4), pipe operator `|>` (PHP 8.5), `readonly` sur la classe entière, types stricts partout, services injectés via constructor promotion.
-C'est le PHP moderne — et il ressemble beaucoup à du Kotlin ou du TypeScript bien tenu.
+`readonly` sur la classe interdit la mutation des propriétés. `private(set)` (8.4) limite l'écriture à la classe tout en gardant la lecture publique. Le bloc
+`get => ...` (property hook, 8.4) remplace le getter trivial. Le constructeur emporte déclaration et affectation des propriétés (constructor promotion, 8.0).
+Cette densité d'expression est ce qu'un développeur Kotlin ou C# moderne attend, et elle est désormais native côté PHP.
 
-Côté **performance**, le JIT IR introduit en 8.4 et raffiné en 8.5 a fait gagner 5 à 15 % sur les charges arithmétiques par rapport à 8.3, et la base de PHP 8.x
-est déjà environ trois fois plus rapide que le PHP 7.4 que beaucoup ont en tête quand ils parlent de « lenteur PHP ». Pour les besoins **asynchrones**, les
-Fibers introduites en 8.1 sont stables depuis trois versions et utilisables en production via [AmPHP](https://amphp.org/) ou [ReactPHP](https://reactphp.org/) —
-pas la même ergonomie que `async/await` en JavaScript, mais le même résultat fonctionnel : I/O concurrentes sans threads.
+Côté **expressivité**, les ajouts syntaxiques de la branche 8.x sont moins racontés mais plus visibles à la lecture. `match` (8.0) remplace `switch` avec
+comparaison stricte et retour de valeur. L'opérateur nullsafe `?->` chaîne sans test null intermédiaire. Les attributs natifs `#[Attribute]` (8.0) ont enterré
+les annotations docblock. Le pipe operator `|>` (8.5) fait passer une valeur de gauche à droite sans variables intermédiaires :
 
-Le langage que je présente à un junior aujourd'hui est plus proche d'un C# moderne que du PHP 5 qu'il imagine. Ça change immédiatement la nature de tout débat
-sur sa robustesse.
+```php
+$slug = $title
+    |> trim(...)
+    |> mb_strtolower(...)
+    |> fn(string $s) => preg_replace('/[^a-z0-9]+/', '-', $s);
+```
+
+Pris isolément, chacun de ces ajouts est anodin. Cumulés, ils transforment la lecture d'un fichier PHP de 2026 par rapport à un fichier de 2018.
+
+Côté **performance**, la base de PHP 8.x est déjà environ trois fois plus rapide que le PHP 7.4 que beaucoup ont en tête quand ils parlent de « lenteur PHP ».
+Le JIT IR introduit en 8.4 et raffiné en 8.5 ajoute 5 à 15 % sur les charges arithmétiques, en consommant moins de mémoire que le précédent backend. Sur des
+applications web typiques, IO-bound, le JIT seul ne change pas grand-chose ; c'est l'ensemble — moteur 7.0, JIT 8.0, IR 8.4/8.5, OPcache désormais compilé
+statiquement dans 8.5 — qui a effacé l'argument structurel de lenteur.
+
+Côté **asynchrone**, les Fibers introduites en 8.1 sont stables depuis quatre versions majeures et utilisables en production via [AmPHP](https://amphp.org/) ou
+[ReactPHP](https://reactphp.org/). L'ergonomie n'est pas celle d'`async/await` en JavaScript, mais le résultat fonctionnel est le même : I/O concurrentes sans
+threads.
+
+Le langage que je présente à un junior aujourd'hui est plus proche d'un C# moderne ou d'un Kotlin que du PHP 5 qu'il imagine. Ça change immédiatement la nature
+de tout débat sur sa robustesse.
