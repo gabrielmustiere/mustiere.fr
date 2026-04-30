@@ -28,22 +28,7 @@ const projects = (
           class="block group project-card"
         >
           <article>
-            {project.data.cover ? (
-              <img
-                src={project.data.cover}
-                alt={`${project.data.title} — ${project.data.kind}`}
-                loading="lazy"
-                decoding="async"
-                class="w-full aspect-[21/9] object-cover rounded-md border border-[color:var(--color-rule)] transition-opacity group-hover:opacity-90"
-              />
-            ) : (
-              <div
-                class="placeholder-stripe rounded-md aspect-[21/9] transition-opacity group-hover:opacity-90"
-                role="presentation"
-                aria-hidden="true"
-              />
-            )}
-            <div class="mt-3 flex items-baseline justify-between gap-4">
+            <div class="flex items-baseline justify-between gap-4">
               <h3
                 class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em] group-hover:text-[color:var(--a-projects)] transition-colors"
                 style="font-family: var(--font-serif)"
@@ -74,13 +59,6 @@ const projects = (
 </section>
 
 <style>
-  .placeholder-stripe {
-    background-image: repeating-linear-gradient(
-      135deg,
-      #ebe7de 0 6px,
-      #e4dfd4 6px 12px
-    );
-  }
   .project-card {
     text-decoration: none;
     color: inherit;

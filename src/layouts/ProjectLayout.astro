@@ -136,6 +136,18 @@ const metaDescription = truncateForMeta(data.resume.plain);
           >
           <span class="tnum text-[color:var(--color-muted)]">{data.kind}</span>
         </div>
+        {
+          data.cover && (
+            <img
+              src={data.cover}
+              alt=""
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+              class="mt-5 w-full aspect-[16/9] object-cover rounded-md"
+            />
+          )
+        }
         <h1
           class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
