@@ -1,0 +1,33 @@
+## AI, and why all this matters for a CTO
+
+The last objection, which I hear more and more, is that AI-first apps are built in Python — that's where the libraries are, that's where the benchmarks are.
+That's partly true for R&D and custom inference. It is not for the **majority of apps that consume LLMs through APIs**, which covers the overwhelming
+majority of AI products today: vertical chatbots, RAG, agents, tool use, embedded copilots.
+
+The [**Symfony AI Initiative**](https://symfony.com/blog/kicking-off-the-symfony-ai-initiative) launched by Christopher Hertel formalises what was already
+being patched together in several projects — components for calling LLMs (OpenAI, Anthropic, Mistral, Ollama), message and tool-call handling, embeddings
+and vector stores (Pinecone, Qdrant, pgvector), RAG pipelines, agents with planning. It's young, in motion, but already usable for the majority of product
+use cases.
+
+On a recent project where we needed to add a RAG vertical assistant on top of a client document base, I built it in Symfony: document ingestion in the
+background via Messenger, embeddings stored in pgvector, retrieval + generation on the Symfony AI side, Live Component UI for the chat with SSE streaming
+through Mercure. Everything in the same codebase. No separate Python service to orchestrate, no double deployment.
+
+### The five-criteria decision grid
+
+What I tell today a CTO or tech lead wondering what place to give the PHP/Symfony ecosystem on a new product:
+
+| Criterion              | PHP/Symfony verdict in 2026                                                       |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| Delivery velocity      | API Platform + EasyAdmin + Live Components → a solid MVP in a few weeks           |
+| Infrastructure cost    | FrankenPHP worker mode → 3-4× the throughput of PHP-FPM, infra divided accordingly |
+| Hiring profile         | Wide pool, stable seniors, schools still training for it, freelancers available   |
+| Code longevity         | Rector + PHPStan → automated migrations, code maintainable for ten years and more |
+| Functional coverage    | API, SaaS, e-commerce, back-office, real-time, mobile, AI — everything is covered |
+
+There are cases where another stack is better placed. For pure AI research, scientific computing, sub-millisecond real-time, or systems tooling, PHP isn't
+the right choice — and no one will pretend otherwise. But for what makes up 80 % of what a modern product team ships — B2B SaaS, e-commerce, vertical
+back-office, exposed APIs, AI assistants plugged into business data — the PHP ecosystem is today a perfectly defensible **default** option. Not a nostalgic
+compromise: a practitioner's choice, anchored in fourteen years of direct observation.
+
+That's what I wanted to put in writing.

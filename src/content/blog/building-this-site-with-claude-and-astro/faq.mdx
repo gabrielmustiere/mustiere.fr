@@ -1,0 +1,21 @@
+---
+questions:
+  - q: 'Why Astro rather than Next.js, Hugo or a classic static site generator?'
+    r: |
+      For a content site that almost never needs interactive JS, Astro hits the sweet spot: zero JS by default (so nothing to hydrate, nothing to break Core
+      Web Vitals), typed content collections with Zod validation that breaks the build on a missing field, and first-class i18n in the config. Next.js is
+      overkill when you don't need a React runtime, Hugo is faster to build but its templating gets cramped beyond a few collections, and a hand-rolled SSG
+      means rewriting the sitemap, hreflang and image pipeline yourself. On a portfolio + blog, Astro saves the most time without giving up SEO discipline.
+  - q: 'Can you really hand off design and implementation to Claude end-to-end?'
+    r: |
+      Not "hand off" — collaborate. Claude Design produced the HTML mockups in a tight loop where I described the editorial intent ("sober, mixed serif/sans/
+      mono", "drop the Tweaks panel") and reviewed each iteration. Claude Code then turned the mockups into idiomatic Astro components, but I worked
+      plan-then-execute: I asked for a task breakdown first, reviewed it, and only then let the agent run. The leverage is real (two weekends to ship the
+      whole site), but it requires you to know what you want and to read every diff. Treat it as a senior pair, not an autopilot.
+  - q: "Is the SEO setup overkill for a freelance CTO portfolio?"
+    r: |
+      The six building blocks (Zod schema, hreflang, JSON-LD, sitemap, llms.txt, fast static delivery) are not "overkill" — they're the floor. Each one solves
+      a concrete failure mode: a missing `excerpt` silently broken meta descriptions, a duplicate FR/EN page tanked by Google, an article invisible to
+      ChatGPT/Perplexity citations. Total cost: a few hours, and most of it is reusable across any future project. What's overkill is keyword-stuffing in
+      copy, link-buying, or chasing 100/100 Lighthouse scores past 95 — none of those move the needle for a CTO site.
+---

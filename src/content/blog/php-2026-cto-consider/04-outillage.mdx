@@ -1,0 +1,78 @@
+## The tooling that makes quality industrial
+
+This is the segment where the prejudice still holds the most, and where reality has drifted the furthest from it. Over fourteen years, I've watched PHP
+tooling go from an assembly of homemade scripts to an industrial backbone — to the point of being today, in my view, more stable than its JavaScript
+counterpart, where every quarter brings a new ESLint plugin or a paradigm shift.
+
+**[PHPStan](https://phpstan.org/)** has become the spine of static analysis. Strict mode (level 9) catches nearly every typed error before runtime; level 10,
+shipped with version 2.0, even chases unresolved `mixed` types and has become a quality badge in PHP OSS. A serious Symfony codebase passes at minimum level 8
+in CI. The [`phpstan/phpstan-symfony`](https://github.com/phpstan/phpstan-symfony) extension adds fine-grained knowledge of the container, services, routing
+and parameters — concretely, PHPStan knows that `$container->get('doctrine')` returns a `Registry` and that this parameter is an `int`. That's valuable.
+
+**[Rector](https://getrector.com/)** is the tool that took several codebases of mine from PHP 7.4 + Symfony 4 to PHP 8.5 + Symfony 7 without lost weeks. It
+knows the migration rules of PHP, Symfony, Doctrine, and applies them across hundreds of files in a single command. The `SymfonySetList::SYMFONY_70` set
+chains in minutes transformations that would take weeks by hand: moving annotations to PHP 8 attributes, migrating services, updating controller signatures.
+For a product's longevity over ten years, it's a life insurance policy.
+
+**[PHPUnit](https://phpunit.de/)** remains the reference test framework in the Symfony ecosystem, and version 13 released in February 2026 confirms that it
+keeps evolving with impeccable quality — PHP 8 attribute metadata, stricter expectations, isolation by default. Combined with the `WebTestCase` and
+`KernelTestCase` provided by Symfony, it covers the whole spectrum, from unit test to functional HTTP test. For API tests,
+[API Platform](https://api-platform.com/) provides its own `ApiTestCase` that integrates natively with PHPUnit. And for those who want to validate the
+relevance of their tests, [Infection](https://infection.github.io/) rounds out the arsenal via mutation testing.
+
+**[PHP-CS-Fixer](https://cs.symfony.com/)** is the reference formatter on the Symfony side, with its `@Symfony` and `@Symfony:risky` presets that
+automatically apply the community's conventions. Configuration in `.php-cs-fixer.dist.php`, CI/IDE integration, end of the style debate. The `@PER-CS2.0`
+ruleset additionally aligns with the most recent PHP-FIG standard.
+
+On the security side, [`composer audit`](https://getcomposer.org/doc/03-cli.md#audit) has been integrated natively into Composer since 2.4, and since 2.9 it
+automatically blocks the installation of vulnerable dependencies. Wire it into CI, full stop. To go further, [Roave Security
+Advisories](https://github.com/Roave/SecurityAdvisories) locks at the `composer.json` level itself, and the
+[Local PHP Security Checker](https://github.com/fabpot/local-php-security-checker) maintained by Symfony remains a complementary option.
+
+For architecture, [Deptrac](https://github.com/qossmic/deptrac) or [PHPat](https://github.com/carlosas/phpat) (as a PHPStan extension) let you test contracts
+between layers — for example, forbidding a controller from calling a repository directly — and turn architecture discipline into rules verified in CI. On
+Symfony projects that structure code as bounded contexts or hexagonal architecture, it's a safety net that pays off immediately.
+
+A minimal CI on a Symfony project in 2026 looks like this:
+
+```yaml
+# .github/workflows/ci.yml (excerpt)
+- run: composer install --no-progress
+- run: vendor/bin/php-cs-fixer fix --dry-run --diff   # style
+- run: vendor/bin/phpstan analyse                     # types (level 8+)
+- run: vendor/bin/rector --dry-run                    # upcoming deprecations
+- run: vendor/bin/phpunit --coverage-clover=clover.xml
+- run: composer audit                                 # CVE
+```
+
+Six commands, six guarantees: clean style, correct types, code aligned with the next version, tested behaviour, no vulnerable dependency. That's exactly the
+level I expect from a serious TypeScript project. On top of that I systematically add the [Symfony CLI](https://symfony.com/download), which bundles a TLS
+dev server, Docker integration and a security checker, and [Castor](https://castor.jolicode.com/) (built by JoliCode) as a modern task runner to orchestrate
+project commands — replacing Make or scattered shell scripts, with proper PHP ergonomics and the matching autocompletion.
+
+### Honourable mentions
+
+The PHP ecosystem isn't reducible to the tools I use day-to-day on Symfony. A few essentials deserve to be mentioned so that a CTO has a fair view of what
+exists.
+
+On testing, **[Pest](https://pestphp.com/)** is worth mentioning even if I stay loyal to PHPUnit: its expressive syntax and version 4 — which integrates
+[Playwright](https://pestphp.com/docs/browser-testing) for browser tests without a separate JavaScript stack — have made it the fastest-growing framework,
+particularly on the Laravel side (over 39 million installations in early 2026). For a team starting from scratch, it's a defensible option.
+
+On static analysis, **[Psalm](https://psalm.dev/)**, now maintained by Daniil Gentili, remains the alternative to PHPStan. Its distinctive feature is taint
+analysis — static detection of XSS, SQL injection and command injection — which has no free equivalent in the ecosystem.
+
+On runtimes, beyond FrankenPHP covered in the next section, **[RoadRunner](https://roadrunner.dev/)** (Go-based application server with built-in queue and
+gRPC) and **[Swoole](https://www.swoole.com/)** (coroutine/event-loop extension) are the two other serious choices for stepping out of the PHP-FPM model. For
+serverless, **[Bref](https://bref.sh/)** has become the de facto standard for running PHP on AWS Lambda.
+
+On dev environments, **[DDEV](https://ddev.com/)** stands out as the most mature multi-stack Docker solution across all communities (Drupal, WordPress,
+TYPO3, Symfony, Laravel), while **[Laravel Herd](https://herd.laravel.com/)** offers a particularly polished native macOS/Windows experience for those who
+want to avoid Docker locally.
+
+On distribution, **[PHIVE](https://phar.io/)** (Phar Installation and Verification Environment) lets you install GPG-signed QA tools without polluting the
+project's `composer.json`, and **[Box](https://github.com/box-project/box)** remains the standard for packaging a PHP application as a standalone PHAR.
+
+Finally, an honourable mention for **[Mago](https://github.com/carthage-software/mago)**, a new entrant written in Rust that aims to unify linter, formatter
+and static analyser in a single binary, in the spirit of what [Biome](https://biomejs.dev/) does on the JavaScript side. It's still young (pre-1.0 at the end
+of 2025), but worth watching in the coming years.

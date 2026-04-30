@@ -1,11 +1,9 @@
 ## Symfony, et un écosystème qui couvre tout
 
-Symfony 7 est mon socle de travail depuis cinq versions majeures. C'est un framework HTTP générique, mature, fortement typé, qui propose un container DI
-puissant, un système d'événements, un Messenger pour les jobs asynchrones, un Workflow pour les machines à états, un Validator, un Form, un Security — chacun de
-ces composants étant utilisable indépendamment du reste. Cette modularité est ce qui m'a permis, sur quatorze ans, de monter des produits très différents avec
-une architecture homogène.
+Symfony est mon socle de travail depuis cinq versions majeures — modulaire, fortement typé, chaque composant utilisable indépendamment. Le vrai argument en
+2026, c'est ce qui s'est construit autour.
 
-Mais le vrai argument en 2026 ce n'est plus Symfony seul, c'est ce qui s'est construit autour :
+D'abord les briques **produit** prêtes à l'emploi :
 
 | Besoin               | Composant principal       | Ce qui sort de la boîte                                                             |
 | -------------------- | ------------------------- | ----------------------------------------------------------------------------------- |
@@ -16,7 +14,28 @@ Mais le vrai argument en 2026 ce n'est plus Symfony seul, c'est ce qui s'est con
 | UI réactive sans JS  | Symfony UX Live Component | Composants Twig avec état serveur, mises à jour AJAX automatiques                   |
 | Mobile (iOS/Android) | Turbo + Hotwire Native    | App native qui réutilise le HTML serveur, sans React Native ni Flutter              |
 
-Cette table est ce que j'oppose à l'objection « PHP, c'est juste du web 2010 ». Sur la plupart des produits que je vois passer — SaaS B2B, marketplace,
+Et derrière, le **framework lui-même** est une cinquantaine de composants découplés, chacun installable indépendamment dans n'importe quel projet PHP. Le
+panorama, par domaine, donne la mesure de la couverture :
+
+| Domaine                | Composants                                                                                            |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| HTTP & routing         | HttpFoundation, HttpKernel, HttpClient (sync/async/HTTP/2), Routing, Mime, WebLink                    |
+| Console & runtime      | Console, Process, Runtime, Dotenv                                                                     |
+| Configuration & DI     | Config, DependencyInjection, OptionsResolver, Yaml, ExpressionLanguage                                |
+| Sécurité               | Security (Core/Bundle/Csrf/Http), PasswordHasher, RateLimiter, Lock, Semaphore, HtmlSanitizer, Ldap   |
+| Données & types        | Validator, Serializer, Form, PropertyAccess, PropertyInfo, TypeInfo, ObjectMapper, JsonPath           |
+| Async & événements     | Messenger, Scheduler, EventDispatcher, RemoteEvent, Webhook, Workflow (state machines)                |
+| Communication          | Mailer (Amazon/SendGrid/Mailgun/Postmark/Brevo…), Notifier (SMS, push, Slack, Telegram, Discord…)     |
+| Cache & perf           | Cache (PSR-6/16 + tags), Clock, Stopwatch                                                             |
+| Filesystem & assets    | Filesystem, Finder, Asset, AssetMapper (sans bundler ni Node)                                         |
+| I18n & identifiants    | Translation, Intl, Emoji, Uid (UUID v1–v8, ULID)                                                      |
+| Test & debug           | BrowserKit, DomCrawler, CssSelector, Panther (Chrome/Firefox), VarDumper, VarExporter, ErrorHandler   |
+| Frontend (Symfony UX)  | Turbo, LiveComponent, TwigComponent, Stimulus, Autocomplete, Icons, Chart.js, Map, React/Vue/Svelte   |
+| IA (depuis 2025)       | AI Platform, AI Agent, AI Chat/Store, bridges OpenAI/Anthropic/Gemini/Mistral/Cohere, MCP Bundle      |
+
+Cette densité est ce que j'oppose à l'objection « PHP, c'est juste du web 2010 ». Tout ce qui demande ailleurs un assemblage de quatre librairies tierces et
+deux services externes (queue + worker, retry + DLQ, signed URL + storage, OAuth + 2FA + rate limit, OpenTelemetry + clock injecté pour les tests…) existe ici
+sous une API homogène, maintenue par la même équipe, documentée au même endroit. Sur la plupart des produits que je vois passer — SaaS B2B, marketplace,
 plateforme métier — chacune de ces briques s'utilise sans glue code. **API Platform** en particulier mérite qu'on s'y arrête : on déclare une entité Doctrine,
 on annote, on a une API REST + GraphQL + OpenAPI documentée + Mercure-pushable, sans écrire un controller. Le gain de productivité se compte en facteurs, pas en
 pourcentages.

@@ -109,14 +109,18 @@ propose Symfony plutôt que Node sur un nouveau projet.
 
 **Points clés :**
 
-- PHPStan level 10 — `list<T>`, types stricts, badge qualité OSS.
-- Rector — migrations automatisées, indispensable pour porter du code sur 10 ans.
-- Pest 4 — DX moderne, Playwright + visual regression intégrés.
-- Pint / php-cs-fixer — formatage standardisé.
-- `composer audit` — sécu CI standard.
+- PHPStan level 10 + extension `phpstan-symfony` — types stricts, container/services connus, badge qualité OSS.
+- Rector — migrations automatisées (`SymfonySetList::SYMFONY_70`), indispensable pour porter du code sur 10 ans.
+- PHPUnit 13 (Symfony first-class) couplé à `WebTestCase` / `KernelTestCase` / `ApiTestCase` ; Infection en complément (mutation testing).
+- PHP-CS-Fixer avec presets `@Symfony` / `@Symfony:risky` / `@PER-CS2.0` — formatter de référence côté Symfony.
+- `composer audit` (bloquant depuis Composer 2.9), Roave Security Advisories, Local PHP Security Checker — sécu CI standard.
+- Architecture testing : Deptrac / PHPat pour vérifier les contrats entre couches en CI.
+- Outillage projet : Symfony CLI (dev TLS, Docker, security checker), Castor (task runner JoliCode).
+- Mentions spéciales pour donner une vision écosystème : Pest (Laravel-friendly), Psalm (taint analysis), RoadRunner / Swoole / Bref (runtimes alt), DDEV /
+  Laravel Herd (env dev), PHIVE / Box (distribution), Mago (linter/formatter/analyseur en Rust, à surveiller).
 - Comparaison rapide avec l'outillage TS — équivalent, parfois plus stable car moins fragmenté.
 
-**Artefacts :** snippet `composer.json` ou config CI minimale (PHPStan + Pest + Rector).
+**Artefacts :** config CI minimale Symfony (PHP-CS-Fixer + PHPStan + Rector + PHPUnit + composer audit).
 
 ### 5. FrankenPHP — la rupture qui change l'équation infra
 

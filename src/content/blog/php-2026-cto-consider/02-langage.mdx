@@ -1,0 +1,53 @@
+## The language has caught up — and gone past — what was expected of it
+
+The PHP I write in 2026 looks nothing like the PHP I wrote in 2012. The transformation came in two steps. PHP 7.0 in late 2015 rebuilt the engine (Zend
+Engine 3) and locked in a roughly ×2 performance jump on typical workloads. PHP 8.0 in late 2020 laid down the modern type system and introduced the JIT.
+Everything added since, from 8.1 to 8.5, is depth rather than rupture.
+
+On the **typing** side, seven versions have turned a permissive language into a strict one: scalar types in 7.0, typed properties in 7.4, unions and `mixed`
+in 8.0, enums and intersections in 8.1, readonly classes and DNF in 8.2, typed class constants in 8.3, property hooks and asymmetric visibility in 8.4.
+PHPStan in strict mode (more on that in its own section) catches almost every error before runtime. Concretely, here's what a modern entity looks like:
+
+```php
+final readonly class Order
+{
+    public function __construct(
+        public OrderId $id,
+        public Status $status,
+        public private(set) array $lines = [],
+    ) {}
+
+    public string $reference {
+        get => sprintf('ORD-%s-%s', $this->status->value, $this->id);
+    }
+}
+```
+
+`readonly` on the class forbids property mutation. `private(set)` (8.4) restricts writes to the class while keeping reads public. The `get => ...` block
+(property hook, 8.4) replaces the trivial getter. The constructor declares and assigns properties at once (constructor promotion, 8.0). This expression
+density is what a modern Kotlin or C# developer expects, and it's now native on the PHP side.
+
+On the **expressiveness** side, the syntactic additions of the 8.x branch are less talked about but more visible when reading code. `match` (8.0) replaces
+`switch` with strict comparison and a returned value. The nullsafe operator `?->` chains without intermediate null checks. Native attributes `#[Attribute]`
+(8.0) buried docblock annotations. The pipe operator `|>` (8.5) flows a value left to right without intermediate variables:
+
+```php
+$slug = $title
+    |> trim(...)
+    |> mb_strtolower(...)
+    |> fn(string $s) => preg_replace('/[^a-z0-9]+/', '-', $s);
+```
+
+In isolation, each of these additions is minor. Stacked, they transform the reading of a 2026 PHP file compared to a 2018 one.
+
+On the **performance** side, the PHP 8.x baseline is already roughly three times faster than the PHP 7.4 most people have in mind when they talk about
+"PHP slowness". The JIT IR introduced in 8.4 and refined in 8.5 adds 5 to 15 % on arithmetic workloads while using less memory than the previous backend. On
+typical IO-bound web applications, the JIT alone doesn't change much; it's the whole picture — 7.0 engine, 8.0 JIT, 8.4/8.5 IR, OPcache now compiled
+statically into 8.5 — that has erased the structural slowness argument.
+
+On the **async** side, Fibers introduced in 8.1 have been stable for four major versions and are usable in production via [AmPHP](https://amphp.org/) or
+[ReactPHP](https://reactphp.org/). The ergonomics aren't those of `async/await` in JavaScript, but the functional outcome is the same: concurrent I/O without
+threads.
+
+The language I introduce to a junior today is closer to a modern C# or Kotlin than to the PHP 5 they imagine. That immediately changes the nature of any
+debate about its robustness.

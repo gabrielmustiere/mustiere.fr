@@ -1,0 +1,24 @@
+---
+questions:
+  - q: 'Pourquoi Astro plutôt que Next.js, Hugo ou un générateur statique classique ?'
+    r: |
+      Pour un site de contenu qui n'a presque jamais besoin de JS interactif, Astro touche le point d'équilibre : zéro JS par défaut (rien à hydrater, rien
+      pour casser les Core Web Vitals), des content collections typées et validées par Zod qui font échouer le build sur un champ manquant, et un i18n natif
+      dans la config. Next.js est surdimensionné quand on n'a pas besoin d'un runtime React, Hugo build plus vite mais son templating devient à l'étroit
+      au-delà de quelques collections, et un SSG maison oblige à réécrire sitemap, hreflang et pipeline d'images soi-même. Sur un portfolio + blog, Astro fait
+      gagner le plus de temps sans sacrifier la rigueur SEO.
+  - q: "Peut-on vraiment confier design et implémentation à Claude de bout en bout ?"
+    r: |
+      Pas "confier" — collaborer. Claude Design a produit les maquettes HTML dans une boucle serrée où je décrivais l'intention éditoriale ("sobre,
+      typographie mixte serif/sans/mono", "vire le panneau Tweaks") et je relisais chaque itération. Claude Code a ensuite transformé les maquettes en
+      composants Astro idiomatiques, mais je travaille en plan-then-execute : je demande d'abord un découpage en sous-tâches, je le relis, et seulement
+      ensuite je laisse l'agent dérouler. Le levier est réel (deux week-ends pour sortir tout le site), mais il faut savoir ce qu'on veut et lire chaque diff.
+      C'est un binôme sénior, pas un pilote automatique.
+  - q: "Le dispositif SEO n'est-il pas surdimensionné pour un portfolio de CTO freelance ?"
+    r: |
+      Les six briques (schéma Zod, hreflang, JSON-LD, sitemap, llms.txt, livraison statique rapide) ne sont pas du "surdimensionné" — c'est le plancher.
+      Chacune répond à un mode de panne concret : un `excerpt` manquant qui casse silencieusement les meta descriptions, une page FR/EN dupliquée que Google
+      enterre, un article invisible aux citations de ChatGPT/Perplexity. Coût total : quelques heures, et la majorité est réutilisable sur n'importe quel
+      projet futur. Ce qui est surdimensionné, c'est le bourrage de mots-clés dans les textes, l'achat de liens, ou la course au 100/100 Lighthouse au-delà
+      de 95 — aucun de ces leviers ne bouge l'aiguille sur un site de CTO.
+---

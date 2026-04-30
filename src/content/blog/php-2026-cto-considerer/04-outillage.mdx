@@ -1,32 +1,80 @@
 ## L'outillage qui rend la qualité industrielle
 
-C'est le segment où le préjugé tient encore le plus, et où la réalité s'en est le plus écartée. Ce qu'un projet PHP sérieux embarque aujourd'hui :
+C'est le segment où le préjugé tient encore le plus, et où la réalité s'en est le plus écartée. En quatorze ans, j'ai vu l'outillage PHP passer d'un assemblage
+de scripts maison à un socle industriel — au point d'être aujourd'hui plus stable, à mes yeux, que son pendant JavaScript où chaque trimestre amène un nouveau
+plugin ESLint ou un changement de paradigme.
 
-- **[PHPStan](https://phpstan.org/)** — analyse statique. Le mode strict (level 9) attrape déjà la quasi-totalité des erreurs typées ; le level 10, sorti avec
-  PHPStan 2.0, traque jusqu'aux types `mixed` non résolus et est devenu un badge qualité dans l'OSS PHP. Une codebase Symfony sérieuse passe au minimum level 8
-  en CI.
-- **[Rector](https://getrector.com/)** — refactoring automatisé. C'est l'outil qui m'a fait passer plusieurs codebases de PHP 7.4 + Symfony 4 à PHP 8.4 +
-  Symfony 7 sans semaines perdues. Il connaît les règles de migration de PHP, de Symfony, de Doctrine, et il les applique sur des centaines de fichiers d'une
-  commande. Pour la longévité d'un produit sur dix ans, c'est une assurance vie.
-- **[Pest](https://pestphp.com/)** — framework de test moderne, syntaxe expressive, plus de 39 millions d'installations début 2026. La version 4 a intégré
-  [Playwright](https://pestphp.com/docs/browser-testing) pour les tests browser et la régression visuelle, sans installer de stack JavaScript séparée. Pour les
-  puristes, **PHPUnit** continue d'évoluer en parallèle avec une qualité irréprochable.
-- **Pint / php-cs-fixer** — formatters. Configuration zéro, intégration CI/IDE, fin du débat sur le style. C'est le `prettier` du monde PHP.
-- **[`composer audit`](https://getcomposer.org/doc/03-cli.md#audit)** — sécu intégrée à Composer depuis 2.4, basée sur la base FriendsOfPHP. À mettre en CI,
-  point.
+**[PHPStan](https://phpstan.org/)** est devenu la colonne vertébrale de l'analyse statique. Le mode strict (level 9) attrape la quasi-totalité des erreurs
+typées avant l'exécution ; le level 10, sorti avec la version 2.0, traque jusqu'aux types `mixed` non résolus et est devenu un badge qualité dans l'OSS PHP. Une
+codebase Symfony sérieuse passe au minimum level 8 en CI. L'extension [`phpstan/phpstan-symfony`](https://github.com/phpstan/phpstan-symfony) ajoute la
+connaissance fine du container, des services, du routing et des paramètres — concrètement, PHPStan sait que `$container->get('doctrine')` retourne un
+`Registry` et que tel paramètre est un `int`. C'est précieux.
 
-Une CI minimale sur un projet 2026 ressemble à ça :
+**[Rector](https://getrector.com/)** est l'outil qui m'a fait passer plusieurs codebases de PHP 7.4 + Symfony 4 à PHP 8.5 + Symfony 7 sans semaines perdues. Il
+connaît les règles de migration de PHP, de Symfony, de Doctrine, et il les applique sur des centaines de fichiers d'une commande. Le set
+`SymfonySetList::SYMFONY_70` enchaîne en quelques minutes des transformations qui prendraient des semaines à la main : passage des annotations aux attributs
+PHP 8, migration des services, mise à jour des signatures de contrôleurs. Pour la longévité d'un produit sur dix ans, c'est une assurance vie.
+
+**[PHPUnit](https://phpunit.de/)** reste le framework de test de référence dans l'écosystème Symfony, et la version 13 sortie en février 2026 confirme qu'il
+évolue avec une qualité irréprochable — métadonnées par attributs PHP 8, attentes plus strictes, isolation par défaut. Couplé au `WebTestCase` et au
+`KernelTestCase` fournis par Symfony, il couvre l'intégralité du spectre, du test unitaire au test fonctionnel HTTP. Pour les tests d'API,
+[API Platform](https://api-platform.com/) fournit son propre `ApiTestCase` qui s'intègre nativement à PHPUnit. Et pour ceux qui veulent valider la pertinence de
+leurs tests, [Infection](https://infection.github.io/) complète l'arsenal via mutation testing.
+
+**[PHP-CS-Fixer](https://cs.symfony.com/)** est le formatter de référence côté Symfony, avec ses presets `@Symfony` et `@Symfony:risky` qui appliquent
+automatiquement les conventions de la communauté. Configuration en `.php-cs-fixer.dist.php`, intégration CI/IDE, fin du débat sur le style. La règle
+`@PER-CS2.0` permet en plus de s'aligner sur le standard PHP-FIG le plus récent.
+
+Côté sécurité, [`composer audit`](https://getcomposer.org/doc/03-cli.md#audit) est intégré nativement à Composer depuis la 2.4, et depuis la 2.9 il bloque
+automatiquement l'installation de dépendances vulnérables. À mettre en CI, point. Pour aller plus loin,
+[Roave Security Advisories](https://github.com/Roave/SecurityAdvisories) verrouille au niveau du `composer.json` lui-même, et le
+[Local PHP Security Checker](https://github.com/fabpot/local-php-security-checker) maintenu par Symfony reste une option en complément.
+
+Pour l'architecture, [Deptrac](https://github.com/qossmic/deptrac) ou [PHPat](https://github.com/carlosas/phpat) (en extension PHPStan) permettent de tester les
+contrats entre couches — interdire qu'un contrôleur appelle directement un repository, par exemple — et de transformer la discipline d'archi en règles
+vérifiées en CI. Sur les projets Symfony qui structurent leur code en bounded contexts ou en architecture hexagonale, c'est un filet de sécurité qui paie
+immédiatement.
+
+Une CI minimale sur un projet Symfony en 2026 ressemble à ça :
 
 ```yaml
 # .github/workflows/ci.yml (extrait)
 - run: composer install --no-progress
-- run: vendor/bin/pint --test # style
-- run: vendor/bin/phpstan analyse # types (level 8+)
-- run: vendor/bin/rector --dry-run # déprécations à venir
-- run: vendor/bin/pest --coverage --min=80
-- run: composer audit # CVE
+- run: vendor/bin/php-cs-fixer fix --dry-run --diff   # style
+- run: vendor/bin/phpstan analyse                     # types (level 8+)
+- run: vendor/bin/rector --dry-run                    # déprécations à venir
+- run: vendor/bin/phpunit --coverage-clover=clover.xml
+- run: composer audit                                 # CVE
 ```
 
-Cinq commandes, cinq garanties : style propre, types corrects, code aligné sur la prochaine version, comportement testé, pas de dépendance vulnérable. C'est
-très exactement le niveau que j'attends d'un projet TypeScript sérieux. Et l'expérience cumulée sur ces outils me fait dire que l'outillage PHP est en réalité
-**plus stable** que son pendant JavaScript, où chaque trimestre amène un nouveau plugin ESLint ou un changement de paradigme dans le runner de test.
+Six commandes, six garanties : style propre, types corrects, code aligné sur la prochaine version, comportement testé, pas de dépendance vulnérable. C'est
+exactement le niveau que j'attends d'un projet TypeScript sérieux. À cela j'ajoute systématiquement la [Symfony CLI](https://symfony.com/download), qui embarque
+un serveur dev TLS, l'intégration Docker et un security checker, et [Castor](https://castor.jolicode.com/) (porté par JoliCode) comme task runner moderne pour
+orchestrer les commandes du projet — en remplacement de Make ou de scripts shell disparates, avec une vraie ergonomie PHP et l'autocomplétion qui va avec.
+
+### Mentions spéciales
+
+L'écosystème PHP ne se résume pas aux outils que j'utilise au quotidien sur Symfony. Quelques incontournables méritent d'être cités pour qu'un CTO ait une
+vision juste de ce qui existe.
+
+Côté testing, **[Pest](https://pestphp.com/)** mérite d'être mentionné même si je reste fidèle à PHPUnit : sa syntaxe expressive et sa version 4 — qui intègre
+[Playwright](https://pestphp.com/docs/browser-testing) pour les tests browser sans stack JavaScript séparée — en ont fait le framework qui monte le plus vite,
+particulièrement côté Laravel (plus de 39 millions d'installations début 2026). Pour une équipe qui démarre from scratch, c'est une option défendable.
+
+Côté analyse statique, **[Psalm](https://psalm.dev/)**, maintenu désormais par Daniil Gentili, reste l'alternative à PHPStan. Sa singularité tient à son taint
+analysis — détection statique des XSS, SQL injection et command injection — qui n'a pas d'équivalent gratuit dans l'écosystème.
+
+Côté runtimes, au-delà de FrankenPHP qu'on traite dans la section suivante, **[RoadRunner](https://roadrunner.dev/)** (serveur d'application en Go avec queue et
+gRPC intégrés) et **[Swoole](https://www.swoole.com/)** (extension coroutines/event-loop) sont les deux autres choix sérieux pour sortir du modèle PHP-FPM. Pour
+le serverless, **[Bref](https://bref.sh/)** est devenu le standard de fait pour exécuter du PHP sur AWS Lambda.
+
+Côté environnement de dev, **[DDEV](https://ddev.com/)** s'impose comme la solution Docker multi-stack la plus mature toutes communautés confondues (Drupal,
+WordPress, TYPO3, Symfony, Laravel), tandis que **[Laravel Herd](https://herd.laravel.com/)** offre une expérience native macOS/Windows particulièrement soignée
+pour qui veut éviter Docker en local.
+
+Côté distribution, **[PHIVE](https://phar.io/)** (Phar Installation and Verification Environment) permet d'installer des outils QA signés GPG sans polluer le
+`composer.json` du projet, et **[Box](https://github.com/box-project/box)** reste le standard pour packager une application PHP en PHAR autonome.
+
+Enfin, mention pour **[Mago](https://github.com/carthage-software/mago)**, un nouvel entrant écrit en Rust qui ambitionne d'unifier linter, formatter et
+analyseur statique dans un seul binaire, à la manière de ce que [Biome](https://biomejs.dev/) fait côté JavaScript. C'est encore jeune (pré-1.0 fin 2025), mais
+à surveiller pour les années qui viennent.
