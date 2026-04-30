@@ -18,6 +18,7 @@ interface Props {
   loading?: 'eager' | 'lazy';
   fetchpriority?: 'high' | 'auto';
   showCover?: boolean;
+  headingLevel?: 2 | 3;
 }
 
 const {
@@ -27,7 +28,9 @@ const {
   loading = 'lazy',
   fetchpriority,
   showCover = true,
+  headingLevel = 3,
 } = Astro.props;
+const SmHeading = `h${headingLevel}` as 'h2' | 'h3';
 const { data } = entry;
 const { cover, alt } = await getCover(entry);
 const href = localizedPath(lang, `/blog/${entry.id}`);
@@ -181,12 +184,12 @@ const pictureAlt = alt;
           />
         )}
         <div class="article-card__body">
-          <h3
+          <SmHeading
             class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
             style="font-family: var(--font-serif)"
           >
             {data.title}
-          </h3>
+          </SmHeading>
           <div class="mt-2 flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] font-mono">
             <time class="tnum acc-blog" datetime={toISODate(data.publishedAt)}>
               {formatDateShort(data.publishedAt, lang)}
