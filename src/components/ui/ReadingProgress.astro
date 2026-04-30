@@ -31,17 +31,34 @@
 </style>
 
 <script>
-  const bar = document.getElementById('progress-bar');
-  if (bar) {
-    const update = () => {
+  // Listeners portés sur `window` : les attacher à chaque page-load
+  // dupliquerait. On garde une référence module-scope pour pouvoir
+  // détacher/rebrancher proprement à chaque transition.
+  let currentBar: HTMLElement | null = null;
+  let currentUpdate: (() => void) | null = null;
+
+  function init() {
+    if (currentUpdate) {
+      window.removeEventListener('scroll', currentUpdate);
+      window.removeEventListener('resize', currentUpdate);
+    }
+    currentBar = document.getElementById('progress-bar');
+    if (!currentBar) {
+      currentUpdate = null;
+      return;
+    }
+    const bar = currentBar;
+    currentUpdate = () => {
       const h = document.documentElement;
       const scrolled = h.scrollTop;
       const max = h.scrollHeight - h.clientHeight;
       const pct = max > 0 ? (scrolled / max) * 100 : 0;
       bar.style.width = `${pct}%`;
     };
-    update();
-    window.addEventListener('scroll', update, { passive: true });
-    window.addEventListener('resize', update, { passive: true });
+    currentUpdate();
+    window.addEventListener('scroll', currentUpdate, { passive: true });
+    window.addEventListener('resize', currentUpdate, { passive: true });
   }
+
+  document.addEventListener('astro:page-load', init);
 </script>

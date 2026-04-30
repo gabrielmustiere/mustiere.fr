@@ -32,6 +32,7 @@ const projects = (
               <h3
                 class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em] group-hover:text-[color:var(--a-projects)] transition-colors"
                 style="font-family: var(--font-serif)"
+                transition:name={`project-title-${project.id}`}
               >
                 {project.data.title}
               </h3>

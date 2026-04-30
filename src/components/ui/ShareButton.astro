@@ -25,32 +25,36 @@ const tr = useTranslations(lang);
 </button>
 
 <script>
-  document.querySelectorAll<HTMLButtonElement>('.share-btn').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const title = btn.dataset.shareTitle ?? '';
-      const url = btn.dataset.shareUrl ?? window.location.href;
-      const copiedLabel = btn.dataset.shareCopied ?? 'Copied';
-      const label = btn.querySelector<HTMLElement>('[data-share-label]');
-      if (navigator.share) {
+  function init() {
+    document.querySelectorAll<HTMLButtonElement>('.share-btn').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const title = btn.dataset.shareTitle ?? '';
+        const url = btn.dataset.shareUrl ?? window.location.href;
+        const copiedLabel = btn.dataset.shareCopied ?? 'Copied';
+        const label = btn.querySelector<HTMLElement>('[data-share-label]');
+        if (navigator.share) {
+          try {
+            await navigator.share({ title, url });
+          } catch {
+            /* user cancelled */
+          }
+          return;
+        }
         try {
-          await navigator.share({ title, url });
+          await navigator.clipboard.writeText(url);
+          if (label) {
+            const prev = label.textContent;
+            label.textContent = copiedLabel;
+            setTimeout(() => {
+              label.textContent = prev;
+            }, 2000);
+          }
         } catch {
-          /* user cancelled */
+          /* clipboard denied; noop */
         }
-        return;
-      }
-      try {
-        await navigator.clipboard.writeText(url);
-        if (label) {
-          const prev = label.textContent;
-          label.textContent = copiedLabel;
-          setTimeout(() => {
-            label.textContent = prev;
-          }, 2000);
-        }
-      } catch {
-        /* clipboard denied; noop */
-      }
+      });
     });
-  });
+  }
+
+  document.addEventListener('astro:page-load', init);
 </script>

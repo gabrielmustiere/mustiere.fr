@@ -62,7 +62,11 @@ const index = [
 ] as const;
 ---
 
-<header class="mobile-nav lg:hidden" aria-label={tr.nav.ariaMobile}>
+<header
+  class="mobile-nav lg:hidden"
+  aria-label={tr.nav.ariaMobile}
+  transition:animate="none"
+>
   <a
     href={homePath}
     class="brand font-serif text-[20px] tracking-[-0.01em]"
@@ -472,14 +476,15 @@ const index = [
 </style>
 
 <script>
-  const trigger = document.getElementById(
-    'mobile-menu-trigger'
-  ) as HTMLButtonElement | null;
-  const dialog = document.getElementById(
-    'mobile-menu-panel'
-  ) as HTMLDialogElement | null;
+  function init() {
+    const trigger = document.getElementById(
+      'mobile-menu-trigger'
+    ) as HTMLButtonElement | null;
+    const dialog = document.getElementById(
+      'mobile-menu-panel'
+    ) as HTMLDialogElement | null;
+    if (!trigger || !dialog) return;
 
-  if (trigger && dialog) {
     const closeBtn = dialog.querySelector<HTMLButtonElement>('[data-close]');
     const links = dialog.querySelectorAll<HTMLAnchorElement>(
       '[data-close-on-click]'
@@ -504,4 +509,6 @@ const index = [
     });
     links.forEach((a) => a.addEventListener('click', close));
   }
+
+  document.addEventListener('astro:page-load', init);
 </script>

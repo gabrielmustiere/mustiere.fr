@@ -186,12 +186,13 @@ const Intro = INTRO[lang];
 </style>
 
 <script>
-  const filters = document.getElementById('filters');
-  const posts = document.querySelectorAll<HTMLLIElement>(
-    '#archive li[data-tags]'
-  );
-  const empty = document.getElementById('empty');
-  if (filters && empty) {
+  function init() {
+    const filters = document.getElementById('filters');
+    const posts = document.querySelectorAll<HTMLLIElement>(
+      '#archive li[data-tags]'
+    );
+    const empty = document.getElementById('empty');
+    if (!filters || !empty) return;
     filters.addEventListener('click', (e) => {
       const target = e.target as HTMLElement;
       const btn = target.closest<HTMLButtonElement>('button[data-tag]');
@@ -214,4 +215,6 @@ const Intro = INTRO[lang];
       empty.classList.toggle('hidden', shown > 0);
     });
   }
+
+  document.addEventListener('astro:page-load', init);
 </script>

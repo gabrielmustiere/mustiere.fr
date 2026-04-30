@@ -167,20 +167,24 @@ const hrefFor = (code: Lang): string => {
 
 <script>
   // Preserve hash when swapping language
-  document
-    .querySelectorAll<HTMLAnchorElement>('.lang-toggle__item')
-    .forEach((a) => {
-      a.addEventListener('click', (e) => {
-        if (a.getAttribute('aria-current') === 'true') {
-          e.preventDefault();
-          return;
-        }
-        const hash = window.location.hash;
-        if (hash) {
-          e.preventDefault();
-          const base = a.getAttribute('href') ?? '';
-          window.location.href = base + hash;
-        }
+  function init() {
+    document
+      .querySelectorAll<HTMLAnchorElement>('.lang-toggle__item')
+      .forEach((a) => {
+        a.addEventListener('click', (e) => {
+          if (a.getAttribute('aria-current') === 'true') {
+            e.preventDefault();
+            return;
+          }
+          const hash = window.location.hash;
+          if (hash) {
+            e.preventDefault();
+            const base = a.getAttribute('href') ?? '';
+            window.location.href = base + hash;
+          }
+        });
       });
-    });
+  }
+
+  document.addEventListener('astro:page-load', init);
 </script>

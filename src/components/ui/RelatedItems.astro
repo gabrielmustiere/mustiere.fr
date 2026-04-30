@@ -59,6 +59,7 @@ const { kind, title, items, lang } = Astro.props;
                 <h3
                   class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] transition-colors group-hover:text-[color:var(--related-accent)]"
                   style="font-family: var(--font-serif)"
+                  transition:name={`project-title-${item.id}`}
                 >
                   {item.data.title}
                 </h3>

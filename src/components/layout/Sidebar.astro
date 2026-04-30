@@ -66,7 +66,11 @@ const parcoursLinkHref = isHome ? '#about' : parcoursPath;
 const brandHref = isHome ? '#top' : homePath;
 ---
 
-<aside class="sidebar" aria-label={tr.nav.ariaSidebar}>
+<aside
+  class="sidebar"
+  aria-label={tr.nav.ariaSidebar}
+  transition:animate="none"
+>
   <a href={brandHref} class="avatar-link" aria-label={tr.nav.ariaBackHome}>
     <img
       src="/avatar.jpeg"
@@ -266,49 +270,60 @@ const brandHref = isHome ? '#top' : homePath;
 </style>
 
 <script>
-  const links = document.querySelectorAll<HTMLAnchorElement>('[data-idx-link]');
-  if (links.length) {
-    const byKey = new Map<string, HTMLAnchorElement>();
-    links.forEach((a) => byKey.set(a.dataset.key!, a));
+  // Disconnect précédent à chaque transition pour éviter d'observer un
+  // DOM remplacé.
+  let currentObserver: IntersectionObserver | null = null;
+
+  function init() {
+    if (currentObserver) {
+      currentObserver.disconnect();
+      currentObserver = null;
+    }
+
+    const links =
+      document.querySelectorAll<HTMLAnchorElement>('[data-idx-link]');
+    if (!links.length) return;
 
     const keys = ['blog', 'projects', 'contact', 'cv'];
     const sections = keys
       .map((k) => document.getElementById(k))
       .filter((el): el is HTMLElement => !!el);
 
-    if (sections.length) {
-      let current: string | null = null;
-      const setActive = (key: string | null) => {
-        if (key === current) return;
-        current = key;
-        links.forEach((a) => {
-          const active = a.dataset.key === key;
-          a.classList.toggle('is-active', active);
-          if (active) {
-            a.setAttribute('aria-current', 'location');
-          } else {
-            a.removeAttribute('aria-current');
-          }
-        });
-      };
+    if (!sections.length) return;
 
-      const visibleIds = new Set<string>();
-      const io = new IntersectionObserver(
-        (entries) => {
-          for (const e of entries) {
-            if (e.isIntersecting) visibleIds.add(e.target.id);
-            else visibleIds.delete(e.target.id);
-          }
-          const firstVisible = keys.find((k) => visibleIds.has(k));
-          if (firstVisible) setActive(firstVisible);
-        },
-        {
-          rootMargin: '-20% 0px -60% 0px',
-          threshold: 0,
+    let current: string | null = null;
+    const setActive = (key: string | null) => {
+      if (key === current) return;
+      current = key;
+      links.forEach((a) => {
+        const active = a.dataset.key === key;
+        a.classList.toggle('is-active', active);
+        if (active) {
+          a.setAttribute('aria-current', 'location');
+        } else {
+          a.removeAttribute('aria-current');
         }
-      );
+      });
+    };
 
-      sections.forEach((s) => io.observe(s));
-    }
+    const visibleIds = new Set<string>();
+    currentObserver = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visibleIds.add(e.target.id);
+          else visibleIds.delete(e.target.id);
+        }
+        const firstVisible = keys.find((k) => visibleIds.has(k));
+        if (firstVisible) setActive(firstVisible);
+      },
+      {
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: 0,
+      }
+    );
+
+    sections.forEach((s) => currentObserver!.observe(s));
   }
+
+  document.addEventListener('astro:page-load', init);
 </script>

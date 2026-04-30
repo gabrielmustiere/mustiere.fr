@@ -145,12 +145,14 @@ const metaDescription = truncateForMeta(data.resume.plain);
               fetchpriority="high"
               decoding="async"
               class="mt-5 w-full aspect-[16/9] object-cover rounded-md"
+              transition:name={`project-cover-${project.id}`}
             />
           )
         }
         <h1
           class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
+          transition:name={`project-title-${project.id}`}
         >
           {data.title}
         </h1>
