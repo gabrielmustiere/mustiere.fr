@@ -1,11 +1,12 @@
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   readFileSync,
   readdirSync,
   writeFileSync,
 } from 'node:fs';
-import { dirname, join, relative, sep } from 'node:path';
+import { dirname, extname, join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { Loader, LoaderContext } from 'astro/loaders';
 import {
@@ -36,6 +37,19 @@ import {
 const CHAPTER_NAME_RE = /^\d{2}-[a-z0-9-]+\.(md|mdx)$/;
 const FENCE_RE = /^([`~]{3,})/;
 const TOPLEVEL_RE = /^\s*(import|export)\s/;
+// Extensions d'assets co-localisés (images, fichiers binaires) que le loader
+// recopie à côté du fichier matérialisé pour que les chemins relatifs déclarés
+// dans le frontmatter (ex. `cover: ./cover.webp` consommé par `image()`) soient
+// résolus depuis le matérialisé par le pipeline Vite/Astro.
+const COLOCATED_ASSET_EXTS = new Set([
+  '.webp',
+  '.avif',
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.gif',
+  '.svg',
+]);
 
 interface ChapteredGlobOptions {
   base: string;
@@ -272,6 +286,8 @@ async function loadFolder(args: {
           `slug en kebab-case), ou un fichier réservé (resume.mdx, faq.mdx, sources.mdx).`
       );
     }
+    // Tout autre fichier non MD/MDX et non réservé est traité comme un asset
+    // co-localisé (cover.webp, etc.) — il sera recopié à côté du matérialisé.
   }
   chapterFiles.sort();
 
@@ -346,8 +362,13 @@ async function loadFolder(args: {
   if (faqData) data.faq = faqData;
   if (sourcesData) data.sources = sourcesData;
 
-  const assembledRel = `.astro/chaptered/${collection}/${dirName}${indexExt}`;
+  // Matérialiser dans un sous-dossier par entrée pour pouvoir y co-localiser
+  // les assets référencés en chemin relatif depuis le frontmatter (cover.webp,
+  // etc.). Sans ça, Astro `image()` résout `./cover.webp` relativement au
+  // fichier matérialisé et ne trouve pas l'asset original.
+  const assembledRel = `.astro/chaptered/${collection}/${dirName}/index${indexExt}`;
   const assembledAbs = join(rootPath, assembledRel);
+  const assembledDir = dirname(assembledAbs);
   const digestSource =
     indexContents +
     '\n' +
@@ -371,12 +392,19 @@ async function loadFolder(args: {
     return;
   }
 
-  // Matérialiser le fichier agrégé sous .astro/chaptered/<collection>/<dirname>.<ext>
-  // pour que Vite puisse le rendre via le pipeline MDX standard.
+  // Matérialiser le fichier agrégé sous
+  // .astro/chaptered/<collection>/<dirname>/index.<ext> pour que Vite puisse
+  // le rendre via le pipeline MDX standard, et copier à côté les assets
+  // co-localisés (cover.*, etc.) référencés en chemin relatif.
   const frontmatterBlock = rawData.length > 0 ? `---\n${rawData}\n---\n` : '';
   const assembledContent = frontmatterBlock + aggregatedBody + '\n';
-  mkdirSync(dirname(assembledAbs), { recursive: true });
+  mkdirSync(assembledDir, { recursive: true });
   writeFileSync(assembledAbs, assembledContent, 'utf-8');
+  for (const f of files) {
+    const ext = extname(f).toLowerCase();
+    if (!COLOCATED_ASSET_EXTS.has(ext)) continue;
+    copyFileSync(join(dirPath, f), join(assembledDir, f));
+  }
 
   const parsedData = await ctx.parseData({ id, data, filePath: indexPath });
 

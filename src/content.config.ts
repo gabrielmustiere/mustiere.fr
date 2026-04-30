@@ -36,24 +36,42 @@ const blog = defineCollection({
     base: './src/content/blog',
     extensions: ['.mdx', '.md'],
   }),
-  schema: z.object({
-    title: z.string().max(120),
-    excerpt: z.string().min(80).max(220),
-    publishedAt: z.coerce.date(),
-    updatedAt: z.coerce.date().optional(),
-    category: categoryEnum,
-    tags: z.array(z.string()).default([]),
-    readingTime: z.number().int().positive().optional(),
-    ogImage: z.string().optional(),
-    draft: z.boolean().default(false),
-    keywords: z.array(z.string()).default([]),
-    resume: resumeSchema,
-    faq: z.array(faqItem).default([]),
-    sources: z.array(sourceItem).default([]),
-    number: z.number().int().positive(),
-    lang: langEnum.default('fr'),
-    translationOf: z.string().optional(),
-  }),
+  schema: ({ image }) =>
+    z
+      .object({
+        title: z.string().max(120),
+        excerpt: z.string().min(80).max(220),
+        publishedAt: z.coerce.date(),
+        updatedAt: z.coerce.date().optional(),
+        category: categoryEnum,
+        tags: z.array(z.string()).default([]),
+        readingTime: z.number().int().positive().optional(),
+        cover: image().optional(),
+        coverAlt: z.string().min(3).optional(),
+        draft: z.boolean().default(false),
+        keywords: z.array(z.string()).default([]),
+        resume: resumeSchema,
+        faq: z.array(faqItem).default([]),
+        sources: z.array(sourceItem).default([]),
+        number: z.number().int().positive(),
+        lang: langEnum.default('fr'),
+        translationOf: z.string().optional(),
+      })
+      // Une cover doit être disponible pour chaque article : soit déclarée
+      // localement (`cover: ./cover.webp`), soit héritée d'une entrée pointée
+      // par `translationOf` (typiquement la version FR pour un article EN
+      // bilingue). Le helper `getCover` (src/utils/article-cover.ts) opère
+      // la résolution au rendu.
+      .superRefine((data, ctx) => {
+        if (!data.cover && !data.translationOf) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['cover'],
+            message:
+              'cover required (or translationOf to inherit cover from another entry)',
+          });
+        }
+      }),
 });
 
 const projects = defineCollection({

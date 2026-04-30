@@ -3,6 +3,7 @@ import SiteLayout from './SiteLayout.astro';
 import Footer from '@components/layout/Footer.astro';
 import ReadingProgress from '@components/ui/ReadingProgress.astro';
 import CategoryPill from '@components/ui/CategoryPill.astro';
+import ArticleCard from '@components/ui/ArticleCard.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
 import Resume from '@components/ui/Resume.astro';
 import SectionMarker from '@components/ui/SectionMarker.astro';
@@ -17,6 +18,8 @@ import {
   faqPageSchema,
 } from '@/utils/schema';
 import { formatDateDottedFull, toISODate } from '@/utils/format-date';
+import { getOgImage } from '@/utils/article-cover';
+
 import { truncateForMeta } from '@/utils/meta';
 import { SITE } from '@/consts';
 import {
@@ -65,6 +68,8 @@ const relatedUrls = nextPosts.map(
   (n) => new URL(localizedPath(lang, `/blog/${n.id}`), SITE.url).href
 );
 
+const ogImage = await getOgImage(post);
+
 const schemas = [
   blogPostingSchema({
     title: data.title,
@@ -75,7 +80,9 @@ const schemas = [
     category: data.category,
     keywords: data.keywords,
     readingTime: data.readingTime,
-    image: data.ogImage,
+    image: ogImage.url,
+    imageWidth: ogImage.width,
+    imageHeight: ogImage.height,
     tldr: data.resume.plain,
     lang,
     relatedUrls,
@@ -102,7 +109,9 @@ const metaDescription = truncateForMeta(data.resume.plain);
   modifiedTime={data.updatedAt}
   category={data.category}
   tags={data.tags}
-  image={data.ogImage}
+  image={ogImage.url}
+  imageWidth={ogImage.width}
+  imageHeight={ogImage.height}
   current="article"
   lang={lang}
   otherLangHref={otherLangHref}
@@ -129,62 +138,21 @@ const metaDescription = truncateForMeta(data.resume.plain);
         <CategoryPill category={data.category} size="sm" lang={lang} />
       </nav>
 
-      <header class="mt-10">
-        <div
-          class="flex items-center gap-3 text-[11px] tracking-[0.12em] uppercase font-mono"
-        >
-          <span class="acc-blog tnum"
-            >№ {String(data.number).padStart(2, '0')}</span
-          >
-          <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
-            >·</span
-          >
-          <time class="acc-blog tnum" datetime={toISODate(data.publishedAt)}>
-            {formatDateDottedFull(data.publishedAt)}
-          </time>
-          {
-            data.readingTime && (
-              <>
-                <span
-                  class="text-[color:var(--color-rule-strong)]"
-                  aria-hidden="true"
-                >
-                  ·
-                </span>
-                <span class="tnum text-[color:var(--color-muted)]">
-                  {data.readingTime} min
-                </span>
-              </>
-            )
-          }
-        </div>
-        <h1
-          class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
-          style="font-family: var(--font-serif)"
-        >
-          {data.title}
-        </h1>
-        <p
-          class="mt-6 text-[17px] sm:text-[19px] text-[#2a2622] leading-[1.55] font-serif"
-          data-speakable
-        >
-          {data.excerpt}
-        </p>
+      <ArticleCard entry={post} variant="lg" lang={lang} loading="eager" />
 
-        <Resume
-          html={data.resume.html}
-          label={tr.article.summaryLabel}
-          accent="blog"
-          ariaLabel={tr.article.summaryAria}
-        />
+      <Resume
+        html={data.resume.html}
+        label={tr.article.summaryLabel}
+        accent="blog"
+        ariaLabel={tr.article.summaryAria}
+      />
 
-        <AuthorCard
-          shareTitle={data.title}
-          shareUrl={url}
-          lang={lang}
-          accent="blog"
-        />
-      </header>
+      <AuthorCard
+        shareTitle={data.title}
+        shareUrl={url}
+        lang={lang}
+        accent="blog"
+      />
 
       <TableOfContents headings={headings} title={tocTitle} accent="blog" />
 

@@ -30,6 +30,8 @@ export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   canonical?: string;
   type?: 'website' | 'article';
   publishedTime?: Date;
@@ -48,6 +50,8 @@ const {
   title,
   description = tr.site.description,
   image = SITE.ogImage,
+  imageWidth = 1200,
+  imageHeight = 630,
   canonical,
   type = 'website',
   publishedTime,
@@ -115,8 +119,8 @@ const baseGraph = [organizationSchema(), websiteSchema(), personSchema(lang)];
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImageURL} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image:width" content={String(imageWidth)} />
+    <meta property="og:image:height" content={String(imageHeight)} />
     <meta property="og:locale" content={LANG_META[lang].ogLocale} />
     <meta
       property="og:locale:alternate"

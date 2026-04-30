@@ -1,5 +1,5 @@
 ---
-import CategoryPill from './CategoryPill.astro';
+import ArticleCard from './ArticleCard.astro';
 import { localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 import type { CollectionEntry } from 'astro:content';
@@ -19,9 +19,6 @@ type Props =
     };
 
 const { kind, title, items, lang } = Astro.props;
-const accent = kind === 'blog' ? 'var(--a-blog)' : 'var(--a-projects)';
-const accentClass = kind === 'blog' ? 'acc-blog' : 'acc-projects';
-const basePath = kind === 'blog' ? '/blog/' : '/projects/';
 ---
 
 {
@@ -32,56 +29,41 @@ const basePath = kind === 'blog' ? '/blog/' : '/projects/';
       </div>
       <ul class="grid grid-cols-1 sm:grid-cols-2 gap-6 list-none p-0 m-0">
         {items.map((item) => (
-          <li>
-            <a
-              href={localizedPath(lang, `${basePath}${item.id}`)}
-              class="block border-t border-[color:var(--color-rule)] pt-4 group"
-              style={`--related-accent: ${accent}`}
-            >
-              <div class="flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase font-mono">
-                {kind === 'blog' ? (
-                  <>
-                    <CategoryPill
-                      category={(item as CollectionEntry<'blog'>).data.category}
-                      size="sm"
-                      lang={lang}
-                    />
-                    <span
-                      class="text-[color:var(--color-rule-strong)]"
-                      aria-hidden="true"
-                    >
-                      ·
-                    </span>
-                    {(item as CollectionEntry<'blog'>).data.readingTime && (
-                      <span class="tnum text-[color:var(--color-muted)]">
-                        {(item as CollectionEntry<'blog'>).data.readingTime} min
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <span class={accentClass}>
-                      {(item as CollectionEntry<'projects'>).data.status}
-                    </span>
-                    <span
-                      class="text-[color:var(--color-rule-strong)]"
-                      aria-hidden="true"
-                    >
-                      ·
-                    </span>
-                    <span class="tnum text-[color:var(--color-muted)]">
-                      {(item as CollectionEntry<'projects'>).data.year}
-                    </span>
-                  </>
-                )}
-              </div>
-              <h3
-                class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] transition-colors group-hover:text-[color:var(--related-accent)]"
-                style="font-family: var(--font-serif)"
+          <li class="border-t border-[color:var(--color-rule)] pt-4">
+            {kind === 'blog' ? (
+              <ArticleCard
+                entry={item as CollectionEntry<'blog'>}
+                variant="sm"
+                lang={lang}
+              />
+            ) : (
+              <a
+                href={localizedPath(lang, `/projects/${item.id}`)}
+                class="block group"
+                style="--related-accent: var(--a-projects)"
               >
-                {item.data.title}
-              </h3>
-            </a>
+                <div class="flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase font-mono">
+                  <span class="acc-projects">
+                    {(item as CollectionEntry<'projects'>).data.status}
+                  </span>
+                  <span
+                    class="text-[color:var(--color-rule-strong)]"
+                    aria-hidden="true"
+                  >
+                    ·
+                  </span>
+                  <span class="tnum text-[color:var(--color-muted)]">
+                    {(item as CollectionEntry<'projects'>).data.year}
+                  </span>
+                </div>
+                <h3
+                  class="font-serif mt-2 text-[22px] leading-[1.2] tracking-[-0.005em] transition-colors group-hover:text-[color:var(--related-accent)]"
+                  style="font-family: var(--font-serif)"
+                >
+                  {item.data.title}
+                </h3>
+              </a>
+            )}
           </li>
         ))}
       </ul>

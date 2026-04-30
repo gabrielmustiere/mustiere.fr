@@ -51,6 +51,7 @@ Deux formes possibles, choisies selon la longueur prévue.
 ```
 src/content/blog/mon-slug/
 ├── index.mdx          frontmatter complet + intro éventuelle
+├── cover.png          image 16:9 ≥ 1600×900 px (obligatoire ou héritée via translationOf)
 ├── 01-premier-h2.mdx  un H2 par chapitre, kebab-case
 ├── 02-second-h2.mdx
 └── ...
@@ -65,6 +66,8 @@ excerpt: 'Chapô de 80–220 caractères, réutilisé comme meta description.'
 publishedAt: 2026-04-23
 category: IA # IA | Tech | Lead | Business
 tags: [LLM, production]
+cover: ./cover.png # chemin relatif au index.mdx (ou omis si translationOf hérite la cover de l'autre langue)
+coverAlt: 'Description courte uniquement si l''image porte une info non redondante avec le titre (sinon laisser vide → image décorative)'
 keywords: [mot-clé intent SEO]
 number: 8
 tldr: "Résumé 60–320 caractères (lu en tête d'article, utile pour LLMs)."
@@ -74,6 +77,20 @@ Paragraphes d'introduction (optionnels).
 
 Chaque fichier chapitre commence par son `## Heading`, sans frontmatter ni `import`/`export` au top-level (le loader lève une erreur build sinon). Les chapitres
 sont concaténés dans l'ordre alphabétique du nom de fichier ; le préfixe `NN-` à 2 chiffres force cet ordre.
+
+#### Cover image
+
+Source 16:9 ≥ 1600×900 px, format PNG ou WebP, **co-localisée** dans le dossier de l'article (`src/content/blog/<slug>/cover.<ext>`). Le chemin déclaré dans
+le frontmatter est relatif au `index.mdx` — typiquement `./cover.png`. Astro régénère AVIF + WebP optimisés à la sortie.
+
+L'image est exploitée par le composant `<ArticleCard>` (`lg`/`md`/`sm`) : header de l'article, archive `/blog/`, et `RelatedItems`. La home blog
+(`BlogSection`) reste volontairement en liste texte-only via `showCover={false}`. La cover alimente aussi les meta `og:image` / `twitter:image` et le JSON-LD
+`BlogPosting.image` via une variante PNG `width: 1200` dérivée au build par `getImage()` — la hauteur est calculée depuis le ratio source (typiquement 675
+pour 16:9), aucune distortion possible.
+
+Bilingue : pour une paire FR/EN, deux options. (a) Fournir une cover par dossier (cas par défaut actuel). (b) Ne déclarer la cover que côté FR et laisser
+l'EN hériter via `translationOf` — le helper `getCover(entry)` résout au rendu. Le schéma valide qu'au moins l'un des deux est présent (`cover` OR
+`translationOf` pointant vers une entrée qui en porte une).
 
 ### Forme plate (toujours valide pour les articles courts)
 

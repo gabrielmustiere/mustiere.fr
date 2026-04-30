@@ -1,7 +1,7 @@
 ---
 import SiteLayout from '@layouts/SiteLayout.astro';
 import Footer from '@components/layout/Footer.astro';
-import CategoryPill from '@components/ui/CategoryPill.astro';
+import ArticleCard from '@components/ui/ArticleCard.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
 import HeroFR from '@components/i18n/blog-archive/hero/fr.astro';
 import HeroEN from '@components/i18n/blog-archive/hero/en.astro';
@@ -9,7 +9,6 @@ import IntroFR from '@components/i18n/blog-archive/intro/fr.astro';
 import IntroEN from '@components/i18n/blog-archive/intro/en.astro';
 import { getCollection } from 'astro:content';
 import { blogSchema, breadcrumbSchema } from '@/utils/schema';
-import { formatDateDotted, toISODate } from '@/utils/format-date';
 import { SITE } from '@/consts';
 import type { Category } from '@/content.config';
 import { useTranslations, localizedPath } from '@/i18n/utils';
@@ -31,8 +30,6 @@ const all = (
   await getCollection('blog', (entry) => isPublished(entry, lang))
 ).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
-const featured = all[0];
-const archive = all.slice(1);
 const totalCount = all.length;
 
 const categories: Category[] = ['IA', 'Tech', 'Lead', 'Business'];
@@ -135,98 +132,21 @@ const Intro = INTRO[lang];
       }
     </div>
 
-    {
-      featured && (
-        <section
-          class="mt-12 border-t border-[color:var(--color-rule-strong)] pt-6"
-          data-tags={featured.data.category}
-        >
-          <div class="flex items-baseline justify-between text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] font-mono">
-            <span>{tr.blogIndex.featured}</span>
-            <span class="tnum">
-              № {String(featured.data.number).padStart(2, '0')}
-            </span>
-          </div>
-          <a
-            href={localizedPath(lang, `/blog/${featured.id}`)}
-            class="block mt-3 group"
-          >
-            <h2
-              class="font-serif text-[30px] sm:text-[42px] leading-[1.08] tracking-[-0.015em] group-hover:text-[color:var(--a-blog)] transition-colors"
-              style="font-family: var(--font-serif)"
-            >
-              {featured.data.title}
-            </h2>
-          </a>
-          <div class="mt-4 flex items-center gap-4 text-[11px] tracking-[0.1em] uppercase text-[color:var(--color-muted)] font-mono">
-            <time
-              class="tnum acc-blog"
-              datetime={toISODate(featured.data.publishedAt)}
-            >
-              {formatDateDotted(featured.data.publishedAt)}
-            </time>
-            <span aria-hidden="true">·</span>
-            <CategoryPill
-              category={featured.data.category}
-              size="sm"
-              lang={lang}
-            />
-            {featured.data.readingTime && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span class="tnum">{featured.data.readingTime} min</span>
-              </>
-            )}
-          </div>
-          <p class="mt-4 text-[15px] text-[#2a2622] leading-[1.75] max-w-[560px]">
-            {featured.data.excerpt}
-          </p>
-        </section>
-      )
-    }
-
-    <section class="mt-16">
-      <div
-        class="text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] mb-3 font-mono"
-      >
-        {tr.blogIndex.archive}
-      </div>
+    <section class="mt-12">
       <ul id="archive">
         {
-          archive.map((post) => (
+          all.map((post, index) => (
             <li
               class="py-5 border-t border-[color:var(--color-rule)]"
               data-tags={post.data.category}
             >
-              <a
-                href={localizedPath(lang, `/blog/${post.id}`)}
-                class="grid grid-cols-[80px_1fr] sm:grid-cols-[110px_1fr_80px_60px] gap-3 sm:gap-5 items-baseline group"
-              >
-                <time
-                  class="tnum text-[11px] tracking-[0.08em] uppercase acc-blog font-mono"
-                  datetime={toISODate(post.data.publishedAt)}
-                >
-                  {formatDateDotted(post.data.publishedAt)}
-                </time>
-                <h3
-                  class="font-serif text-[19px] sm:text-[23px] leading-[1.25] tracking-[-0.005em] col-span-2 sm:col-span-1 group-hover:text-[color:var(--a-blog)] transition-colors"
-                  style="font-family: var(--font-serif)"
-                >
-                  {post.data.title}
-                </h3>
-                <span class="hidden sm:inline">
-                  <CategoryPill
-                    category={post.data.category}
-                    size="sm"
-                    lang={lang}
-                  />
-                </span>
-                {post.data.readingTime && (
-                  <span class="hidden sm:inline text-[11px] tnum text-right text-[color:var(--color-muted)]">
-                    {post.data.readingTime} min
-                  </span>
-                )}
-              </a>
+              <ArticleCard
+                entry={post}
+                variant="sm"
+                lang={lang}
+                loading={index === 0 ? 'eager' : undefined}
+                fetchpriority={index === 0 ? 'high' : undefined}
+              />
             </li>
           ))
         }

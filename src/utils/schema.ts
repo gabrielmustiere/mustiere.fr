@@ -277,7 +277,9 @@ interface BlogPostingInput {
   keywords: string[];
   wordCount?: number;
   readingTime?: number;
-  image?: string;
+  image: string;
+  imageWidth?: number;
+  imageHeight?: number;
   tldr?: string;
   lang?: Lang;
   relatedUrls?: string[];
@@ -286,9 +288,6 @@ interface BlogPostingInput {
 export function blogPostingSchema(p: BlogPostingInput) {
   const lang: Lang = p.lang ?? 'fr';
   const url = `${SITE.url}${localizedPath(lang, `/blog/${p.slug}`)}`;
-  const imageUrl = p.image
-    ? `${SITE.url}${p.image}`
-    : `${SITE.url}${SITE.ogImage}`;
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -307,10 +306,10 @@ export function blogPostingSchema(p: BlogPostingInput) {
     timeRequired: p.readingTime ? `PT${p.readingTime}M` : undefined,
     image: {
       '@type': 'ImageObject',
-      url: imageUrl,
-      contentUrl: imageUrl,
-      width: 1200,
-      height: 630,
+      url: p.image,
+      contentUrl: p.image,
+      width: p.imageWidth ?? 1200,
+      height: p.imageHeight ?? 630,
     },
     speakable: {
       '@type': 'SpeakableSpecification',

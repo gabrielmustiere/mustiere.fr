@@ -1,7 +1,7 @@
 ---
 import SectionHead from '@components/ui/SectionHead.astro';
+import ArticleCard from '@components/ui/ArticleCard.astro';
 import { getCollection } from 'astro:content';
-import { formatDateShort, toISODate } from '@/utils/format-date';
 import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 import { isPublished } from '@/utils/content';
@@ -26,32 +26,16 @@ const posts = (await getCollection('blog', (entry) => isPublished(entry, lang)))
 
   <ul class="mt-8">
     {
-      posts.map((post) => (
+      posts.map((post, i) => (
         <li class="py-4 border-t border-[color:var(--color-rule)]">
-          <a
-            href={localizedPath(lang, `/blog/${post.id}`)}
-            class="flex items-baseline gap-4 group"
-          >
-            <time
-              class="tnum text-[11px] tracking-[0.1em] uppercase shrink-0 w-20 acc-blog font-mono"
-              datetime={toISODate(post.data.publishedAt)}
-            >
-              {formatDateShort(post.data.publishedAt, lang)}
-            </time>
-            <div class="flex-1">
-              <h3
-                class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
-                style="font-family: var(--font-serif)"
-              >
-                {post.data.title}
-              </h3>
-              {post.data.readingTime && (
-                <span class="text-[11px] tnum text-[color:var(--color-muted)]">
-                  {post.data.readingTime} {tr.article.readingTime}
-                </span>
-              )}
-            </div>
-          </a>
+          <ArticleCard
+            entry={post}
+            variant="sm"
+            lang={lang}
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 ? 'high' : undefined}
+            showCover={false}
+          />
         </li>
       ))
     }
