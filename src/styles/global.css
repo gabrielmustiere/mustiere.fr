@@ -164,7 +164,9 @@ body {
 
 .prose {
   max-width: var(--w-prose);
-  color: var(--color-ink);
+  color: #2a2622;
+  font-size: 16px;
+  line-height: 1.7;
 }
 
 .prose p {
@@ -297,6 +299,52 @@ body {
   padding: 0;
   font-size: inherit;
   font-family: var(--font-mono);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.8em 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.prose thead {
+  border-bottom: 2px solid var(--color-ink);
+}
+
+.prose th,
+.prose td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.65em 0.9em;
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.prose th {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tbody tr:nth-child(even) {
+  background: var(--color-code-bg);
+}
+
+.prose table code {
+  font-size: 0.85em;
+}
+
+.prose .table-wrap {
+  overflow-x: auto;
+  margin: 1.8em 0;
+}
+
+.prose .table-wrap > table {
+  margin: 0;
 }
 
 .prose p.has-dropcap::first-letter {
