@@ -1,4 +1,10 @@
-import { DEFAULT_LANG, LANGUAGES, isLang, type Lang } from './config';
+import {
+  DEFAULT_LANG,
+  LANG_META,
+  LANGUAGES,
+  isLang,
+  type Lang,
+} from './config';
 import { ui, type UiDict } from './ui';
 
 // Le FR (langue par défaut) est servi sans préfixe (`/`, `/blog/`, …).
@@ -62,8 +68,7 @@ export function otherLang(lang: Lang): Lang {
 }
 
 export function formatDate(date: Date, lang: Lang): string {
-  const locale = lang === 'fr' ? 'fr-FR' : 'en-GB';
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(LANG_META[lang].bcp47, {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -71,8 +76,7 @@ export function formatDate(date: Date, lang: Lang): string {
 }
 
 export function formatDateShort(date: Date, lang: Lang): string {
-  const locale = lang === 'fr' ? 'fr-FR' : 'en-GB';
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(LANG_META[lang].bcp47, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

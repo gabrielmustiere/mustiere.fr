@@ -25,7 +25,10 @@ const sourceItem = z.object({
   title: z.string().min(1),
   url: z.url(),
   author: z.string().optional(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 });
 
 const blog = defineCollection({

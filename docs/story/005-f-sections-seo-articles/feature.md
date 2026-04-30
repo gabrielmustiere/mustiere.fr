@@ -202,6 +202,6 @@ Pistes brutes pour `/feature-design` (ne pas concevoir ici, juste lister) :
 
 ## Changelog
 
-| Date | Type | Description |
-|------|------|-------------|
+| Date       | Type                     | Description                                                                                                                                                                                                 |
+| ---------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-04-29 | Sync post-implémentation | Critères d'acceptation cochés, retrait du critère snapshot before/after (inadapté à une migration big-bang), précision sur l'usage de `excerpt` vs `resume.plain` pour les meta descriptions et `llms.txt`. |

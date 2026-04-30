@@ -16,7 +16,7 @@ interface Props {
 const { shareTitle, shareUrl, lang, accent } = Astro.props;
 const tr = useTranslations(lang);
 const accentClass = accent === 'blog' ? 'acc-blog' : 'acc-projects';
-const role = lang === 'fr' ? 'CTO freelance' : 'Freelance CTO';
+const role = tr.author.role;
 ---
 
 <div

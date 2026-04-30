@@ -13,76 +13,76 @@ Convention de fichiers MDX réservés (`resume.mdx`, `faq.mdx`, `sources.mdx`) l
 
 ### Fichiers créés
 
-| Fichier | Rôle | Prévu dans le design |
-|---|---|---|
-| `src/content-loaders/seo-sections.ts` | Helpers `parseResume` / `parseFaq` / `parseSources` + `discoverSectionFiles` + `RESERVED_SECTION_FILES` | Oui (helpers pure + testables) |
-| `src/components/ui/Resume.astro` | Rendu HTML du résumé (via `marked`) dans un Callout-like | Oui |
-| `src/components/ui/Sources.astro` | Liste numérotée des sources (titre, lien, auteur, date, hostname) | Oui |
-| `tests/seo-sections.test.mjs` | 15 tests `node:test` (cas valides + erreurs YAML/URL/date/longueur) | Oui (test framework arbitré en cours d'implémentation) |
-| `src/content/blog/<slug>/resume.mdx` × 3 | Migration des `tldr` existants vers la convention | Oui |
-| `src/content/blog/php-2026-cto-considerer/faq.mdx` | Migration de la FAQ frontmatter vers la convention | Oui |
-| `src/content/projects/<slug>/resume.mdx` × 2 | Migration des `summary` existants | Oui |
-| `src/content/projects/<slug>/faq.mdx` × 2 | Migration de la FAQ frontmatter (FR + EN) | Oui |
-| `docs/story/005-f-sections-seo-articles/{feature,design,review}.md` | Documentation workflow | Oui |
+| Fichier                                                             | Rôle                                                                                                    | Prévu dans le design                                   |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `src/content-loaders/seo-sections.ts`                               | Helpers `parseResume` / `parseFaq` / `parseSources` + `discoverSectionFiles` + `RESERVED_SECTION_FILES` | Oui (helpers pure + testables)                         |
+| `src/components/ui/Resume.astro`                                    | Rendu HTML du résumé (via `marked`) dans un Callout-like                                                | Oui                                                    |
+| `src/components/ui/Sources.astro`                                   | Liste numérotée des sources (titre, lien, auteur, date, hostname)                                       | Oui                                                    |
+| `tests/seo-sections.test.mjs`                                       | 15 tests `node:test` (cas valides + erreurs YAML/URL/date/longueur)                                     | Oui (test framework arbitré en cours d'implémentation) |
+| `src/content/blog/<slug>/resume.mdx` × 3                            | Migration des `tldr` existants vers la convention                                                       | Oui                                                    |
+| `src/content/blog/php-2026-cto-considerer/faq.mdx`                  | Migration de la FAQ frontmatter vers la convention                                                      | Oui                                                    |
+| `src/content/projects/<slug>/resume.mdx` × 2                        | Migration des `summary` existants                                                                       | Oui                                                    |
+| `src/content/projects/<slug>/faq.mdx` × 2                           | Migration de la FAQ frontmatter (FR + EN)                                                               | Oui                                                    |
+| `docs/story/005-f-sections-seo-articles/{feature,design,review}.md` | Documentation workflow                                                                                  | Oui                                                    |
 
 ### Fichiers modifiés
 
-| Fichier | Modification | Prévu dans le design |
-|---|---|---|
-| `src/content-loaders/chaptered-glob.ts` | Whitelist des 3 noms réservés (exclus du body agrégé), parsing + injection dans `data`, contenu inclus dans `digestSource` (hot-reload) | Oui |
-| `src/content.config.ts` | Schémas `resume` / `faq` / `sources` injectés. Champs `tldr` / `faq` (frontmatter blog) / `summary` (projects) supprimés. `excerpt` conservé. Migration `z.string().url()` → `z.url()` (fix deprecation Zod) | Oui (sauf le fix Zod, mineur) |
-| `src/layouts/ArticleLayout.astro` | `<Callout>` → `<Resume html=...>`. Bloc `<Sources>` ajouté après FAQ. `blogPostingSchema(tldr: data.resume.plain)` | Oui |
-| `src/layouts/ProjectLayout.astro` | Même traitement. `softwareSourceCodeSchema(abstract: data.resume.plain)`. Suppression des constantes `summaryLabel`/`summaryAria` locales (passé via `tr.project.*`) | Oui |
-| `src/pages/llms-full.txt.ts` (FR) + `src/pages/en/llms-full.txt.ts` (EN) | `post.data.tldr` → `post.data.resume.markdown`. Préfixe d'affichage : `**Résumé.**` / `**Summary.**` | Oui |
-| `src/i18n/ui.ts` | Ajout `summaryLabel`, `summaryAria`, `sourcesTitle` (FR + EN, blog + projects). Suppression `tldrLabel` (devenu mort) | Oui |
-| `astro.config.mjs` | `buildTranslationIndex` étendu : détection `faq.mdx` / `sources.mdx` par dossier, validation parité stricte entre paires `translationOf` (asymétrie = build fail avec chemins fautifs cités) | Oui |
-| `package.json` | Ajout deps `marked` + `yaml`, script `npm test` (`node --experimental-strip-types`) | Oui |
-| `src/content/blog/<3>/index.mdx` + `src/content/projects/<2>/index.md` | Retrait des champs `tldr` / `faq` / `summary` du frontmatter | Oui |
+| Fichier                                                                  | Modification                                                                                                                                                                                                 | Prévu dans le design          |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------- |
+| `src/content-loaders/chaptered-glob.ts`                                  | Whitelist des 3 noms réservés (exclus du body agrégé), parsing + injection dans `data`, contenu inclus dans `digestSource` (hot-reload)                                                                      | Oui                           |
+| `src/content.config.ts`                                                  | Schémas `resume` / `faq` / `sources` injectés. Champs `tldr` / `faq` (frontmatter blog) / `summary` (projects) supprimés. `excerpt` conservé. Migration `z.string().url()` → `z.url()` (fix deprecation Zod) | Oui (sauf le fix Zod, mineur) |
+| `src/layouts/ArticleLayout.astro`                                        | `<Callout>` → `<Resume html=...>`. Bloc `<Sources>` ajouté après FAQ. `blogPostingSchema(tldr: data.resume.plain)`                                                                                           | Oui                           |
+| `src/layouts/ProjectLayout.astro`                                        | Même traitement. `softwareSourceCodeSchema(abstract: data.resume.plain)`. Suppression des constantes `summaryLabel`/`summaryAria` locales (passé via `tr.project.*`)                                         | Oui                           |
+| `src/pages/llms-full.txt.ts` (FR) + `src/pages/en/llms-full.txt.ts` (EN) | `post.data.tldr` → `post.data.resume.markdown`. Préfixe d'affichage : `**Résumé.**` / `**Summary.**`                                                                                                         | Oui                           |
+| `src/i18n/ui.ts`                                                         | Ajout `summaryLabel`, `summaryAria`, `sourcesTitle` (FR + EN, blog + projects). Suppression `tldrLabel` (devenu mort)                                                                                        | Oui                           |
+| `astro.config.mjs`                                                       | `buildTranslationIndex` étendu : détection `faq.mdx` / `sources.mdx` par dossier, validation parité stricte entre paires `translationOf` (asymétrie = build fail avec chemins fautifs cités)                 | Oui                           |
+| `package.json`                                                           | Ajout deps `marked` + `yaml`, script `npm test` (`node --experimental-strip-types`)                                                                                                                          | Oui                           |
+| `src/content/blog/<3>/index.mdx` + `src/content/projects/<2>/index.md`   | Retrait des champs `tldr` / `faq` / `summary` du frontmatter                                                                                                                                                 | Oui                           |
 
 ### Fichiers supprimés
 
-| Fichier | Raison |
-|---|---|
+| Fichier                           | Raison                                                                                          |
+| --------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `src/components/ui/Callout.astro` | Devenu code mort après bascule des layouts (plus aucun import). Suppression issue de la review. |
 
 ## Écarts avec le design
 
 ### Écarts volontaires
 
-| Prévu | Réalisé | Raison |
-|---|---|---|
-| ST5 (bascule layouts) puis ST6 (resserrement Zod) en deux étapes | **Fusionnées** en bloc | Impossible de basculer le layout sans resserrer le schéma simultanément : sinon Zod réclame toujours `tldr` et le build casse pendant la transition. Pas de chemin incrémental viable, fait en bloc. |
-| ST8 — snapshots before/after via `scripts/snapshot-build.mjs` | Seul un snapshot **after** a été produit | Le `before` aurait nécessité un rollback git complet ; pour une migration big-bang dans une seule PR, le diff de référence est `git diff` lui-même. Le snapshot `after` reste utile comme baseline pour les futures vérifications. |
-| Test framework "à trancher en étape 1" entre Vitest et `node:test` | `node:test` natif Node 25 (`--experimental-strip-types`) | Recommandation explicite du design ("rester minimaliste vu qu'il n'y a aucun autre test JS dans le projet aujourd'hui"). Aucune dépendance ajoutée pour les tests. |
-| Renommer `tldrLabel` ou garder le nom de clé existant — "à trancher en étape 5" | Suppression complète de la clé `tldrLabel` (FR + EN) | Plus aucun consommateur après bascule, donc plutôt que renommer, on supprime. Issue de la review. |
-| Texte plat sans rendu markdown pour `resume.mdx` (mentionné dans alternatives écartées) | Markdown léger via `marked` | Choix utilisateur explicite pendant `/feature-design` (permet liens / emphase). |
+| Prévu                                                                                   | Réalisé                                                  | Raison                                                                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ST5 (bascule layouts) puis ST6 (resserrement Zod) en deux étapes                        | **Fusionnées** en bloc                                   | Impossible de basculer le layout sans resserrer le schéma simultanément : sinon Zod réclame toujours `tldr` et le build casse pendant la transition. Pas de chemin incrémental viable, fait en bloc.                               |
+| ST8 — snapshots before/after via `scripts/snapshot-build.mjs`                           | Seul un snapshot **after** a été produit                 | Le `before` aurait nécessité un rollback git complet ; pour une migration big-bang dans une seule PR, le diff de référence est `git diff` lui-même. Le snapshot `after` reste utile comme baseline pour les futures vérifications. |
+| Test framework "à trancher en étape 1" entre Vitest et `node:test`                      | `node:test` natif Node 25 (`--experimental-strip-types`) | Recommandation explicite du design ("rester minimaliste vu qu'il n'y a aucun autre test JS dans le projet aujourd'hui"). Aucune dépendance ajoutée pour les tests.                                                                 |
+| Renommer `tldrLabel` ou garder le nom de clé existant — "à trancher en étape 5"         | Suppression complète de la clé `tldrLabel` (FR + EN)     | Plus aucun consommateur après bascule, donc plutôt que renommer, on supprime. Issue de la review.                                                                                                                                  |
+| Texte plat sans rendu markdown pour `resume.mdx` (mentionné dans alternatives écartées) | Markdown léger via `marked`                              | Choix utilisateur explicite pendant `/feature-design` (permet liens / emphase).                                                                                                                                                    |
 
 ### Non implémenté
 
-| Élément prévu | Raison | Action requise |
-|---|---|---|
-| Erreur dédiée du loader si `resume.mdx` manque, pointant le dossier | L'erreur vient aujourd'hui de Zod (`resume: Required`) avec un message générique pointant `index.mdx`. | Mineur, noté en review. À reprendre si l'erreur apparaît en pratique. |
-| Mécanisme d'avertissement si le frontmatter `index.mdx` contient un champ qui sera écrasé par le loader (`faq`, `resume`, `sources`) | Le loader écrase silencieusement (Zod n'avertit pas car les unknown keys sont ignorées) | Mineur, noté en review. Probabilité faible vu que les champs ont été retirés des index existants. |
-| JSON-LD `Citation` pour `sources.mdx` | Listé en "questions ouvertes" du design avec recommandation YAGNI | Hors scope confirmé, à ressortir si le SEO l'impose. |
+| Élément prévu                                                                                                                        | Raison                                                                                                 | Action requise                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| Erreur dédiée du loader si `resume.mdx` manque, pointant le dossier                                                                  | L'erreur vient aujourd'hui de Zod (`resume: Required`) avec un message générique pointant `index.mdx`. | Mineur, noté en review. À reprendre si l'erreur apparaît en pratique.                             |
+| Mécanisme d'avertissement si le frontmatter `index.mdx` contient un champ qui sera écrasé par le loader (`faq`, `resume`, `sources`) | Le loader écrase silencieusement (Zod n'avertit pas car les unknown keys sont ignorées)                | Mineur, noté en review. Probabilité faible vu que les champs ont été retirés des index existants. |
+| JSON-LD `Citation` pour `sources.mdx`                                                                                                | Listé en "questions ouvertes" du design avec recommandation YAGNI                                      | Hors scope confirmé, à ressortir si le SEO l'impose.                                              |
 
 ### Ajouts non prévus
 
-| Élément ajouté | Raison |
-|---|---|
-| `discoverSectionFiles(dirPath)` dans `seo-sections.ts` | Helper utilitaire pour les tests (vérifie quels fichiers réservés existent dans un dossier). N'est pas appelé par le loader (qui fait sa propre détection inline) mais documente l'API publique. |
-| Fix de séparateurs `Sources.astro` — bug d'affichage `"Author ·  · host"` quand `author` présent sans `date` | Bug détecté en review, corrigé dans la même PR. |
-| `package.json` script `npm test` | Pas mentionné explicitement dans le design mais nécessaire pour faire tourner la suite `node:test`. |
-| Migration `z.string().url()` → `z.url()` dans `content.config.ts` | Deprecation warning levé par `astro check`, corrigé en cohérence avec l'usage déjà présent ailleurs dans le schéma. |
+| Élément ajouté                                                                                               | Raison                                                                                                                                                                                           |
+| ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `discoverSectionFiles(dirPath)` dans `seo-sections.ts`                                                       | Helper utilitaire pour les tests (vérifie quels fichiers réservés existent dans un dossier). N'est pas appelé par le loader (qui fait sa propre détection inline) mais documente l'API publique. |
+| Fix de séparateurs `Sources.astro` — bug d'affichage `"Author ·  · host"` quand `author` présent sans `date` | Bug détecté en review, corrigé dans la même PR.                                                                                                                                                  |
+| `package.json` script `npm test`                                                                             | Pas mentionné explicitement dans le design mais nécessaire pour faire tourner la suite `node:test`.                                                                                              |
+| Migration `z.string().url()` → `z.url()` dans `content.config.ts`                                            | Deprecation warning levé par `astro check`, corrigé en cohérence avec l'usage déjà présent ailleurs dans le schéma.                                                                              |
 
 ## Tests
 
-| Code | Type prévu | Type réalisé | Statut |
-|---|---|---|---|
-| `src/content-loaders/seo-sections.ts` | Unit | Unit `node:test` (15 tests) | ✅ Fait |
-| `src/content-loaders/chaptered-glob.ts` (extension) | Functional (build sur fixture) | Validé via build complet sur le contenu réel | ⚠️ Pas de fixture isolée — le build prod sert de test fonctionnel implicite. À envisager si la complexité du loader croît. |
-| `astro.config.mjs#buildTranslationIndex` | Functional (build) | Validé manuellement en cassant volontairement la parité (suppression temporaire d'un `faq.mdx` côté EN → erreur attendue → restauration) | ✅ Fait, manuellement |
-| `ArticleLayout.astro` & `ProjectLayout.astro` | E2E manuel | Vérifié via inspection des `dist/*.html` (présence de `Résumé`, `§ sommaire`, JSON-LD `FAQPage`, comptage des questions) | ✅ Fait |
-| `llms-full.txt` (FR + EN) | Snapshot diff | Snapshot `after` produit. Pas de diff before/after. | ⚠️ Partiel (cf. écart ST8) |
+| Code                                                | Type prévu                     | Type réalisé                                                                                                                             | Statut                                                                                                                     |
+| --------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `src/content-loaders/seo-sections.ts`               | Unit                           | Unit `node:test` (15 tests)                                                                                                              | ✅ Fait                                                                                                                    |
+| `src/content-loaders/chaptered-glob.ts` (extension) | Functional (build sur fixture) | Validé via build complet sur le contenu réel                                                                                             | ⚠️ Pas de fixture isolée — le build prod sert de test fonctionnel implicite. À envisager si la complexité du loader croît. |
+| `astro.config.mjs#buildTranslationIndex`            | Functional (build)             | Validé manuellement en cassant volontairement la parité (suppression temporaire d'un `faq.mdx` côté EN → erreur attendue → restauration) | ✅ Fait, manuellement                                                                                                      |
+| `ArticleLayout.astro` & `ProjectLayout.astro`       | E2E manuel                     | Vérifié via inspection des `dist/*.html` (présence de `Résumé`, `§ sommaire`, JSON-LD `FAQPage`, comptage des questions)                 | ✅ Fait                                                                                                                    |
+| `llms-full.txt` (FR + EN)                           | Snapshot diff                  | Snapshot `after` produit. Pas de diff before/after.                                                                                      | ⚠️ Partiel (cf. écart ST8)                                                                                                 |
 
 QA finale : `npm run check` 0/0/1 hint pré-existant (avant suppression de Callout) → 0/0/0 après. `npm run lint` 0 issues. `npm run build` 12 pages OK. `npm test` 15/15.
 

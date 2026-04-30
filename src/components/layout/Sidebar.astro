@@ -1,6 +1,7 @@
 ---
 import { SITE } from '@/consts';
 import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
+import { routePath } from '@/i18n/routes';
 import type { Lang } from '@/i18n/config';
 import LangToggle from './LangToggle.astro';
 
@@ -19,10 +20,7 @@ const { current = 'home', otherLangHref } = Astro.props;
 const isHome = current === 'home';
 const blogPath = localizedPath(lang, '/blog');
 const homePath = localizedPath(lang, '/');
-const parcoursPath = localizedPath(
-  lang,
-  lang === 'fr' ? '/parcours' : '/background'
-);
+const parcoursPath = localizedPath(lang, routePath('parcours', lang));
 
 const index = [
   {

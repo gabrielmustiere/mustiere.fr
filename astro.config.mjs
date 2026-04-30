@@ -59,7 +59,9 @@ function buildTranslationIndex() {
       // pour la validation de parité ci-dessous : si une langue les a,
       // l'autre langue de la paire doit aussi les avoir.
       const hasFaq = dirPath ? existsSync(join(dirPath, 'faq.mdx')) : false;
-      const hasSources = dirPath ? existsSync(join(dirPath, 'sources.mdx')) : false;
+      const hasSources = dirPath
+        ? existsSync(join(dirPath, 'sources.mdx'))
+        : false;
       entries.set(`${collection}/${slug}`, {
         lang,
         translationOf,

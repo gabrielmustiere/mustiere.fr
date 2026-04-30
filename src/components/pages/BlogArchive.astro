@@ -3,6 +3,10 @@ import SiteLayout from '@layouts/SiteLayout.astro';
 import Footer from '@components/layout/Footer.astro';
 import CategoryPill from '@components/ui/CategoryPill.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
+import HeroFR from '@components/i18n/blog-archive/hero/fr.astro';
+import HeroEN from '@components/i18n/blog-archive/hero/en.astro';
+import IntroFR from '@components/i18n/blog-archive/intro/fr.astro';
+import IntroEN from '@components/i18n/blog-archive/intro/en.astro';
 import { getCollection } from 'astro:content';
 import { blogSchema, breadcrumbSchema } from '@/utils/schema';
 import { formatDateDotted, toISODate } from '@/utils/format-date';
@@ -12,6 +16,7 @@ import { useTranslations, localizedPath } from '@/i18n/utils';
 import { BLOG_CATEGORIES } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { isPublished } from '@/utils/content';
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 
 interface Props {
   lang: Lang;
@@ -32,27 +37,28 @@ const totalCount = all.length;
 
 const categories: Category[] = ['IA', 'Tech', 'Lead', 'Business'];
 
-const frCount =
+const countLabel =
   totalCount === 0
-    ? 'aucun billet'
+    ? tr.blogIndex.countZero
     : totalCount === 1
-      ? '1 billet'
-      : `${totalCount} billets`;
-const enCount =
-  totalCount === 0
-    ? 'no posts'
-    : totalCount === 1
-      ? '1 post'
-      : `${totalCount} posts`;
+      ? tr.blogIndex.countSingular
+      : tr.blogIndex.countPlural.replace('{n}', String(totalCount));
 
-const description =
-  lang === 'fr'
-    ? `Blog de Gabriel Mustiere : ${frCount} sur l'IA, la tech, le leadership et le business. Notes et essais d'un CTO freelance basé à Nantes.`
-    : `Gabriel Mustiere's blog: ${enCount} on AI, tech, leadership and business. Notes and essays from a freelance CTO based in Nantes.`;
+const description = tr.blogIndex.metaDescription.replace('{count}', countLabel);
+
+const countSuffix =
+  totalCount > 1
+    ? tr.blogIndex.countSuffixPlural
+    : tr.blogIndex.countSuffixSingular;
+
+const HERO: Record<Lang, AstroComponentFactory> = { fr: HeroFR, en: HeroEN };
+const INTRO: Record<Lang, AstroComponentFactory> = { fr: IntroFR, en: IntroEN };
+const Hero = HERO[lang];
+const Intro = INTRO[lang];
 ---
 
 <SiteLayout
-  title={lang === 'fr' ? 'Articles de blog' : 'Blog posts'}
+  title={tr.blogIndex.heading}
   description={description}
   type="website"
   current="blog"
@@ -64,7 +70,7 @@ const description =
       blogSchema(lang),
       breadcrumbSchema([
         {
-          name: lang === 'fr' ? 'Accueil' : 'Home',
+          name: tr.breadcrumb.home,
           url: `${SITE.url}${homeHref}`,
         },
         { name: tr.home.blog.title, url: `${SITE.url}${blogHref}` },
@@ -85,57 +91,13 @@ const description =
       >
       <span class="tnum text-[color:var(--color-muted)]">
         {totalCount}
-        {
-          lang === 'fr'
-            ? ` billet${totalCount > 1 ? 's' : ''}`
-            : ` post${totalCount > 1 ? 's' : ''}`
-        }
+        {countSuffix}
       </span>
     </div>
 
-    {
-      lang === 'fr' ? (
-        <h1
-          class="font-serif mt-6 text-[52px] sm:text-[72px] leading-[1.02] tracking-[-0.015em]"
-          style="font-family: var(--font-serif)"
-        >
-          Articles de blog{' '}
-          <>
-            <br />
-            <em class="acc-blog">au long cours.</em>
-          </>
-        </h1>
-      ) : (
-        <h1
-          class="font-serif mt-6 text-[52px] sm:text-[72px] leading-[1.02] tracking-[-0.015em]"
-          style="font-family: var(--font-serif)"
-        >
-          Blog posts{' '}
-          <>
-            <br />
-            <em class="acc-blog">at length.</em>
-          </>
-        </h1>
-      )
-    }
+    <Hero />
 
-    {
-      lang === 'fr' ? (
-        <p class="mt-6 text-[15px] sm:text-[16px] text-[#2a2622] leading-[1.7] max-w-[560px]">
-          Notes et essais sur la <span class="acc-blog">tech</span>, le
-          <span class="acc-about">business</span> et l'
-          <span class="acc-projects">IA</span>. Pas de fréquence — juste quand
-          j'ai quelque chose à dire.
-        </p>
-      ) : (
-        <p class="mt-6 text-[15px] sm:text-[16px] text-[#2a2622] leading-[1.7] max-w-[560px]">
-          Notes and essays on <span class="acc-blog">tech</span>,
-          <span class="acc-about">business</span> and{' '}
-          <span class="acc-projects">AI</span>. No schedule — only when I have
-          something to say.
-        </p>
-      )
-    }
+    <Intro />
 
     <div
       class="mt-10 flex flex-wrap items-center gap-2"
@@ -180,7 +142,7 @@ const description =
           data-tags={featured.data.category}
         >
           <div class="flex items-baseline justify-between text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] font-mono">
-            <span>{lang === 'fr' ? 'À la une' : 'Featured'}</span>
+            <span>{tr.blogIndex.featured}</span>
             <span class="tnum">
               № {String(featured.data.number).padStart(2, '0')}
             </span>
@@ -227,7 +189,7 @@ const description =
       <div
         class="text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] mb-3 font-mono"
       >
-        {lang === 'fr' ? 'Archive' : 'Archive'}
+        {tr.blogIndex.archive}
       </div>
       <ul id="archive">
         {

@@ -28,6 +28,45 @@ for (const p of [aRoot, bRoot]) {
 }
 
 const LASTMOD_RE = /<lastmod>[^<]+<\/lastmod>/g;
+// Astro injecte des `data-astro-cid-<hash>` pour scoper le CSS de chaque
+// fichier .astro qui contient un <style>. Le hash dépend du fichier source ;
+// déplacer du markup d'un .astro vers un autre change le cid sans changer
+// le rendu visuel, la sémantique DOM ni le comportement utilisateur. On
+// masque ces attributs comme on masque <lastmod>, ce sont des artefacts
+// techniques du build pas du comportement observable.
+const ASTRO_CID_RE = /\sdata-astro-cid-[a-z0-9]+(?:="[^"]*")?/g;
+// L'extraction de markup d'un .astro vers un autre change l'indentation source
+// du JSX, qui se retrouve dans les text nodes du HTML (séquences de \n + tabs
+// + espaces ASCII). Au navigateur, ces séquences sont collapsées en un espace.
+// On normalise donc les runs d'espaces ASCII (\t\n + espace) en un seul
+// espace dans les fichiers HTML, sans toucher aux NBSP ni aux autres
+// whitespaces Unicode qui sont sémantiquement significatifs.
+const HTML_ASCII_WS_RE = /[\t\n ]+/g;
+// Whitespaces entre balises adjacentes (`>...<`) : insignifiants pour le
+// rendu HTML des éléments de bloc (li/ul/ol/dl/dd/dt/p/section/...). Quand
+// .map() rend une liste sans whitespace entre items et que l'inline JSX en
+// avait, le HTML rendu est sémantiquement identique mais byte-différent.
+const HTML_INTER_TAG_WS_RE = />\s+</g;
+// Whitespaces leading/trailing dans une balise de bloc : insignifiants
+// (le navigateur les collapse). Ex. `<li> Foo</li>` rend pareil que
+// `<li>Foo</li>`.
+const BLOCK_TAGS =
+  'li|p|h1|h2|h3|h4|h5|h6|ul|ol|dl|dt|dd|section|header|footer|article|nav|main|div|aside|figure|figcaption|tr|td|th|tbody|thead|table|blockquote|details|summary|hr|br|span|a|em|strong|b|i|button|time|code|small|sup|sub|abbr|cite|mark|q|s|u';
+const HTML_BLOCK_LEADING_WS_RE = new RegExp(
+  `<(${BLOCK_TAGS})( [^>]*)?> +`,
+  'g'
+);
+const HTML_BLOCK_TRAILING_WS_RE = new RegExp(` +</(${BLOCK_TAGS})>`, 'g');
+// Astro encode parfois certains caractères en HTML entities (&#39; pour ',
+// &amp; pour & dans une string variable) alors que le même caractère écrit
+// directement dans le JSX source reste tel quel. Visuellement et
+// sémantiquement, &#39; et ' rendent identique. On normalise.
+const HTML_ENTITIES = [
+  [/&#39;/g, "'"],
+  [/&apos;/g, "'"],
+  [/&quot;/g, '"'],
+  [/&#34;/g, '"'],
+];
 const TEXT_EXT = new Set([
   '.html',
   '.txt',
@@ -52,6 +91,35 @@ function maskLastmod(rel, content) {
     return content.replace(LASTMOD_RE, '<lastmod>__MASKED__</lastmod>');
   }
   return content;
+}
+
+function maskAstroCid(rel, content) {
+  if (rel.endsWith('.html')) {
+    return content.replace(ASTRO_CID_RE, '');
+  }
+  return content;
+}
+
+function normalizeHtmlAsciiWs(rel, content) {
+  if (rel.endsWith('.html')) {
+    let out = content
+      .replace(HTML_ASCII_WS_RE, ' ')
+      .replace(HTML_INTER_TAG_WS_RE, '><')
+      .replace(HTML_BLOCK_LEADING_WS_RE, (_m, tag, attrs) =>
+        attrs ? `<${tag}${attrs}>` : `<${tag}>`
+      )
+      .replace(HTML_BLOCK_TRAILING_WS_RE, '</$1>');
+    for (const [re, repl] of HTML_ENTITIES) out = out.replace(re, repl);
+    return out;
+  }
+  return content;
+}
+
+function maskVolatile(rel, content) {
+  return normalizeHtmlAsciiWs(
+    rel,
+    maskAstroCid(rel, maskLastmod(rel, content))
+  );
 }
 
 function listFiles(base) {
@@ -87,7 +155,9 @@ for (const variant of ['prod', 'with-drafts']) {
   const aBase = join(aRoot, variant);
   const bBase = join(bRoot, variant);
   if (!existsSync(aBase) || !existsSync(bBase)) {
-    console.warn(`\n[${variant}] Variante absente dans un des snapshots, ignorée`);
+    console.warn(
+      `\n[${variant}] Variante absente dans un des snapshots, ignorée`
+    );
     continue;
   }
 
@@ -96,7 +166,9 @@ for (const variant of ['prod', 'with-drafts']) {
   const aSet = new Set(aFiles);
   const bSet = new Set(bFiles);
 
-  console.log(`\n[${variant}] ${aFiles.length} fichiers (${aName}) ↔ ${bFiles.length} fichiers (${bName})`);
+  console.log(
+    `\n[${variant}] ${aFiles.length} fichiers (${aName}) ↔ ${bFiles.length} fichiers (${bName})`
+  );
 
   const onlyA = aFiles.filter((f) => !bSet.has(f));
   const onlyB = bFiles.filter((f) => !aSet.has(f));
@@ -117,8 +189,8 @@ for (const variant of ['prod', 'with-drafts']) {
     const aBuf = readFileSync(join(aBase, rel));
     const bBuf = readFileSync(join(bBase, rel));
     if (isTextFile(rel)) {
-      const aText = maskLastmod(rel, aBuf.toString('utf-8'));
-      const bText = maskLastmod(rel, bBuf.toString('utf-8'));
+      const aText = maskVolatile(rel, aBuf.toString('utf-8'));
+      const bText = maskVolatile(rel, bBuf.toString('utf-8'));
       if (aText !== bText) {
         console.log(`\n[${variant}] DIFF (texte) : ${rel}`);
         for (const d of diffText(rel, aText, bText)) {
@@ -128,7 +200,9 @@ for (const variant of ['prod', 'with-drafts']) {
         totalDiffs++;
       }
     } else if (!aBuf.equals(bBuf)) {
-      console.log(`\n[${variant}] DIFF (binaire) : ${rel}  (${aBuf.length}B vs ${bBuf.length}B)`);
+      console.log(
+        `\n[${variant}] DIFF (binaire) : ${rel}  (${aBuf.length}B vs ${bBuf.length}B)`
+      );
       totalDiffs++;
     }
   }

@@ -49,7 +49,10 @@ function splitFrontmatter(raw: string): { fm: string | null; body: string } {
   return { fm: m[1], body: raw.slice(m[0].length) };
 }
 
-function parseFrontmatter(filePath: string, fm: string): Record<string, unknown> {
+function parseFrontmatter(
+  filePath: string,
+  fm: string
+): Record<string, unknown> {
   try {
     const data = parseYaml(fm);
     if (data === null || typeof data !== 'object' || Array.isArray(data)) {
@@ -58,7 +61,10 @@ function parseFrontmatter(filePath: string, fm: string): Record<string, unknown>
     return data as Record<string, unknown>;
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    throw new Error(`[seo-sections] frontmatter YAML invalide dans "${filePath}" : ${msg}`, { cause: err });
+    throw new Error(
+      `[seo-sections] frontmatter YAML invalide dans "${filePath}" : ${msg}`,
+      { cause: err }
+    );
   }
 }
 
@@ -84,7 +90,9 @@ export function parseResume(filePath: string): ResumeSection {
   const { body } = splitFrontmatter(raw);
   const markdown = body.trim();
   if (!markdown) {
-    throw new Error(`[seo-sections] "${filePath}" est vide. Le résumé est obligatoire.`);
+    throw new Error(
+      `[seo-sections] "${filePath}" est vide. Le résumé est obligatoire.`
+    );
   }
   const html = (marked.parse(markdown, { async: false }) as string).trim();
   const plain = stripMarkdown(markdown);
@@ -100,12 +108,16 @@ export function parseFaq(filePath: string): FaqEntry[] {
   const raw = readFileSync(filePath, 'utf-8');
   const { fm } = splitFrontmatter(raw);
   if (!fm) {
-    throw new Error(`[seo-sections] "${filePath}" : frontmatter YAML obligatoire (clé \`questions\`).`);
+    throw new Error(
+      `[seo-sections] "${filePath}" : frontmatter YAML obligatoire (clé \`questions\`).`
+    );
   }
   const data = parseFrontmatter(filePath, fm);
   const questions = data.questions;
   if (!Array.isArray(questions) || questions.length === 0) {
-    throw new Error(`[seo-sections] "${filePath}" : \`questions\` doit être une liste non vide.`);
+    throw new Error(
+      `[seo-sections] "${filePath}" : \`questions\` doit être une liste non vide.`
+    );
   }
   if (questions.length > 10) {
     throw new Error(
@@ -114,13 +126,17 @@ export function parseFaq(filePath: string): FaqEntry[] {
   }
   return questions.map((item, i) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      throw new Error(`[seo-sections] "${filePath}" question #${i + 1} : doit être un objet \`{q, r}\`.`);
+      throw new Error(
+        `[seo-sections] "${filePath}" question #${i + 1} : doit être un objet \`{q, r}\`.`
+      );
     }
     const obj = item as Record<string, unknown>;
     const q = obj.q;
     const r = obj.r;
     if (typeof q !== 'string' || q.trim().length === 0) {
-      throw new Error(`[seo-sections] "${filePath}" question #${i + 1} : champ \`q\` (string) manquant ou vide.`);
+      throw new Error(
+        `[seo-sections] "${filePath}" question #${i + 1} : champ \`q\` (string) manquant ou vide.`
+      );
     }
     if (q.length > 200) {
       throw new Error(
@@ -128,7 +144,9 @@ export function parseFaq(filePath: string): FaqEntry[] {
       );
     }
     if (typeof r !== 'string' || r.trim().length === 0) {
-      throw new Error(`[seo-sections] "${filePath}" question #${i + 1} : champ \`r\` (string) manquant ou vide.`);
+      throw new Error(
+        `[seo-sections] "${filePath}" question #${i + 1} : champ \`r\` (string) manquant ou vide.`
+      );
     }
     return { question: q.trim(), answer: r.trim() };
   });
@@ -138,16 +156,22 @@ export function parseSources(filePath: string): SourceEntry[] {
   const raw = readFileSync(filePath, 'utf-8');
   const { fm } = splitFrontmatter(raw);
   if (!fm) {
-    throw new Error(`[seo-sections] "${filePath}" : frontmatter YAML obligatoire (clé \`sources\`).`);
+    throw new Error(
+      `[seo-sections] "${filePath}" : frontmatter YAML obligatoire (clé \`sources\`).`
+    );
   }
   const data = parseFrontmatter(filePath, fm);
   const sources = data.sources;
   if (!Array.isArray(sources) || sources.length === 0) {
-    throw new Error(`[seo-sections] "${filePath}" : \`sources\` doit être une liste non vide.`);
+    throw new Error(
+      `[seo-sections] "${filePath}" : \`sources\` doit être une liste non vide.`
+    );
   }
   return sources.map((item, i) => {
     if (!item || typeof item !== 'object' || Array.isArray(item)) {
-      throw new Error(`[seo-sections] "${filePath}" source #${i + 1} : doit être un objet.`);
+      throw new Error(
+        `[seo-sections] "${filePath}" source #${i + 1} : doit être un objet.`
+      );
     }
     const obj = item as Record<string, unknown>;
     const title = obj.titre ?? obj.title;
@@ -156,20 +180,28 @@ export function parseSources(filePath: string): SourceEntry[] {
     const date = obj.date;
 
     if (typeof title !== 'string' || title.trim().length === 0) {
-      throw new Error(`[seo-sections] "${filePath}" source #${i + 1} : \`titre\` manquant ou vide.`);
+      throw new Error(
+        `[seo-sections] "${filePath}" source #${i + 1} : \`titre\` manquant ou vide.`
+      );
     }
     if (typeof url !== 'string') {
-      throw new Error(`[seo-sections] "${filePath}" source #${i + 1} : \`url\` manquant.`);
+      throw new Error(
+        `[seo-sections] "${filePath}" source #${i + 1} : \`url\` manquant.`
+      );
     }
     try {
       new URL(url);
     } catch {
-      throw new Error(`[seo-sections] "${filePath}" source #${i + 1} : URL invalide "${url}".`);
+      throw new Error(
+        `[seo-sections] "${filePath}" source #${i + 1} : URL invalide "${url}".`
+      );
     }
     const out: SourceEntry = { title: title.trim(), url };
     if (author !== undefined) {
       if (typeof author !== 'string') {
-        throw new Error(`[seo-sections] "${filePath}" source #${i + 1} : \`auteur\` doit être une string.`);
+        throw new Error(
+          `[seo-sections] "${filePath}" source #${i + 1} : \`auteur\` doit être une string.`
+        );
       }
       out.author = author.trim();
     }
@@ -181,7 +213,9 @@ export function parseSources(filePath: string): SourceEntry[] {
       } else if (typeof date === 'string') {
         dateStr = date.trim();
       } else {
-        throw new Error(`[seo-sections] "${filePath}" source #${i + 1} : \`date\` invalide.`);
+        throw new Error(
+          `[seo-sections] "${filePath}" source #${i + 1} : \`date\` invalide.`
+        );
       }
       if (!ISO_DATE_RE.test(dateStr)) {
         throw new Error(

@@ -19,7 +19,11 @@ import {
 import { formatDateDottedFull, toISODate } from '@/utils/format-date';
 import { truncateForMeta } from '@/utils/meta';
 import { SITE } from '@/consts';
-import { useTranslations, localizedPath } from '@/i18n/utils';
+import {
+  useTranslations,
+  localizedPath,
+  otherLang as otherLangOf,
+} from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { isPublished } from '@/utils/content';
@@ -40,7 +44,7 @@ const url = new URL(localizedPath(lang, `/blog/${post.id}`), SITE.url).href;
 const blogHref = localizedPath(lang, '/blog');
 const homeHref = localizedPath(lang, '/');
 
-const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
+const otherLang: Lang = otherLangOf(lang);
 // `data.translationOf` n'est pas une garantie de publication : la traduction
 // peut être en draft (donc absente du build prod). On ne pointe vers la page
 // traduite que si elle passe `isPublished` dans le mode courant.
@@ -77,16 +81,16 @@ const schemas = [
     relatedUrls,
   }),
   breadcrumbSchema([
-    { name: lang === 'fr' ? 'Accueil' : 'Home', url: `${SITE.url}${homeHref}` },
+    { name: tr.breadcrumb.home, url: `${SITE.url}${homeHref}` },
     { name: tr.home.blog.title, url: `${SITE.url}${blogHref}` },
     { name: data.title, url },
   ]),
   ...(data.faq.length > 0 ? [faqPageSchema(data.faq)] : []),
 ];
 
-const tocTitle = lang === 'fr' ? 'sommaire' : 'contents';
-const upNextTitle = lang === 'fr' ? 'À lire ensuite' : 'Up next';
-const endLabel = lang === 'fr' ? '§ fin' : '§ end';
+const tocTitle = tr.article.tocTitle;
+const upNextTitle = tr.article.upNextTitle;
+const endLabel = tr.article.endLabel;
 const metaDescription = truncateForMeta(data.resume.plain);
 ---
 
@@ -114,7 +118,7 @@ const metaDescription = truncateForMeta(data.resume.plain);
     >
       <nav
         class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
-        aria-label={lang === 'fr' ? "Fil d'Ariane" : 'Breadcrumb'}
+        aria-label={tr.breadcrumb.ariaLabel}
       >
         <a href={blogHref} class="hover:text-[color:var(--color-ink)]">
           ← {tr.home.blog.title}

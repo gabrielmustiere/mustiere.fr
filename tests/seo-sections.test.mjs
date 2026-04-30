@@ -30,10 +30,13 @@ test('parseResume — markdown valide rendu en HTML + plain', () => {
     const file = writeFile(
       dir,
       'resume.mdx',
-      'Premier paragraphe avec **du gras** et *de l\'italique*.\n\nDeuxième paragraphe avec un [lien](https://example.com).'
+      "Premier paragraphe avec **du gras** et *de l'italique*.\n\nDeuxième paragraphe avec un [lien](https://example.com)."
     );
     const r = parseResume(file);
-    assert.match(r.html, /<p>Premier paragraphe avec <strong>du gras<\/strong>/);
+    assert.match(
+      r.html,
+      /<p>Premier paragraphe avec <strong>du gras<\/strong>/
+    );
     assert.match(r.html, /<a href="https:\/\/example\.com">lien<\/a>/);
     assert.equal(
       r.plain,
@@ -74,7 +77,7 @@ test('parseFaq — frontmatter valide mappé question/answer', () => {
     const file = writeFile(
       dir,
       'faq.mdx',
-      '---\nquestions:\n  - q: Pourquoi PHP en 2026 ?\n    r: |\n      Parce que l\'écosystème est mature.\n      Et performant.\n  - q: Quels frameworks ?\n    r: Symfony et Laravel.\n---\n'
+      "---\nquestions:\n  - q: Pourquoi PHP en 2026 ?\n    r: |\n      Parce que l'écosystème est mature.\n      Et performant.\n  - q: Quels frameworks ?\n    r: Symfony et Laravel.\n---\n"
     );
     const items = parseFaq(file);
     assert.equal(items.length, 2);
@@ -115,7 +118,9 @@ test('parseFaq — YAML invalide produit une erreur claire avec chemin', () => {
     const file = writeFile(dir, 'faq.mdx', '---\nquestions:\n  - q: ":\n---\n');
     assert.throws(
       () => parseFaq(file),
-      (err) => err.message.includes('frontmatter YAML invalide') && err.message.includes(file)
+      (err) =>
+        err.message.includes('frontmatter YAML invalide') &&
+        err.message.includes(file)
     );
   });
 });
@@ -129,7 +134,10 @@ test('parseSources — frontmatter valide avec champs optionnels', () => {
     );
     const items = parseSources(file);
     assert.equal(items.length, 2);
-    assert.deepEqual(items[0], { title: 'Source A', url: 'https://example.com/a' });
+    assert.deepEqual(items[0], {
+      title: 'Source A',
+      url: 'https://example.com/a',
+    });
     assert.deepEqual(items[1], {
       title: 'Source B',
       url: 'https://example.com/b',
@@ -188,7 +196,11 @@ test('parseSources — date YAML auto-coercée en Date acceptée', () => {
 
 test('discoverSectionFiles — détecte uniquement les fichiers présents', () => {
   withTmpDir((dir) => {
-    writeFile(dir, 'resume.mdx', 'Un résumé qui dépasse les soixante caractères pour passer le seuil minimal sans souci.');
+    writeFile(
+      dir,
+      'resume.mdx',
+      'Un résumé qui dépasse les soixante caractères pour passer le seuil minimal sans souci.'
+    );
     writeFile(dir, 'faq.mdx', '---\nquestions:\n  - q: ?\n    r: !\n---\n');
     const found = discoverSectionFiles(dir);
     assert.ok(found.resume);

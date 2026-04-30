@@ -13,9 +13,7 @@ type PublishableEntry = CollectionEntry<'blog'> | CollectionEntry<'projects'>;
 // pour éviter le drift constaté historiquement (cf. plan t-001).
 export function isPublished(entry: PublishableEntry, lang: Lang): boolean {
   const showDraft =
-    import.meta.env.DEV ||
-    process.env.SHOW_DRAFTS === '1' ||
-    !entry.data.draft;
+    import.meta.env.DEV || process.env.SHOW_DRAFTS === '1' || !entry.data.draft;
   const matchesLang = (entry.data.lang ?? 'fr') === lang;
   return showDraft && matchesLang;
 }

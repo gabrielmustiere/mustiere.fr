@@ -16,8 +16,14 @@ import {
   websiteSchema,
 } from '@/utils/schema';
 import { SITE } from '@/consts';
-import { getLangFromUrl, useTranslations, swapLang } from '@/i18n/utils';
-import { LANG_META, type Lang } from '@/i18n/config';
+import {
+  getLangFromUrl,
+  useTranslations,
+  swapLang,
+  otherLang as otherLangOf,
+} from '@/i18n/utils';
+import { routePath } from '@/i18n/routes';
+import { DEFAULT_LANG, LANG_META, type Lang } from '@/i18n/config';
 
 export interface Props {
   lang?: Lang;
@@ -69,10 +75,11 @@ function normalizeRoute(pathname: string): string {
 const normalizedPath = normalizeRoute(Astro.url.pathname);
 const canonicalURL = canonical ?? new URL(normalizedPath, SITE.url).href;
 const ogImageURL = new URL(image, SITE.url).href;
-const otherLang: Lang = lang === 'fr' ? 'en' : 'fr';
+const otherLang: Lang = otherLangOf(lang);
 const altPath = otherLangHref ?? swapLang(normalizedPath, otherLang);
 const altUrl = new URL(altPath, SITE.url).href;
-const rssHref = lang === 'fr' ? '/rss.xml' : '/en/rss.xml';
+const rssHref = routePath('rssFeed', lang);
+const xDefaultHref = lang === DEFAULT_LANG ? canonicalURL : altUrl;
 
 const baseGraph = [organizationSchema(), websiteSchema(), personSchema(lang)];
 ---
@@ -90,11 +97,7 @@ const baseGraph = [organizationSchema(), websiteSchema(), personSchema(lang)];
     <link rel="canonical" href={canonicalURL} />
     <link rel="alternate" hreflang={otherLang} href={altUrl} />
     <link rel="alternate" hreflang={lang} href={canonicalURL} />
-    <link
-      rel="alternate"
-      hreflang="x-default"
-      href={lang === 'fr' ? canonicalURL : altUrl}
-    />
+    <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
 
     {
       noindex ? (
@@ -117,7 +120,7 @@ const baseGraph = [organizationSchema(), websiteSchema(), personSchema(lang)];
     <meta property="og:locale" content={LANG_META[lang].ogLocale} />
     <meta
       property="og:locale:alternate"
-      content={LANG_META[lang === 'fr' ? 'en' : 'fr'].ogLocale}
+      content={LANG_META[otherLang].ogLocale}
     />
     <meta property="og:site_name" content={SITE.name} />
 

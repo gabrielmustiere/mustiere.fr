@@ -5,10 +5,14 @@ import ProjectsSection from '@components/home/ProjectsSection.astro';
 import ContactSection from '@components/home/ContactSection.astro';
 import CvSection from '@components/home/CvSection.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
+import HeroFR from '@components/i18n/home/hero/fr.astro';
+import HeroEN from '@components/i18n/home/hero/en.astro';
 import { profilePageSchema } from '@/utils/schema';
 import { SITE } from '@/consts';
 import { useTranslations, localizedPath } from '@/i18n/utils';
+import { routePath } from '@/i18n/routes';
 import type { Lang } from '@/i18n/config';
+import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 
 interface Props {
   lang: Lang;
@@ -16,10 +20,13 @@ interface Props {
 
 const { lang } = Astro.props;
 const tr = useTranslations(lang);
-const parcoursHref = localizedPath(
-  lang,
-  lang === 'fr' ? '/parcours' : '/background'
-);
+const parcoursHref = localizedPath(lang, routePath('parcours', lang));
+
+const HERO: Record<Lang, AstroComponentFactory> = {
+  fr: HeroFR,
+  en: HeroEN,
+};
+const Hero = HERO[lang];
 ---
 
 <SiteLayout
@@ -36,77 +43,7 @@ const parcoursHref = localizedPath(
     style="max-width: var(--w-home)"
   >
     <header id="about" data-key="about">
-      {
-        lang === 'fr' ? (
-          <h1
-            class="mt-8 sm:mt-10 font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
-            style="font-family: var(--font-serif)"
-          >
-            CTO &amp; lead <br />
-            <em class="acc-about">en freelance.</em>
-          </h1>
-        ) : (
-          <h1
-            class="mt-8 sm:mt-10 font-serif leading-[1.02] tracking-[-0.015em] text-[48px] sm:text-[80px]"
-            style="font-family: var(--font-serif)"
-          >
-            Freelance <br />
-            <em class="acc-about">CTO &amp; lead.</em>
-          </h1>
-        )
-      }
-
-      <div
-        class="mt-6 sm:mt-8 space-y-5 text-[15px] sm:text-[17px] leading-relaxed text-[#2a2622] max-w-[640px]"
-      >
-        {
-          lang === 'fr' ? (
-            <>
-              <p>
-                <span class="tnum">14 ans</span> dans la tech,{' '}
-                <em class="acc-about">CTO depuis 2017</em>. J'ai bâti la filiale
-                SaaS <em class="acc-about">Progicar</em> (Groupe GEMY) de zéro à
-                plus de 25 personnes, cofondé{' '}
-                <em class="acc-about">Passion Barbecue</em> sur{' '}
-                <span class="hl acc-about">Sylius</span>, et accompagne
-                aujourd'hui <em class="acc-about">Anytime</em> sur la conformité
-                PSD2/SCA via <span class="hl acc-about">WebAuthn</span>{' '}
-                (passkeys, biométrie, clés de sécurité).
-              </p>
-              <p>
-                Mon terrain : la{' '}
-                <span class="hl acc-projects">
-                  construction de produits SaaS et e-commerce
-                </span>{' '}
-                from scratch, et leur mise à l'échelle. J'interviens en mission
-                longue, audit, CTO fractional ou sparring de fondateurs.
-              </p>
-            </>
-          ) : (
-            <>
-              <p>
-                <span class="tnum">14 years</span> in tech,{' '}
-                <em class="acc-about">CTO since 2017</em>. I built the SaaS
-                subsidiary <em class="acc-about">Progicar</em> (Groupe GEMY)
-                from zero to more than 25 people, co-founded{' '}
-                <em class="acc-about">Passion Barbecue</em> on{' '}
-                <span class="hl acc-about">Sylius</span>, and currently support{' '}
-                <em class="acc-about">Anytime</em> on PSD2/SCA compliance via{' '}
-                <span class="hl acc-about">WebAuthn</span> (passkeys,
-                biometrics, security keys).
-              </p>
-              <p>
-                My terrain:{' '}
-                <span class="hl acc-projects">
-                  building SaaS and e-commerce products
-                </span>{' '}
-                from scratch, then scaling them. I work on long engagements,
-                audits, fractional CTO seats, or founder sparring.
-              </p>
-            </>
-          )
-        }
-      </div>
+      <Hero />
 
       <dl
         class="mt-8 grid grid-cols-1 sm:grid-cols-2 sm:gap-x-10 text-[13px] text-[color:var(--color-muted)] max-w-[640px]"
@@ -116,11 +53,7 @@ const parcoursHref = localizedPath(
         >
           <dt>{tr.home.about.experienceLabel}</dt>
           <dd class="tnum acc-about">
-            {
-              lang === 'fr'
-                ? '14 ans · CTO depuis 2017'
-                : '14 years · CTO since 2017'
-            }
+            {tr.home.about.experienceValue}
           </dd>
         </div>
         <div
@@ -153,13 +86,13 @@ const parcoursHref = localizedPath(
           >·</span
         >
         <a href="#contact" class="link-u text-[color:var(--color-ink)]">
-          {lang === 'fr' ? 'Me contacter' : 'Get in touch'}
+          {tr.home.contact.contactCta}
         </a>
         <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
           >·</span
         >
         <a href="#cv" class="link-u text-[color:var(--color-muted)]">
-          {lang === 'fr' ? 'CV (PDF)' : 'Résumé (PDF)'}
+          {tr.home.contact.cvCta}
         </a>
         <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
           >·</span

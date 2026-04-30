@@ -13,9 +13,7 @@ interface Props {
 const lang = Astro.props.lang ?? getLangFromUrl(Astro.url);
 const tr = useTranslations(lang);
 
-const posts = (
-  await getCollection('blog', (entry) => isPublished(entry, lang))
-)
+const posts = (await getCollection('blog', (entry) => isPublished(entry, lang)))
   .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime())
   .slice(0, 4);
 ---
@@ -69,7 +67,7 @@ const posts = (
     <figcaption
       class="text-[11px] tracking-[0.12em] uppercase mb-2 text-[color:var(--color-muted)] font-mono"
     >
-      {lang === 'fr' ? 'Extrait — eval harness' : 'Excerpt — eval harness'}
+      {tr.home.blog.excerptCaption}
     </figcaption>
     <pre
       class="code-block"><code>{`// tiny scoring loop

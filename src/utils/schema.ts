@@ -1,6 +1,7 @@
 import { SITE } from '@/consts';
 import { LANG_META, type Lang } from '@/i18n/config';
 import { localizedPath } from '@/i18n/utils';
+import { routePath } from '@/i18n/routes';
 import { ui } from '@/i18n/ui';
 
 const PERSON_ID = `${SITE.url}/#person`;
@@ -83,7 +84,7 @@ export function personSchema(lang: Lang = 'fr') {
     en: 'Freelance CTO based in Nantes. 14 years in tech, CTO since 2017. Software architecture, technical leadership, SaaS and e-commerce.',
   };
 
-  const occupationName = lang === 'fr' ? 'CTO freelance' : 'Freelance CTO';
+  const occupationName = ui[lang].author.role;
 
   return {
     '@context': 'https://schema.org',
@@ -160,8 +161,7 @@ export function parcoursPageSchema(
   name: string,
   description: string
 ) {
-  const path = lang === 'fr' ? '/parcours' : '/background';
-  const url = `${SITE.url}${localizedPath(lang, path)}`;
+  const url = `${SITE.url}${localizedPath(lang, routePath('parcours', lang))}`;
   return {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
@@ -176,7 +176,7 @@ export function parcoursPageSchema(
   };
 }
 
-const PARCOURS_FAQ: Record<
+export const PARCOURS_FAQ: Record<
   Lang,
   Array<{ question: string; answer: string }>
 > = {

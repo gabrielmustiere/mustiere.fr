@@ -20,11 +20,11 @@ src/content/blog/php-2026-cto-considerer/
 
 Pour chaque fichier réservé :
 
-| Fichier | Parsing | Exposé dans `data` |
-|---|---|---|
-| `resume.mdx` | Body markdown brut + rendu HTML via `marked` au build | `data.resume = { markdown: string, html: string, plain: string }` |
-| `faq.mdx` | Frontmatter YAML `questions: [{q, r}]`. Body ignoré. | `data.faq: [{question, answer}]` (mappé pour rester compat avec `<Faq>` existant) |
-| `sources.mdx` | Frontmatter YAML `sources: [{titre, url, auteur?, date?}]`. Body ignoré. | `data.sources: [{title, url, author?, date?}]` |
+| Fichier       | Parsing                                                                  | Exposé dans `data`                                                                |
+| ------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `resume.mdx`  | Body markdown brut + rendu HTML via `marked` au build                    | `data.resume = { markdown: string, html: string, plain: string }`                 |
+| `faq.mdx`     | Frontmatter YAML `questions: [{q, r}]`. Body ignoré.                     | `data.faq: [{question, answer}]` (mappé pour rester compat avec `<Faq>` existant) |
+| `sources.mdx` | Frontmatter YAML `sources: [{titre, url, auteur?, date?}]`. Body ignoré. | `data.sources: [{title, url, author?, date?}]`                                    |
 
 **La grosse partie de la feature existe déjà** — le scope réel est : déplacer les champs frontmatter `tldr` / `faq` vers des fichiers MDX dédiés, ajouter `sources`, valider la parité i18n, migrer 3 articles + 2 projets.
 
@@ -44,7 +44,10 @@ Pas d'entité au sens BDD (site SSG). Le « modèle » est le schéma Zod de `sr
 
 ```ts
 const blog = defineCollection({
-  loader: chapteredGlob({ base: './src/content/blog', extensions: ['.mdx', '.md'] }),
+  loader: chapteredGlob({
+    base: './src/content/blog',
+    extensions: ['.mdx', '.md'],
+  }),
   schema: z.object({
     title: z.string().max(120),
     excerpt: z.string().min(80).max(220),
@@ -76,9 +79,9 @@ Idem : suppression de `summary` et `faq`, ajout de `resume`/`faq`/`sources` inje
 
 ```ts
 const resumeSchema = z.object({
-  markdown: z.string().min(80),       // contrainte de longueur (~80 mots min)
-  html: z.string(),                    // rendu marked, pour <Resume />
-  plain: z.string().min(80).max(800),  // texte plat, pour meta description + llms.txt
+  markdown: z.string().min(80), // contrainte de longueur (~80 mots min)
+  html: z.string(), // rendu marked, pour <Resume />
+  plain: z.string().min(80).max(800), // texte plat, pour meta description + llms.txt
 });
 
 const faqItem = z.object({
@@ -90,7 +93,10 @@ const sourceItem = z.object({
   title: z.string().min(1),
   url: z.string().url(),
   author: z.string().optional(),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .optional(),
 });
 ```
 
@@ -106,29 +112,29 @@ Le loader construit `data.resume.{markdown,html,plain}` à partir du contenu de 
 
 ## Fichiers à créer
 
-| Fichier | Rôle |
-|---|---|
-| `src/components/ui/Resume.astro` | Affiche `data.resume.html` dans un Callout-like (remplace l'usage de `<Callout>` pour le tldr). Conserve `data-speakable`. |
-| `src/components/ui/Sources.astro` | Section « § sources » en bas d'article. Liste `<ol>` avec `title`, `url` (`<a target="_blank" rel="noopener noreferrer">`), `author` et `date` optionnels en méta + hostname. |
+| Fichier                               | Rôle                                                                                                                                                                                                                               |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/components/ui/Resume.astro`      | Affiche `data.resume.html` dans un Callout-like (remplace l'usage de `<Callout>` pour le tldr). Conserve `data-speakable`.                                                                                                         |
+| `src/components/ui/Sources.astro`     | Section « § sources » en bas d'article. Liste `<ol>` avec `title`, `url` (`<a target="_blank" rel="noopener noreferrer">`), `author` et `date` optionnels en méta + hostname.                                                      |
 | `src/content-loaders/seo-sections.ts` | Helpers pour le loader : `parseResume(filePath)`, `parseFaq(filePath)`, `parseSources(filePath)`, `discoverSectionFiles(dirPath)` (helper utilitaire), `RESERVED_SECTION_FILES`. Sortis du loader principal pour rester testables. |
-| `src/utils/meta.ts` | `truncateForMeta(text, maxLen=160)` pour la meta description HTML, coupure au mot le plus proche + ellipse. |
-| `tests/seo-sections.test.mjs` | 15 tests `node:test` couvrant les helpers : YAML invalide → erreur claire, markdown vide → erreur, longueurs, mapping `q`/`r` → `question`/`answer`, URL/date validées, etc. |
+| `src/utils/meta.ts`                   | `truncateForMeta(text, maxLen=160)` pour la meta description HTML, coupure au mot le plus proche + ellipse.                                                                                                                        |
+| `tests/seo-sections.test.mjs`         | 15 tests `node:test` couvrant les helpers : YAML invalide → erreur claire, markdown vide → erreur, longueurs, mapping `q`/`r` → `question`/`answer`, URL/date validées, etc.                                                       |
 
 ## Fichiers à modifier
 
-| Fichier | Modification |
-|---|---|
-| `src/content-loaders/chaptered-glob.ts` | Étendre `loadFolder` : whitelister `resume.mdx`, `faq.mdx`, `sources.mdx`. Les exclure de `chapterFiles` et de `chapterBodies`. Appeler les helpers `parseResume`/`parseFaq`/`parseSources` puis enrichir `data` avant `parseData()`. Erreur explicite (avant Zod) si `resume.mdx` absent dans la forme dossier. Le `digestSource` inclut le contenu des 3 fichiers (sinon hot-reload cassé). |
-| `src/content.config.ts` | Diff schéma : retirer `tldr`/`faq`/`summary`, ajouter `resume` (obligatoire), `faq` (default []), `sources` (default []). Sous-schémas inline dans le même fichier. Migration `z.string().url()` → `z.url()` (deprecation). |
-| `src/layouts/ArticleLayout.astro` | `blogPostingSchema(tldr: data.resume.plain)`. Remplacer le `<Callout>` qui rend `data.tldr` par `<Resume html={data.resume.html} />`. Après `<Faq>` : bloc `<Sources>` conditionnel. **Meta description** alimentée par `truncateForMeta(data.resume.plain)` (passé via `description={metaDescription}` à `SiteLayout`). |
-| `src/layouts/ProjectLayout.astro` | Même traitement (Resume + Sources + meta description), accent `projects`. `softwareSourceCodeSchema(abstract: data.resume.plain)`. |
-| `src/pages/llms-full.txt.ts` (FR) et `src/pages/en/llms-full.txt.ts` (EN) | Remplacer `post.data.tldr` par `post.data.resume.markdown`. Préfixe d'affichage : `**Résumé.**` / `**Summary.**`. |
-| `src/pages/llms.txt.ts` (FR) et `src/pages/en/llms.txt.ts` (EN) | Aucun changement nécessaire — ces fichiers utilisaient déjà `excerpt`, pas `tldr`. |
-| `src/utils/schema.ts` | `BlogPostingInput.tldr` reste typé `string?`, l'appelant fournit désormais `data.resume.plain`. Pas de changement de signature interne. |
-| `src/i18n/ui.ts` | Ajouter clés `article.summaryLabel`, `article.summaryAria`, `article.sourcesTitle`, `project.summaryLabel`, `project.summaryAria`, `project.sourcesTitle` (FR + EN). Suppression de `tldrLabel` (devenu mort). |
-| `astro.config.mjs#buildTranslationIndex` | Pour chaque entrée en forme dossier, détecter `faq.mdx` / `sources.mdx`. Pour chaque paire `translationOf`, vérifier la parité — asymétrie = build fail avec les deux chemins de fichiers cités. |
-| `package.json` | Ajout deps `marked` (devDep) et `yaml` (devDep). Ajout script `npm test` (`node --experimental-strip-types --test 'tests/**/*.test.mjs'`, requiert Node ≥ 22). |
-| `src/components/ui/Callout.astro` | **Supprimé** : devenu code mort après bascule des layouts (plus aucun import). |
+| Fichier                                                                   | Modification                                                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/content-loaders/chaptered-glob.ts`                                   | Étendre `loadFolder` : whitelister `resume.mdx`, `faq.mdx`, `sources.mdx`. Les exclure de `chapterFiles` et de `chapterBodies`. Appeler les helpers `parseResume`/`parseFaq`/`parseSources` puis enrichir `data` avant `parseData()`. Erreur explicite (avant Zod) si `resume.mdx` absent dans la forme dossier. Le `digestSource` inclut le contenu des 3 fichiers (sinon hot-reload cassé). |
+| `src/content.config.ts`                                                   | Diff schéma : retirer `tldr`/`faq`/`summary`, ajouter `resume` (obligatoire), `faq` (default []), `sources` (default []). Sous-schémas inline dans le même fichier. Migration `z.string().url()` → `z.url()` (deprecation).                                                                                                                                                                   |
+| `src/layouts/ArticleLayout.astro`                                         | `blogPostingSchema(tldr: data.resume.plain)`. Remplacer le `<Callout>` qui rend `data.tldr` par `<Resume html={data.resume.html} />`. Après `<Faq>` : bloc `<Sources>` conditionnel. **Meta description** alimentée par `truncateForMeta(data.resume.plain)` (passé via `description={metaDescription}` à `SiteLayout`).                                                                      |
+| `src/layouts/ProjectLayout.astro`                                         | Même traitement (Resume + Sources + meta description), accent `projects`. `softwareSourceCodeSchema(abstract: data.resume.plain)`.                                                                                                                                                                                                                                                            |
+| `src/pages/llms-full.txt.ts` (FR) et `src/pages/en/llms-full.txt.ts` (EN) | Remplacer `post.data.tldr` par `post.data.resume.markdown`. Préfixe d'affichage : `**Résumé.**` / `**Summary.**`.                                                                                                                                                                                                                                                                             |
+| `src/pages/llms.txt.ts` (FR) et `src/pages/en/llms.txt.ts` (EN)           | Aucun changement nécessaire — ces fichiers utilisaient déjà `excerpt`, pas `tldr`.                                                                                                                                                                                                                                                                                                            |
+| `src/utils/schema.ts`                                                     | `BlogPostingInput.tldr` reste typé `string?`, l'appelant fournit désormais `data.resume.plain`. Pas de changement de signature interne.                                                                                                                                                                                                                                                       |
+| `src/i18n/ui.ts`                                                          | Ajouter clés `article.summaryLabel`, `article.summaryAria`, `article.sourcesTitle`, `project.summaryLabel`, `project.summaryAria`, `project.sourcesTitle` (FR + EN). Suppression de `tldrLabel` (devenu mort).                                                                                                                                                                                |
+| `astro.config.mjs#buildTranslationIndex`                                  | Pour chaque entrée en forme dossier, détecter `faq.mdx` / `sources.mdx`. Pour chaque paire `translationOf`, vérifier la parité — asymétrie = build fail avec les deux chemins de fichiers cités.                                                                                                                                                                                              |
+| `package.json`                                                            | Ajout deps `marked` (devDep) et `yaml` (devDep). Ajout script `npm test` (`node --experimental-strip-types --test 'tests/**/*.test.mjs'`, requiert Node ≥ 22).                                                                                                                                                                                                                                |
+| `src/components/ui/Callout.astro`                                         | **Supprimé** : devenu code mort après bascule des layouts (plus aucun import).                                                                                                                                                                                                                                                                                                                |
 
 ## Impacts transverses
 
@@ -153,13 +159,13 @@ Implémentation incrémentale, chaque étape laisse le build vert.
 
 ## Stratégie de test
 
-| Code | Type de test | Ce qu'on vérifie |
-|---|---|---|
-| `src/content-loaders/seo-sections.ts` | Unit (Vitest ou Node `test`) | `parseFaq` : YAML invalide → erreur claire ; mapping `q`/`r` → `question`/`answer` ; tableau vide rejeté. `parseSources` : URL malformée → erreur ; date invalide → erreur. `parseResume` : markdown trop court → erreur ; markdown valide → `html` non vide ; `plain` ne contient ni HTML ni markdown. |
-| `src/content-loaders/chaptered-glob.ts` (extension) | Functional (build sur fixture) | Dossier sans `resume.mdx` → erreur build avec chemin clair. Dossier avec fichier inconnu (ex `notes.mdx`) → erreur build (régression test). Dossier conforme → `data.resume`/`data.faq`/`data.sources` présents et bien typés. |
-| `astro.config.mjs#buildTranslationIndex` | Functional (build) | Une paire FR/EN avec asymétrie FAQ → erreur build pointant les deux fichiers. Parité respectée → build vert. |
-| `src/layouts/ArticleLayout.astro` & `ProjectLayout.astro` | E2E manuel | Sur tous les articles + projets en FR et EN, vérifier visuellement : Résumé rendu (HTML marked), TOC inchangé, FAQ rendu (si présent), Sources rendues (si présent), JSON-LD `FAQPage` valide via [Schema.org validator](https://validator.schema.org/). |
-| `src/pages/llms-full.txt.ts` (FR + EN) | Inspection ciblée | Vérifier dans `dist/llms-full.txt` que le préfixe `**Résumé.**` (FR) ou `**Summary.**` (EN) précède bien le contenu de `resume.mdx`. Snapshot diff non utilisé (cf. impacts transverses). |
+| Code                                                      | Type de test                   | Ce qu'on vérifie                                                                                                                                                                                                                                                                                        |
+| --------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/content-loaders/seo-sections.ts`                     | Unit (Vitest ou Node `test`)   | `parseFaq` : YAML invalide → erreur claire ; mapping `q`/`r` → `question`/`answer` ; tableau vide rejeté. `parseSources` : URL malformée → erreur ; date invalide → erreur. `parseResume` : markdown trop court → erreur ; markdown valide → `html` non vide ; `plain` ne contient ni HTML ni markdown. |
+| `src/content-loaders/chaptered-glob.ts` (extension)       | Functional (build sur fixture) | Dossier sans `resume.mdx` → erreur build avec chemin clair. Dossier avec fichier inconnu (ex `notes.mdx`) → erreur build (régression test). Dossier conforme → `data.resume`/`data.faq`/`data.sources` présents et bien typés.                                                                          |
+| `astro.config.mjs#buildTranslationIndex`                  | Functional (build)             | Une paire FR/EN avec asymétrie FAQ → erreur build pointant les deux fichiers. Parité respectée → build vert.                                                                                                                                                                                            |
+| `src/layouts/ArticleLayout.astro` & `ProjectLayout.astro` | E2E manuel                     | Sur tous les articles + projets en FR et EN, vérifier visuellement : Résumé rendu (HTML marked), TOC inchangé, FAQ rendu (si présent), Sources rendues (si présent), JSON-LD `FAQPage` valide via [Schema.org validator](https://validator.schema.org/).                                                |
+| `src/pages/llms-full.txt.ts` (FR + EN)                    | Inspection ciblée              | Vérifier dans `dist/llms-full.txt` que le préfixe `**Résumé.**` (FR) ou `**Summary.**` (EN) précède bien le contenu de `resume.mdx`. Snapshot diff non utilisé (cf. impacts transverses).                                                                                                               |
 
 Pas de framework de tests installé pour l'instant — `npm test` n'existe pas dans `package.json`. Les tests unitaires des helpers peuvent être écrits avec le `node:test` natif (zero dep), exécutés via `node --test tests/`. À convenir au moment de l'étape 1.
 
@@ -187,6 +193,6 @@ Toutes tranchées pendant l'implémentation :
 
 ## Changelog
 
-| Date | Type | Description |
-|------|------|-------------|
+| Date       | Type                     | Description                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ---------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 2026-04-29 | Sync post-implémentation | Étapes ST5 + ST6 fusionnées (transition Zod impossible incrémentale). ST8 (snapshots) supprimée (inadapté à une migration big-bang). Ajout `discoverSectionFiles`, `src/utils/meta.ts`, suppression de `<Callout>`. Précisions sur le rôle de `excerpt` vs `resume.plain` (meta description désormais alimentée par `truncateForMeta(resume.plain)`). Toutes les questions ouvertes tranchées. Risques mitigés ou levés. |

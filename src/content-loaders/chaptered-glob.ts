@@ -1,4 +1,10 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { Loader, LoaderContext } from 'astro/loaders';
@@ -38,10 +44,7 @@ interface ChapteredGlobOptions {
 
 type EntryType = {
   extensions: string[];
-  getEntryInfo: (params: {
-    fileUrl: URL;
-    contents: string;
-  }) => Promise<{
+  getEntryInfo: (params: { fileUrl: URL; contents: string }) => Promise<{
     body: string;
     data: Record<string, unknown>;
     rawData: string;
@@ -111,7 +114,14 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
           const ext = pickExtension(entry.name, extensions);
           if (!ext) continue;
           const id = entry.name.slice(0, -ext.length);
-          await loadFlat({ ctx, rootPath, baseDirPath, fileName: entry.name, ext, id });
+          await loadFlat({
+            ctx,
+            rootPath,
+            baseDirPath,
+            fileName: entry.name,
+            ext,
+            id,
+          });
           untouched.delete(id);
         } else if (entry.isDirectory()) {
           const id = entry.name;
@@ -199,7 +209,8 @@ async function loadFolder(args: {
   id: string;
   collection: string;
 }) {
-  const { ctx, rootPath, baseDirPath, dirName, extensions, id, collection } = args;
+  const { ctx, rootPath, baseDirPath, dirName, extensions, id, collection } =
+    args;
   const dirPath = join(baseDirPath, dirName);
   const files = readdirSync(dirPath);
 
@@ -227,7 +238,11 @@ async function loadFolder(args: {
     throw new Error(`[chaptered-glob] pas d'entryType pour ${indexExt}`);
   }
 
-  const { body: indexBody, data, rawData } = await entryType.getEntryInfo({
+  const {
+    body: indexBody,
+    data,
+    rawData,
+  } = await entryType.getEntryInfo({
     contents: indexContents,
     fileUrl: indexUrl,
   });
@@ -236,7 +251,8 @@ async function loadFolder(args: {
   // Sections SEO réservées : resume.mdx (obligatoire), faq.mdx, sources.mdx.
   // Elles sont parsées séparément (cf. seo-sections.ts), exposées dans `data`
   // et n'intègrent jamais le body agrégé. Cf. plan 005-f-sections-seo-articles.
-  const sectionFilePaths: { resume?: string; faq?: string; sources?: string } = {};
+  const sectionFilePaths: { resume?: string; faq?: string; sources?: string } =
+    {};
   for (const f of files) {
     if (f === `index${indexExt}`) continue;
     if (f.startsWith('.') || f.startsWith('_')) continue;

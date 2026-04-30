@@ -39,11 +39,13 @@ export const ui = {
           "Notes sur la tech, le business et l'IA. Pas de fréquence, juste quand j'ai quelque chose à dire.",
         seeAll: 'Tous les articles',
         readMore: 'Lire',
+        excerptCaption: 'Extrait — eval harness',
       },
       about: {
         title: 'À propos',
         experience: '14 ans',
         experienceLabel: 'Expérience',
+        experienceValue: '14 ans · CTO depuis 2017',
         rolesLabel: 'Rôles',
         locationLabel: 'Basé à',
         availabilityLabel: 'Disponibilité',
@@ -63,11 +65,14 @@ export const ui = {
         emailLabel: 'Email',
         linkedinLabel: 'LinkedIn',
         githubLabel: 'GitHub',
+        contactCta: 'Me contacter',
+        cvCta: 'CV (PDF)',
       },
       cv: {
         title: 'CV en PDF',
         meta: 'Dernière mise à jour : avril 2026 · 2 pages · 180 ko',
         cta: 'Télécharger',
+        documentLabel: 'Document',
       },
     },
     blogIndex: {
@@ -77,6 +82,16 @@ export const ui = {
       allCategories: 'Toutes',
       empty: 'Rien dans cette catégorie pour le moment.',
       filterLabel: 'Filtrer par catégorie',
+      heading: 'Articles de blog',
+      featured: 'À la une',
+      archive: 'Archive',
+      countZero: 'aucun billet',
+      countSingular: '1 billet',
+      countPlural: '{n} billets',
+      countSuffixSingular: ' billet',
+      countSuffixPlural: ' billets',
+      metaDescription:
+        "Blog de Gabriel Mustiere : {count} sur l'IA, la tech, le leadership et le business. Notes et essais d'un CTO freelance basé à Nantes.",
     },
     article: {
       backToBlog: '← Tous les articles de blog',
@@ -95,6 +110,9 @@ export const ui = {
       previousArticle: 'Article précédent',
       readingProgress: 'Progression de lecture',
       by: 'Par',
+      tocTitle: 'sommaire',
+      upNextTitle: 'À lire ensuite',
+      endLabel: '§ fin',
     },
     project: {
       backToProjects: '← Tous les projets',
@@ -112,6 +130,9 @@ export const ui = {
         archivé: 'archivé',
         beta: 'beta',
       },
+      tocTitle: 'sommaire',
+      endLabel: '§ fin',
+      viewOnGitHub: 'Voir sur GitHub',
     },
     footer: {
       copyright: '© {year} Gabriel Mustiere',
@@ -135,6 +156,35 @@ export const ui = {
       title: 'Gabriel Mustiere — Blog',
       description:
         "Notes sur la tech, le business et l'IA par Gabriel Mustiere, CTO freelance à Nantes.",
+    },
+    skipLink: {
+      label: 'Aller au contenu principal',
+    },
+    breadcrumb: {
+      home: 'Accueil',
+      ariaLabel: "Fil d'Ariane",
+    },
+    author: {
+      role: 'CTO freelance',
+    },
+    parcours: {
+      eyebrow: 'Parcours',
+      headTitle: 'Parcours',
+      headTitleSeo:
+        'Parcours — CTO freelance, expert Symfony & Sylius à Nantes',
+      headDescription:
+        'Parcours de Gabriel Mustiere, CTO freelance à Nantes. 14 ans dans la tech, CTO depuis 2017. Expert Symfony et Sylius. Builder de produits SaaS et e-commerce from scratch, des startups early stage aux scale-ups.',
+      contactCta: 'Me contacter',
+      cvCta: 'CV (PDF)',
+      backHome: "Retour à l'accueil",
+      experiencesTitle: 'Expériences',
+      expertisesTitle: 'Expertises',
+      securityTitle: 'Sécurité & conformité',
+      modesTitle: "Modes d'intervention",
+      faqTitle: 'Questions fréquentes',
+      nextTitle: 'Et maintenant ?',
+      nextSubtitle: 'On en parle.',
+      writeEmail: 'Écrire un mail',
     },
   },
   en: {
@@ -175,11 +225,13 @@ export const ui = {
           'Notes on tech, business and AI. No schedule — only when I have something to say.',
         seeAll: 'All posts',
         readMore: 'Read',
+        excerptCaption: 'Excerpt — eval harness',
       },
       about: {
         title: 'About',
         experience: '14 years',
         experienceLabel: 'Experience',
+        experienceValue: '14 years · CTO since 2017',
         rolesLabel: 'Roles',
         locationLabel: 'Based in',
         availabilityLabel: 'Availability',
@@ -199,11 +251,14 @@ export const ui = {
         emailLabel: 'Email',
         linkedinLabel: 'LinkedIn',
         githubLabel: 'GitHub',
+        contactCta: 'Get in touch',
+        cvCta: 'Résumé (PDF)',
       },
       cv: {
         title: 'Résumé (PDF)',
         meta: 'Last updated: April 2026 · 2 pages · 180 kB',
         cta: 'Download',
+        documentLabel: 'Document',
       },
     },
     blogIndex: {
@@ -213,6 +268,16 @@ export const ui = {
       allCategories: 'All',
       empty: 'Nothing in this category yet.',
       filterLabel: 'Filter by category',
+      heading: 'Blog posts',
+      featured: 'Featured',
+      archive: 'Archive',
+      countZero: 'no posts',
+      countSingular: '1 post',
+      countPlural: '{n} posts',
+      countSuffixSingular: ' post',
+      countSuffixPlural: ' posts',
+      metaDescription:
+        "Gabriel Mustiere's blog: {count} on AI, tech, leadership and business. Notes and essays from a freelance CTO based in Nantes.",
     },
     article: {
       backToBlog: '← All blog posts',
@@ -231,6 +296,9 @@ export const ui = {
       previousArticle: 'Previous post',
       readingProgress: 'Reading progress',
       by: 'By',
+      tocTitle: 'contents',
+      upNextTitle: 'Up next',
+      endLabel: '§ end',
     },
     project: {
       backToProjects: '← All projects',
@@ -248,6 +316,9 @@ export const ui = {
         archivé: 'archived',
         beta: 'beta',
       },
+      tocTitle: 'contents',
+      endLabel: '§ end',
+      viewOnGitHub: 'View on GitHub',
     },
     footer: {
       copyright: '© {year} Gabriel Mustiere',
@@ -271,6 +342,35 @@ export const ui = {
       title: 'Gabriel Mustiere — Blog posts',
       description:
         'Notes on tech, business and AI by Gabriel Mustiere, freelance CTO in Nantes.',
+    },
+    skipLink: {
+      label: 'Skip to main content',
+    },
+    breadcrumb: {
+      home: 'Home',
+      ariaLabel: 'Breadcrumb',
+    },
+    author: {
+      role: 'Freelance CTO',
+    },
+    parcours: {
+      eyebrow: 'Background',
+      headTitle: 'Background',
+      headTitleSeo:
+        'Background — Freelance CTO, Symfony & Sylius expert in Nantes',
+      headDescription:
+        'Background of Gabriel Mustiere, freelance CTO in Nantes. 14 years in tech, CTO since 2017. Symfony and Sylius expert. Product builder for SaaS and e-commerce, from early-stage startups to scale-ups.',
+      contactCta: 'Get in touch',
+      cvCta: 'Résumé (PDF)',
+      backHome: 'Back to home',
+      experiencesTitle: 'Experience',
+      expertisesTitle: 'Expertise',
+      securityTitle: 'Security & compliance',
+      modesTitle: 'How I work',
+      faqTitle: 'FAQ',
+      nextTitle: 'Next?',
+      nextSubtitle: "Let's talk.",
+      writeEmail: 'Write an email',
     },
   },
 } as const;

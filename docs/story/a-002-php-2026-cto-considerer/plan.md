@@ -187,7 +187,15 @@ excerpt:
 publishedAt: 2026-04-27
 category: Tech
 tags: [PHP, Symfony, FrankenPHP, Architecture]
-keywords: [PHP 2026, Symfony CTO, FrankenPHP performance, écosystème PHP, choix de stack, Hotwire Native Symfony]
+keywords:
+  [
+    PHP 2026,
+    Symfony CTO,
+    FrankenPHP performance,
+    écosystème PHP,
+    choix de stack,
+    Hotwire Native Symfony,
+  ]
 number: 2
 tldr:
   "PHP 8.5, Symfony 7, FrankenPHP en worker mode (3× la perf de PHP-FPM), outillage de niveau industriel (PHPStan level 10, Rector, Pest), Live Components et
