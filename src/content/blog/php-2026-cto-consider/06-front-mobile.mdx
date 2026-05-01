@@ -3,9 +3,9 @@
 This is probably the segment where, for a long time, PHP was objectively trailing. A modern web application implies client-side interactivity, and the
 historical PHP answer was never fully convincing. That's what has changed.
 
-**[Symfony UX Live Components](https://ux.symfony.com/live-component)** is now my default approach on B2B SaaS. A Twig component backed by a PHP class,
-updated server-side in response to user interaction, HTML rendering shipped in fragments, state preserved through signed HTML attributes. No JavaScript
-framework, no bundle, no logic duplicated between front and back. Concretely:
+**[Symfony UX Live Components](https://ux.symfony.com/live-component)** is now my default approach on B2B SaaS. A Twig component backed by a PHP class, updated
+server-side in response to user interaction, HTML rendering shipped in fragments, state preserved through signed HTML attributes. No JavaScript framework, no
+bundle, no logic duplicated between front and back. Concretely:
 
 ```php
 // src/Twig/Components/UserSearch.php
@@ -38,16 +38,16 @@ final class UserSearch
 </div>
 ```
 
-That's it. The `data-model` binds the input to `$query`, rendering updates on every keystroke (with debounce). For 80 % of the admin and B2B SaaS screens I
-see, that level of interactivity is more than enough, and we wrote zero JavaScript.
+That's it. The `data-model` binds the input to `$query`, rendering updates on every keystroke (with debounce). For 80 % of the admin and B2B SaaS screens I see,
+that level of interactivity is more than enough, and we wrote zero JavaScript.
 
 For **real-time**, Mercure is integrated natively into Symfony and API Platform. A push from the server, an SSE consumer in the browser, and you have
 notifications, collaborative editing, real-time status updates — without managing WebSockets.
 
-For **mobile**, the arrival of the **Hotwire Native bridge on the Symfony side** (via [`symfony/turbo`](https://symfony.com/bundles/TurboBundle/current/index.html)
-combined with 37signals' Hotwire native shell) shifts the trade-off. Instead of maintaining three codebases — React web, Swift iOS app, Kotlin Android app —
-you maintain one Symfony codebase that renders HTML, and two minimal native shells that load that HTML inside optimised WebViews. When you need native
-(camera, push notifications, sensors), you expose it via JS↔native bridges. This is Basecamp's approach for HEY, and it's now fully usable in a Symfony
-stack.
+For **mobile**, the arrival of the **Hotwire Native bridge on the Symfony side** (via
+[`symfony/turbo`](https://symfony.com/bundles/TurboBundle/current/index.html) combined with 37signals' Hotwire native shell) shifts the trade-off. Instead of
+maintaining three codebases — React web, Swift iOS app, Kotlin Android app — you maintain one Symfony codebase that renders HTML, and two minimal native shells
+that load that HTML inside optimised WebViews. When you need native (camera, push notifications, sensors), you expose it via JS↔native bridges. This is
+Basecamp's approach for HEY, and it's now fully usable in a Symfony stack.
 
 On a B2B SaaS product with a companion mobile app, this is often **the** right answer: single team, single codebase, free feature parity.

@@ -1,13 +1,12 @@
 ## Le langage a rattrapé — et dépassé — ce qu'on en attendait
 
-Le PHP que j'écris en 2026 ne ressemble pas à celui que j'écrivais en 2012. La transformation s'est faite par deux paliers. PHP 7.0 fin 2015 a refondu le moteur
-(Zend Engine 3) et acté un saut de performance d'environ ×2 sur des charges typiques. PHP 8.0 fin 2020 a posé le système de types moderne et introduit le JIT.
-Tout ce qui s'est ajouté depuis, de 8.1 à 8.5, relève de l'épaisseur, pas de la rupture.
+Le PHP de 2026 n’a plus grand-chose à voir avec celui de 2012. La transformation s’est faite en deux ruptures, puis une phase d’accumulation. PHP 7.0 fin 2015 a
+refondu le moteur (Zend Engine 3) et acté un saut de performance d'environ ×2 sur des charges typiques. PHP 8.0 fin 2020 a posé le système de types moderne et
+introduit le JIT. Tout ce qui s'est ajouté depuis, de 8.1 à 8.5, relève de l'épaisseur, pas de la rupture.
 
-Côté **typage**, sept versions ont transformé un langage permissif en un langage strict : types scalaires en 7.0, propriétés typées en 7.4, unions et `mixed` en
-8.0, enums et intersections en 8.1, readonly classes et DNF en 8.2, constantes de classe typées en 8.3, property hooks et visibilité asymétrique en 8.4. PHPStan
-en mode strict (j'y reviens en section dédiée) attrape la quasi-totalité des erreurs avant l'exécution. Concrètement, voici à quoi ressemble une entité moderne
-:
+Côté **typage**, sept versions ont transformé un langage permissif en un langage strict : Types scalaires (7.0), propriétés typées (7.4), unions et mixed (8.0),
+enums et intersections (8.1), readonly classes et DNF (8.2), constantes de classe typées (8.3), property hooks et visibilité asymétrique (8.4). Concrètement,
+aujourd’hui, une entité métier peut s’écrire ainsi :
 
 ```php
 final readonly class Order
@@ -28,9 +27,9 @@ final readonly class Order
 `get => ...` (property hook, 8.4) remplace le getter trivial. Le constructeur emporte déclaration et affectation des propriétés (constructor promotion, 8.0).
 Cette densité d'expression est ce qu'un développeur Kotlin ou C# moderne attend, et elle est désormais native côté PHP.
 
-Côté **expressivité**, les ajouts syntaxiques de la branche 8.x sont moins racontés mais plus visibles à la lecture. `match` (8.0) remplace `switch` avec
-comparaison stricte et retour de valeur. L'opérateur nullsafe `?->` chaîne sans test null intermédiaire. Les attributs natifs `#[Attribute]` (8.0) ont enterré
-les annotations docblock. Le pipe operator `|>` (8.5) fait passer une valeur de gauche à droite sans variables intermédiaires :
+Côté **expressivité**, les ajouts syntaxiques de la branche 8.x sont moins commentés, mais immédiatement visibles à la lecture. `match` (8.0) remplace `switch`
+avec comparaison stricte et retour de valeur. L'opérateur nullsafe `?->` chaîne sans test null intermédiaire. Les attributs natifs `#[Attribute]` (8.0) ont
+enterré les annotations docblock. Le pipe operator `|>` (8.5) fait passer une valeur de gauche à droite sans variables intermédiaires :
 
 ```php
 $slug = $title
@@ -47,8 +46,8 @@ applications web typiques, IO-bound, le JIT seul ne change pas grand-chose ; c'e
 statiquement dans 8.5 — qui a effacé l'argument structurel de lenteur.
 
 Côté **asynchrone**, les Fibers introduites en 8.1 sont stables depuis quatre versions majeures et utilisables en production via [AmPHP](https://amphp.org/) ou
-[ReactPHP](https://reactphp.org/). L'ergonomie n'est pas celle d'`async/await` en JavaScript, mais le résultat fonctionnel est le même : I/O concurrentes sans
-threads.
+[ReactPHP](https://reactphp.org/). L’ergonomie n’est pas celle `d’async/await` en JavaScript, mais le résultat fonctionnel est le même : gérer des `I/O`
+concurrentes sans recourir aux threads.
 
-Le langage que je présente à un junior aujourd'hui est plus proche d'un C# moderne ou d'un Kotlin que du PHP 5 qu'il imagine. Ça change immédiatement la nature
-de tout débat sur sa robustesse.
+Le langage que je présente à un junior aujourd'hui est plus proche d'un C# moderne ou d'un Kotlin que du PHP 5 qu'il imagine. Ça change complètement la nature
+du débat : on ne parle plus de savoir si PHP est robuste, mais dans quels cas il est le meilleur choix.

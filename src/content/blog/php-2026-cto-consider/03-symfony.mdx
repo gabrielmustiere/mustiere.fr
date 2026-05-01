@@ -5,43 +5,42 @@ what has been built around it.
 
 First, the ready-to-use **product** building blocks:
 
-| Need                   | Main component             | What you get out of the box                                                           |
-| ---------------------- | -------------------------- | ------------------------------------------------------------------------------------- |
-| REST / GraphQL API     | API Platform               | Generated CRUD, auto OpenAPI, filters, pagination, serialisation, native GraphQL      |
-| E-commerce             | Sylius                     | Catalogue, cart, checkout, taxes, promotions, multi-channel, multi-currency, headless |
-| Admin back-office      | EasyAdmin                  | Full CRUD on Doctrine entities in a few lines, dashboard, filters, exports            |
-| Real-time              | Mercure                    | Server-sent events, native API Platform integration                                   |
-| Reactive UI without JS | Symfony UX Live Component  | Twig components with server state, automatic AJAX updates                             |
-| Mobile (iOS/Android)   | Turbo + Hotwire Native     | Native app reusing server-side HTML, no React Native or Flutter                       |
+| Need                   | Main component            | What you get out of the box                                                           |
+| ---------------------- | ------------------------- | ------------------------------------------------------------------------------------- |
+| REST / GraphQL API     | API Platform              | Generated CRUD, auto OpenAPI, filters, pagination, serialisation, native GraphQL      |
+| E-commerce             | Sylius                    | Catalogue, cart, checkout, taxes, promotions, multi-channel, multi-currency, headless |
+| Admin back-office      | EasyAdmin                 | Full CRUD on Doctrine entities in a few lines, dashboard, filters, exports            |
+| Real-time              | Mercure                   | Server-sent events, native API Platform integration                                   |
+| Reactive UI without JS | Symfony UX Live Component | Twig components with server state, automatic AJAX updates                             |
+| Mobile (iOS/Android)   | Turbo + Hotwire Native    | Native app reusing server-side HTML, no React Native or Flutter                       |
 
 And behind them, the **framework itself** is around fifty decoupled components, each installable independently in any PHP project. The panorama, by domain,
 shows the breadth of coverage:
 
-| Domain                  | Components                                                                                            |
-| ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| HTTP & routing          | HttpFoundation, HttpKernel, HttpClient (sync/async/HTTP/2), Routing, Mime, WebLink                    |
-| Console & runtime       | Console, Process, Runtime, Dotenv                                                                     |
-| Configuration & DI      | Config, DependencyInjection, OptionsResolver, Yaml, ExpressionLanguage                                |
-| Security                | Security (Core/Bundle/Csrf/Http), PasswordHasher, RateLimiter, Lock, Semaphore, HtmlSanitizer, Ldap   |
-| Data & types            | Validator, Serializer, Form, PropertyAccess, PropertyInfo, TypeInfo, ObjectMapper, JsonPath           |
-| Async & events          | Messenger, Scheduler, EventDispatcher, RemoteEvent, Webhook, Workflow (state machines)                |
-| Communication           | Mailer (Amazon/SendGrid/Mailgun/Postmark/Brevo…), Notifier (SMS, push, Slack, Telegram, Discord…)     |
-| Cache & perf            | Cache (PSR-6/16 + tags), Clock, Stopwatch                                                             |
-| Filesystem & assets     | Filesystem, Finder, Asset, AssetMapper (no bundler, no Node)                                          |
-| I18n & identifiers      | Translation, Intl, Emoji, Uid (UUID v1–v8, ULID)                                                      |
-| Test & debug            | BrowserKit, DomCrawler, CssSelector, Panther (Chrome/Firefox), VarDumper, VarExporter, ErrorHandler   |
-| Frontend (Symfony UX)   | Turbo, LiveComponent, TwigComponent, Stimulus, Autocomplete, Icons, Chart.js, Map, React/Vue/Svelte   |
-| AI (since 2025)         | AI Platform, AI Agent, AI Chat/Store, OpenAI/Anthropic/Gemini/Mistral/Cohere bridges, MCP Bundle      |
+| Domain                | Components                                                                                          |
+| --------------------- | --------------------------------------------------------------------------------------------------- |
+| HTTP & routing        | HttpFoundation, HttpKernel, HttpClient (sync/async/HTTP/2), Routing, Mime, WebLink                  |
+| Console & runtime     | Console, Process, Runtime, Dotenv                                                                   |
+| Configuration & DI    | Config, DependencyInjection, OptionsResolver, Yaml, ExpressionLanguage                              |
+| Security              | Security (Core/Bundle/Csrf/Http), PasswordHasher, RateLimiter, Lock, Semaphore, HtmlSanitizer, Ldap |
+| Data & types          | Validator, Serializer, Form, PropertyAccess, PropertyInfo, TypeInfo, ObjectMapper, JsonPath         |
+| Async & events        | Messenger, Scheduler, EventDispatcher, RemoteEvent, Webhook, Workflow (state machines)              |
+| Communication         | Mailer (Amazon/SendGrid/Mailgun/Postmark/Brevo…), Notifier (SMS, push, Slack, Telegram, Discord…)   |
+| Cache & perf          | Cache (PSR-6/16 + tags), Clock, Stopwatch                                                           |
+| Filesystem & assets   | Filesystem, Finder, Asset, AssetMapper (no bundler, no Node)                                        |
+| I18n & identifiers    | Translation, Intl, Emoji, Uid (UUID v1–v8, ULID)                                                    |
+| Test & debug          | BrowserKit, DomCrawler, CssSelector, Panther (Chrome/Firefox), VarDumper, VarExporter, ErrorHandler |
+| Frontend (Symfony UX) | Turbo, LiveComponent, TwigComponent, Stimulus, Autocomplete, Icons, Chart.js, Map, React/Vue/Svelte |
+| AI (since 2025)       | AI Platform, AI Agent, AI Chat/Store, OpenAI/Anthropic/Gemini/Mistral/Cohere bridges, MCP Bundle    |
 
 This density is what I push back with against the "PHP is just 2010 web stuff" objection. Everything that elsewhere requires assembling four third-party
-libraries and two external services (queue + worker, retry + DLQ, signed URL + storage, OAuth + 2FA + rate limit, OpenTelemetry + injected clock for
-tests…) exists here under a homogeneous API, maintained by the same team, documented in the same place. On most of the products I see — B2B SaaS,
-marketplace, vertical platform — each of these blocks is used without glue code. **API Platform** in particular deserves a stop: declare a Doctrine entity,
-annotate it, and you have a documented REST + GraphQL + OpenAPI API, Mercure-pushable, without writing a controller. The productivity gain is measured in
-factors, not percentages.
+libraries and two external services (queue + worker, retry + DLQ, signed URL + storage, OAuth + 2FA + rate limit, OpenTelemetry + injected clock for tests…)
+exists here under a homogeneous API, maintained by the same team, documented in the same place. On most of the products I see — B2B SaaS, marketplace, vertical
+platform — each of these blocks is used without glue code. **API Platform** in particular deserves a stop: declare a Doctrine entity, annotate it, and you have
+a documented REST + GraphQL + OpenAPI API, Mercure-pushable, without writing a controller. The productivity gain is measured in factors, not percentages.
 
 I haven't run **Laravel** at length, but it has to be mentioned: the other major PHP framework, massive community, very polished DX, coherent product-oriented
-ecosystem (Forge, Vapor, Livewire, Reverb). For a small team that values convention over configuration, it's a perfectly defensible choice. **WordPress**,
-which I don't work with day-to-day either, remains an ecosystem staple — about 40 % of the web runs on it, the commercial plugin market is mature, and it now
-exposes a real REST/GraphQL API via WPGraphQL for anyone who wants to use it as a headless CMS. The PHP ecosystem isn't reducible to Symfony, and its various
-branches cover the full spectrum of modern web products.
+ecosystem (Forge, Vapor, Livewire, Reverb). For a small team that values convention over configuration, it's a perfectly defensible choice. **WordPress**, which
+I don't work with day-to-day either, remains an ecosystem staple — about 40 % of the web runs on it, the commercial plugin market is mature, and it now exposes
+a real REST/GraphQL API via WPGraphQL for anyone who wants to use it as a headless CMS. The PHP ecosystem isn't reducible to Symfony, and its various branches
+cover the full spectrum of modern web products.

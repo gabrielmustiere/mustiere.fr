@@ -21,8 +21,8 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 ### Changed
 
 - I18n unifiée : gestion centralisée des traductions, helpers de routage cohérents, meilleure maintenabilité.
-- Cover des side-projects déplacée de la grille `ProjectsSection` (home) vers le header de la page projet — la home retrouve une liste texte-only cohérente
-  avec le rendu blog.
+- Cover des side-projects déplacée de la grille `ProjectsSection` (home) vers le header de la page projet — la home retrouve une liste texte-only cohérente avec
+  le rendu blog.
 - Article PHP 2026 (FR brouillon) retravaillé : chapitres resserrés (historique, langage, Symfony, outillage), nouveaux chapitres `FrankenPHP` / `front-mobile`
   / `IA` dans la version EN.
 - Prose harmonisée : couleur de corps `#2a2622`, `font-size 16px`, `line-height 1.7`, et grille typographique complète sur les tables (`.prose table`).
