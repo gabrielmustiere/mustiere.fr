@@ -1,12 +1,12 @@
 ## The language has caught up — and gone past — what was expected of it
 
-The PHP I write in 2026 looks nothing like the PHP I wrote in 2012. The transformation came in two steps. PHP 7.0 in late 2015 rebuilt the engine (Zend
-Engine 3) and locked in a roughly ×2 performance jump on typical workloads. PHP 8.0 in late 2020 laid down the modern type system and introduced the JIT.
-Everything added since, from 8.1 to 8.5, is depth rather than rupture.
+The PHP of 2026 looks nothing like the PHP of 2012. The transformation came in two ruptures, then a phase of accumulation. PHP 7.0 in late 2015 rebuilt the
+engine (Zend Engine 3) and locked in a roughly ×2 performance jump on typical workloads. PHP 8.0 in late 2020 laid down the modern type system and introduced
+the JIT. Everything added since, from 8.1 to 8.5, is depth rather than rupture.
 
-On the **typing** side, seven versions have turned a permissive language into a strict one: scalar types in 7.0, typed properties in 7.4, unions and `mixed` in
-8.0, enums and intersections in 8.1, readonly classes and DNF in 8.2, typed class constants in 8.3, property hooks and asymmetric visibility in 8.4. PHPStan in
-strict mode (more on that in its own section) catches almost every error before runtime. Concretely, here's what a modern entity looks like:
+On the **typing** side, seven versions have turned a permissive language into a strict one: scalar types (7.0), typed properties (7.4), unions and `mixed`
+(8.0), enums and intersections (8.1), readonly classes and DNF (8.2), typed class constants (8.3), property hooks and asymmetric visibility (8.4). Concretely,
+today, a domain entity can be written like this:
 
 ```php
 final readonly class Order
@@ -27,9 +27,9 @@ final readonly class Order
 (property hook, 8.4) replaces the trivial getter. The constructor declares and assigns properties at once (constructor promotion, 8.0). This expression density
 is what a modern Kotlin or C# developer expects, and it's now native on the PHP side.
 
-On the **expressiveness** side, the syntactic additions of the 8.x branch are less talked about but more visible when reading code. `match` (8.0) replaces
-`switch` with strict comparison and a returned value. The nullsafe operator `?->` chains without intermediate null checks. Native attributes `#[Attribute]`
-(8.0) buried docblock annotations. The pipe operator `|>` (8.5) flows a value left to right without intermediate variables:
+On the **expressiveness** side, the syntactic additions of the 8.x branch are less talked about but immediately visible when reading code. `match` (8.0)
+replaces `switch` with strict comparison and a returned value. The nullsafe operator `?->` chains without intermediate null checks. Native attributes
+`#[Attribute]` (8.0) buried docblock annotations. The pipe operator `|>` (8.5) flows a value left to right without intermediate variables:
 
 ```php
 $slug = $title
@@ -46,8 +46,8 @@ IO-bound web applications, the JIT alone doesn't change much; it's the whole pic
 — that has erased the structural slowness argument.
 
 On the **async** side, Fibers introduced in 8.1 have been stable for four major versions and are usable in production via [AmPHP](https://amphp.org/) or
-[ReactPHP](https://reactphp.org/). The ergonomics aren't those of `async/await` in JavaScript, but the functional outcome is the same: concurrent I/O without
-threads.
+[ReactPHP](https://reactphp.org/). The ergonomics aren't those of `async/await` in JavaScript, but the functional outcome is the same: handling concurrent `I/O`
+without resorting to threads.
 
-The language I introduce to a junior today is closer to a modern C# or Kotlin than to the PHP 5 they imagine. That immediately changes the nature of any debate
-about its robustness.
+The language I introduce to a junior today is closer to a modern C# or Kotlin than to the PHP 5 they imagine. That completely changes the nature of the debate:
+we're no longer asking whether PHP is robust, but in which cases it's the best choice.

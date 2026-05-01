@@ -2,19 +2,21 @@
 questions:
   - q: 'Should you really start a new project in PHP/Symfony rather than Node or Python in 2026?'
     r: |
-      It depends on the product. For a web app that mainly consumes LLMs through APIs and needs API + back-office + e-commerce + mobile coverage, Symfony is
-      today the fastest choice to get up and running. For a strongly ML-oriented product (training, custom inference, large-scale data processing), Python
-      remains better placed. For a strongly real-time service under 100 ms, Node or Go can hold their own. The trap is to reason by genre rather than by use
-      case.
-  - q: 'FrankenPHP vs Laravel Octane or RoadRunner — which to pick?'
+      It depends on the product. For a web app that consumes LLMs through APIs and needs API + back-office + e-commerce + mobile coverage, Symfony is today
+      the fastest choice to get up and running — API Platform, EasyAdmin, Sylius, Live Components and the Hotwire Native bridge all come out of the box,
+      with no glue code. For a strongly ML-oriented product (training, custom inference, large-scale data processing), Python remains better placed. For a
+      strongly real-time service under one millisecond or systems tooling, Go or Rust come out ahead. The trap is reasoning by genre rather than by use case.
+  - q: 'FrankenPHP in worker mode: what does the migration cost on an existing Symfony codebase?'
     r: |
-      FrankenPHP is today the simplest to deploy (single binary, integrated Caddy, HTTP/3, Mercure) and it's the one I favour on Symfony. Octane is the
-      Laravel equivalent and remains an excellent option if you're already in that ecosystem. RoadRunner is older, more mature on fine-grained worker
-      management, used by large production setups. The three rest on the same idea — PHP process in memory — and the gaps between them are small compared to
-      the gap with classic PHP-FPM.
+      Low, in most cases. The rule fits in one sentence: don't keep mutable state between two requests. The rare services that cache request-scoped data
+      must implement `ResetInterface`, which is quickly fixed. Once that step is past, the gain is immediate: on the Symfony 7.4 benchmark published in
+      early 2026, you go from 1,240 RPS / p95 45 ms (Nginx + PHP-FPM) to 3,850 RPS / p95 8 ms (FrankenPHP worker). Deployment is simplified too — single
+      binary, integrated Caddy, automatic HTTPS, native HTTP/3 and Mercure. RoadRunner and Swoole remain serious alternatives for those who have already
+      invested in them.
   - q: 'How long for a Node or Python team to become productive in Symfony?'
     r: |
-      On the teams I've seen migrate, a senior developer comfortable with a typed full-stack framework (Spring, Rails, NestJS, Django) reaches a decent level
-      in two to four weeks, and full productivity in two to three months. The main brake isn't the language but getting familiar with Symfony conventions
-      (DI, services, Doctrine, Messenger). It's a modest investment compared to the productivity gains of the full ecosystem.
+      On the teams I've seen migrate, a senior developer comfortable with a typed full-stack framework (Spring, Rails, NestJS, Django) reaches a decent
+      level in two to four weeks, and full productivity in two to three months. The main brake isn't the language — PHP 8.5 is close to a modern C# or
+      Kotlin — but getting familiar with Symfony conventions (DI, services, Doctrine, Messenger). It's a modest investment compared to the functional
+      coverage you get back in return.
 ---

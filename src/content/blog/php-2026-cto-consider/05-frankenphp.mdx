@@ -1,10 +1,10 @@
 ## FrankenPHP — the rupture that changes the infrastructure equation
 
-This is probably the most brutal transformation of the last two years. [FrankenPHP](https://frankenphp.dev/), built by Kévin Dunglas (the creator of API
+This is probably the most structuring transformation of the last two years. [FrankenPHP](https://frankenphp.dev/), built by Kévin Dunglas (the creator of API
 Platform), is a PHP application server built on Caddy, distributed as a single binary, and offering a **worker mode**: the PHP process stays in memory between
-requests, the framework bootstrap runs only once.
+requests, and the framework bootstrap runs only once at worker start-up.
 
-The result isn't a marginal improvement. Here's a benchmark published on Symfony 7.4
+The result isn't a marginal improvement. On a standard Symfony application, here's a benchmark published on Symfony 7.4
 ([source DEV.to, early 2026](https://dev.to/mattleads/from-45ms-to-8ms-benchmarking-symfony-74-on-frankenphp-ekk)):
 
 | Setup                    | Throughput | p95 latency |
@@ -12,16 +12,18 @@ The result isn't a marginal improvement. Here's a benchmark published on Symfony
 | Nginx + PHP-FPM          | 1,240 RPS  | 45 ms       |
 | FrankenPHP (worker mode) | 3,850 RPS  | 8 ms        |
 
-Three times more requests per second, p95 latency divided by five. On Laravel, community-reported worker mode migrations bring average latency from 7 seconds to
-66 milliseconds on slow endpoints. These figures are dated (re-confirm under your own load conditions), but the order of magnitude is real.
+Three times more requests per second, p95 latency divided by five. On Laravel, some worker mode migrations reported by the community show very significant gains
+on slow endpoints (to be contextualised case by case). These results need to be validated in the context of your own load, but the order of magnitude is
+representative.
 
-The **infrastructure implication** is simple: at constant traffic, you divide by three or four the number of workers needed. On a B2B SaaS serving a few
-thousand concurrent users, that translates into going from four-to-six application instances down to one or two. The monthly cost follows. And deployment is
-simpler: one FrankenPHP binary embeds the app, Caddy, automatic HTTPS, HTTP/3, Mercure. No more Nginx + PHP-FPM + opcache + reverse proxy stack to orchestrate.
+The infrastructure implication is direct: at constant traffic, you divide by three or four the number of workers needed. On a B2B SaaS serving a few thousand
+concurrent users, that typically translates into going from four-to-six application instances down to one or two. The monthly cost follows.
 
-The **migration** is surprisingly cheap. Most Symfony apps run in worker mode without changes, provided one simple rule is respected: don't keep mutable state
-at the service level. The rare services that cache request-scoped data must implement `ResetInterface`, which takes a few minutes per service. On the SaaS with
-around 1,000 controllers I converted recently, that meant **one** service to modify.
+Deployment is also simplified: a FrankenPHP binary can embed the server, the PHP runtime and the HTTP configuration (Caddy), with automatic HTTPS, HTTP/3 and
+native integration with Mercure. You move away from a classic Nginx + PHP-FPM + reverse proxy stack to orchestrate.
 
-The historical "PHP slowness" argument rested on the per-request process model of PHP-FPM. That model is no longer the only option — and at least in the
-applicative web context, performance can be considered settled.
+Migration is surprisingly cheap. Most Symfony applications run in worker mode without changes, provided one simple rule is respected: don't keep mutable state
+between two requests. The rare services that cache request-scoped data must implement `ResetInterface`, which is generally quick to fix.
+
+The historical "PHP slowness" argument rested on the per-request process model of PHP-FPM. That model is no longer the only option — and, on the majority of
+applicative web projects, performance is no longer a discriminating factor.

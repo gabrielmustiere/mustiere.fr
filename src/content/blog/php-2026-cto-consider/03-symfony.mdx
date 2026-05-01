@@ -1,9 +1,9 @@
-## Symfony, and an ecosystem that covers everything
+## Symfony: an ecosystem that covers everything
 
-Symfony has been my working foundation for five major versions — modular, strongly typed, every component usable independently. The real argument in 2026 is
-what has been built around it.
+Symfony has been my working foundation since Symfony 2 — modular, strongly typed, every component usable independently. The real argument in 2026 is what has
+been built around it.
 
-First, the ready-to-use **product** building blocks:
+These building blocks directly address the most common product needs:
 
 | Need                   | Main component            | What you get out of the box                                                           |
 | ---------------------- | ------------------------- | ------------------------------------------------------------------------------------- |
@@ -14,8 +14,8 @@ First, the ready-to-use **product** building blocks:
 | Reactive UI without JS | Symfony UX Live Component | Twig components with server state, automatic AJAX updates                             |
 | Mobile (iOS/Android)   | Turbo + Hotwire Native    | Native app reusing server-side HTML, no React Native or Flutter                       |
 
-And behind them, the **framework itself** is around fifty decoupled components, each installable independently in any PHP project. The panorama, by domain,
-shows the breadth of coverage:
+And behind them, the **framework itself rests on more than fifty decoupled components**, each installable independently in any PHP project. The panorama, by
+domain, shows the breadth of coverage:
 
 | Domain                | Components                                                                                          |
 | --------------------- | --------------------------------------------------------------------------------------------------- |
@@ -33,14 +33,18 @@ shows the breadth of coverage:
 | Frontend (Symfony UX) | Turbo, LiveComponent, TwigComponent, Stimulus, Autocomplete, Icons, Chart.js, Map, React/Vue/Svelte |
 | AI (since 2025)       | AI Platform, AI Agent, AI Chat/Store, OpenAI/Anthropic/Gemini/Mistral/Cohere bridges, MCP Bundle    |
 
-This density is what I push back with against the "PHP is just 2010 web stuff" objection. Everything that elsewhere requires assembling four third-party
-libraries and two external services (queue + worker, retry + DLQ, signed URL + storage, OAuth + 2FA + rate limit, OpenTelemetry + injected clock for tests…)
-exists here under a homogeneous API, maintained by the same team, documented in the same place. On most of the products I see — B2B SaaS, marketplace, vertical
-platform — each of these blocks is used without glue code. **API Platform** in particular deserves a stop: declare a Doctrine entity, annotate it, and you have
-a documented REST + GraphQL + OpenAPI API, Mercure-pushable, without writing a controller. The productivity gain is measured in factors, not percentages.
+Everything that elsewhere requires assembling several third-party libraries and external services — queue + worker, retry + DLQ, signed URL + storage, OAuth +
+2FA + rate limit, OpenTelemetry + injected clock for tests — exists here under a homogeneous API, maintained by the same team, documented in the same place.
 
-I haven't run **Laravel** at length, but it has to be mentioned: the other major PHP framework, massive community, very polished DX, coherent product-oriented
-ecosystem (Forge, Vapor, Livewire, Reverb). For a small team that values convention over configuration, it's a perfectly defensible choice. **WordPress**, which
-I don't work with day-to-day either, remains an ecosystem staple — about 40 % of the web runs on it, the commercial plugin market is mature, and it now exposes
-a real REST/GraphQL API via WPGraphQL for anyone who wants to use it as a headless CMS. The PHP ecosystem isn't reducible to Symfony, and its various branches
-cover the full spectrum of modern web products.
+On most of the products I see come through — B2B SaaS, marketplace, vertical platform — each of these blocks is used without glue code.
+
+**API Platform** in particular deserves a stop: declare a Doctrine entity, annotate it, and you get a documented REST + GraphQL + OpenAPI API, Mercure-pushable,
+without writing a controller. In some contexts, the productivity gain is measured in factors, not in percentages.
+
+I haven't used **Laravel** in depth over the long run, but it has to be mentioned: the other major PHP framework, massive community, very polished DX, coherent
+product-oriented ecosystem (Forge, Vapor, Livewire, Reverb). For a small team that values convention over configuration, it's a perfectly defensible choice.
+
+**WordPress**, which I don't work with day-to-day either, remains an ecosystem staple — about 40 % of the web runs on it, the commercial plugin market is
+mature, and it now exposes a real REST/GraphQL API via WPGraphQL for anyone who wants to use it as a headless CMS.
+
+The PHP ecosystem isn't reducible to Symfony, and its various branches cover the full spectrum of modern web products.
