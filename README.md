@@ -1,4 +1,8 @@
-# Handoff — Portfolio Gabriel Mustiere
+# Brief design — Portfolio Gabriel Mustiere
+
+> **Document historique.** Ce fichier est le brief de design original utilisé pour bootstrapper le site. Il sert aujourd'hui de **référence visuelle et de
+> source de tokens** : couleurs, typographies, échelles, comportements. Pour les commandes, l'architecture Astro et les conventions code, voir
+> [`CLAUDE.md`](CLAUDE.md) et [`DEVELOPMENT.md`](DEVELOPMENT.md). Pour la source de vérité visuelle haute-fidélité, voir [`designs/*.html`](designs/).
 
 ## Overview
 
@@ -6,19 +10,19 @@ Portfolio mono-page pour Gabriel Mustiere, CTO freelance basé à Nantes. Le sit
 
 - **Page d'accueil** (`v3-quiet-nav.html`) — identité, parcours, extraits d'articles de blog, projets, contact, CV, avec une sidebar sticky contenant un index
   §01–§05 et un scroll-spy coloré.
-- **Liste des articles de blog** (`blog.html`) — 12 articles avec filtres par catégorie (IA / Tech / Lead / Business), article mis en avant en tête.
+- **Liste des articles de blog** (`blog.html`) — articles avec filtres par catégorie (IA / Tech / Lead / Business), article mis en avant en tête.
 - **Page d'article** (`article.html`) — lecture longue éditoriale avec barre de progression, drop cap, citations, blocs de code stylés, « à lire ensuite ».
 
-Ton éditorial, minimaliste, typographie mixte (serif + sans + mono), palette beige + accents colorés sobres.
+Ton éditorial, minimaliste, typographie mixte (serif + sans + mono), palette beige + accents colorés sobres. Le site a depuis été étendu en **bilingue FR/EN**
+(non couvert par ce brief — voir `CLAUDE.md` § i18n).
 
 ## About the Design Files
 
 Les fichiers dans `designs/` sont des **références design réalisées en HTML pur + Tailwind CDN**. Ce ne sont **pas** du code de production à copier-coller.
-L'objectif est de **recréer fidèlement ces maquettes dans un projet Astro neuf** en utilisant les patterns idiomatiques Astro (composants `.astro`, content
-collections pour le blog, assets optimisés).
+Ils servent de source de vérité visuelle pour la recréation des écrans dans le projet Astro.
 
-Le style Tailwind utilisé dans les maquettes est Tailwind v4 via CDN (`@tailwindcss/browser@4`) avec un bloc `@theme` custom. Dans Astro, il faudra installer
-l'intégration Tailwind officielle et déplacer les tokens dans `tailwind.config` ou un `global.css`.
+Le style Tailwind utilisé dans les maquettes est Tailwind v4 via CDN (`@tailwindcss/browser@4`) avec un bloc `@theme` custom. Dans le projet, Tailwind 4 est
+installé via `@tailwindcss/postcss` et les tokens `@theme` vivent dans `src/styles/global.css`.
 
 ## Fidelity
 
@@ -27,44 +31,15 @@ libertés : optimisations techniques (chargement fonts, code-splitting, images r
 
 ---
 
-## Stack cible recommandée
+## Stack effective
 
-- **Astro 4+** (SSG pur — pas d'islands React nécessaires ici)
-- **Tailwind CSS v4** via `@astrojs/tailwind`
-- **Content Collections** pour les articles de blog (markdown / MDX)
-- **@fontsource** pour self-host les webfonts (meilleures perfs que Google Fonts CDN)
-- **astro:assets** pour les images (quand le client fournira les visuels)
+- **Astro 6** (SSG pur — pas d'islands framework, ~1 KB JS gzip total)
+- **Tailwind CSS 4** via `@tailwindcss/postcss` (`postcss.config.mjs`)
+- **Content Collections** Astro pour `blog` (`*.mdx`) et `projects` (`*.md`) avec loader `chapteredGlob` (forme plate ou dossier + chapitres)
+- **`@fontsource`** pour self-host Instrument Serif, Inter, JetBrains Mono
+- **`astro:assets`** pour la génération AVIF/WebP des covers d'articles
 
-Structure de projet proposée :
-
-```
-src/
-├── components/
-│   ├── Sidebar.astro          # sidebar sticky de la page d'accueil
-│   ├── TopNav.astro           # menu haut pour blog.html et article.html
-│   ├── SectionHead.astro      # en-tête "§ 0X · Titre" coloré
-│   ├── BlogListItem.astro
-│   └── AccentLink.astro
-├── layouts/
-│   ├── BaseLayout.astro       # html/head/body + fonts + global.css
-│   ├── HomeLayout.astro       # BaseLayout + Sidebar + scroll-spy
-│   └── BlogLayout.astro       # BaseLayout + TopNav
-├── content/
-│   ├── config.ts              # collection schema
-│   └── blog/
-│       ├── evaluations-llm.md
-│       └── ...
-├── pages/
-│   ├── index.astro            # recrée v3-quiet-nav.html
-│   ├── blog/
-│   │   ├── index.astro        # recrée blog.html
-│   │   └── [slug].astro       # recrée article.html, rend un post
-│   └── cv.pdf                 # fichier statique
-├── styles/
-│   └── global.css             # tokens @theme + accents oklch
-└── public/
-    └── fonts/                 # si fonts auto-hébergées
-```
+L'arborescence réelle vit sous `src/` — voir [`DEVELOPMENT.md`](DEVELOPMENT.md#arborescence) pour la cartographie à jour.
 
 ---
 
@@ -209,14 +184,20 @@ Implémentation recommandée en Astro :
 <!-- src/components/Sidebar.astro : script inline en bas -->
 <script>
   const links = document.querySelectorAll('.idx-link[data-key]');
-  const sections = ['about', 'blog', 'projects', 'contact', 'cv'].map((k) => document.getElementById(k)).filter(Boolean);
+  const sections = ['about', 'blog', 'projects', 'contact', 'cv']
+    .map((k) => document.getElementById(k))
+    .filter(Boolean);
 
   const io = new IntersectionObserver(
     (entries) => {
-      const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      const visible = entries
+        .filter((e) => e.isIntersecting)
+        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
       if (!visible.length) return;
       const key = visible[0].target.id;
-      links.forEach((a) => a.classList.toggle('is-active', a.dataset.key === key));
+      links.forEach((a) =>
+        a.classList.toggle('is-active', a.dataset.key === key)
+      );
     },
     { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] }
   );
@@ -234,26 +215,8 @@ Implémentation recommandée en Astro :
 - **Archive** : liste `<li>` avec grid `[110px_1fr_80px_60px]` (date / titre / catégorie / temps)
 - Filtrage client side : JS simple qui toggle `.hidden` selon `data-tags` sur `<li>`
 
-Content Collection schema (`src/content/config.ts`) :
-
-```ts
-import { defineCollection, z } from 'astro:content';
-
-const blog = defineCollection({
-  type: 'content',
-  schema: z.object({
-    title: z.string(),
-    excerpt: z.string(),
-    date: z.date(),
-    readTime: z.number(), // minutes
-    category: z.enum(['IA', 'Tech', 'Lead', 'Business']),
-    featured: z.boolean().optional().default(false),
-    number: z.number(), // pour le § № 07
-  }),
-});
-
-export const collections = { blog };
-```
+Pour le schéma Zod effectif (avec sections SEO `resume`/`faq`/`sources`, cover obligatoire, `lang`/`translationOf`), voir `src/content.config.ts` — la
+structure réelle a divergé du schéma proposé dans le brief.
 
 ### 3. Page d'article — `src/pages/blog/[slug].astro` (d'après `article.html`)
 
@@ -340,11 +303,8 @@ Aucun asset bitmap à ce stade — toutes les illustrations sont typographiques.
 
 ## Copy / contenu
 
-Tout le texte est en **français**. Les articles blog sont des stubs de démo à remplacer par le vrai contenu client. Les titres/handles sont placeholder :
-
-- `hello@gabrielmustiere.fr` — email
-- `github.com/gmustiere` — à valider avec Gabriel
-- `linkedin.com/in/gabrielmustiere` — à valider avec Gabriel
+Tout le texte du brief est en **français**. Le site déployé est désormais bilingue FR/EN — voir `src/i18n/ui.ts` pour les chaînes UI et `src/consts.ts` pour
+les coordonnées canoniques (domaine `mustiere.fr`, GitHub `github.com/gabrielmustiere`, LinkedIn `linkedin.com/in/gabrielmustiere`).
 
 ---
 
@@ -360,64 +320,9 @@ Pour voir une maquette en contexte : ouvre-la dans un navigateur (elle est auton
 
 ---
 
-## Guide Astro pas-à-pas (pour démarrer, si tu ne connais pas)
-
-```bash
-# 1. Créer le projet
-npm create astro@latest portfolio-gm -- --template minimal --typescript strict
-cd portfolio-gm
-
-# 2. Ajouter Tailwind
-npx astro add tailwind
-
-# 3. Ajouter @fontsource pour les fonts
-npm i @fontsource/instrument-serif @fontsource/inter @fontsource/jetbrains-mono
-
-# 4. Créer la structure décrite plus haut
-# 5. Dev
-npm run dev
-```
-
-Dans `src/layouts/BaseLayout.astro`, importer les fonts :
-
-```astro
----
-import '@fontsource/instrument-serif/400.css';
-import '@fontsource/instrument-serif/400-italic.css';
-import '@fontsource/inter/300.css';
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/500.css';
-import '@fontsource/inter/600.css';
-import '@fontsource/jetbrains-mono/400.css';
-import '@fontsource/jetbrains-mono/500.css';
-import '../styles/global.css';
----
-```
-
-Dans `src/styles/global.css`, placer les tokens `@theme` + palette oklch + classes `.acc-*`, `.link-u`, `.hl`, `.idx-link`, `.prose`, etc. (copier-coller depuis
-la balise `<style>` des maquettes, nettoyer ce qui est lié au mode Tweaks qui n'est pas nécessaire en prod).
-
-Dans `astro.config.mjs`, pas de config spéciale — Astro sert les pages statiques.
-
-Pour le blog, utiliser `getCollection('blog')` dans `src/pages/blog/index.astro` et `getStaticPaths` + `entry.render()` dans `[slug].astro`.
-
----
-
 ## Ce qui est volontairement exclu des maquettes
 
 - Le panneau "Tweaks" visible dans les maquettes (coin bas-droite) est un **outil de preview interne** uniquement. **Ne pas le porter en production**. Le script
   `TWEAK_DEFAULTS` et le module `EDITMODE-BEGIN/END` peuvent être ignorés.
 - La variante de réordonnancement des sections n'a pas besoin d'être gardée — l'ordre §01 → §05 est final.
 - Les choix de polices alternatives (Fraunces, Newsreader) sont exploratoires ; rester sur **Instrument Serif + Inter + JetBrains Mono**.
-
----
-
-## Points à valider avec le client avant implémentation
-
-1. Handle GitHub (`gmustiere` ?) et URL LinkedIn exacts
-2. Domaine cible (`gabrielmustiere.fr` ?)
-3. Contenu réel du CV (PDF à fournir)
-4. Photo / avatar pour la byline article
-5. Contenu réel des 12 articles blog (titres, catégories, corps)
-6. Les 3 projets de la section §03 (nom, résumé, stack, résultat)
-7. Année de début de carrière pour l'âge dynamique "15+ ans"

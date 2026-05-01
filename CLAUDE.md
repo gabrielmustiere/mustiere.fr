@@ -9,6 +9,7 @@ npm run dev       # dev server (http://localhost:4321)
 npm run build     # SSG → dist/
 npm run preview   # preview du build
 npm run check     # astro check (TS + diagnostics content collections)
+npm run test      # node --test tests/**/*.test.mjs (loaders content)
 npm run lint      # eslint .
 npm run lint:fix  # eslint . --fix
 npm run format    # prettier --write .
@@ -16,8 +17,8 @@ npm run format    # prettier --write .
 
 `make serve` lance dev sur `http://mustiere.wip:4321` (ajoute l'entrée /etc/hosts via sudo).
 
-Aucun runner de tests : la CI repose sur `astro check` + Lighthouse CI (`lighthouserc.json`) + pa11y-ci (`.pa11yci.json`). Pour reproduire localement :
-`npm run build && npx lhci autorun` ou `npx pa11y-ci`.
+Tests unitaires Node natifs (`node --test`) ciblant les loaders / parseurs de content collections (`tests/seo-sections.test.mjs`). La CI ajoute `astro check`,
+Lighthouse CI (`lighthouserc.json`) et pa11y-ci (`.pa11yci.json`). Pour reproduire localement : `npm run build && npx lhci autorun` ou `npx pa11y-ci`.
 
 ## Architecture
 
@@ -37,17 +38,19 @@ oklch, typo, spacing) vivent dans `src/styles/global.css` sous `@theme`.
 
 ### Content Collections (`src/content.config.ts`)
 
-- **`blog`** (`*.mdx`) — schéma Zod strict : `tldr` 60–320 chars (lu par les LLMs), `excerpt` 80–220, `number` requis, `category ∈ {IA, Tech, Lead, Business}`,
-  `lang` + `translationOf` optionnels.
-- **`projects`** (`*.md`) — `status`, `kind`, `order` pour le tri.
+- **`blog`** (`*.mdx`) — schéma Zod strict : `excerpt` 80–220, `number` requis, `category ∈ {IA, Tech, Lead, Business}`, `cover` requis (ou hérité via
+  `translationOf`), `lang` + `translationOf` optionnels. Sections SEO injectées par le loader (cf. `seo-sections.ts`) : `resume.mdx` **obligatoire** (≥ 60 chars
+  plain text, lu par les LLMs et affiché en tête d'article), `faq.mdx` optionnel (`questions: [{q, r}]` en YAML), `sources.mdx` optionnel (citations).
+- **`projects`** (`*.md`) — `status`, `kind`, `order` pour le tri ; mêmes sections SEO (`resume.mdx` obligatoire, `faq.mdx` / `sources.mdx` optionnels).
 - Le build **échoue** si un frontmatter ne valide pas. C'est intentionnel : ne pas relâcher le schéma pour faire passer un article, corriger l'article.
 - **Loader** : `chapteredGlob` (`src/content-loaders/chaptered-glob.ts`) — remplace `glob`. Supporte deux formes pour chaque entrée :
   - **Forme plate** : `<slug>.{md,mdx}` à la racine du dossier de collection. C'est la forme historique, encore valide.
   - **Forme dossier** (recommandée pour les articles longs) : `<slug>/index.{md,mdx}` avec frontmatter, accompagné de chapitres `NN-<kebab>.{md,mdx}` (préfixe à
-    2 chiffres + tiret + kebab-case). Le `body` agrégé = `index.body` puis chapitres triés alphabétiquement, joints par `\n\n`. Les URLs publiques restent
-    identiques (l'`id` de l'entrée = nom du dossier).
+    2 chiffres + tiret + kebab-case) et des sections SEO réservées (`resume.mdx`, `faq.mdx`, `sources.mdx`). Le `body` agrégé = `index.body` puis chapitres
+    triés alphabétiquement, joints par `\n\n`. Les URLs publiques restent identiques (l'`id` de l'entrée = nom du dossier).
 - Règles **strictes** dans la forme dossier : un seul `index.{md,mdx}` autorisé ; les chapitres sont sans frontmatter et sans `import`/`export` au top-level
-  (l'agrégateur lèvera une erreur build sinon, cf. plan 004-r option ii) ; pas d'autre `.md`/`.mdx` non conforme dans le dossier.
+  (l'agrégateur lèvera une erreur build sinon, cf. plan 004-r option ii) ; les noms `resume.mdx` / `faq.mdx` / `sources.mdx` sont réservés (cf.
+  `RESERVED_SECTION_FILES`) ; pas d'autre `.md`/`.mdx` non conforme dans le dossier.
 
 ### Vérifier la non-régression d'un chapitre
 
@@ -65,15 +68,22 @@ Le diff masque uniquement le `<lastmod>` du sitemap. Tout autre changement atten
 
 ### Pages dynamiques
 
-- `src/pages/blog/[...slug].astro` + `src/pages/en/blog/[...slug].astro` filtrent la collection par `lang` dans `getStaticPaths`. Idem pour `projects/`.
+- `src/pages/blog/[...slug].astro` + `src/pages/en/blog/[...slug].astro` filtrent la collection par `lang` dans `getStaticPaths`. Idem pour `projects/`. Le
+  filtrage publication/draft passe par `isPublished(entry, lang)` (`src/utils/content.ts`) — toute nouvelle page consommant `blog`/`projects` doit utiliser
+  ce helper plutôt que d'inliner `!data.draft && data.lang === ...`.
 - `src/pages/llms.txt.ts` et `llms-full.txt.ts` génèrent au build l'index + le corpus markdown complet (standard Jeremy Howard) — versions FR et EN sous `/en/`.
 - `rss.xml.ts` : 20 derniers posts, par langue.
 
 ### Layouts
 
 `BaseLayout` (html/head, fonts self-hostées, JSON-LD via `components/seo/StructuredData.astro`) ← `SiteLayout` (sidebar + nav) ← `ArticleLayout` /
-`ProjectLayout` (prose, ReadingProgress, RelatedItems). Le composant `pages/HomePage.astro` est rendu depuis les deux `index.astro` (FR et EN) pour partager la
-composition.
+`ProjectLayout` (prose, ReadingProgress, RelatedItems). Les composants `src/components/pages/*.astro` (`HomePage`, `BlogArchive`, `ParcoursPage`,
+`NotFoundPage`) sont rendus depuis les paires d'`index.astro` FR (`src/pages/`) et EN (`src/pages/en/`) pour partager la composition entre les deux langues.
+
+### Routes nommées (`src/i18n/routes.ts`)
+
+Les chemins divergents entre FR et EN passent par `routePath(name, lang)` — ex. `parcours` (`/parcours` FR ↔ `/background` EN). Ne jamais hard-coder
+`/background` ou `/parcours` côté composant : combiner `routePath()` et `localizedPath()` pour éviter la dérive d'URLs.
 
 ### SEO
 
