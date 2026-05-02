@@ -1,6 +1,4 @@
 HOST := mustiere.wip
-PORT := 4321
-URL  := http://$(HOST):$(PORT)
 
 .PHONY: help install serve dev build preview check format wrap-md clean hosts-add hosts-remove
 
@@ -22,9 +20,7 @@ install:
 	npm install
 
 serve: hosts-add
-	@echo "→ Ouverture de $(URL)"
-	@( sleep 2 && open $(URL) ) &
-	npm run dev -- --host $(HOST) --port $(PORT)
+	portless mustiere astro dev
 
 dev:
 	npm run dev

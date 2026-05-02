@@ -15,6 +15,7 @@ import {
   faqPageSchema,
   softwareSourceCodeSchema,
 } from '@/utils/schema';
+import { formatDateDottedFull, toISODate } from '@/utils/format-date';
 import { truncateForMeta } from '@/utils/meta';
 import { SITE } from '@/consts';
 import {
@@ -68,7 +69,8 @@ const schemas = [
     title: data.title,
     description: data.excerpt,
     slug: project.id,
-    year: data.year,
+    publishedAt: data.publishedAt,
+    updatedAt: data.updatedAt,
     repository: data.url,
     lang,
     cover: data.cover,
@@ -225,11 +227,31 @@ const metaDescription = truncateForMeta(data.resume.plain);
         )
       }
 
-      <SectionMarker
-        label={endLabel}
-        accent="projects"
-        trailing={String(data.year)}
-      />
+      {
+        data.updatedAt &&
+        data.updatedAt.getTime() !== data.publishedAt.getTime() ? (
+          <SectionMarker label={endLabel} accent="projects">
+            <Fragment slot="trailing">
+              {tr.article.publishedOn}{' '}
+              <time datetime={toISODate(data.publishedAt)}>
+                {formatDateDottedFull(data.publishedAt)}
+              </time>
+              {' · '}
+              {tr.article.updatedOn}{' '}
+              <time datetime={toISODate(data.updatedAt)}>
+                {formatDateDottedFull(data.updatedAt)}
+              </time>
+            </Fragment>
+          </SectionMarker>
+        ) : (
+          <SectionMarker
+            label={endLabel}
+            accent="projects"
+            trailing={formatDateDottedFull(data.publishedAt)}
+            trailingDateTime={toISODate(data.publishedAt)}
+          />
+        )
+      }
 
       <RelatedItems
         kind="project"

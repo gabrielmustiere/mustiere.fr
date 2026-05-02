@@ -18,8 +18,8 @@ Ton éditorial, minimaliste, typographie mixte (serif + sans + mono), palette be
 
 ## About the Design Files
 
-Les fichiers dans `designs/` sont des **références design réalisées en HTML pur + Tailwind CDN**. Ce ne sont **pas** du code de production à copier-coller.
-Ils servent de source de vérité visuelle pour la recréation des écrans dans le projet Astro.
+Les fichiers dans `designs/` sont des **références design réalisées en HTML pur + Tailwind CDN**. Ce ne sont **pas** du code de production à copier-coller. Ils
+servent de source de vérité visuelle pour la recréation des écrans dans le projet Astro.
 
 Le style Tailwind utilisé dans les maquettes est Tailwind v4 via CDN (`@tailwindcss/browser@4`) avec un bloc `@theme` custom. Dans le projet, Tailwind 4 est
 installé via `@tailwindcss/postcss` et les tokens `@theme` vivent dans `src/styles/global.css`.
@@ -184,20 +184,14 @@ Implémentation recommandée en Astro :
 <!-- src/components/Sidebar.astro : script inline en bas -->
 <script>
   const links = document.querySelectorAll('.idx-link[data-key]');
-  const sections = ['about', 'blog', 'projects', 'contact', 'cv']
-    .map((k) => document.getElementById(k))
-    .filter(Boolean);
+  const sections = ['about', 'blog', 'projects', 'contact', 'cv'].map((k) => document.getElementById(k)).filter(Boolean);
 
   const io = new IntersectionObserver(
     (entries) => {
-      const visible = entries
-        .filter((e) => e.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+      const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
       if (!visible.length) return;
       const key = visible[0].target.id;
-      links.forEach((a) =>
-        a.classList.toggle('is-active', a.dataset.key === key)
-      );
+      links.forEach((a) => a.classList.toggle('is-active', a.dataset.key === key));
     },
     { rootMargin: '-20% 0px -60% 0px', threshold: [0, 0.1, 0.5, 1] }
   );
@@ -215,8 +209,8 @@ Implémentation recommandée en Astro :
 - **Archive** : liste `<li>` avec grid `[110px_1fr_80px_60px]` (date / titre / catégorie / temps)
 - Filtrage client side : JS simple qui toggle `.hidden` selon `data-tags` sur `<li>`
 
-Pour le schéma Zod effectif (avec sections SEO `resume`/`faq`/`sources`, cover obligatoire, `lang`/`translationOf`), voir `src/content.config.ts` — la
-structure réelle a divergé du schéma proposé dans le brief.
+Pour le schéma Zod effectif (avec sections SEO `resume`/`faq`/`sources`, cover obligatoire, `lang`/`translationOf`), voir `src/content.config.ts` — la structure
+réelle a divergé du schéma proposé dans le brief.
 
 ### 3. Page d'article — `src/pages/blog/[slug].astro` (d'après `article.html`)
 
@@ -303,8 +297,8 @@ Aucun asset bitmap à ce stade — toutes les illustrations sont typographiques.
 
 ## Copy / contenu
 
-Tout le texte du brief est en **français**. Le site déployé est désormais bilingue FR/EN — voir `src/i18n/ui.ts` pour les chaînes UI et `src/consts.ts` pour
-les coordonnées canoniques (domaine `mustiere.fr`, GitHub `github.com/gabrielmustiere`, LinkedIn `linkedin.com/in/gabrielmustiere`).
+Tout le texte du brief est en **français**. Le site déployé est désormais bilingue FR/EN — voir `src/i18n/ui.ts` pour les chaînes UI et `src/consts.ts` pour les
+coordonnées canoniques (domaine `mustiere.fr`, GitHub `github.com/gabrielmustiere`, LinkedIn `linkedin.com/in/gabrielmustiere`).
 
 ---
 

@@ -11,24 +11,39 @@ La première brique SEO n'est pas dans le HTML, elle est dans le modèle de donn
 ```ts
 // src/content.config.ts
 const blog = defineCollection({
-  loader: glob({ pattern: '**/*.mdx', base: './src/content/blog' }),
-  schema: z.object({
-    title: z.string().max(120),
-    excerpt: z.string().min(80).max(220),
-    publishedAt: z.coerce.date(),
-    updatedAt: z.coerce.date().optional(),
-    category: z.enum(['IA', 'Tech', 'Lead', 'Business']),
-    tags: z.array(z.string()).default([]),
-    keywords: z.array(z.string()).default([]),
-    tldr: z.string().min(60).max(320),
-    lang: z.enum(['fr', 'en']).default('fr'),
-    translationOf: z.string().optional(),
+  loader: chapteredGlob({
+    base: './src/content/blog',
+    extensions: ['.mdx', '.md'],
   }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().max(120),
+      excerpt: z.string().min(80).max(220),
+      publishedAt: z.coerce.date(),
+      updatedAt: z.coerce.date().optional(),
+      category: z.enum(['IA', 'Tech', 'Lead', 'Business']),
+      tags: z.array(z.string()).default([]),
+      keywords: z.array(z.string()).default([]),
+      cover: image().optional(),
+      resume: resumeSchema, // injecté depuis resume.mdx
+      faq: z.array(faqItem).default([]), // injecté depuis faq.mdx
+      sources: z.array(sourceItem).default([]), // injecté depuis sources.mdx
+      number: z.number().int().positive(),
+      lang: z.enum(['fr', 'en']).default('fr'),
+      translationOf: z.string().optional(),
+    }),
 });
 ```
 
-`excerpt` est borné entre 80 et 220 caractères parce que c'est la longueur utile d'une meta description. `tldr` force un résumé exploitable par les LLM.
-`translationOf` relie deux versions linguistiques du même article : indispensable pour les balises `hreflang`.
+`excerpt` est borné entre 80 et 220 caractères parce que c'est la longueur utile d'une meta description. Le champ `resume` n'est pas une chaîne de frontmatter :
+c'est un objet `{ markdown, html, plain }` injecté par `chapteredGlob` à partir d'un fichier `resume.mdx` réservé à la racine du dossier de l'article — même
+mécanique pour `faq.mdx` (questions structurées exposées en JSON-LD `FAQPage`) et `sources.mdx` (citations vérifiables). On édite du contenu, pas du YAML, et le
+résultat reste exploitable côté LLM via `resume.plain`. `translationOf` relie deux versions linguistiques du même article : indispensable pour les balises
+`hreflang`.
+
+**Format dossier multi-chapitres.** Au-delà de 1500 mots, je découpe l'article en `index.mdx` (frontmatter + intro) + chapitres `NN-<kebab>.mdx` que le loader
+agrège alphabétiquement. Cet article-ci en est un exemple. Le slug public ne change pas — c'est le nom du dossier — mais la rédaction et la review d'un long
+billet deviennent gérables, fichier par fichier, plutôt que de naviguer dans un seul `.mdx` de 2000 lignes.
 
 ### 2. Hreflang et canonical systématiques
 
@@ -113,17 +128,13 @@ Personne ne sait encore si le standard `llms.txt` va s'imposer, mais il coûte p
 plan éditorial, pas d'un sitemap XML.
 
 ```ts
-// src/pages/fr/llms.txt.ts (extrait)
+// src/pages/llms.txt.ts (extrait — FR à la racine, defaultLocale sans préfixe)
 export const GET: APIRoute = async () => {
-  const posts = (await getCollection('blog', ({ data }) => !data.draft && (data.lang ?? 'fr') === 'fr')).sort(
-    (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
-  );
+  const posts = (await getCollection('blog', (entry) => isPublished(entry, 'fr'))).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
 
   const lines: string[] = [`# ${SITE.name}`, '', '## Articles', ''];
   for (const post of posts) {
-    lines.push(
-      `- [${post.data.title}](${SITE.url}/fr/blog/${post.id}) ` + `(${toISODate(post.data.publishedAt)}, ${post.data.category}) : ${post.data.excerpt}`
-    );
+    lines.push(`- [${post.data.title}](${SITE.url}/blog/${post.id}/) ` + `(${toISODate(post.data.publishedAt)}, ${post.data.category}) : ${post.data.excerpt}`);
   }
   return new Response(lines.join('\n'), {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },
@@ -131,7 +142,10 @@ export const GET: APIRoute = async () => {
 };
 ```
 
-Les excerpts stricts du schéma Zod (point 1) deviennent ici des résumés utilisables par un modèle sans qu'il ait à charger chaque article.
+Les excerpts stricts du schéma Zod (point 1) deviennent ici des résumés utilisables par un modèle sans qu'il ait à charger chaque article. En complément,
+`src/pages/llms-full.txt.ts` génère le **corpus markdown complet** des articles — c'est le standard que pousse Jeremy Howard (auteur originel de `llms.txt`)
+pour que les modèles puissent raisonner sur l'intégralité du contenu sans crawler page par page. Coût marginal au build, gain potentiel si l'un de ces standards
+finit par s'imposer côté indexation IA.
 
 ### 6. Statique, léger, rapide
 

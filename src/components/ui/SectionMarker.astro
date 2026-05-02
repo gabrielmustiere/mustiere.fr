@@ -27,18 +27,19 @@ const accentClass = accent === 'blog' ? 'acc-blog' : 'acc-projects';
     class="flex-1 border-t border-[color:var(--color-rule)]"
     aria-hidden="true"></span>
   {
-    trailing && trailingDateTime && (
+    Astro.slots.has('trailing') ? (
+      <span class="tnum text-[color:var(--color-muted)]">
+        <slot name="trailing" />
+      </span>
+    ) : trailing && trailingDateTime ? (
       <time
         class="tnum text-[color:var(--color-muted)]"
         datetime={trailingDateTime}
       >
         {trailing}
       </time>
-    )
-  }
-  {
-    trailing && !trailingDateTime && (
+    ) : trailing ? (
       <span class="tnum text-[color:var(--color-muted)]">{trailing}</span>
-    )
+    ) : null
   }
 </div>

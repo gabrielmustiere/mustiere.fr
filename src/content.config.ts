@@ -93,6 +93,8 @@ const projects = defineCollection({
     ]),
     kind: z.string(),
     year: z.number().int(),
+    publishedAt: z.coerce.date(),
+    updatedAt: z.coerce.date().optional(),
     excerpt: z.string(),
     cover: z.string().optional(),
     url: z.url().optional(),

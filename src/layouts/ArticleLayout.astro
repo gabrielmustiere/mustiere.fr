@@ -176,12 +176,31 @@ const metaDescription = truncateForMeta(data.resume.plain);
         )
       }
 
-      <SectionMarker
-        label={endLabel}
-        accent="blog"
-        trailing={formatDateDottedFull(data.updatedAt ?? data.publishedAt)}
-        trailingDateTime={toISODate(data.updatedAt ?? data.publishedAt)}
-      />
+      {
+        data.updatedAt &&
+        data.updatedAt.getTime() !== data.publishedAt.getTime() ? (
+          <SectionMarker label={endLabel} accent="blog">
+            <Fragment slot="trailing">
+              {tr.article.publishedOn}{' '}
+              <time datetime={toISODate(data.publishedAt)}>
+                {formatDateDottedFull(data.publishedAt)}
+              </time>
+              {' · '}
+              {tr.article.updatedOn}{' '}
+              <time datetime={toISODate(data.updatedAt)}>
+                {formatDateDottedFull(data.updatedAt)}
+              </time>
+            </Fragment>
+          </SectionMarker>
+        ) : (
+          <SectionMarker
+            label={endLabel}
+            accent="blog"
+            trailing={formatDateDottedFull(data.publishedAt)}
+            trailingDateTime={toISODate(data.publishedAt)}
+          />
+        )
+      }
 
       <RelatedItems
         kind="blog"

@@ -327,7 +327,8 @@ interface SoftwareSourceCodeInput {
   title: string;
   description: string;
   slug: string;
-  year: number;
+  publishedAt: Date;
+  updatedAt?: Date;
   repository?: string;
   lang: Lang;
   cover?: string;
@@ -356,7 +357,9 @@ export function softwareSourceCodeSchema(p: SoftwareSourceCodeInput) {
     ...(p.repository
       ? { codeRepository: p.repository, sameAs: [p.repository] }
       : {}),
-    dateCreated: `${p.year}-01-01`,
+    dateCreated: p.publishedAt,
+    datePublished: p.publishedAt,
+    dateModified: p.updatedAt ?? p.publishedAt,
     image: {
       '@type': 'ImageObject',
       url: imageUrl,

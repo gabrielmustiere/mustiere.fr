@@ -69,8 +69,8 @@ Le diff masque uniquement le `<lastmod>` du sitemap. Tout autre changement atten
 ### Pages dynamiques
 
 - `src/pages/blog/[...slug].astro` + `src/pages/en/blog/[...slug].astro` filtrent la collection par `lang` dans `getStaticPaths`. Idem pour `projects/`. Le
-  filtrage publication/draft passe par `isPublished(entry, lang)` (`src/utils/content.ts`) — toute nouvelle page consommant `blog`/`projects` doit utiliser
-  ce helper plutôt que d'inliner `!data.draft && data.lang === ...`.
+  filtrage publication/draft passe par `isPublished(entry, lang)` (`src/utils/content.ts`) — toute nouvelle page consommant `blog`/`projects` doit utiliser ce
+  helper plutôt que d'inliner `!data.draft && data.lang === ...`.
 - `src/pages/llms.txt.ts` et `llms-full.txt.ts` génèrent au build l'index + le corpus markdown complet (standard Jeremy Howard) — versions FR et EN sous `/en/`.
 - `rss.xml.ts` : 20 derniers posts, par langue.
 
