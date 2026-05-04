@@ -36,9 +36,10 @@ interface Props {
   post: CollectionEntry<'blog'>;
   nextPosts: CollectionEntry<'blog'>[];
   headings?: MarkdownHeading[];
+  isDraftPreview?: boolean;
 }
 
-const { post, nextPosts, headings = [] } = Astro.props;
+const { post, nextPosts, headings = [], isDraftPreview = false } = Astro.props;
 const { data } = post;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);
@@ -115,6 +116,7 @@ const metaDescription = truncateForMeta(data.resume.plain);
   current="article"
   lang={lang}
   otherLangHref={otherLangHref}
+  noindex={isDraftPreview}
 >
   <StructuredData slot="head" schemas={schemas} />
 

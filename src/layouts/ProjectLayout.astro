@@ -32,9 +32,15 @@ interface Props {
   project: CollectionEntry<'projects'>;
   others: CollectionEntry<'projects'>[];
   headings?: MarkdownHeading[];
+  isDraftPreview?: boolean;
 }
 
-const { project, others, headings = [] } = Astro.props;
+const {
+  project,
+  others,
+  headings = [],
+  isDraftPreview = false,
+} = Astro.props;
 const { data } = project;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);
@@ -98,6 +104,7 @@ const metaDescription = truncateForMeta(data.resume.plain);
   current="project"
   lang={lang}
   otherLangHref={otherLangHref}
+  noindex={isDraftPreview}
 >
   <StructuredData slot="head" schemas={schemas} />
 

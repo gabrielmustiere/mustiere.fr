@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import type { CollectionEntry } from 'astro:content';
 import type { Lang } from '@/i18n/config';
 
@@ -16,4 +17,52 @@ export function isPublished(entry: PublishableEntry, lang: Lang): boolean {
     import.meta.env.DEV || process.env.SHOW_DRAFTS === '1' || !entry.data.draft;
   const matchesLang = (entry.data.lang ?? 'fr') === lang;
   return showDraft && matchesLang;
+}
+
+// Génération des URLs de prévisualisation des drafts en prod (cf. plan
+// 008-t-draft-preview-urls). Le hash est dérivé du slug + DRAFT_HASH_SEED
+// pour rendre l'URL non-devinable depuis le slug seul.
+//
+// Ce n'est PAS un secret de sécurité : la seed est hardcodée et donc visible
+// par quiconque a accès au repo. Si le repo est public, les URLs draft sont
+// reconstructibles. C'est accepté — l'objectif est juste d'éviter qu'elles
+// soient triviales depuis le slug et qu'elles fuitent dans les listings/sitemap.
+//
+// Le CLI `scripts/draft-url.mjs` et `tests/draft-isolation.test.mjs` lisent
+// la seed via regex sur ce fichier (recherche `DRAFT_HASH_SEED = '...'`) —
+// si tu modifies le nom ou la forme, mets-les à jour aussi.
+export const DRAFT_HASH_SEED = 'mustiere-drafts-relecture-2026';
+const DRAFT_HASH_LENGTH = 10;
+const DRAFT_PATH_SEGMENT = '_drafts';
+
+// Renvoie le hash court à insérer dans l'URL d'un draft, ou null en dev (les
+// drafts sont alors servis à leur URL canonique via `isPublished()`).
+export function getDraftHash(slug: string): string | null {
+  if (import.meta.env.DEV) return null;
+  return createHash('sha256')
+    .update(slug + DRAFT_HASH_SEED)
+    .digest('hex')
+    .slice(0, DRAFT_HASH_LENGTH);
+}
+
+// Renvoie le segment passé à `params.slug` d'une route `[...slug].astro` pour
+// générer la page sous `/<collection>/_drafts/<hash>/<slug>/`, ou null en dev.
+export function getDraftSlugParam(slug: string): string | null {
+  const hash = getDraftHash(slug);
+  if (!hash) return null;
+  return `${DRAFT_PATH_SEGMENT}/${hash}/${slug}`;
+}
+
+// Filtre les entrées d'une collection à exposer en mode preview draft. Renvoie
+// un tableau vide en dev (les drafts sont déjà à leur URL canonique via
+// `isPublished()`).
+export function getDraftPreviewEntries<T extends PublishableEntry>(
+  entries: T[],
+  lang: Lang
+): T[] {
+  if (import.meta.env.DEV) return [];
+  return entries.filter(
+    (entry) =>
+      Boolean(entry.data.draft) && (entry.data.lang ?? 'fr') === lang
+  );
 }

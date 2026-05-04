@@ -198,7 +198,8 @@ export default defineConfig({
       filter: (page) =>
         !page.includes('/404') &&
         !page.includes('/llms.txt') &&
-        !page.includes('/llms-full.txt'),
+        !page.includes('/llms-full.txt') &&
+        !page.includes('/_drafts/'),
       i18n: {
         defaultLocale: 'fr',
         locales: {
@@ -230,7 +231,17 @@ export default defineConfig({
         { userAgent: 'CCBot', allow: '/' },
         { userAgent: 'cohere-ai', allow: '/' },
         { userAgent: 'Bytespider', disallow: '/' },
-        { userAgent: '*', allow: '/', disallow: ['/404'] },
+        {
+          userAgent: '*',
+          allow: '/',
+          disallow: [
+            '/404',
+            '/blog/_drafts/',
+            '/en/blog/_drafts/',
+            '/projects/_drafts/',
+            '/en/projects/_drafts/',
+          ],
+        },
       ],
     }),
   ],

@@ -1,34 +1,60 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import ProjectLayout from '@layouts/ProjectLayout.astro';
-import { isPublished } from '@/utils/content';
+import {
+  isPublished,
+  getDraftPreviewEntries,
+  getDraftSlugParam,
+} from '@/utils/content';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects', (entry) =>
-    isPublished(entry, 'en')
+  const all = await getCollection('projects');
+  const published = all.filter((entry) => isPublished(entry, 'en'));
+  const sorted = [...published].sort(
+    (a, b) => a.data.order - b.data.order
   );
-  const sorted = [...projects].sort((a, b) => a.data.order - b.data.order);
 
-  return projects.map((project) => {
+  const publishedRoutes = published.map((project) => {
     const others = sorted.filter(
       (p): p is CollectionEntry<'projects'> => p.id !== project.id
     );
     return {
       params: { slug: project.id },
-      props: { project, others },
+      props: { project, others, isDraftPreview: false },
     };
   });
+
+  const draftRoutes = getDraftPreviewEntries(all, 'en')
+    .map((project) => {
+      const slug = getDraftSlugParam(project.id);
+      if (!slug) return null;
+      return {
+        params: { slug },
+        props: { project, others: [], isDraftPreview: true },
+      };
+    })
+    .filter(
+      (r): r is NonNullable<typeof r> => r !== null
+    );
+
+  return [...publishedRoutes, ...draftRoutes];
 }
 
 type Props = {
   project: CollectionEntry<'projects'>;
   others: CollectionEntry<'projects'>[];
+  isDraftPreview: boolean;
 };
-const { project, others } = Astro.props as Props;
+const { project, others, isDraftPreview } = Astro.props as Props;
 
 const { Content, headings } = await render(project);
 ---
 
-<ProjectLayout project={project} others={others} headings={headings}>
+<ProjectLayout
+  project={project}
+  others={others}
+  headings={headings}
+  isDraftPreview={isDraftPreview}
+>
   <Content />
 </ProjectLayout>

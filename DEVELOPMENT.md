@@ -134,6 +134,27 @@ Le filtre vit dans `src/utils/content.ts` (`isPublished(entry, lang)`) — seul 
 Le mode est porté par `import.meta.env.DEV` : pas de variable d'env à actionner, pas de feature flag. Pour rebasculer un draft en publié, retirer (ou mettre à
 `false`) le champ `draft` du frontmatter.
 
+### Partager un draft pour relecture
+
+Le build prod génère chaque draft sous une URL non-devinable dérivée du slug et d'une phrase hardcodée (`DRAFT_HASH_SEED` dans `src/utils/content.ts`) :
+
+```
+https://mustiere.fr/blog/_drafts/<hash>/<slug>/
+```
+
+Les pages draft émettent `<meta name="robots" content="noindex,nofollow">`, `robots.txt` `Disallow: /blog/_drafts/`, et le slug n'apparaît dans aucun listing (sitemap, RSS, llms.txt, archive blog, sections home).
+
+Pour récupérer l'URL d'un draft :
+
+```bash
+npm run draft:url mon-slug
+# → https://mustiere.fr/blog/_drafts/abc1234567/mon-slug/
+```
+
+Le CLI auto-détecte la collection (`blog` ou `projects`) et la langue depuis le frontmatter. Pour invalider toutes les URLs précédemment partagées, modifier `DRAFT_HASH_SEED` dans `src/utils/content.ts` et redéployer.
+
+Ce n'est **pas** un système de sécurité : la seed est dans le code, donc visible par quiconque a accès au repo. Si l'URL fuite (capture, Slack, Referer), l'article devient publiquement lisible jusqu'au prochain changement de seed. C'est un partage à des relecteurs de confiance, point.
+
 ## SEO — ce qui est couvert
 
 - Meta `<title>`, `<meta description>`, canonical absolu, OG complet, Twitter card
