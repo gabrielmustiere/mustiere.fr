@@ -147,8 +147,8 @@ Pas de test unitaire formel introduit (le projet n'a pas de runner) — la couve
 
 ## Risques et points d'attention
 
-- **Temps de build** — la génération AVIF par `sharp` est plus lente que WebP seul. Si le build dépasse les budgets CI Cloudflare Pages, fallback WebP seul (modifier `<Picture>` → `<Image>`).
-- **URL OG stable côté Cloudflare Pages** — `getImage()` produit un fichier dans `dist/_astro/...` avec un hash de contenu. L'URL change à chaque édition de la cover (cache busting OG côté LinkedIn ≈ 7 jours). Pas un blocker.
+- **Temps de build** — la génération AVIF par `sharp` est plus lente que WebP seul. Si le build dépasse les budgets CI Github Pages, fallback WebP seul (modifier `<Picture>` → `<Image>`).
+- **URL OG stable côté Github Pages** — `getImage()` produit un fichier dans `dist/_astro/...` avec un hash de contenu. L'URL change à chaque édition de la cover (cache busting OG côté LinkedIn ≈ 7 jours). Pas un blocker.
 - **Cache loader sur édition d'asset** — le `chapteredGlob` ne ré-hashe pas les assets co-localisés dans son `digestSource` ; remplacer un `cover.png` sans toucher à `index.mdx` peut laisser une copie matérialisée stale dans `.astro/chaptered/`. Workaround : `rm -rf .astro && npm run build` après remplacement d'asset, ou inclure les hashes des assets co-localisés dans le digest si le cas se reproduit.
 - **LCP du premier item `/blog/`** — devient candidate au LCP. `loading="eager"` + `fetchpriority="high"` uniquement sur le premier ; tout le reste en `loading="lazy"`. À vérifier dans le rapport `lhci`.
 - **CLS sur mobile** — `<Picture>` Astro pose `width`/`height`, donc 0 layout shift attendu. Tester sur viewport étroit.

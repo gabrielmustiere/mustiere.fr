@@ -1,6 +1,6 @@
 # mustiere.fr — guide technique
 
-Site Astro statique déployé sur Cloudflare Pages. Portfolio éditorial + blog de Gabriel Mustière.
+Site Astro statique déployé sur Github Pages. Portfolio éditorial + blog de Gabriel Mustière.
 
 ## Stack
 
@@ -164,18 +164,18 @@ Le mode est porté par `import.meta.env.DEV` : pas de variable d'env à actionne
 | JS total gzip | < 10 KB  |
 
 État actuel : JS page-level ≈ 1 KB gzip (scroll-spy + progress bar + filtre blog + share), polices self-hostées, CSS critique inline, compression Brotli via
-Cloudflare.
+Github.
 
-## Déploiement (Cloudflare Pages)
+## Déploiement (Github Pages)
 
 1. Pousser le repo sur GitHub (public ou privé).
-2. Cloudflare dashboard → Pages → **Connect to Git** → sélectionner le repo.
+2. Github dashboard → Pages → **Connect to Git** → sélectionner le repo.
 3. Build config :
    - Framework preset : **Astro**
    - Build command : `npm run build`
    - Build output : `dist`
    - Node version : `22` (variable `NODE_VERSION=22`)
-4. Après premier déploiement : configurer DNS (`mustiere.fr` → Cloudflare).
+4. Après premier déploiement : configurer DNS (`mustiere.fr` → Github).
 5. Search Console + Bing Webmaster : soumettre `https://mustiere.fr/sitemap-index.xml`.
 
 Preview deploys automatiques sur chaque PR.

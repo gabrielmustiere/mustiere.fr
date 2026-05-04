@@ -34,7 +34,7 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ## [0.1.0] - 2026-04-29
 
-Première version publique du site mustiere.fr déployé en SSG sur Cloudflare Pages.
+Première version publique du site mustiere.fr déployé en SSG sur Github Pages.
 
 ### Added
 

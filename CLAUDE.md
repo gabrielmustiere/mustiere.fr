@@ -22,7 +22,7 @@ Lighthouse CI (`lighthouserc.json`) et pa11y-ci (`.pa11yci.json`). Pour reprodui
 
 ## Architecture
 
-**Astro 6 SSG bilingue** (FR/EN) déployé statiquement sur Cloudflare Pages. Aucune île JS framework — quelques scripts inline (~1 KB gzip total) pour
+**Astro 6 SSG bilingue** (FR/EN) déployé statiquement sur Github Pages. Aucune île JS framework — quelques scripts inline (~1 KB gzip total) pour
 scroll-spy, progress bar, filtres blog. Tailwind CSS 4 via `@tailwindcss/postcss` (configuré dans `postcss.config.mjs`) ; tous les tokens design (couleurs
 oklch, typo, spacing) vivent dans `src/styles/global.css` sous `@theme`.
 
@@ -101,6 +101,6 @@ JSON-LD émis par `src/utils/schema.ts` selon le type de page (`Person`, `WebSit
 
 ## Références
 
-- `DEVELOPMENT.md` — guide pratique (ajout d'article, déploiement Cloudflare, budgets perf).
+- `DEVELOPMENT.md` — guide pratique (ajout d'article, déploiement Github, budgets perf).
 - `README.md` — brief design original (tokens, échelles typo, scroll-spy, comportements).
 - `designs/*.html` — source de vérité visuelle haute-fidélité.
