@@ -250,10 +250,10 @@ export const ui = {
         linkedinLabel: 'LinkedIn',
         githubLabel: 'GitHub',
         contactCta: 'Get in touch',
-        cvCta: 'Résumé (PDF)',
+        cvCta: 'Resume (PDF)',
       },
       cv: {
-        title: 'Résumé (PDF)',
+        title: 'Resume (PDF)',
         meta: 'Last updated: April 2026 · 2 pages · 180 kB',
         cta: 'Download',
         documentLabel: 'Document',
@@ -357,7 +357,7 @@ export const ui = {
       headDescription:
         'Background of Gabriel Mustiere, freelance CTO in Nantes. 14 years in tech, CTO since 2017. Symfony and Sylius expert. Product builder for SaaS and e-commerce, from early-stage startups to scale-ups.',
       contactCta: 'Get in touch',
-      cvCta: 'Résumé (PDF)',
+      cvCta: 'Resume (PDF)',
       backHome: 'Back to home',
       experiencesTitle: 'Experience',
       expertisesTitle: 'Expertise',

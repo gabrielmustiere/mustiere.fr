@@ -1,11 +1,12 @@
 HOST := mustiere.wip
 
-.PHONY: help install serve dev build preview check format wrap-md clean hosts-add hosts-remove
+.PHONY: help install serve expose dev build preview check format wrap-md clean hosts-add hosts-remove
 
 help:
 	@echo "Commandes disponibles :"
 	@echo "  make install       Installer les dépendances npm"
-	@echo "  make serve         Lancer le dev server sur $(URL)"
+	@echo "  make serve         Lancer le dev server sur $(HOST) (via portless)"
+	@echo "  make expose        Lancer le dev server bindé sur 0.0.0.0 (pour ngrok / LAN)"
 	@echo "  make dev           Lancer le dev server (localhost classique)"
 	@echo "  make build         Build de production"
 	@echo "  make preview       Prévisualiser le build"
@@ -21,6 +22,9 @@ install:
 
 serve: hosts-add
 	portless mustiere astro dev
+
+expose:
+	npx astro dev --host 0.0.0.0
 
 dev:
 	npm run dev
