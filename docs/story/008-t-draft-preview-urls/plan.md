@@ -26,11 +26,11 @@ Aujourd'hui, un article `draft: true` est exclu du build prod (`isPublished()` d
 
 ## Point d'intégration
 
-- **`src/utils/content.ts`** — exporte `DRAFT_HASH_SEED` + helpers `getDraftHash`, `getDraftSlugParam`, `getDraftPreviewEntries`. En dev (`import.meta.env.DEV`), les helpers renvoient null/[] pour que les drafts restent à leur path canonique via `isPublished()`. `isPublished()` reste inchangé.
+- **`src/utils/content.ts`** — exporte `DRAFT_HASH_SEED` + helpers `getDraftHash`, `getDraftSlugParam`, `getDraftPreviewEntries`. En dev (`import.meta.env.DEV`), les helpers renvoient `null`/`[]` pour que les drafts restent à leur path canonique via `isPublished()`. `isPublished()` reste inchangé.
 - **`src/pages/blog/[...slug].astro`**, **`src/pages/en/blog/[...slug].astro`**, **`src/pages/projects/[...slug].astro`**, **`src/pages/en/projects/[...slug].astro`** — `getStaticPaths()` génère les pages draft sous le path opaque quand `DRAFT_SECRET` est défini.
 - **`astro.config.mjs`** — `sitemap.filter` exclut `/_drafts/` ; `robots.txt` ajoute `Disallow: /blog/_drafts/` (et variantes).
-- **`src/layouts/BaseLayout.astro`** — prop `noindex?: boolean` qui émet `<meta name="robots" content="noindex,nofollow">` (deux lignes, autant éviter Google).
-- **`scripts/draft-url.mjs`** (nouveau) — CLI qui prend un slug et imprime l'URL prod. Lit `DRAFT_HASH_SEED` via regex sur `src/utils/content.ts` (ancrée sur `export const`) pour rester source unique avec le build.
+- **`src/layouts/{Article,Project}Layout.astro`** — nouvelle prop `isDraftPreview?: boolean` propagée à `BaseLayout.noindex` (la prop `noindex` existe déjà sur `BaseLayout`, qui émet `<meta name="robots" content="noindex,nofollow">` quand elle est à `true`).
+- **`scripts/draft-url.mjs`** (nouveau) — CLI qui prend un slug et imprime l'URL prod. Lit `DRAFT_HASH_SEED` via regex sur `src/utils/content.ts` et `SITE.url` via regex sur `src/consts.ts` (ancrées sur `export const` / clé `url`) pour rester source unique avec le build.
 - **`package.json`** — script `"draft:url": "node scripts/draft-url.mjs"`.
 - **`.github/workflows/deploy.yml`** — pas de modification nécessaire (la seed est dans le code, pas en env).
 
@@ -55,12 +55,12 @@ Test automatisé : `tests/draft-isolation.test.mjs` (`node --test`) build avec u
 ## Plan d'exécution
 
 1. [ ] **Étape 1 — Test d'isolation rouge** : `tests/draft-isolation.test.mjs` qui build avec `DRAFT_SECRET=test-phrase-quelconque` et capture les assertions du tableau.
-2. [ ] **Étape 2 — `getDraftPath()` + extension `getStaticPaths()`** dans les 4 fichiers `[...slug].astro`.
-3. [ ] **Étape 3 — `noindex` dans `BaseLayout` + propagation depuis `ArticleLayout`/`ProjectLayout` quand `entry.data.draft === true`**.
+2. [ ] **Étape 2 — helpers (`getDraftHash` / `getDraftSlugParam` / `getDraftPreviewEntries`) + extension `getStaticPaths()`** dans les 4 fichiers `[...slug].astro`.
+3. [ ] **Étape 3 — prop `isDraftPreview` sur `ArticleLayout`/`ProjectLayout`, propagée à `BaseLayout.noindex` (déjà existante) quand le routage passe par la branche drafts**.
 4. [ ] **Étape 4 — `sitemap.filter` + `robots.txt` dans `astro.config.mjs`**.
 5. [ ] **Étape 5 — CLI `scripts/draft-url.mjs` + script npm `draft:url`**.
 6. [ ] **Étape 6 — `deploy.yml`** (aucune modif requise au final : la seed est dans le code).
-7. [ ] **Étape 7 — Note dans `DEVELOPMENT.md`** (1 paragraphe : "comment partager un draft").
+7. [ ] **Étape 7 — Section dans `DEVELOPMENT.md`** : workflow de partage, rappel rollback (changement de seed), avertissement « pas un système de sécurité ».
 
 ## Critères de sortie
 
@@ -72,3 +72,11 @@ Test automatisé : `tests/draft-isolation.test.mjs` (`node --test`) build avec u
 ## Questions ouvertes
 
 - Aucune. Volontairement minimal.
+
+---
+
+## Changelog
+
+| Date | Type | Description |
+|------|------|-------------|
+| 2026-05-04 | Sync post-implémentation | Étape 2 du plan d'exécution : `getDraftPath()` → 3 helpers réels (`getDraftHash` / `getDraftSlugParam` / `getDraftPreviewEntries`). Section `BaseLayout` : la prop `noindex` existait déjà, seul le pass-through `isDraftPreview` via `Article/ProjectLayout` est nouveau. CLI : précisé qu'il lit aussi `SITE.url` via regex sur `src/consts.ts`. Étape 7 : « 1 paragraphe » → section avec workflow + rollback + avertissement sécurité. Voir `report.md` pour le détail des écarts. |
