@@ -7,6 +7,21 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-05-04
+
+### Added
+
+- URLs de prévisualisation pour les articles `draft: true` en build prod : chaque brouillon est généré sous `/blog/_drafts/<hash>/<slug>/` (hash dérivé du slug + d'une seed hardcodée), absent des sitemap/RSS/llms.txt/listings, avec `noindex,nofollow`. CLI `npm run draft:url <slug>` pour récupérer l'URL prod d'un draft.
+- Transitions de page animées via `astro:transitions` (`ClientRouter` + `transition:name` sur titres et covers) pour une navigation fluide entre les pages.
+- Champs `publishedAt` et `updatedAt` dans les schémas des collections `blog` et `projects` ; affichage des dates de publication et de mise à jour dans les layouts.
+- Commande `npm run dev:expose` (et cible `make dev:expose`) pour exposer le dev server sur le réseau local.
+
+### Changed
+
+- Article « PHP en 2026 : pourquoi un CTO devrait sérieusement le considérer » (FR + EN) : chapitres retravaillés (langage, Symfony, outillage, FrankenPHP, front-mobile, IA), FAQ enrichie, résumé étoffé, conclusion ajoutée, cohérence stylistique entre les deux langues.
+- Niveau de titre configurable (`headingLevel`) dans `ArticleCard` et `BlogArchive` pour préserver la hiérarchie sémantique des `h*` selon le contexte d'inclusion.
+- Terminologie EN harmonisée (« Résumé » → « Resume ») dans les chaînes UI.
+
 ## [0.2.0] - 2026-04-30
 
 ### Added
@@ -62,6 +77,7 @@ Première version publique du site mustiere.fr déployé en SSG sur Github Pages
 - URLs unifiées avec trailing slash systématique.
 - Navigation unifiée avec menu mobile.
 
-[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/gabrielmustiere/mustiere.fr/releases/tag/v0.1.0
