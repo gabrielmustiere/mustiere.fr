@@ -7,6 +7,22 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-05-05
+
+### Added
+
+- Covers de projets optimisées via `image()` + `<Picture>` Astro (AVIF/WebP, srcset, sizes responsive, view-transition partagée), avec `coverAlt` requis dans le schéma `projects`.
+
+### Changed
+
+- Schéma `projects.cover` : passe de `string` à `image()` — covers résolues au build avec hash et optimisation.
+- Typo : élargissement des colonnes de prose (`--w-prose` 720→780, `--w-blog` 820→920, `--w-home` 720→840), `text-wrap: pretty` sur la prose et `balance` sur les titres pour des coupures de lignes plus propres.
+- Articles Symfony 2026 (FR + EN) : traits d'union insécables (`‑`) dans les mots composés (back‑office, e‑commerce, real‑time, front‑end, AI‑first…) pour éviter les coupures disgracieuses.
+
+### Fixed
+
+- Covers restaurées sur les articles « Comment j'ai construit ce site avec Claude et Astro » (FR + EN).
+
 ## [0.3.1] - 2026-05-05
 
 ### Added
@@ -88,7 +104,8 @@ Première version publique du site mustiere.fr déployé en SSG sur Github Pages
 - URLs unifiées avec trailing slash systématique.
 - Navigation unifiée avec menu mobile.
 
-[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.1...HEAD
+[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.1.0...v0.2.0
