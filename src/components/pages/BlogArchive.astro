@@ -12,6 +12,7 @@ import { blogSchema, breadcrumbSchema } from '@/utils/schema';
 import { SITE } from '@/consts';
 import type { Category } from '@/content.config';
 import { useTranslations, localizedPath } from '@/i18n/utils';
+import { routePath } from '@/i18n/routes';
 import { BLOG_CATEGORIES } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { isPublished } from '@/utils/content';
@@ -25,6 +26,7 @@ const { lang } = Astro.props;
 const tr = useTranslations(lang);
 const blogHref = localizedPath(lang, '/blog');
 const homeHref = localizedPath(lang, '/');
+const rssHref = routePath('rssFeed', lang);
 
 const all = (
   await getCollection('blog', (entry) => isPublished(entry, lang))
@@ -86,9 +88,31 @@ const Intro = INTRO[lang];
       <span class="acc-blog"
         ><span class="acc-dot"></span>§ 02 · {tr.home.blog.title}</span
       >
-      <span class="tnum text-[color:var(--color-muted)]">
-        {totalCount}
-        {countSuffix}
+      <span class="flex items-center gap-3 text-[color:var(--color-muted)]">
+        <span class="tnum">
+          {totalCount}
+          {countSuffix}
+        </span>
+        <span aria-hidden="true">·</span>
+        <a
+          href={rssHref}
+          class="rss-link inline-flex items-center gap-1.5 hover:text-[color:var(--color-ink)] focus-visible:text-[color:var(--color-ink)]"
+          aria-label={tr.blogIndex.rssAriaLabel}
+          type="application/rss+xml"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="11"
+            height="11"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              d="M6.18 17.82a2.18 2.18 0 1 1-4.36 0 2.18 2.18 0 0 1 4.36 0zM4 4.44v3.18A12.38 12.38 0 0 1 16.38 20h3.18A15.56 15.56 0 0 0 4 4.44zM4 10.1v3.16A6.74 6.74 0 0 1 10.74 20h3.16A9.9 9.9 0 0 0 4 10.1z"
+            ></path>
+          </svg>
+          <span>{tr.blogIndex.rssLabel}</span>
+        </a>
       </span>
     </div>
 

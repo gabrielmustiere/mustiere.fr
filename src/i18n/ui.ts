@@ -88,6 +88,8 @@ export const ui = {
       countPlural: '{n} billets',
       countSuffixSingular: ' billet',
       countSuffixPlural: ' billets',
+      rssLabel: 'RSS',
+      rssAriaLabel: 'S’abonner au flux RSS',
       metaDescription:
         "Blog de Gabriel Mustiere : {count} sur l'IA, la tech, le leadership et le business. Notes et essais d'un CTO freelance basé à Nantes.",
     },
@@ -272,6 +274,8 @@ export const ui = {
       countPlural: '{n} posts',
       countSuffixSingular: ' post',
       countSuffixPlural: ' posts',
+      rssLabel: 'RSS',
+      rssAriaLabel: 'Subscribe to RSS feed',
       metaDescription:
         "Gabriel Mustiere's blog: {count} on AI, tech, leadership and business. Notes and essays from a freelance CTO based in Nantes.",
     },
