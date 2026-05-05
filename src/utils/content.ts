@@ -1,8 +1,10 @@
 import { createHash } from 'node:crypto';
-import type { CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from '@/i18n/config';
 
 type PublishableEntry = CollectionEntry<'blog'> | CollectionEntry<'projects'>;
+
+type TranslatableCollection = 'blog' | 'projects';
 
 // Filtre unique pour les collections `blog` et `projects` :
 // - en dev (`make serve`), les drafts sont visibles pour relecture locale ;
@@ -56,6 +58,31 @@ export function getDraftSlugParam(slug: string): string | null {
 // Filtre les entrées d'une collection à exposer en mode preview draft. Renvoie
 // un tableau vide en dev (les drafts sont déjà à leur URL canonique via
 // `isPublished()`).
+// Résout l'entrée traduite d'un article ou projet, en regardant des deux côtés
+// de la relation `translationOf`. C'est défensif : historiquement, la déclaration
+// n'était faite que d'un côté, ce qui cassait silencieusement le lien EN/FR
+// quand on était sur la version « non-déclarante ». En cherchant aussi par
+// reverse-lookup (entrée de l'autre langue qui pointe vers `entry`), une seule
+// déclaration suffit.
+export async function findTranslation<C extends TranslatableCollection>(
+  collection: C,
+  entry: CollectionEntry<C>,
+  otherLang: Lang
+): Promise<CollectionEntry<C> | undefined> {
+  const candidates = await getCollection(collection, (e) =>
+    isPublished(e as PublishableEntry, otherLang)
+  );
+  const forwardId = (entry.data as { translationOf?: string }).translationOf;
+  if (forwardId) {
+    const forward = candidates.find((c) => c.id === forwardId);
+    if (forward) return forward;
+  }
+  return candidates.find(
+    (c) =>
+      (c.data as { translationOf?: string }).translationOf === entry.id
+  );
+}
+
 export function getDraftPreviewEntries<T extends PublishableEntry>(
   entries: T[],
   lang: Lang

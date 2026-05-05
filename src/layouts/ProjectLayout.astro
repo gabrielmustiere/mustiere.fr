@@ -26,8 +26,8 @@ import {
   otherLang as otherLangOf,
 } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
-import { getCollection, type CollectionEntry } from 'astro:content';
-import { isPublished } from '@/utils/content';
+import type { CollectionEntry } from 'astro:content';
+import { findTranslation } from '@/utils/content';
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
@@ -52,18 +52,14 @@ const url = new URL(localizedPath(lang, `/projects/${project.id}`), SITE.url)
 const homeHref = localizedPath(lang, '/');
 
 const otherLangCode: Lang = otherLangOf(lang);
-// `data.translationOf` n'est pas une garantie de publication : la traduction
-// peut être en draft (donc absente du build prod). On ne pointe vers la page
-// traduite que si elle passe `isPublished` dans le mode courant.
-const translatedEntry = data.translationOf
-  ? (
-      await getCollection(
-        'projects',
-        (entry) =>
-          entry.id === data.translationOf && isPublished(entry, otherLangCode)
-      )
-    )[0]
-  : undefined;
+// Lookup bidirectionnel : `translationOf` peut n'être déclaré que d'un seul
+// côté de la paire FR/EN. `findTranslation` couvre les deux sens et applique
+// `isPublished` (les drafts sont exclus en build prod).
+const translatedEntry = await findTranslation(
+  'projects',
+  project,
+  otherLangCode
+);
 const otherLangHref = translatedEntry
   ? localizedPath(otherLangCode, `/projects/${translatedEntry.id}`)
   : localizedPath(otherLangCode, '/');

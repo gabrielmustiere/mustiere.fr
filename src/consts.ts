@@ -12,7 +12,7 @@ export const SITE = {
     country: 'France',
     jobTitle: 'CTO freelance',
     github: 'https://github.com/gabrielmustiere',
-    linkedin: 'https://www.linkedin.com/in/gabrielmustiere/',
+    linkedin: 'https://www.linkedin.com/in/gabriel-mustiere/',
   },
   nav: [
     { href: '/', label: 'Accueil' },
