@@ -1,4 +1,4 @@
-## Front, mobile et temps réel sans empiler de stack JS
+## Front, mobile et temps réel sans empiler de stack JS
 
 C’est probablement le segment où PHP a longtemps été à la traîne. Une application web moderne implique de l’interactivité côté client — et la réponse historique
 côté PHP n’a jamais été pleinement convaincante. C’est ce qui a changé.
@@ -41,8 +41,8 @@ final class UserSearch
 C’est tout ce qu’il faut. Le `data-model` lie l’input à `$query`, le rendu se met à jour à chaque frappe (avec debounce). Dans la grande majorité des écrans
 d’admin et de SaaS B2B, ce niveau d’interactivité suffit largement — et on a écrit zéro JavaScript.
 
-Pour le **temps réel**, Mercure est intégré nativement à Symfony et API Platform. Un publisher côté serveur, un consommateur SSE côté navigateur, et on obtient
-des notifications, du collaborative editing ou des mises à jour temps réel — sans WebSocket à gérer.
+Pour le **temps réel**, Mercure est intégré nativement à Symfony et API Platform. Un publisher côté serveur, un consommateur SSE côté navigateur, et on obtient
+des notifications, du collaborative editing ou des mises à jour temps réel — sans WebSocket à gérer.
 
 Pour le **mobile**, l’arrivée du **bridge Hotwire Native côté Symfony** (via `symfony/turbo` couplé au shell natif Hotwire de 37signals) change l’arbitrage. Au
 lieu de maintenir trois codebases — web React, app iOS Swift, app Android Kotlin — on maintient une codebase Symfony qui rend du HTML. Deux shells natifs

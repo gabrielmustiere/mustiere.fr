@@ -13,9 +13,9 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --w-home: 720px;
-  --w-blog: 820px;
-  --w-prose: 720px;
+  --w-home: 840px;
+  --w-blog: 920px;
+  --w-prose: 780px;
 }
 
 :root {
@@ -167,10 +167,17 @@ body {
   color: #2a2622;
   font-size: 16px;
   line-height: 1.7;
+  text-wrap: pretty;
 }
 
 .prose p {
   margin: 1.2em 0;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  text-wrap: balance;
 }
 
 .prose p.lead {
