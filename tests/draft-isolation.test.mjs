@@ -43,10 +43,12 @@ function hashFor(slug) {
     .slice(0, 10);
 }
 
-const DRAFTS = [
-  { collection: 'blog', slug: 'php-2026-cto-considerer', lang: 'fr' },
-  { collection: 'blog', slug: 'php-2026-cto-consider', lang: 'en' },
-];
+// Liste hardcodée des drafts à couvrir par les assertions par-slug. Vide
+// quand aucun article n'est `draft: true` dans `src/content/` — seul le test
+// robots.txt s'exécute alors. Mettre à jour quand un draft est ajouté ou
+// publié (cf. report.md du plan 008-t-draft-preview-urls, point sur la
+// fragilité de la liste hardcodée).
+const DRAFTS = [];
 
 function langPrefix(lang) {
   return lang === 'fr' ? '' : '/en';

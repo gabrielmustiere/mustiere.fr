@@ -11,7 +11,7 @@ type: tech-plan
 
 ## Problème adressé
 
-Aujourd'hui, un article `draft: true` est exclu du build prod (`isPublished()` dans `src/utils/content.ts:14` — résultat du plan `t-003-drafts-dev-only/`). Pour partager un brouillon à un relecteur, il faut soit installer l'environnement de dev, soit publier. Pas de voie médiane.
+Aujourd'hui, un article `draft: true` est exclu du build prod (`isPublished()` dans `src/utils/content.ts:14` — résultat du plan `003-t-drafts-dev-only/`). Pour partager un brouillon à un relecteur, il faut soit installer l'environnement de dev, soit publier. Pas de voie médiane.
 
 **Pourquoi maintenant** : besoin opérationnel récurrent de faire relire des articles avant publication par des personnes sans environnement Node. La friction pousse à publier sans relecture.
 

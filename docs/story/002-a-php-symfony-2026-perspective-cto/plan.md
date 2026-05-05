@@ -2,6 +2,8 @@
 
 > Date : 2026-04-27 Type : article-blog Slug pressenti : php-2026-cto-considerer Stack détectée : Astro Content Collections (schéma Zod strict,
 > `src/content.config.ts`) Langue source : fr Multilingue : oui — pendant EN prévu (slug `php-in-2026-why-cto-should-consider-it`)
+>
+> **Slug final adopté** : `php-symfony-2026-perspective-cto` (FR) / `php-symfony-2026-cto-perspective` (EN) — révisé le 2026-05-05 pour intégrer « symfony » et clarifier l'angle éditorial (« perspective CTO »).
 
 ## Sujet & déclencheur
 

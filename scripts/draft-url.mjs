@@ -74,7 +74,7 @@ function main() {
   const slug = process.argv[2];
   if (!slug) {
     console.error('Usage : npm run draft:url <slug>');
-    console.error('Exemple : npm run draft:url php-2026-cto-considerer');
+    console.error('Exemple : npm run draft:url php-symfony-2026-perspective-cto');
     process.exit(1);
   }
 
