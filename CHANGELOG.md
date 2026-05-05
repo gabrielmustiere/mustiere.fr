@@ -7,6 +7,17 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-05-05
+
+### Added
+
+- Article « PHP & Symfony en 2026 : pourquoi un CTO devrait sérieusement le considérer » publié (FR + EN).
+
+### Changed
+
+- Slug EN renommé en `php-symfony-2026-cto-perspective` pour intégrer Symfony et l'angle éditorial « perspective CTO ».
+- Migration des trois dossiers `docs/story/` legacy vers le format `NNN-<type>-<slug>/` (compteur en tête).
+
 ## [0.3.0] - 2026-05-04
 
 ### Added
@@ -77,7 +88,8 @@ Première version publique du site mustiere.fr déployé en SSG sur Github Pages
 - URLs unifiées avec trailing slash systématique.
 - Navigation unifiée avec menu mobile.
 
-[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/gabrielmustiere/mustiere.fr/releases/tag/v0.1.0
