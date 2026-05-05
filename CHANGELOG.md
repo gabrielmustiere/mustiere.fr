@@ -7,6 +7,13 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-05-05
+
+### Changed
+
+- Résolution des traductions FR/EN unifiée via `findTranslation` (`utils/content.ts`) : couvre les deux sens de la relation `translationOf` et exclut les drafts en production. `ArticleLayout` et `ProjectLayout` n'inlinent plus `getCollection` / `isPublished`.
+- Frontmatter de l'article Symfony EN : `translationOf` ajouté pour refléter le lien vers la version FR.
+
 ## [0.4.0] - 2026-05-05
 
 ### Added
@@ -104,7 +111,8 @@ Première version publique du site mustiere.fr déployé en SSG sur Github Pages
 - URLs unifiées avec trailing slash systématique.
 - Navigation unifiée avec menu mobile.
 
-[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.2.0...v0.3.0
