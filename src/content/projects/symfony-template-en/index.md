@@ -7,7 +7,8 @@ year: 2026
 publishedAt: 2026-04-28
 excerpt:
   'A pre-configured Symfony 8 skeleton: Tailwind 4, SQLite, Mailpit, Unit/Functional/E2E tests, PHPStan level 9, and MCP servers wired for AI assistance.'
-cover: '/images/projects/symfony-template-banner.png'
+cover: ./cover.png
+coverAlt: 'Symfony template banner: a ready-to-use skeleton to kick off a project'
 url: 'https://github.com/gabrielmustiere/symfony-template'
 order: 1
 lang: en

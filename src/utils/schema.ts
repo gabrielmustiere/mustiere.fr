@@ -331,16 +331,14 @@ interface SoftwareSourceCodeInput {
   updatedAt?: Date;
   repository?: string;
   lang: Lang;
-  cover?: string;
+  coverUrl?: string;
   abstract?: string;
   relatedUrls?: string[];
 }
 
 export function softwareSourceCodeSchema(p: SoftwareSourceCodeInput) {
   const url = `${SITE.url}${localizedPath(p.lang, `/projects/${p.slug}`)}`;
-  const imageUrl = p.cover
-    ? `${SITE.url}${p.cover}`
-    : `${SITE.url}${SITE.ogImage}`;
+  const imageUrl = p.coverUrl ?? `${SITE.url}${SITE.ogImage}`;
   return {
     '@context': 'https://schema.org',
     '@type': 'SoftwareSourceCode',

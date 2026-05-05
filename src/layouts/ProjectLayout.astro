@@ -1,4 +1,5 @@
 ---
+import { Picture } from 'astro:assets';
 import SiteLayout from './SiteLayout.astro';
 import Footer from '@components/layout/Footer.astro';
 import ReadingProgress from '@components/ui/ReadingProgress.astro';
@@ -16,6 +17,7 @@ import {
   softwareSourceCodeSchema,
 } from '@/utils/schema';
 import { formatDateDottedFull, toISODate } from '@/utils/format-date';
+import { getCover, getOgImage } from '@/utils/cover';
 import { truncateForMeta } from '@/utils/meta';
 import { SITE } from '@/consts';
 import {
@@ -70,6 +72,9 @@ const relatedUrls = others.map(
   (o) => new URL(localizedPath(lang, `/projects/${o.id}`), SITE.url).href
 );
 
+const { cover, alt: coverAlt } = await getCover(project);
+const ogImage = await getOgImage(project);
+
 const schemas = [
   softwareSourceCodeSchema({
     title: data.title,
@@ -79,7 +84,7 @@ const schemas = [
     updatedAt: data.updatedAt,
     repository: data.url,
     lang,
-    cover: data.cover,
+    coverUrl: ogImage.url,
     abstract: data.resume.plain,
     relatedUrls,
   }),
@@ -99,7 +104,9 @@ const metaDescription = truncateForMeta(data.resume.plain);
 <SiteLayout
   title={data.title}
   description={metaDescription}
-  image={data.cover}
+  image={ogImage.url}
+  imageWidth={ogImage.width}
+  imageHeight={ogImage.height}
   type="article"
   current="project"
   lang={lang}
@@ -145,19 +152,19 @@ const metaDescription = truncateForMeta(data.resume.plain);
           >
           <span class="tnum text-[color:var(--color-muted)]">{data.kind}</span>
         </div>
-        {
-          data.cover && (
-            <img
-              src={data.cover}
-              alt=""
-              loading="eager"
-              fetchpriority="high"
-              decoding="async"
-              class="mt-5 w-full aspect-[16/9] object-cover rounded-md"
-              transition:name={`project-cover-${project.id}`}
-            />
-          )
-        }
+        <Picture
+          src={cover}
+          formats={['avif', 'webp']}
+          widths={[480, 720, 1080, 1440]}
+          width={720}
+          height={Math.round((720 * 9) / 16)}
+          alt={coverAlt}
+          loading="eager"
+          fetchpriority="high"
+          sizes="(min-width: 760px) 720px, 100vw"
+          class="mt-5 w-full aspect-[16/9] object-cover rounded-md"
+          transition:name={`project-cover-${project.id}`}
+        />
         <h1
           class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"

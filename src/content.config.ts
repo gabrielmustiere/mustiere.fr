@@ -60,7 +60,7 @@ const blog = defineCollection({
       // Une cover doit être disponible pour chaque article : soit déclarée
       // localement (`cover: ./cover.webp`), soit héritée d'une entrée pointée
       // par `translationOf` (typiquement la version FR pour un article EN
-      // bilingue). Le helper `getCover` (src/utils/article-cover.ts) opère
+      // bilingue). Le helper `getCover` (src/utils/cover.ts) opère
       // la résolution au rendu.
       .superRefine((data, ctx) => {
         if (!data.cover && !data.translationOf) {
@@ -79,33 +79,46 @@ const projects = defineCollection({
     base: './src/content/projects',
     extensions: ['.md', '.mdx'],
   }),
-  schema: z.object({
-    title: z.string(),
-    subtitle: z.string(),
-    status: z.enum([
-      'actif',
-      'archivé',
-      'v1.0',
-      'v1.1',
-      'v1.2',
-      'v1.3',
-      'beta',
-    ]),
-    kind: z.string(),
-    year: z.number().int(),
-    publishedAt: z.coerce.date(),
-    updatedAt: z.coerce.date().optional(),
-    excerpt: z.string(),
-    cover: z.string().optional(),
-    url: z.url().optional(),
-    order: z.number().int().default(0),
-    resume: resumeSchema,
-    faq: z.array(faqItem).default([]),
-    sources: z.array(sourceItem).default([]),
-    draft: z.boolean().default(false),
-    lang: langEnum.default('fr'),
-    translationOf: z.string().optional(),
-  }),
+  schema: ({ image }) =>
+    z
+      .object({
+        title: z.string(),
+        subtitle: z.string(),
+        status: z.enum([
+          'actif',
+          'archivé',
+          'v1.0',
+          'v1.1',
+          'v1.2',
+          'v1.3',
+          'beta',
+        ]),
+        kind: z.string(),
+        year: z.number().int(),
+        publishedAt: z.coerce.date(),
+        updatedAt: z.coerce.date().optional(),
+        excerpt: z.string(),
+        cover: image().optional(),
+        coverAlt: z.string().min(3).optional(),
+        url: z.url().optional(),
+        order: z.number().int().default(0),
+        resume: resumeSchema,
+        faq: z.array(faqItem).default([]),
+        sources: z.array(sourceItem).default([]),
+        draft: z.boolean().default(false),
+        lang: langEnum.default('fr'),
+        translationOf: z.string().optional(),
+      })
+      .superRefine((data, ctx) => {
+        if (!data.cover && !data.translationOf) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['cover'],
+            message:
+              'cover required (or translationOf to inherit cover from another entry)',
+          });
+        }
+      }),
 });
 
 export const collections = { blog, projects };

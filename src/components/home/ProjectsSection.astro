@@ -1,9 +1,11 @@
 ---
+import { Picture } from 'astro:assets';
 import SectionHead from '@components/ui/SectionHead.astro';
 import { getCollection } from 'astro:content';
 import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 import { isPublished } from '@/utils/content';
+import { getCover } from '@/utils/cover';
 
 interface Props {
   lang?: Lang;
@@ -15,6 +17,13 @@ const tr = useTranslations(lang);
 const projects = (
   await getCollection('projects', (entry) => isPublished(entry, lang))
 ).sort((a, b) => a.data.order - b.data.order);
+
+const projectsWithCover = await Promise.all(
+  projects.map(async (project) => ({
+    project,
+    ...(await getCover(project)),
+  }))
+);
 ---
 
 <section data-key="projects" id="projects">
@@ -22,13 +31,25 @@ const projects = (
 
   <div class="mt-8 space-y-10">
     {
-      projects.map((project) => (
+      projectsWithCover.map(({ project, cover, alt }) => (
         <a
           href={localizedPath(lang, `/projects/${project.id}`)}
           class="block group project-card"
         >
           <article>
-            <div class="flex items-baseline justify-between gap-4">
+            <Picture
+              src={cover}
+              formats={['avif', 'webp']}
+              widths={[480, 720, 1080, 1440]}
+              width={720}
+              height={Math.round((720 * 9) / 16)}
+              alt={alt}
+              loading="lazy"
+              sizes="(min-width: 760px) 720px, 100vw"
+              class="project-card__cover"
+              transition:name={`project-cover-${project.id}`}
+            />
+            <div class="mt-5 flex items-baseline justify-between gap-4">
               <h3
                 class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em] group-hover:text-[color:var(--a-projects)] transition-colors"
                 style="font-family: var(--font-serif)"
@@ -69,5 +90,13 @@ const projects = (
   }
   .project-card:hover .arrow {
     transform: translateX(2px);
+  }
+  .project-card__cover {
+    border-radius: 6px;
+    overflow: hidden;
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 </style>

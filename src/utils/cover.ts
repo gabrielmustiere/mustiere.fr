@@ -3,7 +3,8 @@ import { getImage } from 'astro:assets';
 import { getEntry, type CollectionEntry } from 'astro:content';
 import { SITE } from '@/consts';
 
-type BlogEntry = CollectionEntry<'blog'>;
+type CoverableCollection = 'blog' | 'projects';
+type CoverableEntry = CollectionEntry<CoverableCollection>;
 
 export interface ResolvedCover {
   cover: ImageMetadata;
@@ -16,14 +17,19 @@ export interface ResolvedOgImage {
   height: number;
 }
 
-export async function getCover(entry: BlogEntry): Promise<ResolvedCover> {
+export async function getCover(entry: CoverableEntry): Promise<ResolvedCover> {
   let cover: ImageMetadata | undefined = entry.data.cover;
   if (!cover && entry.data.translationOf) {
-    const target = await getEntry('blog', entry.data.translationOf);
+    const target = await getEntry(
+      entry.collection as CoverableCollection,
+      entry.data.translationOf
+    );
     cover = target?.data.cover;
   }
   if (!cover) {
-    throw new Error(`No cover resolvable for blog entry "${entry.id}"`);
+    throw new Error(
+      `No cover resolvable for ${entry.collection} entry "${entry.id}"`
+    );
   }
   // Fallback `''` (et non `data.title`) : les composants qui rendent la
   // <Picture> rendent aussi le titre en h1/h2/h3 juste à côté ; sans
@@ -38,7 +44,9 @@ export async function getCover(entry: BlogEntry): Promise<ResolvedCover> {
 // Retourne l'URL absolue + les dimensions effectives de la variante OG.
 // Aucun height forcé : `getImage` calcule la hauteur depuis le ratio source
 // pour éviter toute distortion (cf. plan 007-f, source 16/9 → OG 1200×675).
-export async function getOgImage(entry: BlogEntry): Promise<ResolvedOgImage> {
+export async function getOgImage(
+  entry: CoverableEntry
+): Promise<ResolvedOgImage> {
   const { cover } = await getCover(entry);
   const og = await getImage({
     src: cover,
