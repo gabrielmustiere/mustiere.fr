@@ -273,6 +273,8 @@ body {
   padding: 1px 5px;
   font-family: var(--font-mono);
   font-size: 0.9em;
+  font-variant-ligatures: none;
+  font-feature-settings: 'liga' 0, 'calt' 0;
 }
 
 .prose pre,
@@ -286,6 +288,8 @@ body {
   line-height: 1.7;
   margin: 1.6em 0;
   font-family: var(--font-mono);
+  font-variant-ligatures: none;
+  font-feature-settings: 'liga' 0, 'calt' 0;
 }
 
 /* Shiki github-light — override des tokens qui tombent sous 4.5:1 sur fond blanc.
