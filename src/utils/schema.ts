@@ -337,7 +337,7 @@ interface SoftwareSourceCodeInput {
 }
 
 export function softwareSourceCodeSchema(p: SoftwareSourceCodeInput) {
-  const url = `${SITE.url}${localizedPath(p.lang, `/projects/${p.slug}`)}`;
+  const url = `${SITE.url}${localizedPath(p.lang, `${routePath('projects', p.lang)}/${p.slug}`)}`;
   const imageUrl = p.coverUrl ?? `${SITE.url}${SITE.ogImage}`;
   return {
     '@context': 'https://schema.org',

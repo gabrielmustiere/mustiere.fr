@@ -1,10 +1,33 @@
 import { createHash } from 'node:crypto';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from '@/i18n/config';
+import { localizedPath } from '@/i18n/utils';
+import { routePath } from '@/i18n/routes';
 
 type PublishableEntry = CollectionEntry<'blog'> | CollectionEntry<'projects'>;
 
 type TranslatableCollection = 'blog' | 'projects';
+
+// Les collections `blog` et `projects` utilisent `nestedByLang` : l'`id`
+// d'entrée porte un préfixe `fr/` ou `en/` (ex. `fr/symfony-template`). Le slug
+// public est la dernière section, sans préfixe.
+export function publicSlug(entry: { id: string }): string {
+  const parts = entry.id.split('/');
+  return parts[parts.length - 1];
+}
+
+// URL canonique d'un projet pour la langue donnée. Combine `routePath`
+// (segment localisé `/projets` vs `/projects`) et `localizedPath` (préfixe lang
+// pour l'EN).
+export function projectPath(entry: { id: string }, lang: Lang): string {
+  return localizedPath(lang, `${routePath('projects', lang)}/${publicSlug(entry)}`);
+}
+
+// URL canonique d'un article de blog. Le segment `/blog` est identique en FR
+// et en EN ; seule la lang change le préfixe global.
+export function blogPath(entry: { id: string }, lang: Lang): string {
+  return localizedPath(lang, `${routePath('blog', lang)}/${publicSlug(entry)}`);
+}
 
 // Filtre unique pour les collections `blog` et `projects` :
 // - en dev (`make serve`), les drafts sont visibles pour relecture locale ;
@@ -72,15 +95,22 @@ export async function findTranslation<C extends TranslatableCollection>(
   const candidates = await getCollection(collection, (e) =>
     isPublished(e as PublishableEntry, otherLang)
   );
-  const forwardId = (entry.data as { translationOf?: string }).translationOf;
-  if (forwardId) {
-    const forward = candidates.find((c) => c.id === forwardId);
+  // `translationOf` peut référencer soit l'id complet (forme historique :
+  // `symfony-template-en` quand la collection était plate), soit le slug public
+  // pur (`symfony-template` avec le layout nestedByLang). On compare sur les
+  // deux formes pour rester compatible avec les deux conventions.
+  const forwardRef = (entry.data as { translationOf?: string }).translationOf;
+  if (forwardRef) {
+    const forward = candidates.find(
+      (c) => c.id === forwardRef || publicSlug(c) === forwardRef
+    );
     if (forward) return forward;
   }
-  return candidates.find(
-    (c) =>
-      (c.data as { translationOf?: string }).translationOf === entry.id
-  );
+  const entrySlug = publicSlug(entry);
+  return candidates.find((c) => {
+    const ref = (c.data as { translationOf?: string }).translationOf;
+    return ref === entry.id || ref === entrySlug;
+  });
 }
 
 export function getDraftPreviewEntries<T extends PublishableEntry>(

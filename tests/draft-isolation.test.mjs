@@ -169,7 +169,7 @@ test('robots.txt — Disallow sur les préfixes _drafts/', () => {
   for (const path of [
     '/blog/_drafts/',
     '/en/blog/_drafts/',
-    '/projects/_drafts/',
+    '/projets/_drafts/',
     '/en/projects/_drafts/',
   ]) {
     assert.ok(

@@ -29,7 +29,7 @@ import {
 } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 import type { CollectionEntry } from 'astro:content';
-import { findTranslation } from '@/utils/content';
+import { blogPath, findTranslation, publicSlug } from '@/utils/content';
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
@@ -44,7 +44,7 @@ const { data } = post;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);
 
-const url = new URL(localizedPath(lang, `/blog/${post.id}`), SITE.url).href;
+const url = new URL(blogPath(post, lang), SITE.url).href;
 const blogHref = localizedPath(lang, '/blog');
 const homeHref = localizedPath(lang, '/');
 
@@ -54,11 +54,11 @@ const otherLang: Lang = otherLangOf(lang);
 // `isPublished` (les drafts sont exclus en build prod).
 const translatedPost = await findTranslation('blog', post, otherLang);
 const otherLangHref = translatedPost
-  ? localizedPath(otherLang, `/blog/${translatedPost.id}`)
+  ? blogPath(translatedPost, otherLang)
   : localizedPath(otherLang, '/blog');
 
 const relatedUrls = nextPosts.map(
-  (n) => new URL(localizedPath(lang, `/blog/${n.id}`), SITE.url).href
+  (n) => new URL(blogPath(n, lang), SITE.url).href
 );
 
 const ogImage = await getOgImage(post);
@@ -67,7 +67,7 @@ const schemas = [
   blogPostingSchema({
     title: data.title,
     description: data.excerpt,
-    slug: post.id,
+    slug: publicSlug(post),
     publishedAt: data.publishedAt,
     updatedAt: data.updatedAt,
     category: data.category,

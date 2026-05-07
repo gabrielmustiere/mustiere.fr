@@ -54,6 +54,13 @@ const COLOCATED_ASSET_EXTS = new Set([
 interface ChapteredGlobOptions {
   base: string;
   extensions: string[];
+  // Mode i18n : si défini, le loader plonge d'un cran dans `base/<lang>/` pour
+  // chaque langue listée et préfixe l'`id` des entrées par `<lang>/`. Permet de
+  // séparer physiquement les versions FR et EN d'une même collection sans
+  // dupliquer le slug public dans le nom de dossier (ex. `projects/fr/foo/` +
+  // `projects/en/foo/`). Le slug public (sans préfixe) est exposé via
+  // `publicSlug(entry)` côté code applicatif.
+  nestedByLang?: readonly string[];
 }
 
 type EntryType = {
@@ -98,7 +105,7 @@ function posixRelative(from: string, to: string): string {
 }
 
 export function chapteredGlob(options: ChapteredGlobOptions): Loader {
-  const { base, extensions } = options;
+  const { base, extensions, nestedByLang } = options;
 
   return {
     name: 'chaptered-glob',
@@ -120,36 +127,50 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
 
       const untouched = new Set(store.keys());
 
-      const entries = readdirSync(baseDirPath, { withFileTypes: true });
-      for (const entry of entries) {
-        if (entry.name.startsWith('.') || entry.name.startsWith('_')) continue;
+      const processDir = async (dirPath: string, idPrefix: string) => {
+        const entries = readdirSync(dirPath, { withFileTypes: true });
+        for (const entry of entries) {
+          if (entry.name.startsWith('.') || entry.name.startsWith('_')) continue;
 
-        if (entry.isFile()) {
-          const ext = pickExtension(entry.name, extensions);
-          if (!ext) continue;
-          const id = entry.name.slice(0, -ext.length);
-          await loadFlat({
-            ctx,
-            rootPath,
-            baseDirPath,
-            fileName: entry.name,
-            ext,
-            id,
-          });
-          untouched.delete(id);
-        } else if (entry.isDirectory()) {
-          const id = entry.name;
-          await loadFolder({
-            ctx,
-            rootPath,
-            baseDirPath,
-            dirName: entry.name,
-            extensions,
-            id,
-            collection,
-          });
-          untouched.delete(id);
+          if (entry.isFile()) {
+            const ext = pickExtension(entry.name, extensions);
+            if (!ext) continue;
+            const slug = entry.name.slice(0, -ext.length);
+            const id = idPrefix + slug;
+            await loadFlat({
+              ctx,
+              rootPath,
+              baseDirPath: dirPath,
+              fileName: entry.name,
+              ext,
+              id,
+            });
+            untouched.delete(id);
+          } else if (entry.isDirectory()) {
+            const id = idPrefix + entry.name;
+            await loadFolder({
+              ctx,
+              rootPath,
+              baseDirPath: dirPath,
+              dirName: entry.name,
+              extensions,
+              id,
+              collection,
+            });
+            untouched.delete(id);
+          }
         }
+      };
+
+      if (nestedByLang && nestedByLang.length > 0) {
+        for (const lang of nestedByLang) {
+          const langDir = join(baseDirPath, lang);
+          if (!existsSync(langDir)) continue;
+          await processDir(langDir, `${lang}/`);
+          if (watcher) watcher.add(langDir);
+        }
+      } else {
+        await processDir(baseDirPath, '');
       }
 
       for (const id of untouched) {
@@ -366,7 +387,7 @@ async function loadFolder(args: {
   // les assets référencés en chemin relatif depuis le frontmatter (cover.webp,
   // etc.). Sans ça, Astro `image()` résout `./cover.webp` relativement au
   // fichier matérialisé et ne trouve pas l'asset original.
-  const assembledRel = `.astro/chaptered/${collection}/${dirName}/index${indexExt}`;
+  const assembledRel = `.astro/chaptered/${collection}/${id}/index${indexExt}`;
   const assembledAbs = join(rootPath, assembledRel);
   const assembledDir = dirname(assembledAbs);
   const digestSource =

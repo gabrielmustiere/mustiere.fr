@@ -2,9 +2,9 @@
 import { Picture } from 'astro:assets';
 import SectionHead from '@components/ui/SectionHead.astro';
 import { getCollection } from 'astro:content';
-import { getLangFromUrl, useTranslations, localizedPath } from '@/i18n/utils';
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
-import { isPublished } from '@/utils/content';
+import { isPublished, projectPath, publicSlug } from '@/utils/content';
 import { getCover } from '@/utils/cover';
 
 interface Props {
@@ -33,7 +33,7 @@ const projectsWithCover = await Promise.all(
     {
       projectsWithCover.map(({ project, cover, alt }) => (
         <a
-          href={localizedPath(lang, `/projects/${project.id}`)}
+          href={projectPath(project, lang)}
           class="block group project-card"
         >
           <article>
@@ -47,13 +47,13 @@ const projectsWithCover = await Promise.all(
               loading="lazy"
               sizes="(min-width: 760px) 720px, 100vw"
               class="project-card__cover"
-              transition:name={`project-cover-${project.id}`}
+              transition:name={`project-cover-${publicSlug(project)}`}
             />
             <div class="mt-5 flex items-baseline justify-between gap-4">
               <h3
                 class="font-serif text-[22px] sm:text-[26px] tracking-[-0.005em] group-hover:text-[color:var(--a-projects)] transition-colors"
                 style="font-family: var(--font-serif)"
-                transition:name={`project-title-${project.id}`}
+                transition:name={`project-title-${publicSlug(project)}`}
               >
                 {project.data.title}
               </h3>

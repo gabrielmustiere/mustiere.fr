@@ -35,6 +35,11 @@ const blog = defineCollection({
   loader: chapteredGlob({
     base: './src/content/blog',
     extensions: ['.mdx', '.md'],
+    // Layout i18n : `blog/fr/<slug>/` et `blog/en/<slug>/`. L'`id` d'entrée
+    // porte le préfixe lang (`fr/<slug>`) ; le slug public est extrait via
+    // `publicSlug(entry)` (cf. utils/content). Les URLs publiques restent
+    // `/blog/<slug>/` (FR) et `/en/blog/<slug>/` (EN), inchangées.
+    nestedByLang: ['fr', 'en'],
   }),
   schema: ({ image }) =>
     z
@@ -78,6 +83,10 @@ const projects = defineCollection({
   loader: chapteredGlob({
     base: './src/content/projects',
     extensions: ['.md', '.mdx'],
+    // Layout i18n : `projects/fr/<slug>/` et `projects/en/<slug>/`. L'`id`
+    // d'entrée porte le préfixe lang (`fr/symfony-template`) ; le slug public
+    // est extrait via `publicSlug(entry)` (cf. utils/content).
+    nestedByLang: ['fr', 'en'],
   }),
   schema: ({ image }) =>
     z

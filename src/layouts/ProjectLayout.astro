@@ -27,7 +27,7 @@ import {
 } from '@/i18n/utils';
 import type { Lang } from '@/i18n/config';
 import type { CollectionEntry } from 'astro:content';
-import { findTranslation } from '@/utils/content';
+import { findTranslation, projectPath, publicSlug } from '@/utils/content';
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
@@ -47,8 +47,7 @@ const { data } = project;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);
 
-const url = new URL(localizedPath(lang, `/projects/${project.id}`), SITE.url)
-  .href;
+const url = new URL(projectPath(project, lang), SITE.url).href;
 const homeHref = localizedPath(lang, '/');
 
 const otherLangCode: Lang = otherLangOf(lang);
@@ -61,11 +60,11 @@ const translatedEntry = await findTranslation(
   otherLangCode
 );
 const otherLangHref = translatedEntry
-  ? localizedPath(otherLangCode, `/projects/${translatedEntry.id}`)
+  ? projectPath(translatedEntry, otherLangCode)
   : localizedPath(otherLangCode, '/');
 
 const relatedUrls = others.map(
-  (o) => new URL(localizedPath(lang, `/projects/${o.id}`), SITE.url).href
+  (o) => new URL(projectPath(o, lang), SITE.url).href
 );
 
 const { cover, alt: coverAlt } = await getCover(project);
@@ -75,7 +74,7 @@ const schemas = [
   softwareSourceCodeSchema({
     title: data.title,
     description: data.excerpt,
-    slug: project.id,
+    slug: publicSlug(project),
     publishedAt: data.publishedAt,
     updatedAt: data.updatedAt,
     repository: data.url,
@@ -159,12 +158,12 @@ const metaDescription = truncateForMeta(data.resume.plain);
           fetchpriority="high"
           sizes="(min-width: 760px) 720px, 100vw"
           class="mt-5 w-full aspect-[16/9] object-cover rounded-md"
-          transition:name={`project-cover-${project.id}`}
+          transition:name={`project-cover-${publicSlug(project)}`}
         />
         <h1
           class="font-serif mt-5 text-[40px] sm:text-[60px] leading-[1.04] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
-          transition:name={`project-title-${project.id}`}
+          transition:name={`project-title-${publicSlug(project)}`}
         >
           {data.title}
         </h1>

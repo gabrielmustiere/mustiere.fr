@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
-import { isPublished } from '@/utils/content';
+import { blogPath, isPublished } from '@/utils/content';
 
 export const GET: APIRoute = async () => {
   const posts = (
@@ -51,7 +51,7 @@ export const GET: APIRoute = async () => {
     parts.push(`### ${post.data.title}`);
     parts.push('');
     parts.push(
-      `*Published on ${date} · Category: ${post.data.category} · URL: ${SITE.url}/en/blog/${post.id}/*`
+      `*Published on ${date} · Category: ${post.data.category} · URL: ${SITE.url}${blogPath(post, 'en')}*`
     );
     parts.push('');
     if (post.data.resume?.markdown) {

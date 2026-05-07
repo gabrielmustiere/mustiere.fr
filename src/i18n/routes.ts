@@ -3,6 +3,7 @@ import type { Lang } from './config';
 export const ROUTES = {
   parcours: { fr: '/parcours', en: '/background' },
   blog: { fr: '/blog', en: '/blog' },
+  projects: { fr: '/projets', en: '/projects' },
   rssFeed: { fr: '/rss.xml', en: '/en/rss.xml' },
 } as const satisfies Record<string, Record<Lang, string>>;
 

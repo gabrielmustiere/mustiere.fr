@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
-import { isPublished } from '@/utils/content';
+import { blogPath, isPublished } from '@/utils/content';
 
 // Racine `llms-full.txt` — contenu intégral FR (langue par défaut, sans
 // préfixe). La variante anglaise reste disponible sur /en/llms-full.txt.
@@ -57,7 +57,7 @@ export const GET: APIRoute = async () => {
     parts.push(`### ${post.data.title}`);
     parts.push('');
     parts.push(
-      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}/blog/${post.id}/*`
+      `*Publié le ${date} · Catégorie : ${post.data.category} · URL : ${SITE.url}${blogPath(post, 'fr')}*`
     );
     parts.push('');
     if (post.data.resume?.markdown) {

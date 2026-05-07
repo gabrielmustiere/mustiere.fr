@@ -6,6 +6,7 @@ import {
   isPublished,
   getDraftPreviewEntries,
   getDraftSlugParam,
+  publicSlug,
 } from '@/utils/content';
 
 export async function getStaticPaths() {
@@ -21,14 +22,14 @@ export async function getStaticPaths() {
       (p): p is CollectionEntry<'blog'> => Boolean(p)
     );
     return {
-      params: { slug: post.id },
+      params: { slug: publicSlug(post) },
       props: { post, nextPosts, isDraftPreview: false },
     };
   });
 
   const draftRoutes = getDraftPreviewEntries(all, 'fr')
     .map((post) => {
-      const slug = getDraftSlugParam(post.id);
+      const slug = getDraftSlugParam(publicSlug(post));
       if (!slug) return null;
       return {
         params: { slug },

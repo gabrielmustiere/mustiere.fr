@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import type { APIContext } from 'astro';
 import { SITE } from '@/consts';
 import { ui } from '@/i18n/ui';
-import { isPublished } from '@/utils/content';
+import { blogPath, isPublished } from '@/utils/content';
 
 // Flux RSS racine — contenu FR (langue par défaut du site, servi sans préfixe).
 // Le flux EN reste sur /en/rss.xml.
@@ -24,7 +24,7 @@ export async function GET(context: APIContext) {
       title: post.data.title,
       pubDate: post.data.publishedAt,
       description: post.data.excerpt,
-      link: `/blog/${post.id}/`,
+      link: blogPath(post, 'fr'),
       categories: [post.data.category, ...post.data.tags],
       author: `${SITE.author.email} (${SITE.author.name})`,
     })),

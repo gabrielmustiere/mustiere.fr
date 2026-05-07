@@ -2,7 +2,7 @@ import { getCollection } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
-import { isPublished } from '@/utils/content';
+import { blogPath, isPublished, projectPath } from '@/utils/content';
 
 // Racine `llms.txt` — contenu FR (langue par défaut du site), avec un pointeur
 // explicite vers la variante localisée anglaise. Servi en text/plain pour que
@@ -67,7 +67,7 @@ export const GET: APIRoute = async () => {
   for (const post of posts) {
     const date = toISODate(post.data.publishedAt);
     lines.push(
-      `- [${post.data.title}](${SITE.url}/blog/${post.id}/) (${date}, ${post.data.category}) : ${post.data.excerpt}`
+      `- [${post.data.title}](${SITE.url}${blogPath(post, 'fr')}) (${date}, ${post.data.category}) : ${post.data.excerpt}`
     );
   }
   lines.push('');
@@ -77,7 +77,7 @@ export const GET: APIRoute = async () => {
     lines.push('');
     for (const project of projects) {
       lines.push(
-        `- [${project.data.title}](${SITE.url}/projects/${project.id}/) (${project.data.kind} · ${project.data.year} · ${project.data.status}) : ${project.data.excerpt}`
+        `- [${project.data.title}](${SITE.url}${projectPath(project, 'fr')}) (${project.data.kind} · ${project.data.year} · ${project.data.status}) : ${project.data.excerpt}`
       );
     }
     lines.push('');

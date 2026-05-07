@@ -3,7 +3,7 @@ import { Picture } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import type { Lang } from '@/i18n/config';
 import CategoryPill from './CategoryPill.astro';
-import { localizedPath } from '@/i18n/utils';
+import { blogPath, publicSlug } from '@/utils/content';
 import {
   formatDateShort,
   formatDateDottedFull,
@@ -33,7 +33,8 @@ const {
 const SmHeading = `h${headingLevel}` as 'h2' | 'h3';
 const { data } = entry;
 const { cover, alt } = await getCover(entry);
-const href = localizedPath(lang, `/blog/${entry.id}`);
+const href = blogPath(entry, lang);
+const slug = publicSlug(entry);
 
 // Toutes les variantes affichent désormais la cover full-width 16/9 au-dessus
 // du titre. Les `widths` couvrent l'éventail de largeurs de rendu effectives
@@ -97,13 +98,13 @@ const pictureAlt = alt;
             fetchpriority={fetchpriority}
             sizes={sizesAttr}
             class="article-card__cover article-card__cover--lg mt-5"
-            transition:name={`article-cover-${entry.id}`}
+            transition:name={`article-cover-${slug}`}
           />
         )}
         <h1
           class="font-serif mt-5 text-[34px] sm:text-[48px] leading-[1.06] tracking-[-0.015em]"
           style="font-family: var(--font-serif)"
-          transition:name={`article-title-${entry.id}`}
+          transition:name={`article-title-${slug}`}
         >
           {data.title}
         </h1>
@@ -134,14 +135,14 @@ const pictureAlt = alt;
             fetchpriority={fetchpriority}
             sizes={sizesAttr}
             class="article-card__cover article-card__cover--md"
-            transition:name={`article-cover-${entry.id}`}
+            transition:name={`article-cover-${slug}`}
           />
         )}
         <div class="article-card__body">
           <h2
             class="font-serif text-[26px] sm:text-[36px] leading-[1.1] tracking-[-0.015em] group-hover:text-[color:var(--a-blog)] transition-colors"
             style="font-family: var(--font-serif)"
-            transition:name={`article-title-${entry.id}`}
+            transition:name={`article-title-${slug}`}
           >
             {data.title}
           </h2>
@@ -185,14 +186,14 @@ const pictureAlt = alt;
             fetchpriority={fetchpriority}
             sizes={sizesAttr}
             class="article-card__cover article-card__cover--sm"
-            transition:name={`article-cover-${entry.id}`}
+            transition:name={`article-cover-${slug}`}
           />
         )}
         <div class="article-card__body">
           <SmHeading
             class="font-serif text-[19px] sm:text-[22px] leading-[1.25] tracking-[-0.005em] group-hover:text-[color:var(--a-blog)] transition-colors"
             style="font-family: var(--font-serif)"
-            transition:name={`article-title-${entry.id}`}
+            transition:name={`article-title-${slug}`}
           >
             {data.title}
           </SmHeading>
