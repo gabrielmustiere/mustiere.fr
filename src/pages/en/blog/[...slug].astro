@@ -36,9 +36,7 @@ export async function getStaticPaths() {
         props: { post, nextPosts: [], isDraftPreview: true },
       };
     })
-    .filter(
-      (r): r is NonNullable<typeof r> => r !== null
-    );
+    .filter((r): r is NonNullable<typeof r> => r !== null);
 
   return [...publishedRoutes, ...draftRoutes];
 }

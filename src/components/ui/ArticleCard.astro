@@ -41,8 +41,7 @@ const slug = publicSlug(entry);
 // par variante (lg/md = pleine prose ~720px, sm = grille 2 cols ~360px).
 const sizes = { lg: 720, md: 720, sm: 480 } as const;
 const size = sizes[variant];
-const widths =
-  variant === 'sm' ? [360, 480, 720, 960] : [480, 720, 1080, 1440];
+const widths = variant === 'sm' ? [360, 480, 720, 960] : [480, 720, 1080, 1440];
 const sizesAttr =
   variant === 'sm'
     ? '(min-width: 760px) 360px, 100vw'
@@ -155,9 +154,7 @@ const pictureAlt = alt;
             {data.readingTime && (
               <>
                 <span aria-hidden="true">·</span>
-                <span class="tnum">
-                  {data.readingTime} min
-                </span>
+                <span class="tnum">{data.readingTime} min</span>
               </>
             )}
           </div>
@@ -206,9 +203,7 @@ const pictureAlt = alt;
             {data.readingTime && (
               <>
                 <span aria-hidden="true">·</span>
-                <span class="tnum">
-                  {data.readingTime} min
-                </span>
+                <span class="tnum">{data.readingTime} min</span>
               </>
             )}
           </div>

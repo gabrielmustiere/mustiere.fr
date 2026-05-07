@@ -227,11 +227,11 @@ public function testButtonRendersVariant(): void
 
 ### Les trois profils à gérer
 
-| Profil | Résistance potentielle | Comment embarquer |
-|--------|-----------------------|-------------------|
-| **Dev backend PHP** | Aucune en général, l'adoption est naturelle | Pair-programming sur un premier composant |
-| **Dev front React/Vue** | "Je vais perdre mon expertise" | Montrer les îlots `ux-react` : leur skill reste utile |
-| **Dev fullstack habitué au bricolage** | "Je sais déjà faire en Stimulus custom" | Démontrer le gain en lignes sur **son propre code** |
+| Profil                                 | Résistance potentielle                      | Comment embarquer                                     |
+| -------------------------------------- | ------------------------------------------- | ----------------------------------------------------- |
+| **Dev backend PHP**                    | Aucune en général, l'adoption est naturelle | Pair-programming sur un premier composant             |
+| **Dev front React/Vue**                | "Je vais perdre mon expertise"              | Montrer les îlots `ux-react` : leur skill reste utile |
+| **Dev fullstack habitué au bricolage** | "Je sais déjà faire en Stimulus custom"     | Démontrer le gain en lignes sur **son propre code**   |
 
 ### Onboarding concret
 
@@ -243,11 +243,13 @@ public function testButtonRendersVariant(): void
 
 ```markdown
 ## Changements
+
 - [ ] Nouveau composant Twig : <nom>
 - [ ] Nouveau Live Component : <nom>
 - [ ] Suppression de JS custom : <fichier>
 
 ## Checklist
+
 - [ ] Props typées PHP (pas de mixed)
 - [ ] Template dans `templates/components/<chemin>` miroir de la classe
 - [ ] Pas de `render(controller())` introduit
@@ -255,6 +257,7 @@ public function testButtonRendersVariant(): void
 - [ ] Pas de JS custom ajouté sans justification
 
 ## Justification si React/Vue introduit
+
 (obligatoire, à faire valider par le lead)
 ```
 
@@ -311,17 +314,21 @@ Un cas semble justifier React ?
 # ADR-00X : Adoption de Symfony UX comme couche composant
 
 ## Contexte
+
 <la situation avant : patchwork de macros, includes, Stimulus…>
 
 ## Décision
+
 Adopter Twig Components + Live Components comme standard pour toute nouvelle UI.
 React/Vue autorisés uniquement pour <cas documentés>.
 
 ## Conséquences
+
 - Positives : <cohérence, DX, moins de JS>
 - Négatives : <courbe d'apprentissage, latence HTTP sur Live>
 
 ## Alternatives étudiées
+
 - SPA React complète : écartée car <raison>
 - Rester en macros + Stimulus custom : écarté car <raison>
 ```
@@ -332,15 +339,15 @@ React/Vue autorisés uniquement pour <cas documentés>.
 
 ### Le coût caché de React dans une app Symfony "classique"
 
-| Dimension | Surcoût concret |
-|-----------|-----------------|
-| **Stack** | 2 écosystèmes à maintenir (Composer + npm/yarn) |
-| **Modèles** | DTO PHP + types TS dupliqués, désynchronisation fréquente |
-| **Build** | 2 pipelines CI (PHPStan/PHPUnit + ESLint/Vitest/TSC) |
-| **Équipes** | souvent front + back séparées → coordination, lag, bugs d'intégration |
-| **Recrutement** | 2 compétences à chercher, coûts doublés |
-| **Onboarding** | 2× le temps pour qu'un dev soit autonome sur toute la stack |
-| **Design system** | risque d'en maintenir **deux** (un Twig, un React) |
+| Dimension         | Surcoût concret                                                       |
+| ----------------- | --------------------------------------------------------------------- |
+| **Stack**         | 2 écosystèmes à maintenir (Composer + npm/yarn)                       |
+| **Modèles**       | DTO PHP + types TS dupliqués, désynchronisation fréquente             |
+| **Build**         | 2 pipelines CI (PHPStan/PHPUnit + ESLint/Vitest/TSC)                  |
+| **Équipes**       | souvent front + back séparées → coordination, lag, bugs d'intégration |
+| **Recrutement**   | 2 compétences à chercher, coûts doublés                               |
+| **Onboarding**    | 2× le temps pour qu'un dev soit autonome sur toute la stack           |
+| **Design system** | risque d'en maintenir **deux** (un Twig, un React)                    |
 
 **Ordre de grandeur** sur une équipe de 5 devs : +30 à +50 % de temps de coordination pour des gains UX souvent imaginaires.
 
@@ -422,7 +429,7 @@ Si une réponse est faible, le choix n'est pas assez mûr.
 
 ## 💬 Message clé
 
-> **"En tant que lead dev, la question n'est pas *'comment intégrer Symfony UX ?'* mais *'jusqu'où peut-on aller sans quitter Symfony UX ?'*"**
+> **"En tant que lead dev, la question n'est pas _'comment intégrer Symfony UX ?'_ mais _'jusqu'où peut-on aller sans quitter Symfony UX ?'_"**
 >
 > Plus on repousse la frontière React, plus on simplifie l'architecture — et plus l'équipe livre vite avec moins de bugs d'intégration.
 
@@ -436,9 +443,9 @@ Si une réponse est faible, le choix n'est pas assez mûr.
 
 ## 🗣️ Narration (script oral)
 
-> "Dans les équipes où je suis intervenu, le réflexe par défaut était souvent : *'on fait du React parce que c'est moderne'*. Mais quand on analyse objectivement les besoins, 80 % des écrans sont du CRUD, du listing, du formulaire. Pour ça, Symfony UX n'est pas seulement **suffisant** — il est **meilleur** : moins de code, une seule équipe, une architecture unifiée.
+> "Dans les équipes où je suis intervenu, le réflexe par défaut était souvent : _'on fait du React parce que c'est moderne'_. Mais quand on analyse objectivement les besoins, 80 % des écrans sont du CRUD, du listing, du formulaire. Pour ça, Symfony UX n'est pas seulement **suffisant** — il est **meilleur** : moins de code, une seule équipe, une architecture unifiée.
 >
-> Mon rôle de lead, ce n'est pas d'imposer un dogme *'jamais de React'*. C'est de poser une **frontière défendable** : Twig et Live par défaut, React/Vue uniquement quand un besoin métier précis le justifie — et ce besoin, je le fais écrire noir sur blanc dans la PR. Pas pour freiner, mais pour éviter que chaque dev réintroduise la complexité par habitude ou par nostalgie.
+> Mon rôle de lead, ce n'est pas d'imposer un dogme _'jamais de React'_. C'est de poser une **frontière défendable** : Twig et Live par défaut, React/Vue uniquement quand un besoin métier précis le justifie — et ce besoin, je le fais écrire noir sur blanc dans la PR. Pas pour freiner, mais pour éviter que chaque dev réintroduise la complexité par habitude ou par nostalgie.
 >
 > Et surtout : je ne démarre jamais par un big bang. La recette qui marche, c'est design system Twig d'abord, puis Live sur les widgets bricolés, puis standardisation. Trois à six mois, et l'équipe a changé d'ère sans que personne n'ait eu à suer sur une migration brutale."
 

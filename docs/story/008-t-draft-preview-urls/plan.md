@@ -38,12 +38,12 @@ Aujourd'hui, un article `draft: true` est exclu du build prod (`isPublished()` d
 
 ## Critères de succès mesurables
 
-| Métrique | Baseline | Cible | Méthode |
-|----------|----------|-------|---------|
-| Pages draft générées sous path opaque | 0 | 100 % des `draft: true` | `existsSync(dist/blog/_drafts/<hash>/<slug>/index.html)` |
-| Slugs draft dans sitemap / RSS / llms.txt / listings HTML | 0 | 0 (préservé) | grep slug dans les fichiers de `dist/` |
-| Path canonique d'un draft | 404 | 404 (préservé) | `!existsSync(dist/blog/<slug>/index.html)` |
-| Build en mode dev (`astro dev`) | drafts servis à leur path canonique | aucun `_drafts/` généré (les helpers renvoient null en dev) | inspection visuelle, comportement géré par `import.meta.env.DEV` |
+| Métrique                                                  | Baseline                            | Cible                                                       | Méthode                                                          |
+| --------------------------------------------------------- | ----------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------- |
+| Pages draft générées sous path opaque                     | 0                                   | 100 % des `draft: true`                                     | `existsSync(dist/blog/_drafts/<hash>/<slug>/index.html)`         |
+| Slugs draft dans sitemap / RSS / llms.txt / listings HTML | 0                                   | 0 (préservé)                                                | grep slug dans les fichiers de `dist/`                           |
+| Path canonique d'un draft                                 | 404                                 | 404 (préservé)                                              | `!existsSync(dist/blog/<slug>/index.html)`                       |
+| Build en mode dev (`astro dev`)                           | drafts servis à leur path canonique | aucun `_drafts/` généré (les helpers renvoient null en dev) | inspection visuelle, comportement géré par `import.meta.env.DEV` |
 
 Test automatisé : `tests/draft-isolation.test.mjs` (`node --test`) build avec un secret connu et vérifie tout le tableau.
 
@@ -77,6 +77,6 @@ Test automatisé : `tests/draft-isolation.test.mjs` (`node --test`) build avec u
 
 ## Changelog
 
-| Date | Type | Description |
-|------|------|-------------|
+| Date       | Type                     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ---------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-05-04 | Sync post-implémentation | Étape 2 du plan d'exécution : `getDraftPath()` → 3 helpers réels (`getDraftHash` / `getDraftSlugParam` / `getDraftPreviewEntries`). Section `BaseLayout` : la prop `noindex` existait déjà, seul le pass-through `isDraftPreview` via `Article/ProjectLayout` est nouveau. CLI : précisé qu'il lit aussi `SITE.url` via regex sur `src/consts.ts`. Étape 7 : « 1 paragraphe » → section avec workflow + rollback + avertissement sécurité. Voir `report.md` pour le détail des écarts. |

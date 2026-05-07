@@ -11,9 +11,7 @@ import {
 export async function getStaticPaths() {
   const all = await getCollection('projects');
   const published = all.filter((entry) => isPublished(entry, 'en'));
-  const sorted = [...published].sort(
-    (a, b) => a.data.order - b.data.order
-  );
+  const sorted = [...published].sort((a, b) => a.data.order - b.data.order);
 
   const publishedRoutes = published.map((project) => {
     const others = sorted.filter(
@@ -34,9 +32,7 @@ export async function getStaticPaths() {
         props: { project, others: [], isDraftPreview: true },
       };
     })
-    .filter(
-      (r): r is NonNullable<typeof r> => r !== null
-    );
+    .filter((r): r is NonNullable<typeof r> => r !== null);
 
   return [...publishedRoutes, ...draftRoutes];
 }

@@ -32,10 +32,7 @@ const projectsWithCover = await Promise.all(
   <div class="mt-8 space-y-10">
     {
       projectsWithCover.map(({ project, cover, alt }) => (
-        <a
-          href={projectPath(project, lang)}
-          class="block group project-card"
-        >
+        <a href={projectPath(project, lang)} class="block group project-card">
           <article>
             <Picture
               src={cover}

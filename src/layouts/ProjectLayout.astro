@@ -37,12 +37,7 @@ interface Props {
   isDraftPreview?: boolean;
 }
 
-const {
-  project,
-  others,
-  headings = [],
-  isDraftPreview = false,
-} = Astro.props;
+const { project, others, headings = [], isDraftPreview = false } = Astro.props;
 const { data } = project;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);

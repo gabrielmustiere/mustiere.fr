@@ -60,12 +60,12 @@ self::assertStringStartsWith('https://', $component->generatedUrl);
 
 ### Quand tester, quoi tester
 
-| Cas | Stratégie |
-|-----|-----------|
-| Composant atomic critique (Button, Alert) | Test de rendu avec quelques variantes |
-| Composant avec `PreMount` / `PostMount` / services | Test du mount |
-| Composant purement présentationnel (layout, Card) | Pas de test — couvert par les tests fonctionnels |
-| Composant qui encapsule une règle métier | Test unitaire sur la méthode métier |
+| Cas                                                | Stratégie                                        |
+| -------------------------------------------------- | ------------------------------------------------ |
+| Composant atomic critique (Button, Alert)          | Test de rendu avec quelques variantes            |
+| Composant avec `PreMount` / `PostMount` / services | Test du mount                                    |
+| Composant purement présentationnel (layout, Card)  | Pas de test — couvert par les tests fonctionnels |
+| Composant qui encapsule une règle métier           | Test unitaire sur la méthode métier              |
 
 ---
 
@@ -118,15 +118,15 @@ public function testIncrementAction(): void
 
 ## Slide 6.3 — L'API du `TestLiveComponent`
 
-| Méthode | Rôle |
-|---------|------|
-| `set(string $prop, mixed $value)` | Modifie une LiveProp writable (re-render implicite) |
-| `call(string $action, array $args = [])` | Invoque une LiveAction avec arguments `#[LiveArg]` |
-| `refresh()` | Force un re-render sans action |
-| `emit(string $name, array $args = [])` | Émet un événement vers un parent |
-| `component()` | Retourne l'instance PHP courante |
-| `render()` | Retourne le HTML courant |
-| `response()` | Retourne la `Response` brute (statuts, redirections) |
+| Méthode                                  | Rôle                                                 |
+| ---------------------------------------- | ---------------------------------------------------- |
+| `set(string $prop, mixed $value)`        | Modifie une LiveProp writable (re-render implicite)  |
+| `call(string $action, array $args = [])` | Invoque une LiveAction avec arguments `#[LiveArg]`   |
+| `refresh()`                              | Force un re-render sans action                       |
+| `emit(string $name, array $args = [])`   | Émet un événement vers un parent                     |
+| `component()`                            | Retourne l'instance PHP courante                     |
+| `render()`                               | Retourne le HTML courant                             |
+| `response()`                             | Retourne la `Response` brute (statuts, redirections) |
 
 ### Tester une redirection
 
@@ -201,12 +201,12 @@ Le template boucle sur une collection et accède à une relation non chargée (e
 
 ### Ordres de grandeur sains vs alerte
 
-| Métrique | 🟢 Sain | 🟠 À surveiller | 🔴 Alerte |
-|----------|---------|-----------------|-----------|
-| Temps re-render (local) | < 50 ms | 50–200 ms | > 200 ms |
-| Queries Doctrine / cycle | 1–5 | 5–15 | > 15 |
-| Taille payload sérialisé | < 5 KB | 5–30 KB | > 30 KB |
-| Taille réponse HTML | < 30 KB | 30–100 KB | > 100 KB |
+| Métrique                 | 🟢 Sain | 🟠 À surveiller | 🔴 Alerte |
+| ------------------------ | ------- | --------------- | --------- |
+| Temps re-render (local)  | < 50 ms | 50–200 ms       | > 200 ms  |
+| Queries Doctrine / cycle | 1–5     | 5–15            | > 15      |
+| Taille payload sérialisé | < 5 KB  | 5–30 KB         | > 30 KB   |
+| Taille réponse HTML      | < 30 KB | 30–100 KB       | > 100 KB  |
 
 ### Profiler en pratique
 
@@ -220,7 +220,7 @@ Le template boucle sur une collection et accède à une relation non chargée (e
 #    - Onglet Performance → temps total, goulots
 ```
 
-> 💡 **Blackfire** *(non testé)* : profiler directement une `LiveAction` via le header `X-Blackfire-Query`. Recommandé pour les pages à trafic élevé.
+> 💡 **Blackfire** _(non testé)_ : profiler directement une `LiveAction` via le header `X-Blackfire-Query`. Recommandé pour les pages à trafic élevé.
 
 ---
 

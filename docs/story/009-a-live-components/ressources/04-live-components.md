@@ -24,13 +24,13 @@ Live Components n'est pas un OVNI. Il s'inscrit dans une **famille d'approches**
 
 > 💬 **« Server-driven UI »** : l'état de vérité vit côté serveur, le client n'est qu'une projection, on échange du **HTML** plutôt que du JSON.
 
-| Solution | Stack | Année | Idée centrale |
-|----------|-------|-------|---------------|
-| **Phoenix LiveView** | Elixir | 2018 | État serveur, diffs via WebSocket |
-| **Hotwire / Turbo** | Rails (agnostique) | 2020 | Turbo Frames / Streams |
-| **Laravel Livewire** | PHP / Laravel | 2020 | Composant PHP réactif, requête HTTP |
-| **htmx** | Agnostique | 2020 | Attributs HTML → fragments |
-| **UX Live Components** | PHP / Symfony | 2022 | Modèle Livewire-like, idiomes Symfony |
+| Solution               | Stack              | Année | Idée centrale                         |
+| ---------------------- | ------------------ | ----- | ------------------------------------- |
+| **Phoenix LiveView**   | Elixir             | 2018  | État serveur, diffs via WebSocket     |
+| **Hotwire / Turbo**    | Rails (agnostique) | 2020  | Turbo Frames / Streams                |
+| **Laravel Livewire**   | PHP / Laravel      | 2020  | Composant PHP réactif, requête HTTP   |
+| **htmx**               | Agnostique         | 2020  | Attributs HTML → fragments            |
+| **UX Live Components** | PHP / Symfony      | 2022  | Modèle Livewire-like, idiomes Symfony |
 
 ### Ce que cette famille refuse
 
@@ -71,13 +71,13 @@ Un attribut Twig qui **lie un input à une `LiveProp`** et déclenche un re-rend
 
 Concrètement, voilà ce qu'on **arrête d'écrire** dès qu'on passe en Live.
 
-| Sans Live | Avec Live |
-|-----------|-----------|
-| Écrire un endpoint Ajax dédié | **Aucun endpoint** à écrire |
-| Définir un format de réponse (JSON ? HTML ?) | **Du HTML**, c'est tout |
-| Réimplémenter la logique en JS | La logique reste **en PHP** |
-| Mettre à jour le DOM à la main | **DOM morphing** (morphdom) |
-| Gérer CSRF, sécurité, sérialisation | **Géré par le bundle** |
+| Sans Live                                    | Avec Live                   |
+| -------------------------------------------- | --------------------------- |
+| Écrire un endpoint Ajax dédié                | **Aucun endpoint** à écrire |
+| Définir un format de réponse (JSON ? HTML ?) | **Du HTML**, c'est tout     |
+| Réimplémenter la logique en JS               | La logique reste **en PHP** |
+| Mettre à jour le DOM à la main               | **DOM morphing** (morphdom) |
+| Gérer CSRF, sécurité, sérialisation          | **Géré par le bundle**      |
 
 > 💬 **On garde Symfony. On gagne l'interactivité. On laisse le JS custom.**
 
@@ -301,13 +301,13 @@ Injection de services **comme dans un controller** : repositories, mailer, logge
 
 `data-model` lie un input à une `LiveProp`. Le modificateur décide **quand** déclencher un re-render.
 
-| Syntaxe | Quand l'utiliser |
-|---------|------------------|
-| `data-model="query"` | Re-render à chaque frappe — *à éviter sur un champ texte* |
-| `data-model="debounce(300)|query"` | Recherche live — 1 requête après 300 ms d'inactivité |
-| `data-model="on(change)|email"` | Formulaires — re-render au blur / au changement |
-| `data-model="norender|message"` | Maintenir l'état côté client sans re-render |
-| `data-model="contact.name"` | Sous-propriété d'un objet (nécessite `writable: [...]`) |
+| Syntaxe                     | Quand l'utiliser                                          |
+| --------------------------- | --------------------------------------------------------- | ---------------------------------------------------- |
+| `data-model="query"`        | Re-render à chaque frappe — _à éviter sur un champ texte_ |
+| `data-model="debounce(300)  | query"`                                                   | Recherche live — 1 requête après 300 ms d'inactivité |
+| `data-model="on(change)     | email"`                                                   | Formulaires — re-render au blur / au changement      |
+| `data-model="norender       | message"`                                                 | Maintenir l'état côté client sans re-render          |
+| `data-model="contact.name"` | Sous-propriété d'un objet (nécessite `writable: [...]`)   |
 
 > 💬 **Une boucle HTTP par frappe est un choix, pas une fatalité.**
 
@@ -335,13 +335,11 @@ Un champ tapé pendant le re-render **n'est pas écrasé**. Classes CSS et event
 
 ```html
 {# Exclure un élément du morphing (animation JS, éditeur riche) #}
-<div data-live-ignore>
-    Ce contenu n'est jamais touché par morphdom.
-</div>
+<div data-live-ignore>Ce contenu n'est jamais touché par morphdom.</div>
 
-{# Sur les listes : id stable obligatoire pour éviter les bugs visuels #}
-{% for item in items %}
-    <li id="item-{{ item.id }}">{{ item.name }}</li>
+{# Sur les listes : id stable obligatoire pour éviter les bugs visuels #} {% for
+item in items %}
+<li id="item-{{ item.id }}">{{ item.name }}</li>
 {% endfor %}
 ```
 
@@ -392,12 +390,12 @@ public function beforeRender(): void
 // Hooks disponibles : PostMount · PostHydrate · PreReRender · PreDehydrate
 ```
 
-| Hook | Render initial | Re-render Ajax | Moment |
-|------|:---:|:---:|---|
-| `#[PostMount]` | ✅ | ❌ | Après instanciation + mount() |
-| `#[PostHydrate]` | ❌ | ✅ | Après hydratation des LiveProp |
-| `#[PreReRender]` | ❌ | ✅ | Juste avant le re-render Twig |
-| `#[PreDehydrate]` | ✅ | ✅ | Avant la sérialisation des props |
+| Hook              | Render initial | Re-render Ajax | Moment                           |
+| ----------------- | :------------: | :------------: | -------------------------------- |
+| `#[PostMount]`    |       ✅       |       ❌       | Après instanciation + mount()    |
+| `#[PostHydrate]`  |       ❌       |       ✅       | Après hydratation des LiveProp   |
+| `#[PreReRender]`  |       ❌       |       ✅       | Juste avant le re-render Twig    |
+| `#[PreDehydrate]` |       ✅       |       ✅       | Avant la sérialisation des props |
 
 > 💬 **Loading, polling, events, hooks : tout est déjà dans le bundle.**
 

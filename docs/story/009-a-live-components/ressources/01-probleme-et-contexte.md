@@ -197,17 +197,15 @@ Bon outil pour des helpers de formatage (date, slug, prix). Mauvais outil pour u
 
 ```javascript
 export default class extends Controller {
-    static targets = ['input', 'results'];
-    static values  = { url: String };
+  static targets = ['input', 'results'];
+  static values = { url: String };
 
-    async query() {
-        // appelle l'endpoint PHP, reçoit du HTML
-        const r = await fetch(
-            `${this.urlValue}?q=${this.inputTarget.value}`
-        );
-        // injecte le HTML dans la liste
-        this.resultsTarget.innerHTML = await r.text();
-    }
+  async query() {
+    // appelle l'endpoint PHP, reçoit du HTML
+    const r = await fetch(`${this.urlValue}?q=${this.inputTarget.value}`);
+    // injecte le HTML dans la liste
+    this.resultsTarget.innerHTML = await r.text();
+  }
 }
 ```
 

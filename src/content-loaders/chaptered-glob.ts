@@ -130,7 +130,8 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
       const processDir = async (dirPath: string, idPrefix: string) => {
         const entries = readdirSync(dirPath, { withFileTypes: true });
         for (const entry of entries) {
-          if (entry.name.startsWith('.') || entry.name.startsWith('_')) continue;
+          if (entry.name.startsWith('.') || entry.name.startsWith('_'))
+            continue;
 
           if (entry.isFile()) {
             const ext = pickExtension(entry.name, extensions);

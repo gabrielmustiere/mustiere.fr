@@ -11,20 +11,24 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ### Changed
 
-- Résolution des traductions FR/EN unifiée via `findTranslation` (`utils/content.ts`) : couvre les deux sens de la relation `translationOf` et exclut les drafts en production. `ArticleLayout` et `ProjectLayout` n'inlinent plus `getCollection` / `isPublished`.
+- Résolution des traductions FR/EN unifiée via `findTranslation` (`utils/content.ts`) : couvre les deux sens de la relation `translationOf` et exclut les drafts
+  en production. `ArticleLayout` et `ProjectLayout` n'inlinent plus `getCollection` / `isPublished`.
 - Frontmatter de l'article Symfony EN : `translationOf` ajouté pour refléter le lien vers la version FR.
 
 ## [0.4.0] - 2026-05-05
 
 ### Added
 
-- Covers de projets optimisées via `image()` + `<Picture>` Astro (AVIF/WebP, srcset, sizes responsive, view-transition partagée), avec `coverAlt` requis dans le schéma `projects`.
+- Covers de projets optimisées via `image()` + `<Picture>` Astro (AVIF/WebP, srcset, sizes responsive, view-transition partagée), avec `coverAlt` requis dans le
+  schéma `projects`.
 
 ### Changed
 
 - Schéma `projects.cover` : passe de `string` à `image()` — covers résolues au build avec hash et optimisation.
-- Typo : élargissement des colonnes de prose (`--w-prose` 720→780, `--w-blog` 820→920, `--w-home` 720→840), `text-wrap: pretty` sur la prose et `balance` sur les titres pour des coupures de lignes plus propres.
-- Articles Symfony 2026 (FR + EN) : traits d'union insécables (`‑`) dans les mots composés (back‑office, e‑commerce, real‑time, front‑end, AI‑first…) pour éviter les coupures disgracieuses.
+- Typo : élargissement des colonnes de prose (`--w-prose` 720→780, `--w-blog` 820→920, `--w-home` 720→840), `text-wrap: pretty` sur la prose et `balance` sur
+  les titres pour des coupures de lignes plus propres.
+- Articles Symfony 2026 (FR + EN) : traits d'union insécables (`‑`) dans les mots composés (back‑office, e‑commerce, real‑time, front‑end, AI‑first…) pour
+  éviter les coupures disgracieuses.
 
 ### Fixed
 
@@ -45,15 +49,20 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ### Added
 
-- URLs de prévisualisation pour les articles `draft: true` en build prod : chaque brouillon est généré sous `/blog/_drafts/<hash>/<slug>/` (hash dérivé du slug + d'une seed hardcodée), absent des sitemap/RSS/llms.txt/listings, avec `noindex,nofollow`. CLI `npm run draft:url <slug>` pour récupérer l'URL prod d'un draft.
+- URLs de prévisualisation pour les articles `draft: true` en build prod : chaque brouillon est généré sous `/blog/_drafts/<hash>/<slug>/` (hash dérivé du
+  slug + d'une seed hardcodée), absent des sitemap/RSS/llms.txt/listings, avec `noindex,nofollow`. CLI `npm run draft:url <slug>` pour récupérer l'URL prod d'un
+  draft.
 - Transitions de page animées via `astro:transitions` (`ClientRouter` + `transition:name` sur titres et covers) pour une navigation fluide entre les pages.
-- Champs `publishedAt` et `updatedAt` dans les schémas des collections `blog` et `projects` ; affichage des dates de publication et de mise à jour dans les layouts.
+- Champs `publishedAt` et `updatedAt` dans les schémas des collections `blog` et `projects` ; affichage des dates de publication et de mise à jour dans les
+  layouts.
 - Commande `npm run dev:expose` (et cible `make dev:expose`) pour exposer le dev server sur le réseau local.
 
 ### Changed
 
-- Article « PHP en 2026 : pourquoi un CTO devrait sérieusement le considérer » (FR + EN) : chapitres retravaillés (langage, Symfony, outillage, FrankenPHP, front-mobile, IA), FAQ enrichie, résumé étoffé, conclusion ajoutée, cohérence stylistique entre les deux langues.
-- Niveau de titre configurable (`headingLevel`) dans `ArticleCard` et `BlogArchive` pour préserver la hiérarchie sémantique des `h*` selon le contexte d'inclusion.
+- Article « PHP en 2026 : pourquoi un CTO devrait sérieusement le considérer » (FR + EN) : chapitres retravaillés (langage, Symfony, outillage, FrankenPHP,
+  front-mobile, IA), FAQ enrichie, résumé étoffé, conclusion ajoutée, cohérence stylistique entre les deux langues.
+- Niveau de titre configurable (`headingLevel`) dans `ArticleCard` et `BlogArchive` pour préserver la hiérarchie sémantique des `h*` selon le contexte
+  d'inclusion.
 - Terminologie EN harmonisée (« Résumé » → « Resume ») dans les chaînes UI.
 
 ## [0.2.0] - 2026-04-30

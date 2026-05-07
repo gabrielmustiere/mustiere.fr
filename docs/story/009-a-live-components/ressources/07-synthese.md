@@ -26,20 +26,20 @@ Refermer la boucle ouverte au chapitre 1.
 
 ## Slide 7.1 — Twig / Live / React — 12 axes
 
-| Feature | Twig Component | Live Component | React / Vue |
-|---------|----------------|----------------|-------------|
-| **Rendu** | Serveur uniquement | Serveur + patch Ajax | Client (SSR optionnel) |
-| **État** | Aucun (figé) | Serveur, sérialisé dans le DOM | Client, en mémoire JS |
-| **JS requis** | ❌ Aucun | ⚠️ Stimulus inclus | ✅ Oui, significatif |
-| **Build pipeline** | ❌ AssetMapper suffit | ❌ AssetMapper suffit | ✅ Vite / Webpack |
-| **Poids JS** | ~0 Ko | ~25–30 Ko | 40–150 Ko+ |
-| **SEO natif** | ✅ HTML complet | ✅ HTML complet | ⚠️ SSR ou prerender |
-| **Offline** | ❌ | ❌ | ✅ PWA / service worker |
-| **Latence** | N/A | 50–300 ms (réseau) | Locale (instantanée) |
-| **Duplication PHP/JS** | Aucune | Aucune | Fréquente |
-| **Apprentissage** | Faible (Twig enrichi) | Moyenne | Élevée |
-| **Testabilité** | PHPUnit + rendu | PHPUnit + InteractsWithLive | Jest + testing-library |
-| **Accessibilité** | Natif (HTML pur) | Natif (morphing préserve focus) | Dépend de l'équipe |
+| Feature                | Twig Component        | Live Component                  | React / Vue             |
+| ---------------------- | --------------------- | ------------------------------- | ----------------------- |
+| **Rendu**              | Serveur uniquement    | Serveur + patch Ajax            | Client (SSR optionnel)  |
+| **État**               | Aucun (figé)          | Serveur, sérialisé dans le DOM  | Client, en mémoire JS   |
+| **JS requis**          | ❌ Aucun              | ⚠️ Stimulus inclus              | ✅ Oui, significatif    |
+| **Build pipeline**     | ❌ AssetMapper suffit | ❌ AssetMapper suffit           | ✅ Vite / Webpack       |
+| **Poids JS**           | ~0 Ko                 | ~25–30 Ko                       | 40–150 Ko+              |
+| **SEO natif**          | ✅ HTML complet       | ✅ HTML complet                 | ⚠️ SSR ou prerender     |
+| **Offline**            | ❌                    | ❌                              | ✅ PWA / service worker |
+| **Latence**            | N/A                   | 50–300 ms (réseau)              | Locale (instantanée)    |
+| **Duplication PHP/JS** | Aucune                | Aucune                          | Fréquente               |
+| **Apprentissage**      | Faible (Twig enrichi) | Moyenne                         | Élevée                  |
+| **Testabilité**        | PHPUnit + rendu       | PHPUnit + InteractsWithLive     | Jest + testing-library  |
+| **Accessibilité**      | Natif (HTML pur)      | Natif (morphing préserve focus) | Dépend de l'équipe      |
 
 ---
 
@@ -49,14 +49,14 @@ Le meilleur projet Symfony moderne n'est **pas 100 % Twig**, ni **100 % Live**, 
 
 ### Exemple : un backoffice e-commerce
 
-| Zone | Brique choisie |
-|------|----------------|
-| Layout, header, sidebar, footer | **Twig Component** |
-| Design system (boutons, cards) | **Twig Component** |
-| Liste produits filtrable | **Live Component** |
-| Formulaire commande (wizard) | **Live Component** |
-| Éditeur de fiche produit riche | **Live Component** |
-| Charts dashboard | **Twig + Chart.js** |
+| Zone                            | Brique choisie      |
+| ------------------------------- | ------------------- |
+| Layout, header, sidebar, footer | **Twig Component**  |
+| Design system (boutons, cards)  | **Twig Component**  |
+| Liste produits filtrable        | **Live Component**  |
+| Formulaire commande (wizard)    | **Live Component**  |
+| Éditeur de fiche produit riche  | **Live Component**  |
+| Charts dashboard                | **Twig + Chart.js** |
 
 > 💬 **Une seule stack** (Symfony + Twig), **deux moteurs de réactivité** (Live et React-île), **un design system** unifié.
 >
@@ -80,14 +80,14 @@ Avant de choisir la brique, **deux questions** suffisent dans 95 % des cas.
 
 ### Application concrète
 
-| Feature | Q1 | Q2 | Brique |
-|---------|----|----|--------|
-| Card produit (affichage) | Non | — | **Twig Component** |
-| Toggle dark mode | Oui | Non | **Stimulus** |
+| Feature                   | Q1  | Q2  | Brique             |
+| ------------------------- | --- | --- | ------------------ |
+| Card produit (affichage)  | Non | —   | **Twig Component** |
+| Toggle dark mode          | Oui | Non | **Stimulus**       |
 | Recherche produit en live | Oui | Oui | **Live Component** |
 | Filtre + pagination liste | Oui | Oui | **Live Component** |
 | Champs conditionnels form | Oui | Oui | **Live Component** |
-| Copy-to-clipboard | Oui | Non | **Stimulus** |
+| Copy-to-clipboard         | Oui | Non | **Stimulus**       |
 
 ---
 
@@ -95,12 +95,12 @@ Avant de choisir la brique, **deux questions** suffisent dans 95 % des cas.
 
 ### Latence réseau
 
-| Environnement | Latence | Perception |
-|---------------|---------|------------|
-| Dev local | 30–80 ms | Imperceptible |
-| Prod, même région | 80–200 ms | Acceptable |
-| Mobile 4G | 200–500 ms | Visible mais OK |
-| 3G / réseau dégradé | 500 ms–2 s | Frustrant |
+| Environnement       | Latence    | Perception      |
+| ------------------- | ---------- | --------------- |
+| Dev local           | 30–80 ms   | Imperceptible   |
+| Prod, même région   | 80–200 ms  | Acceptable      |
+| Mobile 4G           | 200–500 ms | Visible mais OK |
+| 3G / réseau dégradé | 500 ms–2 s | Frustrant       |
 
 > 💡 Typing sans debounce = 2–5 req/s par utilisateur. Une app à 100 req/s classique → prévoir **300–500 req/s** avec Live actifs.
 
@@ -117,24 +117,24 @@ Avant de choisir la brique, **deux questions** suffisent dans 95 % des cas.
 
 ## Slide 7.5 — 5 anti-patterns à reconnaître
 
-| # | Anti-pattern | Fix |
-|---|--------------|-----|
-| 1 | Entité Doctrine complète en `LiveProp` | Passer l'ID, recharger côté serveur |
-| 2 | Plusieurs `LiveAction` enchaînées sur un clic | Une seule action qui fait les étapes |
-| 3 | Live Component sans `LiveProp writable` ni `LiveAction` | C'est un Twig Component — économiser l'hydratation |
-| 4 | Slider, WYSIWYG, canvas en Live | Stimulus pur ou lib client dédiée |
-| 5 | Ignorer le profiling sur des composants imbriqués | Une interaction peut déclencher plusieurs requêtes en cascade |
+| #   | Anti-pattern                                            | Fix                                                           |
+| --- | ------------------------------------------------------- | ------------------------------------------------------------- |
+| 1   | Entité Doctrine complète en `LiveProp`                  | Passer l'ID, recharger côté serveur                           |
+| 2   | Plusieurs `LiveAction` enchaînées sur un clic           | Une seule action qui fait les étapes                          |
+| 3   | Live Component sans `LiveProp writable` ni `LiveAction` | C'est un Twig Component — économiser l'hydratation            |
+| 4   | Slider, WYSIWYG, canvas en Live                         | Stimulus pur ou lib client dédiée                             |
+| 5   | Ignorer le profiling sur des composants imbriqués       | Une interaction peut déclencher plusieurs requêtes en cascade |
 
 ### Grille de décision rapide
 
-| Question | Oui → | Non → |
-|----------|-------|-------|
-| Interaction dépend d'état serveur ? | ✅ Live | Twig / Stimulus |
-| < 1 interaction/s suffit ? | ✅ Live | Stimulus only |
-| Latence ~200 ms tolérable ? | ✅ Live | SPA / client |
-| Offline requis ? | SPA / PWA | ✅ Live |
-| Animation 60 fps ? | Client JS | ✅ Live |
-| Indexé par Google ? | ✅ Live | SPA + SSR |
+| Question                            | Oui →     | Non →           |
+| ----------------------------------- | --------- | --------------- |
+| Interaction dépend d'état serveur ? | ✅ Live   | Twig / Stimulus |
+| < 1 interaction/s suffit ?          | ✅ Live   | Stimulus only   |
+| Latence ~200 ms tolérable ?         | ✅ Live   | SPA / client    |
+| Offline requis ?                    | SPA / PWA | ✅ Live         |
+| Animation 60 fps ?                  | Client JS | ✅ Live         |
+| Indexé par Google ?                 | ✅ Live   | SPA + SSR       |
 
 ---
 

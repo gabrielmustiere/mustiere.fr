@@ -30,11 +30,11 @@ L'héritage FR↔EN est centralisé dans un helper `getCover(entry)` qui résout
 
 Schéma `blog` (`src/content.config.ts`) — passage à la forme fonction pour accéder au helper `image()`. Champs ajoutés / retirés :
 
-| Champ | Type | Statut |
-|---|---|---|
-| `cover` | `image().optional()` (Astro → `ImageMetadata`) | **ajouté**, optionnel + `superRefine` (cover OR translationOf) |
-| `coverAlt` | `z.string().min(3).optional()` | **ajouté, optionnel** (fallback `''` au rendu — image décorative) |
-| `ogImage` | `z.string().optional()` | **retiré** |
+| Champ      | Type                                           | Statut                                                            |
+| ---------- | ---------------------------------------------- | ----------------------------------------------------------------- |
+| `cover`    | `image().optional()` (Astro → `ImageMetadata`) | **ajouté**, optionnel + `superRefine` (cover OR translationOf)    |
+| `coverAlt` | `z.string().min(3).optional()`                 | **ajouté, optionnel** (fallback `''` au rendu — image décorative) |
+| `ogImage`  | `z.string().optional()`                        | **retiré**                                                        |
 
 Schéma `projects` inchangé (le champ `cover: z.string().optional()` du côté projects reste hors scope, cf. `feature.md` — Hors scope).
 
@@ -42,37 +42,41 @@ Forme finale du schéma blog :
 
 ```ts
 const blog = defineCollection({
-  loader: chapteredGlob({ base: './src/content/blog', extensions: ['.mdx', '.md'] }),
+  loader: chapteredGlob({
+    base: './src/content/blog',
+    extensions: ['.mdx', '.md'],
+  }),
   schema: ({ image }) =>
-    z.object({
-      title: z.string().max(120),
-      excerpt: z.string().min(80).max(220),
-      publishedAt: z.coerce.date(),
-      updatedAt: z.coerce.date().optional(),
-      category: categoryEnum,
-      tags: z.array(z.string()).default([]),
-      readingTime: z.number().int().positive().optional(),
-      cover: image().optional(),
-      coverAlt: z.string().min(3).optional(),
-      draft: z.boolean().default(false),
-      keywords: z.array(z.string()).default([]),
-      resume: resumeSchema,
-      faq: z.array(faqItem).default([]),
-      sources: z.array(sourceItem).default([]),
-      number: z.number().int().positive(),
-      lang: langEnum.default('fr'),
-      translationOf: z.string().optional(),
-    })
-    .superRefine((data, ctx) => {
-      if (!data.cover && !data.translationOf) {
-        ctx.addIssue({
-          code: 'custom',
-          path: ['cover'],
-          message:
-            'cover required (or translationOf to inherit cover from another entry)',
-        });
-      }
-    }),
+    z
+      .object({
+        title: z.string().max(120),
+        excerpt: z.string().min(80).max(220),
+        publishedAt: z.coerce.date(),
+        updatedAt: z.coerce.date().optional(),
+        category: categoryEnum,
+        tags: z.array(z.string()).default([]),
+        readingTime: z.number().int().positive().optional(),
+        cover: image().optional(),
+        coverAlt: z.string().min(3).optional(),
+        draft: z.boolean().default(false),
+        keywords: z.array(z.string()).default([]),
+        resume: resumeSchema,
+        faq: z.array(faqItem).default([]),
+        sources: z.array(sourceItem).default([]),
+        number: z.number().int().positive(),
+        lang: langEnum.default('fr'),
+        translationOf: z.string().optional(),
+      })
+      .superRefine((data, ctx) => {
+        if (!data.cover && !data.translationOf) {
+          ctx.addIssue({
+            code: 'custom',
+            path: ['cover'],
+            message:
+              'cover required (or translationOf to inherit cover from another entry)',
+          });
+        }
+      }),
 });
 ```
 
@@ -88,25 +92,25 @@ Les frontmatters référencent leur cover via un chemin **relatif à l'index** (
 
 ## Fichiers à créer
 
-| Fichier | Rôle |
-|---|---|
-| `src/components/ui/ArticleCard.astro` | Composant unique cover 16:9 full-width au-dessus du bloc texte, props `(entry, variant: 'lg' \| 'md' \| 'sm', lang, loading?: 'eager' \| 'lazy', fetchpriority?: 'high' \| 'auto', showCover?: boolean = true)`. Résout cover/alt via `getCover(entry)`. Rendu `<Picture>` AVIF+WebP. |
-| `src/utils/article-cover.ts` | `getCover(entry)` (résout l'héritage `translationOf` et expose `{ cover: ImageMetadata, alt: string }`, fallback `alt = ''` quand pas de `coverAlt`) ; `getOgImage(entry)` (appelle `getImage({ width: 1200 })`, retourne `{ url, width, height }` avec dimensions effectives propagées au JSON-LD et aux meta `og:image:width` / `og:image:height`). |
-| `src/content/blog/<slug>/cover.<png\|webp>` | Backfill cover par article ou par paire bilingue. Le partage FR/EN n'est plus imposé : si l'auteur préfère deux images distinctes, il les déclare ; sinon il déclare seulement la cover FR et laisse l'EN hériter via `translationOf`. |
+| Fichier                                     | Rôle                                                                                                                                                                                                                                                                                                                                                  |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/components/ui/ArticleCard.astro`       | Composant unique cover 16:9 full-width au-dessus du bloc texte, props `(entry, variant: 'lg' \| 'md' \| 'sm', lang, loading?: 'eager' \| 'lazy', fetchpriority?: 'high' \| 'auto', showCover?: boolean = true)`. Résout cover/alt via `getCover(entry)`. Rendu `<Picture>` AVIF+WebP.                                                                 |
+| `src/utils/article-cover.ts`                | `getCover(entry)` (résout l'héritage `translationOf` et expose `{ cover: ImageMetadata, alt: string }`, fallback `alt = ''` quand pas de `coverAlt`) ; `getOgImage(entry)` (appelle `getImage({ width: 1200 })`, retourne `{ url, width, height }` avec dimensions effectives propagées au JSON-LD et aux meta `og:image:width` / `og:image:height`). |
+| `src/content/blog/<slug>/cover.<png\|webp>` | Backfill cover par article ou par paire bilingue. Le partage FR/EN n'est plus imposé : si l'auteur préfère deux images distinctes, il les déclare ; sinon il déclare seulement la cover FR et laisse l'EN hériter via `translationOf`.                                                                                                                |
 
 ## Fichiers à modifier
 
-| Fichier | Modification |
-|---|---|
-| `src/content.config.ts` | Schéma blog en forme `({ image }) => z.object(...)`. Ajout `cover: image().optional()`, `coverAlt: z.string().min(3).optional()`, `superRefine` (cover OR translationOf). Retrait de `ogImage`. |
-| `src/layouts/ArticleLayout.astro` | Remplacer la prop `image: data.ogImage` par les valeurs produites par `getOgImage(post)` → `image={ogImage.url}`, `imageWidth={ogImage.width}`, `imageHeight={ogImage.height}`. Mêmes valeurs propagées à `blogPostingSchema`. Header : insérer `<ArticleCard variant="lg" entry={post} lang={lang} loading="eager" />` qui rend le H1, l'eyebrow et la cover. |
-| `src/utils/schema.ts` | `BlogPostingInput` accepte `imageWidth?` / `imageHeight?` (défauts 1200 / 630). Supprimer le fallback `SITE.ogImage` côté `blogPostingSchema` (chaque article aura sa cover ou héritera). Le JSON-LD reflète la dimension réelle servie. |
-| `src/layouts/BaseLayout.astro` | Props `imageWidth?` / `imageHeight?` (défauts 1200 / 630) propagées aux meta `og:image:width` / `og:image:height`. |
-| `src/components/pages/BlogArchive.astro` | Items archive rendus via `<ArticleCard variant="sm" entry={post} lang={lang} />`. Le premier item porte `loading="eager" fetchpriority="high"` pour LCP. |
-| `src/components/home/BlogSection.astro` | Items rendus via `<ArticleCard variant="sm" entry={post} lang={lang} showCover={false} />`. La home blog reste **liste texte-only volontairement** pour préserver la sobriété de la home (la cover ressort dès que l'utilisateur clique vers `/blog/`). Conserver le `<SectionHead>` et la `<figure>` code-block en bas. |
-| `src/components/ui/RelatedItems.astro` | Branche `kind === 'blog'` rend `<ArticleCard variant="sm" entry={item} lang={lang} />`. Branche `kind === 'project'` inchangée. |
-| `src/content/blog/<slug>/index.mdx` | Frontmatter : ajouter `cover: ./cover.<ext>` (relatif) ou laisser vide si on s'appuie sur `translationOf`. Ajouter `coverAlt: '...'` optionnel uniquement si l'image porte une info non redondante avec le titre. Retirer `ogImage` si présent. |
-| `DEVELOPMENT.md` | Section "Ajouter un article" : documenter la règle (source 16:9 ≥ 1600×900 px, PNG ou WebP, chemin relatif `./cover.<ext>`, exemple de frontmatter, mécanisme `translationOf` pour partager une cover EN↔FR). |
+| Fichier                                  | Modification                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/content.config.ts`                  | Schéma blog en forme `({ image }) => z.object(...)`. Ajout `cover: image().optional()`, `coverAlt: z.string().min(3).optional()`, `superRefine` (cover OR translationOf). Retrait de `ogImage`.                                                                                                                                                                |
+| `src/layouts/ArticleLayout.astro`        | Remplacer la prop `image: data.ogImage` par les valeurs produites par `getOgImage(post)` → `image={ogImage.url}`, `imageWidth={ogImage.width}`, `imageHeight={ogImage.height}`. Mêmes valeurs propagées à `blogPostingSchema`. Header : insérer `<ArticleCard variant="lg" entry={post} lang={lang} loading="eager" />` qui rend le H1, l'eyebrow et la cover. |
+| `src/utils/schema.ts`                    | `BlogPostingInput` accepte `imageWidth?` / `imageHeight?` (défauts 1200 / 630). Supprimer le fallback `SITE.ogImage` côté `blogPostingSchema` (chaque article aura sa cover ou héritera). Le JSON-LD reflète la dimension réelle servie.                                                                                                                       |
+| `src/layouts/BaseLayout.astro`           | Props `imageWidth?` / `imageHeight?` (défauts 1200 / 630) propagées aux meta `og:image:width` / `og:image:height`.                                                                                                                                                                                                                                             |
+| `src/components/pages/BlogArchive.astro` | Items archive rendus via `<ArticleCard variant="sm" entry={post} lang={lang} />`. Le premier item porte `loading="eager" fetchpriority="high"` pour LCP.                                                                                                                                                                                                       |
+| `src/components/home/BlogSection.astro`  | Items rendus via `<ArticleCard variant="sm" entry={post} lang={lang} showCover={false} />`. La home blog reste **liste texte-only volontairement** pour préserver la sobriété de la home (la cover ressort dès que l'utilisateur clique vers `/blog/`). Conserver le `<SectionHead>` et la `<figure>` code-block en bas.                                       |
+| `src/components/ui/RelatedItems.astro`   | Branche `kind === 'blog'` rend `<ArticleCard variant="sm" entry={item} lang={lang} />`. Branche `kind === 'project'` inchangée.                                                                                                                                                                                                                                |
+| `src/content/blog/<slug>/index.mdx`      | Frontmatter : ajouter `cover: ./cover.<ext>` (relatif) ou laisser vide si on s'appuie sur `translationOf`. Ajouter `coverAlt: '...'` optionnel uniquement si l'image porte une info non redondante avec le titre. Retirer `ogImage` si présent.                                                                                                                |
+| `DEVELOPMENT.md`                         | Section "Ajouter un article" : documenter la règle (source 16:9 ≥ 1600×900 px, PNG ou WebP, chemin relatif `./cover.<ext>`, exemple de frontmatter, mécanisme `translationOf` pour partager une cover EN↔FR).                                                                                                                                                  |
 
 ## Impacts transverses
 
@@ -133,15 +137,15 @@ Les frontmatters référencent leur cover via un chemin **relatif à l'index** (
 
 ## Stratégie de test
 
-| Code | Type de test | Ce qu'on vérifie |
-|---|---|---|
-| `src/content.config.ts` (schéma) | Build (`npm run build`) | Article sans `cover` ni `translationOf` → build casse avec le message `superRefine` clair. Cover avec chemin invalide → build casse à la résolution `image()`. |
-| `src/utils/article-cover.ts` | Manuel via build complet | Entrée EN sans cover propre hérite de la FR via `translationOf` (à vérifier sur la paire `building-this-site-with-claude-and-astro` ↔ `construire-ce-site-avec-claude-et-astro` lorsqu'on retire la cover EN). |
-| `src/components/ui/ArticleCard.astro` | Visuel + `pa11y-ci` | Les 3 variantes rendent bien ; `<img>` final porte `alt=""` quand pas de `coverAlt` (image décorative — le titre suit en h1/h2/h3) ; pas de warning `pa11y`. |
-| `src/utils/schema.ts` (`blogPostingSchema`) | Inspection HTML du build | JSON-LD `image.url` pointe vers le PNG `width: 1200` dérivé ; `width`/`height` reflètent le ratio source effectif (ex. 1200×675 pour 16:9). |
-| Pages article + `/blog/` + `/` | `lhci autorun` | Performance ≥ 0.95, A11y = 1.0, SEO = 1.0, CLS = 0 — pas de régression vs baseline. |
-| Build complet | `scripts/snapshot-build.mjs before/after` + `diff-snapshot.mjs` | Aucun changement non-intentionnel hors fichiers blog (sitemap `lastmod` masqué). |
-| Meta OG | Manuel via LinkedIn Post Inspector + X Cards Validator | Au moins un article FR et un article EN affichent une vignette 1200×675 propre, ratio préservé. |
+| Code                                        | Type de test                                                    | Ce qu'on vérifie                                                                                                                                                                                               |
+| ------------------------------------------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/content.config.ts` (schéma)            | Build (`npm run build`)                                         | Article sans `cover` ni `translationOf` → build casse avec le message `superRefine` clair. Cover avec chemin invalide → build casse à la résolution `image()`.                                                 |
+| `src/utils/article-cover.ts`                | Manuel via build complet                                        | Entrée EN sans cover propre hérite de la FR via `translationOf` (à vérifier sur la paire `building-this-site-with-claude-and-astro` ↔ `construire-ce-site-avec-claude-et-astro` lorsqu'on retire la cover EN). |
+| `src/components/ui/ArticleCard.astro`       | Visuel + `pa11y-ci`                                             | Les 3 variantes rendent bien ; `<img>` final porte `alt=""` quand pas de `coverAlt` (image décorative — le titre suit en h1/h2/h3) ; pas de warning `pa11y`.                                                   |
+| `src/utils/schema.ts` (`blogPostingSchema`) | Inspection HTML du build                                        | JSON-LD `image.url` pointe vers le PNG `width: 1200` dérivé ; `width`/`height` reflètent le ratio source effectif (ex. 1200×675 pour 16:9).                                                                    |
+| Pages article + `/blog/` + `/`              | `lhci autorun`                                                  | Performance ≥ 0.95, A11y = 1.0, SEO = 1.0, CLS = 0 — pas de régression vs baseline.                                                                                                                            |
+| Build complet                               | `scripts/snapshot-build.mjs before/after` + `diff-snapshot.mjs` | Aucun changement non-intentionnel hors fichiers blog (sitemap `lastmod` masqué).                                                                                                                               |
+| Meta OG                                     | Manuel via LinkedIn Post Inspector + X Cards Validator          | Au moins un article FR et un article EN affichent une vignette 1200×675 propre, ratio préservé.                                                                                                                |
 
 Pas de test unitaire formel introduit (le projet n'a pas de runner) — la couverture repose sur le build, `astro check`, `pa11y-ci`, `lhci`, et le snapshot diff.
 

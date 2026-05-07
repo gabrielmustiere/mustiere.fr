@@ -44,11 +44,11 @@ requête `POST /_components/*`, comment on teste un Live Component sans démarre
 code review entre un Twig Component, un contrôleur Stimulus pur et un Live Component.
 
 Trois choses que cet article n'est **pas**. Ce n'est pas un comparatif Live Components contre React — c'est un autre niveau de décision (techno contre
-organisation), je le traite séparément dans un prochain article. Ce n'est pas un plaidoyer organisationnel sur la non-séparation front/back ; même remarque.
-Et ce n'est surtout pas un argumentaire « Stimulus est mort ». Le contrôleur JavaScript que Live Components attache au DOM (`live_controller.js`, environ
-25 à 30 Ko de Stimulus) **est** un contrôleur Stimulus. Stimulus reste l'outil de choix pour tout ce qui est purement client — toggle, copy-to-clipboard,
-animation simple, comportement qui ne dépend ni d'un état ni de données serveur. Ce qui devient redondant avec Live Components, c'est précisément le couple
-_Stimulus custom + endpoint Ajax custom_ pour faire de la réactivité serveur. Pas Stimulus.
+organisation), je le traite séparément dans un prochain article. Ce n'est pas un plaidoyer organisationnel sur la non-séparation front/back ; même remarque. Et
+ce n'est surtout pas un argumentaire « Stimulus est mort ». Le contrôleur JavaScript que Live Components attache au DOM (`live_controller.js`, environ 25 à 30
+Ko de Stimulus) **est** un contrôleur Stimulus. Stimulus reste l'outil de choix pour tout ce qui est purement client — toggle, copy-to-clipboard, animation
+simple, comportement qui ne dépend ni d'un état ni de données serveur. Ce qui devient redondant avec Live Components, c'est précisément le couple _Stimulus
+custom + endpoint Ajax custom_ pour faire de la réactivité serveur. Pas Stimulus.
 
 Les exemples de code de cet article sont volontairement courts. Les versions complètes — composants `Counter`, `ProductSearch`, `ProductCard`, `Alert`, suites
 de tests `InteractsWithLiveComponents`, payloads réseau commentés — vivent dans un repo Git d'exemples séparé _(repo en cours, lien à venir)_. L'article reste

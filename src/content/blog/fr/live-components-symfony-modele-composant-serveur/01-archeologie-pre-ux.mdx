@@ -1,9 +1,9 @@
 ## Avant Symfony UX, l'inventaire
 
 Avant de regarder ce que change Live Components, il faut nommer ce qu'il remplace. Pas pour enterrer les outils — la plupart restent utiles à leur échelle —
-mais pour comprendre _pourquoi_, mis bout à bout, ils ne tiennent pas le contrat « modèle composant ». Cinq mécanismes ont historiquement servi à composer
-l'UI dans une codebase Symfony : `include` Twig, `macro` Twig, `render(controller())`, extension Twig, et le couple Stimulus + endpoint Ajax. Je les passe
-en revue avec deux questions chacun : que résout-il, où s'arrête-t-il.
+mais pour comprendre _pourquoi_, mis bout à bout, ils ne tiennent pas le contrat « modèle composant ». Cinq mécanismes ont historiquement servi à composer l'UI
+dans une codebase Symfony : `include` Twig, `macro` Twig, `render(controller())`, extension Twig, et le couple Stimulus + endpoint Ajax. Je les passe en revue
+avec deux questions chacun : que résout-il, où s'arrête-t-il.
 
 ### `include` Twig — la factorisation pure
 
@@ -20,8 +20,8 @@ Le réflexe historique. On extrait le markup répété dans un fichier, on l'inc
 
 Ce que ça résout : la duplication de markup. Un seul endroit pour changer le design de l'alerte. Ce que ça ne résout pas : zéro contrat sur les props (un
 `{{ message }}` mal nommé ne lève rien à la compilation), zéro logique côté template, et `only` oublié laisse fuiter tout le contexte parent — bug silencieux
-classique en revue tardive. Ça reste légitime pour des fragments purement visuels (header, footer, snippet statique) où le markup est suffisamment trivial
-pour qu'aucune des trois faiblesses ne morde.
+classique en revue tardive. Ça reste légitime pour des fragments purement visuels (header, footer, snippet statique) où le markup est suffisamment trivial pour
+qu'aucune des trois faiblesses ne morde.
 
 ### `macro` Twig — la signature explicite
 
@@ -38,9 +38,9 @@ pour qu'aucune des trois faiblesses ne morde.
 ```
 
 C'est un vrai progrès sur `include` : la signature est explicite, les valeurs par défaut sont claires, l'isolation du contexte est totale. Mais on est toujours
-dans Twig pur. Pas de PHP, donc pas de service injectable. Pas de types sur les paramètres — un `variant: 1234` passe sans broncher. Et surtout : pas de
-slots. Impossible de passer un bloc Twig en paramètre, comme on le ferait avec `children` en React. Verdict : excellent pour des primitives sans logique
-(bouton, badge, label), insuffisant pour tout ce qui dépasse.
+dans Twig pur. Pas de PHP, donc pas de service injectable. Pas de types sur les paramètres — un `variant: 1234` passe sans broncher. Et surtout : pas de slots.
+Impossible de passer un bloc Twig en paramètre, comme on le ferait avec `children` en React. Verdict : excellent pour des primitives sans logique (bouton,
+badge, label), insuffisant pour tout ce qui dépasse.
 
 ### `render(controller())` — la vraie logique PHP
 
@@ -89,9 +89,9 @@ public function renderBadge(string $label, string $color = 'gray'): string
 {{ badge('Nouveau', 'green') }}
 ```
 
-L'appel est propre, la signature est typée. Mais le markup vit dans une `string` PHP — illisible à mesure que le composant grossit, pas de slot possible,
-aucune autocomplétion HTML dans l'IDE, et chaque nouveau composant pollue le namespace Twig global. Verdict : bon pour des helpers de formatage (date, prix,
-slug), mauvais pour composer un fragment d'UI dès qu'il dépasse trois balises.
+L'appel est propre, la signature est typée. Mais le markup vit dans une `string` PHP — illisible à mesure que le composant grossit, pas de slot possible, aucune
+autocomplétion HTML dans l'IDE, et chaque nouveau composant pollue le namespace Twig global. Verdict : bon pour des helpers de formatage (date, prix, slug),
+mauvais pour composer un fragment d'UI dès qu'il dépasse trois balises.
 
 ### Stimulus + endpoint Ajax custom — la réactivité bricolée
 
@@ -116,8 +116,8 @@ export default class extends Controller {
 }
 ```
 
-Ce que ça résout : de la vraie interactivité côté client, propre, séparation markup/comportement claire, Stimulus est un outil sérieux et bien rangé. Ce que
-ça ne résout pas : on entretient une **double codebase** pour chaque comportement un peu vivant. La validation et le formatage finissent dupliqués PHP et JS,
+Ce que ça résout : de la vraie interactivité côté client, propre, séparation markup/comportement claire, Stimulus est un outil sérieux et bien rangé. Ce que ça
+ne résout pas : on entretient une **double codebase** pour chaque comportement un peu vivant. La validation et le formatage finissent dupliqués PHP et JS,
 chaque comportement réclame son endpoint dédié et son boilerplate, et l'état client peut diverger de l'état serveur sur la moindre erreur réseau. C'est cette
 friction qui finit par pousser à _« on installe React juste pour cette zone-là »_, alors que la zone en question est typiquement un filtre, un wizard de
 formulaire, une recherche live — exactement le terrain de Live Components.
@@ -130,25 +130,25 @@ animation simple). On reviendra dessus au chapitre 5 avec une règle de décisio
 
 Si on regarde l'inventaire à distance, trois douleurs transversales émergent.
 
-| Outil                  | Ce qu'il résout                       | Ce qu'il ne résout pas                                  | Reste légitime pour                |
-| ---------------------- | ------------------------------------- | ------------------------------------------------------- | ---------------------------------- |
-| `include`              | Factorisation markup                  | Contrat, types, état                                    | Fragments visuels statiques        |
-| `macro`                | Signature, isolation                  | PHP, types, slots                                       | Primitives sans logique            |
-| `render(controller())` | Vraie logique PHP, cache séparé       | Coût sous-requête, DX dispersée                         | Fragments à cache différent, lazy  |
-| Extension Twig         | Helpers globaux propres               | Markup en string PHP, pas de slots                      | Helpers de formatage               |
+| Outil                  | Ce qu'il résout                       | Ce qu'il ne résout pas                                  | Reste légitime pour                    |
+| ---------------------- | ------------------------------------- | ------------------------------------------------------- | -------------------------------------- |
+| `include`              | Factorisation markup                  | Contrat, types, état                                    | Fragments visuels statiques            |
+| `macro`                | Signature, isolation                  | PHP, types, slots                                       | Primitives sans logique                |
+| `render(controller())` | Vraie logique PHP, cache séparé       | Coût sous-requête, DX dispersée                         | Fragments à cache différent, lazy      |
+| Extension Twig         | Helpers globaux propres               | Markup en string PHP, pas de slots                      | Helpers de formatage                   |
 | Stimulus + Ajax custom | Interactivité client, endpoint propre | Double codebase, état dupliqué, boilerplate par feature | Comportements 100 % client (sans Live) |
 
-Première douleur : **pas de contrat de typage**. Ni `include`, ni `macro`, ni l'extension Twig n'imposent un type sur les props — un nom mal orthographié
-passe à la compilation et casse au runtime, dans le pire des cas en silence (variable Twig vide rendue comme chaîne vide). Refactorer un fragment partagé
-sur cinquante templates devient un acte de foi.
+Première douleur : **pas de contrat de typage**. Ni `include`, ni `macro`, ni l'extension Twig n'imposent un type sur les props — un nom mal orthographié passe
+à la compilation et casse au runtime, dans le pire des cas en silence (variable Twig vide rendue comme chaîne vide). Refactorer un fragment partagé sur
+cinquante templates devient un acte de foi.
 
-Deuxième douleur : **pas d'unité d'organisation**. Pour un seul fragment d'UI un peu vivant — disons un mini-panier avec compteur d'articles et logique de
-TVA — on accumule un contrôleur, une route, un template, parfois un contrôleur Stimulus, un endpoint Ajax, une extension Twig pour formater le prix. Quatre
-à cinq fichiers répartis dans autant de dossiers, sans qu'aucun ne porte le _nom_ du composant.
+Deuxième douleur : **pas d'unité d'organisation**. Pour un seul fragment d'UI un peu vivant — disons un mini-panier avec compteur d'articles et logique de TVA —
+on accumule un contrôleur, une route, un template, parfois un contrôleur Stimulus, un endpoint Ajax, une extension Twig pour formater le prix. Quatre à cinq
+fichiers répartis dans autant de dossiers, sans qu'aucun ne porte le _nom_ du composant.
 
-Troisième douleur : **pas de réactivité server-driven**. Aucun de ces outils ne permet de dire « cette UI réagit à un changement d'état serveur » sans sortir
-de Symfony. La réponse historique est précisément le couple Stimulus + Ajax — qui réintroduit toutes les douleurs précédentes (deux codebases, deux états)
-sans en supprimer aucune.
+Troisième douleur : **pas de réactivité server-driven**. Aucun de ces outils ne permet de dire « cette UI réagit à un changement d'état serveur » sans sortir de
+Symfony. La réponse historique est précisément le couple Stimulus + Ajax — qui réintroduit toutes les douleurs précédentes (deux codebases, deux états) sans en
+supprimer aucune.
 
 Symfony UX répond à ces trois douleurs en empilant deux briques distinctes : Twig Components règle l'unité d'organisation et le contrat de typage, Live
 Components ajoute la réactivité server-driven sans toucher au reste. La suite de l'article les regarde dans cet ordre — d'abord le socle, puis le cycle.

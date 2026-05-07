@@ -191,14 +191,14 @@ final class ProductSearch
 
 ## Slide 5.5 — Ce qui se passe en coulisses
 
-| Outil | Ce qu'on y voit | Ce que ça confirme |
-|-------|-----------------|--------------------|
-| Onglet **Network** | Requête Ajax → réponse HTML partiel | Le serveur re-render, pas le client |
-| **DOM inspector** | Les nœuds inchangés restent en place | morphdom patche, ne remplace pas |
-| **Profiler Symfony** | Les Live actions apparaissent comme des requêtes classiques | Debug, logs, injection : normal |
-| **Breakpoint Xdebug** | Arrêt dans `getResults()` ou `#[LiveAction]` | C'est du PHP, vraiment du PHP |
+| Outil                 | Ce qu'on y voit                                             | Ce que ça confirme                  |
+| --------------------- | ----------------------------------------------------------- | ----------------------------------- |
+| Onglet **Network**    | Requête Ajax → réponse HTML partiel                         | Le serveur re-render, pas le client |
+| **DOM inspector**     | Les nœuds inchangés restent en place                        | morphdom patche, ne remplace pas    |
+| **Profiler Symfony**  | Les Live actions apparaissent comme des requêtes classiques | Debug, logs, injection : normal     |
+| **Breakpoint Xdebug** | Arrêt dans `getResults()` ou `#[LiveAction]`                | C'est du PHP, vraiment du PHP       |
 
-> 💬 **Aucun outil nouveau à apprendre.** Les outils de debug Symfony fonctionnent *tels quels* sur un Live Component.
+> 💬 **Aucun outil nouveau à apprendre.** Les outils de debug Symfony fonctionnent _tels quels_ sur un Live Component.
 
 ---
 
@@ -224,7 +224,7 @@ Une page, un formulaire, un widget à la fois. On **greffe** sur l'existant, on 
 
 ## 🗣️ Narration (script oral)
 
-> "Je vais volontairement choisir des démos **très simples**. Pas pour sous-estimer votre niveau, mais parce que la vraie surprise, c'est de réaliser à quel point c'est court. Une recherche live, c'est **une classe PHP de 15 lignes et un template de 10 lignes**. Quand vous la voyez fonctionner en direct, sans JS, vous comprenez pourquoi on qualifie Live Components de *game changer* pour l'écosystème Symfony.
+> "Je vais volontairement choisir des démos **très simples**. Pas pour sous-estimer votre niveau, mais parce que la vraie surprise, c'est de réaliser à quel point c'est court. Une recherche live, c'est **une classe PHP de 15 lignes et un template de 10 lignes**. Quand vous la voyez fonctionner en direct, sans JS, vous comprenez pourquoi on qualifie Live Components de _game changer_ pour l'écosystème Symfony.
 >
 > Et le plus important : aucun outil nouveau à apprendre. Le profiler Symfony voit les Live actions comme des requêtes classiques. Vous pouvez poser un breakpoint Xdebug dans une `LiveAction` et débugger comme dans un controller. C'est du PHP, vraiment du PHP."
 

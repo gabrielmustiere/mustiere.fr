@@ -22,13 +22,13 @@ Le socle : un composant = une classe PHP + un template Twig.
 
 ### Analogie React
 
-| React | Twig Component |
-|-------|----------------|
-| `class Alert extends Component` | `#[AsTwigComponent] class Alert` |
-| `props` | propriétés publiques PHP typées |
-| `render()` | template `Alert.html.twig` |
-| `<Alert ... />` | `<twig:Alert ... />` |
-| `children` | `{% block content %}{% endblock %}` |
+| React                           | Twig Component                      |
+| ------------------------------- | ----------------------------------- |
+| `class Alert extends Component` | `#[AsTwigComponent] class Alert`    |
+| `props`                         | propriétés publiques PHP typées     |
+| `render()`                      | template `Alert.html.twig`          |
+| `<Alert ... />`                 | `<twig:Alert ... />`                |
+| `children`                      | `{% block content %}{% endblock %}` |
 
 ### La syntaxe d'appel
 

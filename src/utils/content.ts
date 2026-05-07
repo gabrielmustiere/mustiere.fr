@@ -20,7 +20,10 @@ export function publicSlug(entry: { id: string }): string {
 // (segment localisé `/projets` vs `/projects`) et `localizedPath` (préfixe lang
 // pour l'EN).
 export function projectPath(entry: { id: string }, lang: Lang): string {
-  return localizedPath(lang, `${routePath('projects', lang)}/${publicSlug(entry)}`);
+  return localizedPath(
+    lang,
+    `${routePath('projects', lang)}/${publicSlug(entry)}`
+  );
 }
 
 // URL canonique d'un article de blog. Le segment `/blog` est identique en FR
@@ -119,7 +122,6 @@ export function getDraftPreviewEntries<T extends PublishableEntry>(
 ): T[] {
   if (import.meta.env.DEV) return [];
   return entries.filter(
-    (entry) =>
-      Boolean(entry.data.draft) && (entry.data.lang ?? 'fr') === lang
+    (entry) => Boolean(entry.data.draft) && (entry.data.lang ?? 'fr') === lang
   );
 }
