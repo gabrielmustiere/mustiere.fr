@@ -1,0 +1,55 @@
+---
+title: "Live Components : l'aboutissement du modèle composant côté serveur dans Symfony"
+excerpt:
+  "Symfony UX Live Components rend obsolète le combo render(controller()) + endpoint Ajax + Stimulus custom pour 95 % des UIs CRUD. Anatomie d'un cycle, tests,
+  perf, sécu, et règle de décision en code review."
+publishedAt: 2026-05-07
+category: Tech
+tags: [Symfony, PHP, Live Components, Twig Components, Symfony UX, Stimulus]
+cover: ./cover.png
+coverAlt: 'Live Components Symfony : modèle composant côté serveur'
+keywords:
+  - Symfony Live Components
+  - Symfony UX
+  - Twig Components
+  - LiveProp
+  - LiveAction
+  - data-model Symfony
+  - server-driven UI PHP
+  - HTML over the wire Symfony
+  - morphdom Symfony
+  - Stimulus Live Components
+  - tests Live Components
+  - render controller alternative
+number: 3
+draft: true
+lang: fr
+---
+
+Toute codebase Symfony d'une certaine maturité finit par accumuler la même couche sédimentaire. Quelques `include` Twig au début, puis des macros pour formater
+les prix et les dates, puis le premier `render(controller())` quand il a fallu une vraie logique PHP dans un fragment de page. Une extension Twig pour les
+helpers globaux. Un contrôleur Stimulus collé à un endpoint Ajax `/admin/products/_search` quand le métier a demandé du filtrage en direct. Et au bout de
+quelques années, une zone React greffée parce que la prochaine UI vivante méritait « un vrai framework ». Cinq mécanismes, cinq endroits où chercher quand un
+champ se met à mal s'afficher.
+
+J'ai vu cette accumulation sur la majorité des projets Symfony un peu vivants que j'ai rejoints — y compris ceux que j'avais démarrés moi-même. Elle n'est pas
+le signe d'une équipe qui code mal. Elle est le signe d'un écosystème qui n'avait pas, jusqu'à récemment, d'unité d'organisation pour parler de _composant_, ni
+de mécanique pour faire de la réactivité côté serveur sans coller à la main du JavaScript et un endpoint dédié. Symfony UX a réglé les deux, en empilant deux
+briques : [Twig Components](https://ux.symfony.com/twig-component) (le composant statique typé) et [Live Components](https://ux.symfony.com/live-component) (le
+composant réactif piloté par le serveur).
+
+Cet article est la version longue d'une présentation interne que j'ai donnée en entreprise. J'y entre dans le détail technique de Live Components, du point de
+vue d'un dev Symfony qui écrit le code : ce que résout chaque brique, comment l'état circule entre client et serveur, ce qui sort vraiment du DOM dans une
+requête `POST /_components/*`, comment on teste un Live Component sans démarrer de navigateur, ce qu'on profile, ce qu'on sécurise, et comment on tranche en
+code review entre un Twig Component, un contrôleur Stimulus pur et un Live Component.
+
+Trois choses que cet article n'est **pas**. Ce n'est pas un comparatif Live Components contre React — c'est un autre niveau de décision (techno contre
+organisation), je le traite séparément dans un prochain article. Ce n'est pas un plaidoyer organisationnel sur la non-séparation front/back ; même remarque.
+Et ce n'est surtout pas un argumentaire « Stimulus est mort ». Le contrôleur JavaScript que Live Components attache au DOM (`live_controller.js`, environ
+25 à 30 Ko de Stimulus) **est** un contrôleur Stimulus. Stimulus reste l'outil de choix pour tout ce qui est purement client — toggle, copy-to-clipboard,
+animation simple, comportement qui ne dépend ni d'un état ni de données serveur. Ce qui devient redondant avec Live Components, c'est précisément le couple
+_Stimulus custom + endpoint Ajax custom_ pour faire de la réactivité serveur. Pas Stimulus.
+
+Les exemples de code de cet article sont volontairement courts. Les versions complètes — composants `Counter`, `ProductSearch`, `ProductCard`, `Alert`, suites
+de tests `InteractsWithLiveComponents`, payloads réseau commentés — vivent dans un repo Git d'exemples séparé _(repo en cours, lien à venir)_. L'article reste
+lisible sans, mais il prend tout son sens si on a un projet Symfony ouvert à côté pour tester deux ou trois extraits.

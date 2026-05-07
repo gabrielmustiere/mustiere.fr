@@ -1,0 +1,164 @@
+## Le code marche. La prod pose trois questions
+
+La moitié des refus d'adopter Live Components que j'entends en code review tient en trois objections : « comment on teste ça ? », « comment on profile ? »,
+« comment on sécurise un objet dont l'état est dans le DOM ? ». Toutes ont des réponses précises, et aucune ne demande d'apprendre un outillage nouveau —
+parce qu'**un Live Component, c'est un contrôleur Symfony déguisé**. Tout ce qu'on connaît marche.
+
+### Tester un Live Component sans navigateur
+
+Le bundle expose un trait `InteractsWithLiveComponents` qui fonctionne en `KernelTestCase`. On instancie le composant, on pilote les props et les actions
+exactement comme le bundle le fait en prod, et on inspecte l'état après chaque cycle. Pas de Panther, pas de jsdom, pas de headless — la même boucle
+instanciation / hydratation / action / rendu que le runtime exécute en production, mais à la vitesse d'un test unitaire.
+
+```php
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
+
+final class CounterTest extends KernelTestCase
+{
+    use InteractsWithLiveComponents;
+
+    public function testIncrementUpdatesCount(): void
+    {
+        $component = $this->createLiveComponent(
+            name: 'Counter',
+            data: ['count' => 0],
+        );
+
+        $component->call('increment');
+        $component->call('increment');
+
+        self::assertSame(2, $component->component()->count);
+        self::assertStringContainsString('Compteur : 2', (string) $component->render());
+    }
+}
+```
+
+Pour un composant avec une `LiveProp writable` modifiée depuis un `data-model`, on simule la modification via `set()` :
+
+```php
+public function testSearchFiltersResults(): void
+{
+    $component = $this->createLiveComponent('ProductSearch', ['query' => '']);
+    $component->set('query', 'clavier');
+
+    self::assertCount(3, $component->component()->getResults());
+    self::assertStringContainsString('Clavier mécanique', (string) $component->render());
+}
+```
+
+L'API du `TestLiveComponent` couvre la surface réelle du runtime : `set(string $prop, mixed $value)` modifie une `LiveProp writable` et déclenche le
+re-render implicite, `call(string $action, array $args)` invoque une `LiveAction` avec ses arguments `#[LiveArg]`, `refresh()` force un re-render sans
+action, `emit(string $name, array $args)` émet un événement vers un parent (utile pour tester les composants imbriqués), `component()` retourne l'instance
+PHP courante, `render()` retourne le HTML, et `response()` retourne la `Response` brute pour tester redirections et statuts.
+
+C'est suffisant pour 90 % des cas. Les rares cas où on a besoin du vrai navigateur (préservation effective du focus pendant un morphing, comportement réseau
+en condition dégradée) passent par [Panther](https://github.com/symfony/panther). Mais ne pas démarrer là — la majorité des bugs Live Components que j'ai
+chassés se reproduit en `InteractsWithLiveComponents` sans navigateur.
+
+### Profiler : rien de nouveau, sauf le filtre
+
+Le profiler Symfony intercepte les `POST /_components/*` exactement comme n'importe quelle requête HTTP. Workflow concret : on laisse le profiler ouvert sur
+la page du composant, on interagit (on tape, on clique), puis dans `/_profiler` on filtre les requêtes par URL `/_components/`. Pour chaque cycle, l'onglet
+**Doctrine** donne le nombre de queries et les requêtes lentes, l'onglet **Twig** donne le temps de rendu et le nombre de templates, l'onglet
+**Performance** donne le temps total et les goulots.
+
+Ce qu'on cherche en premier, et qui se trouve toujours sur des composants Live qui « rament » : un N+1 SQL caché par du lazy loading Doctrine. Un template
+qui boucle sur une collection et accède à une relation non chargée (`{% for article in articles %}{{ article.author.name }}{% endfor %}`) déclenche une
+requête par élément. C'est _imperceptible_ au chargement initial parce qu'il a lieu une fois — mais avec un Live Component, ce rendu est rejoué **à chaque
+cycle Ajax**. Un N+1 invisible au render initial peut devenir bloquant à chaque frappe clavier.
+
+Trois ordres de grandeur à garder en tête comme repères, à ajuster à ton infra :
+
+| Métrique                       | Sain    | À surveiller | Alerte    |
+| ------------------------------ | ------- | ------------ | --------- |
+| Temps re-render (local)        | < 50 ms | 50–200 ms    | > 200 ms  |
+| Queries Doctrine / cycle       | 1–5     | 5–15         | > 15      |
+| Taille payload sérialisé (DOM) | < 5 KB  | 5–30 KB      | > 30 KB   |
+| Taille réponse HTML re-render  | < 30 KB | 30–100 KB    | > 100 KB  |
+
+Au-delà des seuils alerte, c'est rarement un problème de Live Components — c'est un design qui force trop d'état à voyager, ou un composant qui devrait être
+splitté en deux. Le réflexe : profiler **avant** de chercher un fix, parce que la cause est presque toujours visible en cinq secondes dans l'onglet Doctrine
+ou dans le payload.
+
+### Trois pièges perf à connaître par cœur
+
+**Entité Doctrine entière dans une `LiveProp`.** Sans surcharge `dehydrateWith`, l'entité est sérialisée en JSON dans le DOM puis renvoyée à chaque cycle.
+On peut atteindre des payloads de 30 à 100 KB pour un composant qui ne devrait en faire qu'un. Le fix tient en deux méthodes (cf. chapitre précédent) :
+sérialiser l'ID, recharger côté serveur via le repository.
+
+**Rendre la même méthode N fois dans le template.** `{% if this.results %}...{% for r in this.results %}` exécute la méthode deux fois — donc deux requêtes
+SQL. Le fix : `computed.results`, ou `{% set results = this.results %}` puis utiliser `results` partout.
+
+**`data-model` sans `debounce`.** Un input texte avec `data-model="query"` envoie une requête par caractère tapé. Sur un utilisateur qui tape vite, c'est
+2 à 5 requêtes par seconde, par utilisateur, par champ. Une app à 100 req/s « classique » passe facilement à 300–500 req/s avec quelques composants Live mal
+configurés. Le fix tient en deux modificateurs :
+
+```twig
+{# Recherche live : 1 requête après 300 ms d'inactivité #}
+<input data-model="debounce(300)|query" type="search">
+
+{# Select : re-render uniquement au changement de valeur #}
+<select data-model="on(change)|sortBy">…</select>
+
+{# Form long : on maintient l'état côté client sans re-render #}
+<input data-model="norender|draftMessage" type="text">
+```
+
+Le `debounce(300)` est la valeur que je pose par défaut sur tous les champs texte. C'est suffisamment court pour que l'utilisateur ne le perçoive pas comme
+une latence, suffisamment long pour absorber le rythme de frappe.
+
+### Sécuriser : l'état voyage dans le DOM, donc…
+
+C'est la seule règle propre à Live Components, et elle tient en une phrase : **l'état voyage dans le DOM, donc jamais de secret dans une `LiveProp`**. Toute
+valeur qui finit dans une prop est visible côté client (DevTools, View Source) et renvoyée à chaque cycle. Pas de token API, pas de mot de passe en clair,
+pas d'identifiant interne sensible.
+
+Le reste relève du **réflexe Symfony classique appliqué à un contrôleur déguisé** :
+
+- **`#[IsGranted]` sur les `LiveAction`** comme sur n'importe quel contrôleur. Une action qui modifie une commande exige `ROLE_ADMIN` ? On annote, c'est tout.
+
+```php
+#[LiveAction]
+#[IsGranted('ROLE_ADMIN')]
+public function deleteOrder(#[LiveArg] int $orderId): void { /* ... */ }
+```
+
+- **`LiveProp(writable: false)` est le défaut**, et c'est volontaire. Pour qu'une valeur soit modifiable côté client, il faut l'opt-in. La signature
+  serveur — la clé `@checksum` qu'on a vue dans le payload du chapitre précédent — est vérifiée à chaque cycle ; un attaquant qui modifie une prop
+  non-writable se fait rejeter par le bundle, pas par toi.
+
+- **Validation côté re-render**, jamais de confiance dans l'état renvoyé. Une `LiveProp(writable: true)` est une entrée utilisateur, à traiter exactement
+  comme un `Request::get('foo')`. Les contraintes Symfony Validator (`#[Assert\Length]`, `#[Assert\Choice]`) s'appliquent telles quelles ; pour un Live
+  Component qui pilote un `Symfony\Component\Form`, le `ComponentWithFormTrait` fait le pont automatiquement.
+
+- **Whitelist sur les objets.** `#[LiveProp(writable: ['name', 'email'])]` au lieu de `writable: true` quand la prop porte un DTO. Tu listes les champs
+  modifiables côté client, tu ne fais pas confiance au reste.
+
+### Latence : ce qui est tolérable, ce qui ne l'est pas
+
+Live Components ajoute un round-trip HTTP par interaction. C'est rapide quand le réseau coopère, lent quand il ne coopère pas. Repères honnêtes :
+
+| Environnement       | Latence       | Perception          |
+| ------------------- | ------------- | ------------------- |
+| Dev local           | 30–80 ms      | Imperceptible       |
+| Prod, même région   | 80–200 ms     | Acceptable          |
+| Mobile 4G           | 200–500 ms    | Visible mais OK     |
+| 3G / réseau dégradé | 500 ms–2 s    | Frustrant           |
+
+La conséquence pratique : si ton produit cible une UX sub-100ms perçue (animation continue, slider qui suit le curseur, drag and drop fluide), Live
+Components n'est pas la bonne réponse — ces cas relèvent de Stimulus pur ou d'une lib client dédiée. Pour 95 % des UIs CRUD, backoffice, e-commerce, SaaS
+B2B, les seuils ci-dessus tombent dans l'acceptable.
+
+### Trois anti-patterns, trois fix
+
+| Anti-pattern                                                        | Fix                                                  |
+| ------------------------------------------------------------------- | ---------------------------------------------------- |
+| Entité Doctrine entière en `LiveProp`                               | Stocker l'ID, recharger côté serveur                |
+| `data-model` sans `debounce` sur input texte                        | `data-model="debounce(300)|query"`                   |
+| Méthode lourde appelée plusieurs fois dans un template (`this.foo`) | `computed.foo` ou `{% set foo = this.foo %}`         |
+
+Tester, profiler, sécuriser : trois sujets, trois réponses, aucun outillage nouveau à apprendre. La seule règle vraiment propre à Live Components — l'état
+voyage dans le DOM, jamais de secret dans une `LiveProp` — tient sur une ligne. Pour le reste, c'est du Symfony.
+
+Reste la question qui décide en code review : entre Twig Component, Stimulus pur et Live Component, **comment on choisit** ?

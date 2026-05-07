@@ -1,0 +1,156 @@
+## Twig Components, le composant statique typé
+
+Avant d'attaquer la réactivité, il faut poser la brique de base. Elle ne porte pas le sujet de l'article — Live Components — mais sans elle rien ne tient
+debout, parce que Live Components n'est qu'un Twig Component _enrichi_. Si le socle est mal compris, le reste s'effondre.
+
+Tout modèle composant — React, Vue, Svelte ou autre — repose sur trois idées qui ne dépendent ni du langage ni du runtime : **encapsulation** (un composant
+est un bout d'UI autonome qui réunit template, état et logique, qu'on raisonne localement sans regarder le reste de la page), **réactivité** (l'état change,
+la vue se met à jour, sans synchronisation manuelle du DOM), **composition** (les composants s'imbriquent en arbre, les props descendent, les événements
+remontent). Le Virtual DOM, le bundle JS, l'hydratation, les stores globaux — c'est une _implémentation_ parmi d'autres. On peut garder l'idée et laisser
+l'implémentation. C'est exactement ce que fait Symfony UX, en deux briques empilées : Twig Components couvre l'encapsulation et la composition, Live
+Components ajoute la réactivité.
+
+### Anatomie : une classe + un template
+
+Un Twig Component, c'est deux fichiers. Une classe PHP qui porte le contrat d'entrée, un template Twig qui porte le markup. Le nom de la classe détermine le
+nom du template par convention.
+
+```php
+// src/Twig/Components/Alert.php
+use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
+
+#[AsTwigComponent]
+final class Alert
+{
+    public string $message = '';
+    public string $type = 'info';
+    public bool $dismissible = false;
+}
+```
+
+```twig
+{# templates/components/Alert.html.twig #}
+<div {{ attributes.defaults({ class: 'alert alert-' ~ type }) }}>
+    {% if dismissible %}<button class="alert-close">×</button>{% endif %}
+    {{ message }}
+</div>
+```
+
+À l'usage, on appelle le composant avec une syntaxe HTML-like, propre :
+
+```twig
+<twig:Alert message="Commande validée" type="success" />
+<twig:Alert type="warning">Ton abonnement expire dans <strong>3 jours</strong>.</twig:Alert>
+```
+
+Trois choses méritent qu'on s'y arrête. D'abord les **propriétés publiques typées** sont les props : `string`, `int`, `bool`, ou n'importe quel objet PHP.
+Pas de tableau associatif opaque, pas de magie — l'IDE sait, le typecheck sait, le refactor sait. Ensuite `{{ attributes }}` capture tous les attributs HTML
+extra passés depuis l'appelant (`id`, `data-*`, `class`...) et les fusionne sur l'élément racine — sans cette ligne, ces attributs sont silencieusement
+ignorés, ce qui est un piège récurrent en review. Enfin, le contenu sans attribut atterrit dans un slot par défaut, équivalent du `children` React.
+
+### Slots : passer du contenu, pas seulement des chaînes
+
+Pour passer un bloc HTML à l'intérieur d'un composant, on utilise des `block` Twig, exactement comme on étend un layout :
+
+```twig
+{# templates/components/Modal.html.twig #}
+<div class="modal">
+    <div class="modal-header">{% block header %}{% endblock %}</div>
+    <div class="modal-body">{% block content %}{% endblock %}</div>
+    <div class="modal-footer">
+        {% block footer %}<button>Fermer</button>{% endblock %}
+    </div>
+</div>
+```
+
+```twig
+<twig:Modal>
+    <twig:block name="header"><h2>Confirmer</h2></twig:block>
+    Voulez-vous supprimer ce produit ?
+</twig:Modal>
+```
+
+Le contenu sans `<twig:block>` atterrit dans `block content`, chaque slot nommé peut avoir un contenu par défaut. C'est précisément ce qui manquait à `macro` :
+on peut passer un fragment HTML structuré en paramètre, pas seulement des scalaires.
+
+### Services injectables et méthodes calculées
+
+C'est ici que Twig Components dépasse définitivement la macro : la classe est un service Symfony comme un autre. On peut injecter via le constructeur, accéder
+à des repositories, formater une donnée à la volée. Aucune extension Twig globale à enregistrer pour ça.
+
+```php
+// src/Twig/Components/RecentOrders.php
+#[AsTwigComponent]
+final class RecentOrders
+{
+    public User $user;
+    public int $limit = 5;
+
+    public function __construct(private readonly OrderRepository $orders) {}
+
+    public function results(): array
+    {
+        return $this->orders->findRecentFor($this->user, $this->limit);
+    }
+}
+```
+
+Côté template, attention au piège : `{{ this.results }}` appelle la méthode à chaque accès — deux boucles successives sur la même méthode = deux requêtes
+SQL. Pour mettre en cache la valeur le temps du rendu, on utilise `computed.` :
+
+```twig
+{# 2 accès à this.results = 2 requêtes SQL ❌ #}
+{% if this.results is not empty %}
+    <ul>{% for o in this.results %}<li>{{ o.id }}</li>{% endfor %}</ul>
+{% endif %}
+
+{# computed. : la méthode est mise en cache pour la durée du rendu ✅ #}
+{% if computed.results is not empty %}
+    <ul>{% for o in computed.results %}<li>{{ o.id }}</li>{% endfor %}</ul>
+{% endif %}
+```
+
+C'est une convention à intégrer dès la première relecture de code. Le coût d'un appel à une méthode lourde n'apparaît pas au chargement initial — il apparaît
+silencieusement dès qu'on enchaîne les accès dans le même template.
+
+### Cycle de vie : `mount`, `PreMount`, `PostMount`
+
+Pour les cas où une prop a besoin d'être normalisée ou d'une valeur calculée à l'instanciation, le bundle expose trois hooks. `mount()` reçoit les props
+brutes et permet une initialisation complexe (parsing de date, normalisation), `#[PreMount]` reçoit le tableau de données avant assignation et permet de
+valider via un `OptionsResolver`, `#[PostMount]` s'exécute après que les props sont posées :
+
+```php
+#[PreMount]
+public function preMount(array $data): array
+{
+    $resolver = new OptionsResolver();
+    $resolver->setDefaults(['type' => 'info']);
+    $resolver->setAllowedValues('type', ['info', 'success', 'warning', 'danger']);
+    $resolver->setRequired('message');
+
+    return $resolver->resolve($data) + $data;
+}
+```
+
+Au-delà de ces hooks, on peut aussi rendre le **template dynamique** — utile pour des composants polymorphes (`Button` qui se rend `<a>`, `<button type=submit>`
+ou `<button>` selon une prop) — via une `template: new FromMethod('getTemplateName')` dans l'attribut `#[AsTwigComponent]`. Je le mentionne pour complétude,
+mais la règle reste : si tu te retrouves à brancher trois templates différents dans un seul composant, c'est probablement deux composants distincts qui se
+partagent un layout.
+
+### Statique. C'est tout l'argument.
+
+Un Twig Component **rend une fois**, côté serveur, et c'est terminé. Il n'a pas d'état entre deux requêtes, il ne sait rien de l'utilisateur après le rendu,
+il ne réagit à rien. Cette absence de réactivité est le point qui fait passer à Live Components — pour un filtre qui se met à jour, un compteur, un formulaire
+qui valide à la frappe, on a besoin d'une couche supplémentaire.
+
+| React / Vue                        | Twig Component                                    |
+| ---------------------------------- | ------------------------------------------------- |
+| `class Alert extends Component`    | `#[AsTwigComponent] final class Alert`            |
+| `props` typées (TS / PropTypes)    | propriétés publiques PHP typées                   |
+| `render()` (JSX, template Vue)     | template `Alert.html.twig`                        |
+| `<Alert ... />`                    | `<twig:Alert ... />`                              |
+| `children`                         | `{% block content %}{% endblock %}`               |
+
+Ce qui est résolu par cette brique seule : le **contrat de typage** (les props sont des propriétés PHP typées, refactorables, autocomplétables) et l'**unité
+d'organisation** (le couple classe + template porte le nom du composant, on sait toujours où chercher). Deux des trois douleurs du chapitre précédent. Reste
+la troisième — la réactivité server-driven — et c'est le sujet du chapitre suivant.

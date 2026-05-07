@@ -1,0 +1,12 @@
+Toute codebase Symfony d'une certaine maturité accumule la même couche sédimentaire : des `include` Twig, des macros, du `render(controller())`, une extension
+Twig, du Stimulus collé à un endpoint Ajax custom. Trois douleurs structurelles ressortent de cet inventaire : pas de contrat de typage entre vue et données,
+pas d'unité d'organisation pour parler de _composant_, pas de réactivité server-driven sans sortir de Symfony. Symfony UX répond à ces trois douleurs en
+empilant deux briques. **Twig Components** apporte la classe PHP + le template Twig + les props typées : un composant statique, refactorable,
+auto-documenté. **Live Components** ajoute trois sous-briques de réactivité — `LiveProp` pour l'état synchronisé entre client et serveur via le DOM,
+`LiveAction` pour les méthodes déclenchables depuis le DOM, `data-model` pour lier un input à une prop. Le cycle est en deux phases : render initial qui
+sérialise l'état dans le DOM, puis cycle interaction `POST /_components/<NomDuComposant>` qui reconstruit le composant côté serveur, ré-exécute, et patche
+le DOM via morphdom (focus, scroll, inputs préservés). Stimulus n'est ni mort ni remplacé : Live Components s'appuie sur un contrôleur Stimulus côté client
+(`live_controller.js`, environ 25–30 Ko) et reste l'outil de choix pour tout comportement 100 % client. Tests via `InteractsWithLiveComponents` en
+`KernelTestCase`, sans navigateur. Profiler Symfony intercepte les `POST /_components/*` comme n'importe quelle requête. Règle sécu unique : l'état voyage
+dans le DOM, jamais de secret dans une `LiveProp`. En code review, deux questions suffisent : interaction qui modifie l'UI ? non → Twig Component, oui →
+dépend du serveur ? non → Stimulus, oui → Live Component. L'arbitrage React et le mindset équipe ne sont pas traités ici — autre article.

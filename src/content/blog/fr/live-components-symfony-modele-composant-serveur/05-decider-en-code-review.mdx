@@ -1,0 +1,97 @@
+## Twig, Stimulus, Live : choisir en deux questions
+
+Tout l'article revient à un seul moment : la pull request d'un dev de l'équipe qui ajoute une UI vivante quelque part. Il a écrit un Twig Component, un
+contrôleur Stimulus avec un endpoint Ajax, ou un Live Component. Ton job en review, c'est de savoir s'il a posé la bonne brique. La règle qui suit suffit
+dans 95 % des cas, et elle tient en deux questions.
+
+### La règle des deux questions
+
+```
+1. Y a-t-il une interaction utilisateur qui modifie l'UI ?
+   ├─ Non → Twig Component (rendu figé, props au chargement)
+   └─ Oui → Question 2
+
+2. Cette interaction dépend-elle d'un état ou de données côté serveur ?
+   ├─ Non → Stimulus (comportement purement client)
+   └─ Oui → Live Component
+```
+
+Lue à voix haute, c'est presque trivial. En review, c'est suffisant pour trancher 95 % des cas sans débat. Voici comment elle s'applique sur six features
+réelles qu'on croise tous les mois.
+
+| Feature                              | Q1 (interaction qui modifie l'UI ?) | Q2 (état serveur ?) | Brique             |
+| ------------------------------------ | ----------------------------------- | ------------------- | ------------------ |
+| Card produit (affichage seul)        | Non                                 | —                   | **Twig Component** |
+| Toggle dark mode                     | Oui                                 | Non                 | **Stimulus**       |
+| Recherche produit en live            | Oui                                 | Oui                 | **Live Component** |
+| Filtre + pagination liste            | Oui                                 | Oui                 | **Live Component** |
+| Champs conditionnels d'un formulaire | Oui                                 | Oui                 | **Live Component** |
+| Copy-to-clipboard                    | Oui                                 | Non                 | **Stimulus**       |
+
+Stimulus apparaît deux fois dans cette grille. Ce n'est pas un effet de bord — c'est la règle qui rend explicite que **Stimulus reste l'outil de choix pour
+les comportements client purs**. Live Components n'a jamais visé à supprimer Stimulus. Le bundle Live Components _s'appuie_ sur Stimulus côté client (cf.
+chapitre 3) et le pousse vers les cas où il est le plus pertinent : tout ce qui ne dépend pas du serveur.
+
+### Cinq anti-patterns à reconnaître en review
+
+Au-delà de la règle, cinq drapeaux rouges qui reviennent. En les nommant explicitement, on accélère la review et on évite les débats qui s'enlisent.
+
+| #  | Anti-pattern                                                          | Fix                                              |
+| -- | --------------------------------------------------------------------- | ------------------------------------------------ |
+| 1  | Entité Doctrine complète en `LiveProp`                                | Passer l'ID, recharger côté serveur              |
+| 2  | Plusieurs `LiveAction` enchaînées sur un seul clic                    | Une seule action qui orchestre les étapes        |
+| 3  | Live Component sans `LiveProp writable` ni `LiveAction`               | C'est un Twig Component — économiser l'hydratation |
+| 4  | Slider, WYSIWYG, canvas en Live                                       | Stimulus pur ou lib client dédiée                |
+| 5  | Composants imbriqués profilés au coup par coup                        | Profiler la cascade de re-renders complète       |
+
+Le numéro 3 mérite qu'on s'y attarde. Un Live Component sans aucune `LiveProp writable` ni aucune `LiveAction` ne fait **rien** que ne ferait un Twig
+Component — mais il paie la sérialisation de l'état dans le DOM, l'attache du contrôleur Stimulus, et la signature CSRF. C'est gratuit côté DX, coûteux côté
+bundle JS et côté payload. Si la brique est statique, elle doit être un Twig Component.
+
+Le numéro 5 vient avec l'expérience : un composant parent Live qui contient trois composants Live enfants peut déclencher une cascade de re-renders sur une
+interaction. Le profiler le montre, mais il faut penser à le regarder. Sur un composant qui « rame sans raison apparente », commencer par compter le nombre
+de `POST /_components/*` qui partent par interaction.
+
+### Plan d'action : ce qu'on fait lundi matin
+
+Adopter Live Components, ça ne se fait pas en big bang. Composant par composant, en greffe sur l'existant. Le plan que je donne aux équipes que
+j'accompagne :
+
+**Cette semaine.** Installer `symfony/ux-twig-component` et `symfony/ux-live-component` sur un projet pilote. Extraire un composant répété évident —
+typiquement une `Alert`, une `Card`, un `Badge` — en Twig Component, juste pour sentir le couplage classe + template. Écrire un Live Component trivial
+(compteur, toggle, like) pour voir le cycle s'exécuter dans DevTools. Ouvrir le profiler, inspecter un `POST /_components/*`, lire le payload.
+
+**Ce mois-ci.** Identifier _un_ widget JS / Stimulus bricolé qui fait de la réactivité serveur — typiquement un endpoint `/admin/*/_search` collé à un
+contrôleur Stimulus. Le réécrire en Live Component, supprimer l'endpoint et le contrôleur custom. Compter les lignes supprimées. Mettre les premiers tests
+`InteractsWithLiveComponents` sur les composants critiques. Commencer une arborescence `src/Twig/Components/` + `templates/components/`.
+
+**Ce trimestre.** Documenter la règle des deux questions dans le guide d'équipe. Auditer les pages existantes : combien de `render(controller())`,
+combien de JS custom, combien de zones React greffées qui pourraient revenir en Live. Construire un backlog de refacto ciblé — pas un plan de réécriture
+massive, une liste de greffes par ordre de coût décroissant.
+
+### Ce que cette grille ne couvre pas
+
+Honnêteté nécessaire pour fermer le sujet. La règle des deux questions tranche entre Twig Component, Stimulus et Live Component. Elle ne dit **rien** sur
+quand React reste le bon outil — parce que c'est un autre niveau de décision, qui dépasse la techno. Quand un produit a besoin d'animations 60 fps continues,
+de mode offline, d'un éditeur collaboratif temps réel, d'un canvas drag-and-drop fluide, Live Components est une mauvaise réponse, pas par défaut technique
+mais par contrat de la famille HTML-over-the-wire (cf. chapitre 3 : un round-trip HTTP par interaction, dépendance au réseau, pas d'état client riche).
+
+Et au-delà de ces cas extrêmes, le débat « React contre Live Components » porte rarement sur la techno seule — il porte sur l'organisation de l'équipe, la
+séparation front/back, le mindset stack unique versus stack séparée. C'est un sujet à part, que je traite dans un prochain article orienté CTO. Pour
+l'instant, la règle ci-dessus suffit : sur 95 % des UIs CRUD, backoffice, e-commerce, SaaS B2B d'une codebase Symfony, le bon outil est entre les trois
+briques de cet article. Pas plus loin.
+
+### Pour aller plus loin
+
+- Le hub officiel : [ux.symfony.com](https://ux.symfony.com)
+- La doc Live Components : [ux.symfony.com/live-component](https://ux.symfony.com/live-component)
+- La doc Twig Components : [ux.symfony.com/twig-component](https://ux.symfony.com/twig-component)
+- Les cousins à connaître pour le contexte HTML-over-the-wire : [Livewire](https://livewire.laravel.com/) (Laravel),
+  [Phoenix LiveView](https://hexdocs.pm/phoenix_live_view/) (Elixir, l'ancêtre de la famille), [Hotwire](https://hotwired.dev/) (Rails / agnostique),
+  [htmx](https://htmx.org/) (agnostique, plus minimaliste).
+- Le repo Git d'exemples qui accompagne cet article — composants `Counter`, `ProductSearch`, `ProductCard`, `Alert` complets, avec leurs tests
+  `InteractsWithLiveComponents` et un payload `POST /_components/*` capturé pour de vrai _(repo en cours, lien à venir)_.
+
+Le meilleur framework front, c'est celui dont on n'a pas besoin pour 95 % des UIs métier. Ce qui sort de Symfony UX en 2026, c'est exactement la pile qui
+permet à un dev Symfony de tenir cette promesse — sans réécrire son équipe, sans installer Webpack, sans monter une stack séparée. Une classe, un template,
+trois briques de réactivité quand il en faut. Et la règle des deux questions pour savoir quand ne pas en mettre.
