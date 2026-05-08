@@ -6,7 +6,6 @@ import ReadingProgress from '@components/ui/ReadingProgress.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
 import Resume from '@components/ui/Resume.astro';
 import SectionMarker from '@components/ui/SectionMarker.astro';
-import AuthorCard from '@components/ui/AuthorCard.astro';
 import RelatedItems from '@components/ui/RelatedItems.astro';
 import Faq from '@components/ui/Faq.astro';
 import Sources from '@components/ui/Sources.astro';
@@ -116,11 +115,17 @@ const metaDescription = truncateForMeta(data.resume.plain);
         class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
         aria-label={tr.breadcrumb.ariaLabel}
       >
+        <a href={homeHref} class="hover:text-[color:var(--color-ink)]">
+          {tr.breadcrumb.home}
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >/</span
+        >
         <a
           href={`${homeHref}#projects`}
           class="hover:text-[color:var(--color-ink)]"
         >
-          ← {tr.home.projects.title}
+          {tr.home.projects.title}
         </a>
         <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
           >/</span
@@ -174,13 +179,6 @@ const metaDescription = truncateForMeta(data.resume.plain);
           label={tr.project.summaryLabel}
           accent="projects"
           ariaLabel={tr.project.summaryAria}
-        />
-
-        <AuthorCard
-          shareTitle={data.title}
-          shareUrl={url}
-          lang={lang}
-          accent="projects"
         />
 
         {

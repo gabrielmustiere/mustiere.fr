@@ -7,10 +7,8 @@ import ArticleCard from '@components/ui/ArticleCard.astro';
 import StructuredData from '@components/seo/StructuredData.astro';
 import Resume from '@components/ui/Resume.astro';
 import SectionMarker from '@components/ui/SectionMarker.astro';
-import AuthorCard from '@components/ui/AuthorCard.astro';
 import RelatedItems from '@components/ui/RelatedItems.astro';
 import SeriesBanner from '@components/ui/SeriesBanner.astro';
-import SeriesNav from '@components/ui/SeriesNav.astro';
 import Faq from '@components/ui/Faq.astro';
 import Sources from '@components/ui/Sources.astro';
 import TableOfContents from '@components/ui/TableOfContents.astro';
@@ -135,14 +133,18 @@ const metaDescription = truncateForMeta(data.resume.plain);
       class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
       style="max-width: var(--w-prose)"
     >
-      {seriesContext && <SeriesBanner context={seriesContext} lang={lang} />}
-
       <nav
         class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
         aria-label={tr.breadcrumb.ariaLabel}
       >
+        <a href={homeHref} class="hover:text-[color:var(--color-ink)]">
+          {tr.breadcrumb.home}
+        </a>
+        <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+          >/</span
+        >
         <a href={blogHref} class="hover:text-[color:var(--color-ink)]">
-          ← {tr.home.blog.title}
+          {tr.home.blog.title}
         </a>
         <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
           >/</span
@@ -152,18 +154,13 @@ const metaDescription = truncateForMeta(data.resume.plain);
 
       <ArticleCard entry={post} variant="lg" lang={lang} loading="eager" />
 
+      {seriesContext && <SeriesBanner context={seriesContext} lang={lang} />}
+
       <Resume
         html={data.resume.html}
         label={tr.article.summaryLabel}
         accent="blog"
         ariaLabel={tr.article.summaryAria}
-      />
-
-      <AuthorCard
-        shareTitle={data.title}
-        shareUrl={url}
-        lang={lang}
-        accent="blog"
       />
 
       <TableOfContents headings={headings} title={tocTitle} accent="blog" />
@@ -213,8 +210,6 @@ const metaDescription = truncateForMeta(data.resume.plain);
           />
         )
       }
-
-      {seriesContext && <SeriesNav context={seriesContext} lang={lang} />}
 
       <RelatedItems
         kind="blog"
