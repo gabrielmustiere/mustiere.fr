@@ -1,0 +1,45 @@
+---
+import type { Lang } from '@/i18n/config';
+import type { SeriesContext } from '@/utils/series';
+import { useTranslations } from '@/i18n/utils';
+import { blogPath } from '@/utils/content';
+
+interface Props {
+  context: SeriesContext;
+  lang: Lang;
+}
+
+const { context, lang } = Astro.props;
+const tr = useTranslations(lang);
+const counter = tr.article.series.episode
+  .replace('{n}', String(context.position))
+  .replace('{m}', String(context.total));
+const firstHref = blogPath(context.firstEpisode, lang);
+---
+
+<aside
+  class="series-banner mt-6 p-4 sm:p-5 border-l-2 text-[14px] leading-[1.55] text-[#2a2622]"
+  style="border-color: var(--a-blog); background: color-mix(in oklch, var(--a-blog) 6%, transparent)"
+  aria-label={tr.article.series.partOf}
+>
+  <div
+    class="font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] flex items-center gap-2 flex-wrap"
+  >
+    <span>{tr.article.series.partOf}</span>
+    <span class="acc-blog">{context.series.data.title}</span>
+    <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+      >·</span
+    >
+    <span class="tnum">{counter}</span>
+  </div>
+  {
+    !context.isFirst && (
+      <a
+        href={firstHref}
+        class="series-banner__cta mt-2 inline-flex items-center gap-1 text-[14px] underline decoration-1 underline-offset-2 hover:text-[color:var(--a-blog)] transition-colors"
+      >
+        ↩ {tr.article.series.firstEpisodeCta}
+      </a>
+    )
+  }
+</aside>

@@ -283,11 +283,29 @@ interface BlogPostingInput {
   tldr?: string;
   lang?: Lang;
   relatedUrls?: string[];
+  // Si fourni, on émet un nœud `CreativeWorkSeries` dans `isPartOf` pour
+  // signaler aux crawlers que l'article appartient à une série éditoriale.
+  // `position` est porté par le `BlogPosting` lui-même (pas par la série) :
+  // schema.org définit `position` comme « la position d'un item dans une
+  // série/séquence », donc l'item est l'article, pas la série.
+  // Le `url` du CreativeWorkSeries est volontairement omis : il n'existe pas
+  // de page d'index série (cf. design 009-f-blog-series), et schema.org
+  // tolère parfaitement une CreativeWorkSeries sans url.
+  series?: { name: string; position: number };
 }
 
 export function blogPostingSchema(p: BlogPostingInput) {
   const lang: Lang = p.lang ?? 'fr';
   const url = `${SITE.url}${localizedPath(lang, `/blog/${p.slug}`)}`;
+  const isPartOf = p.series
+    ? [
+        { '@id': WEBSITE_ID },
+        {
+          '@type': 'CreativeWorkSeries',
+          name: p.series.name,
+        },
+      ]
+    : { '@id': WEBSITE_ID };
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -319,7 +337,8 @@ export function blogPostingSchema(p: BlogPostingInput) {
       p.relatedUrls && p.relatedUrls.length > 0 ? p.relatedUrls : undefined,
     author: { '@id': PERSON_ID },
     publisher: { '@id': ORG_ID },
-    isPartOf: { '@id': WEBSITE_ID },
+    isPartOf,
+    position: p.series ? p.series.position : undefined,
   };
 }
 

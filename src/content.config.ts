@@ -61,6 +61,15 @@ const blog = defineCollection({
         number: z.number().int().positive(),
         lang: langEnum.default('fr'),
         translationOf: z.string().optional(),
+        // Appartenance à une série d'articles (cf. plan 009-f-blog-series).
+        // `series` référence le slug public d'une entrée de la collection
+        // `series` dans la même langue que l'article. `seriesOrder` est le
+        // rang dans la série (entier positif unique par série, validé par
+        // `validateSeriesGraph` au runtime — Zod ne peut pas vérifier la
+        // cohérence cross-collection). Les deux champs sont présents
+        // ensemble ou absents ensemble.
+        series: z.string().optional(),
+        seriesOrder: z.number().int().positive().optional(),
       })
       // Une cover doit être disponible pour chaque article : soit déclarée
       // localement (`cover: ./cover.webp`), soit héritée d'une entrée pointée
@@ -76,7 +85,31 @@ const blog = defineCollection({
               'cover required (or translationOf to inherit cover from another entry)',
           });
         }
+        const hasSeries = data.series !== undefined;
+        const hasOrder = data.seriesOrder !== undefined;
+        if (hasSeries !== hasOrder) {
+          ctx.addIssue({
+            code: 'custom',
+            path: hasSeries ? ['seriesOrder'] : ['series'],
+            message:
+              'series et seriesOrder doivent être présents ensemble ou absents ensemble',
+          });
+        }
       }),
+});
+
+const series = defineCollection({
+  loader: chapteredGlob({
+    base: './src/content/series',
+    extensions: ['.md', '.mdx'],
+    nestedByLang: ['fr', 'en'],
+  }),
+  schema: z.object({
+    title: z.string().min(1).max(120),
+    description: z.string().min(40).max(280),
+    lang: langEnum.default('fr'),
+    translationOf: z.string().optional(),
+  }),
 });
 
 const projects = defineCollection({
@@ -130,5 +163,5 @@ const projects = defineCollection({
       }),
 });
 
-export const collections = { blog, projects };
+export const collections = { blog, projects, series };
 export type Category = z.infer<typeof categoryEnum>;

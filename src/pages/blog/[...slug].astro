@@ -8,9 +8,21 @@ import {
   getDraftSlugParam,
   publicSlug,
 } from '@/utils/content';
+import { buildSeriesIndex, type SeriesContext } from '@/utils/series';
 
 export async function getStaticPaths() {
   const all = await getCollection('blog');
+  const allSeries = await getCollection('series');
+  // Index série calculé une fois pour la page : valide la cohérence
+  // cross-collection (références + unicité seriesOrder) — le build casse avec
+  // un message clair si la spec se rompt — puis pré-calcule le SeriesContext
+  // de chaque article. `isVisible` aligne la visibilité des drafts sur
+  // `isPublished` (DEV / SHOW_DRAFTS) pour rester cohérent avec le reste du
+  // site.
+  const seriesIndex = buildSeriesIndex(all, allSeries, {
+    isVisible: (a) => isPublished(a as CollectionEntry<'blog'>, 'fr'),
+  });
+
   const published = all.filter((entry) => isPublished(entry, 'fr'));
   const sorted = [...published].sort(
     (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
@@ -21,9 +33,10 @@ export async function getStaticPaths() {
     const nextPosts = [sorted[idx + 1], sorted[idx - 1]].filter(
       (p): p is CollectionEntry<'blog'> => Boolean(p)
     );
+    const seriesContext = seriesIndex.get(post.id);
     return {
       params: { slug: publicSlug(post) },
-      props: { post, nextPosts, isDraftPreview: false },
+      props: { post, nextPosts, seriesContext, isDraftPreview: false },
     };
   });
 
@@ -31,9 +44,10 @@ export async function getStaticPaths() {
     .map((post) => {
       const slug = getDraftSlugParam(publicSlug(post));
       if (!slug) return null;
+      const seriesContext = seriesIndex.get(post.id);
       return {
         params: { slug },
-        props: { post, nextPosts: [], isDraftPreview: true },
+        props: { post, nextPosts: [], seriesContext, isDraftPreview: true },
       };
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
@@ -44,9 +58,11 @@ export async function getStaticPaths() {
 type Props = {
   post: CollectionEntry<'blog'>;
   nextPosts: CollectionEntry<'blog'>[];
+  seriesContext: SeriesContext | null;
   isDraftPreview: boolean;
 };
-const { post, nextPosts, isDraftPreview } = Astro.props as Props;
+const { post, nextPosts, seriesContext, isDraftPreview } =
+  Astro.props as Props;
 
 const { Content, headings } = await render(post);
 
@@ -58,6 +74,7 @@ if (!post.data.readingTime && post.body) {
 <ArticleLayout
   post={post}
   nextPosts={nextPosts}
+  seriesContext={seriesContext}
   headings={headings}
   isDraftPreview={isDraftPreview}
 >

@@ -1,17 +1,52 @@
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
 import { blogPath, isPublished, projectPath } from '@/utils/content';
+import { buildSeriesIndex } from '@/utils/series';
 
 export const GET: APIRoute = async () => {
-  const posts = (
-    await getCollection('blog', (entry) => isPublished(entry, 'en'))
-  ).sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+  const allBlog = await getCollection('blog');
+  const allSeries = await getCollection('series');
+  const seriesIndex = buildSeriesIndex(allBlog, allSeries, {
+    isVisible: (a) => isPublished(a as CollectionEntry<'blog'>, 'en'),
+  });
+  const posts = allBlog
+    .filter((entry) => isPublished(entry, 'en'))
+    .sort(
+      (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
+    );
 
   const projects = (
     await getCollection('projects', (entry) => isPublished(entry, 'en'))
   ).sort((a, b) => a.data.order - b.data.order);
+
+  const seriesGroups: Array<{
+    title: string;
+    description: string;
+    episodes: CollectionEntry<'blog'>[];
+  }> = [];
+  const seenSeries = new Set<string>();
+  const orphans: CollectionEntry<'blog'>[] = [];
+  for (const post of posts) {
+    if (!post.data.series) {
+      orphans.push(post);
+      continue;
+    }
+    const ctx = seriesIndex.get(post.id);
+    if (!ctx) {
+      orphans.push(post);
+      continue;
+    }
+    const key = `en/${post.data.series}`;
+    if (seenSeries.has(key)) continue;
+    seenSeries.add(key);
+    seriesGroups.push({
+      title: ctx.series.data.title,
+      description: ctx.series.data.description,
+      episodes: ctx.episodes as CollectionEntry<'blog'>[],
+    });
+  }
 
   const lines: string[] = [];
   lines.push(`# ${SITE.name}`);
@@ -52,7 +87,20 @@ export const GET: APIRoute = async () => {
 
   lines.push('## Posts');
   lines.push('');
-  for (const post of posts) {
+  for (const group of seriesGroups) {
+    lines.push(`### ${group.title}`);
+    lines.push('');
+    lines.push(`*${group.description}*`);
+    lines.push('');
+    for (const post of group.episodes) {
+      const date = toISODate(post.data.publishedAt);
+      lines.push(
+        `- [${post.data.title}](${SITE.url}${blogPath(post, 'en')}) (${date}, ${post.data.category}): ${post.data.excerpt}`
+      );
+    }
+    lines.push('');
+  }
+  for (const post of orphans) {
     const date = toISODate(post.data.publishedAt);
     lines.push(
       `- [${post.data.title}](${SITE.url}${blogPath(post, 'en')}) (${date}, ${post.data.category}): ${post.data.excerpt}`

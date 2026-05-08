@@ -9,6 +9,8 @@ import Resume from '@components/ui/Resume.astro';
 import SectionMarker from '@components/ui/SectionMarker.astro';
 import AuthorCard from '@components/ui/AuthorCard.astro';
 import RelatedItems from '@components/ui/RelatedItems.astro';
+import SeriesBanner from '@components/ui/SeriesBanner.astro';
+import SeriesNav from '@components/ui/SeriesNav.astro';
 import Faq from '@components/ui/Faq.astro';
 import Sources from '@components/ui/Sources.astro';
 import TableOfContents from '@components/ui/TableOfContents.astro';
@@ -30,16 +32,24 @@ import {
 import type { Lang } from '@/i18n/config';
 import type { CollectionEntry } from 'astro:content';
 import { blogPath, findTranslation, publicSlug } from '@/utils/content';
+import type { SeriesContext } from '@/utils/series';
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
   post: CollectionEntry<'blog'>;
   nextPosts: CollectionEntry<'blog'>[];
+  seriesContext?: SeriesContext | null;
   headings?: MarkdownHeading[];
   isDraftPreview?: boolean;
 }
 
-const { post, nextPosts, headings = [], isDraftPreview = false } = Astro.props;
+const {
+  post,
+  nextPosts,
+  seriesContext = null,
+  headings = [],
+  isDraftPreview = false,
+} = Astro.props;
 const { data } = post;
 const lang: Lang = (data.lang ?? 'fr') as Lang;
 const tr = useTranslations(lang);
@@ -79,6 +89,12 @@ const schemas = [
     tldr: data.resume.plain,
     lang,
     relatedUrls,
+    series: seriesContext
+      ? {
+          name: seriesContext.series.data.title,
+          position: seriesContext.position,
+        }
+      : undefined,
   }),
   breadcrumbSchema([
     { name: tr.breadcrumb.home, url: `${SITE.url}${homeHref}` },
@@ -119,6 +135,8 @@ const metaDescription = truncateForMeta(data.resume.plain);
       class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
       style="max-width: var(--w-prose)"
     >
+      {seriesContext && <SeriesBanner context={seriesContext} lang={lang} />}
+
       <nav
         class="text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
         aria-label={tr.breadcrumb.ariaLabel}
@@ -195,6 +213,8 @@ const metaDescription = truncateForMeta(data.resume.plain);
           />
         )
       }
+
+      {seriesContext && <SeriesNav context={seriesContext} lang={lang} />}
 
       <RelatedItems
         kind="blog"

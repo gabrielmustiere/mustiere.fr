@@ -10,6 +10,8 @@ import {
   toISODate,
 } from '@/utils/format-date';
 import { getCover } from '@/utils/cover';
+import { useTranslations } from '@/i18n/utils';
+import type { SeriesContext } from '@/utils/series';
 
 interface Props {
   entry: CollectionEntry<'blog'>;
@@ -19,6 +21,7 @@ interface Props {
   fetchpriority?: 'high' | 'auto';
   showCover?: boolean;
   headingLevel?: 2 | 3;
+  seriesContext?: SeriesContext | null;
 }
 
 const {
@@ -29,7 +32,12 @@ const {
   fetchpriority,
   showCover = true,
   headingLevel = 3,
+  seriesContext = null,
 } = Astro.props;
+const tr = useTranslations(lang);
+const seriesChipLabel = seriesContext
+  ? `${tr.article.series.chipLabel} ${seriesContext.series.data.title} • ${seriesContext.position}/${seriesContext.total}`
+  : null;
 const SmHeading = `h${headingLevel}` as 'h2' | 'h3';
 const { data } = entry;
 const { cover, alt } = await getCover(entry);
@@ -194,12 +202,23 @@ const pictureAlt = alt;
           >
             {data.title}
           </SmHeading>
-          <div class="mt-2 flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] font-mono">
+          <div
+            class:list={[
+              'mt-2 flex items-center gap-2 text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] font-mono',
+              seriesChipLabel && 'flex-wrap',
+            ]}
+          >
             <time class="tnum acc-blog" datetime={toISODate(data.publishedAt)}>
               {formatDateShort(data.publishedAt, lang)}
             </time>
             <span aria-hidden="true">·</span>
             <CategoryPill category={data.category} size="sm" lang={lang} />
+            {seriesChipLabel && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span class="acc-blog">{seriesChipLabel}</span>
+              </>
+            )}
             {data.readingTime && (
               <>
                 <span aria-hidden="true">·</span>

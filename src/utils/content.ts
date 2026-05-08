@@ -4,9 +4,12 @@ import type { Lang } from '@/i18n/config';
 import { localizedPath } from '@/i18n/utils';
 import { routePath } from '@/i18n/routes';
 
-type PublishableEntry = CollectionEntry<'blog'> | CollectionEntry<'projects'>;
+type PublishableEntry =
+  | CollectionEntry<'blog'>
+  | CollectionEntry<'projects'>
+  | CollectionEntry<'series'>;
 
-type TranslatableCollection = 'blog' | 'projects';
+type TranslatableCollection = 'blog' | 'projects' | 'series';
 
 // Les collections `blog` et `projects` utilisent `nestedByLang` : l'`id`
 // d'entrée porte un préfixe `fr/` ou `en/` (ex. `fr/symfony-template`). Le slug
@@ -41,8 +44,11 @@ export function blogPath(entry: { id: string }, lang: Lang): string {
 // Toujours passer par ce helper plutôt que d'inliner `!data.draft && data.lang === ...`
 // pour éviter le drift constaté historiquement (cf. plan t-001).
 export function isPublished(entry: PublishableEntry, lang: Lang): boolean {
+  // `draft` n'existe que sur `blog` et `projects` ; `series` n'a pas la
+  // notion de draft et passe donc toujours le filtre côté visibilité.
+  const draft = 'draft' in entry.data ? entry.data.draft : false;
   const showDraft =
-    import.meta.env.DEV || process.env.SHOW_DRAFTS === '1' || !entry.data.draft;
+    import.meta.env.DEV || process.env.SHOW_DRAFTS === '1' || !draft;
   const matchesLang = (entry.data.lang ?? 'fr') === lang;
   return showDraft && matchesLang;
 }
@@ -121,7 +127,8 @@ export function getDraftPreviewEntries<T extends PublishableEntry>(
   lang: Lang
 ): T[] {
   if (import.meta.env.DEV) return [];
-  return entries.filter(
-    (entry) => Boolean(entry.data.draft) && (entry.data.lang ?? 'fr') === lang
-  );
+  return entries.filter((entry) => {
+    const draft = 'draft' in entry.data ? entry.data.draft : false;
+    return Boolean(draft) && (entry.data.lang ?? 'fr') === lang;
+  });
 }

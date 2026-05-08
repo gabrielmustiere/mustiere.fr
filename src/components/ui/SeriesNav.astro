@@ -1,0 +1,62 @@
+---
+import type { Lang } from '@/i18n/config';
+import type { SeriesContext } from '@/utils/series';
+import { useTranslations } from '@/i18n/utils';
+import { blogPath } from '@/utils/content';
+
+interface Props {
+  context: SeriesContext;
+  lang: Lang;
+}
+
+const { context, lang } = Astro.props;
+const tr = useTranslations(lang);
+const prev = context.prev;
+const next = context.next;
+---
+
+{
+  (prev || next) && (
+    <nav
+      class="series-nav mt-12"
+      aria-label={tr.article.series.navAriaLabel}
+      style="--series-accent: var(--a-blog)"
+    >
+      <div class="text-[10px] tracking-[0.14em] uppercase text-[color:var(--color-muted)] mb-3 font-mono">
+        {context.series.data.title}
+      </div>
+      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4 list-none p-0 m-0">
+        {prev && (
+          <li class="series-nav__item series-nav__item--prev border-t border-[color:var(--color-rule)] pt-3">
+            <a href={blogPath(prev, lang)} class="block group">
+              <div class="text-[10px] tracking-[0.14em] uppercase font-mono acc-blog">
+                ← {tr.article.series.prevEpisode}
+              </div>
+              <div
+                class="font-serif mt-1 text-[18px] leading-[1.25] tracking-[-0.005em] transition-colors group-hover:text-[color:var(--series-accent)]"
+                style="font-family: var(--font-serif)"
+              >
+                {prev.data.title}
+              </div>
+            </a>
+          </li>
+        )}
+        {next && (
+          <li class="series-nav__item series-nav__item--next border-t border-[color:var(--color-rule)] pt-3 sm:text-right">
+            <a href={blogPath(next, lang)} class="block group">
+              <div class="text-[10px] tracking-[0.14em] uppercase font-mono acc-blog">
+                {tr.article.series.nextEpisode} →
+              </div>
+              <div
+                class="font-serif mt-1 text-[18px] leading-[1.25] tracking-[-0.005em] transition-colors group-hover:text-[color:var(--series-accent)]"
+                style="font-family: var(--font-serif)"
+              >
+                {next.data.title}
+              </div>
+            </a>
+          </li>
+        )}
+      </ul>
+    </nav>
+  )
+}

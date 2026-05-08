@@ -113,6 +113,15 @@ export const ui = {
       tocTitle: 'sommaire',
       upNextTitle: 'À lire ensuite',
       endLabel: '§ fin',
+      series: {
+        partOf: 'Cet article fait partie de la série',
+        episode: 'épisode {n}/{m}',
+        firstEpisodeCta: 'Lire le premier épisode',
+        prevEpisode: 'Épisode précédent',
+        nextEpisode: 'Épisode suivant',
+        chipLabel: 'Série',
+        navAriaLabel: 'Navigation entre épisodes',
+      },
     },
     project: {
       backToProjects: '← Tous les projets',
@@ -299,6 +308,15 @@ export const ui = {
       tocTitle: 'contents',
       upNextTitle: 'Up next',
       endLabel: '§ end',
+      series: {
+        partOf: 'This post is part of the series',
+        episode: 'episode {n}/{m}',
+        firstEpisodeCta: 'Read the first episode',
+        prevEpisode: 'Previous episode',
+        nextEpisode: 'Next episode',
+        chipLabel: 'Series',
+        navAriaLabel: 'Navigation between episodes',
+      },
     },
     project: {
       backToProjects: '← All projects',
