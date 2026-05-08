@@ -142,7 +142,7 @@ test('getSeriesContext — saute les drafts dans next/prev', () => {
   assert.equal(ctx.next?.id, 'fr/a3'); // saute a2 draft
 });
 
-test('getSeriesContext — la page d\'un draft inclut le draft courant', () => {
+test("getSeriesContext — la page d'un draft inclut le draft courant", () => {
   // Quand on rend la page draft preview (URL hashée), getSeriesContext est
   // appelé avec un article draft : il doit figurer dans episodes pour que
   // le bandeau s'affiche correctement.

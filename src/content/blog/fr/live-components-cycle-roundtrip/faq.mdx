@@ -1,0 +1,10 @@
+---
+questions:
+  - q: 'Faut-il garder Stimulus avec Live Components ?'
+    r: |
+      Oui. Stimulus est intégré, pas remplacé. Le contrôleur que Live Components attache au DOM (`live_controller.js`, environ 25 à 30 Ko) **est** un
+      contrôleur Stimulus packagé dans le bundle. Et au-delà de cette dépendance technique, Stimulus reste l'outil de choix pour tous les comportements
+      100 % client — toggle, copy-to-clipboard, ouverture de menu, animation simple. Ce qui devient redondant avec Live Components, c'est précisément le
+      couple _Stimulus custom + endpoint Ajax custom_ pour faire de la réactivité serveur. Pas Stimulus tout court. La règle de décision en deux
+      questions est traitée à l'épisode 5.
+---

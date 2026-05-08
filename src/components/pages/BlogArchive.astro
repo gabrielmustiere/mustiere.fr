@@ -96,6 +96,18 @@ const Intro = INTRO[lang];
     class="mx-auto px-6 sm:px-10 pt-10 sm:pt-16 pb-20"
     style="max-width: var(--w-blog)"
   >
+    <nav
+      class="mb-6 text-[11px] tracking-[0.12em] uppercase text-[color:var(--color-muted)] flex items-center gap-2 font-mono"
+      aria-label={tr.breadcrumb.ariaLabel}
+    >
+      <a href={homeHref} class="hover:text-[color:var(--color-ink)]">
+        {tr.breadcrumb.home}
+      </a>
+      <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
+        >/</span
+      >
+      <span class="acc-blog">{tr.home.blog.title}</span>
+    </nav>
     <div
       class="flex items-center justify-between text-[11px] tracking-[0.12em] uppercase font-mono"
     >

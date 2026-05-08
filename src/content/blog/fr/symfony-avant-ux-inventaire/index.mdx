@@ -1,4 +1,47 @@
-## Avant Symfony UX, l'inventaire
+---
+title: "Avant Symfony UX : l'inventaire, et trois douleurs structurelles"
+excerpt:
+  'Toute codebase Symfony mature accumule include, macro, render(controller()), extension Twig, Stimulus + endpoint Ajax. Cinq mécanismes, trois douleurs
+  structurelles, un manque qui les explique.'
+publishedAt: 2026-05-07
+category: Tech
+tags: [Symfony, PHP, Twig Components, Symfony UX, Stimulus]
+cover: ./cover.png
+coverAlt: 'Live Components Symfony : modèle composant côté serveur'
+keywords:
+  - Symfony composant Twig
+  - render controller alternative
+  - macro Twig limites
+  - extension Twig limites
+  - Stimulus endpoint Ajax
+  - Symfony UX historique
+  - composant côté serveur PHP
+  - server-driven UI Symfony
+number: 3
+draft: true
+lang: fr
+series: live-components-symfony
+seriesOrder: 1
+---
+
+Toute codebase Symfony d'une certaine maturité finit par accumuler la même couche sédimentaire. Quelques `include` Twig au début, puis des macros pour formater
+les prix et les dates, puis le premier `render(controller())` quand il a fallu une vraie logique PHP dans un fragment de page. Une extension Twig pour les
+helpers globaux. Un contrôleur Stimulus collé à un endpoint Ajax `/admin/products/_search` quand le métier a demandé du filtrage en direct. Et au bout de
+quelques années, une zone React greffée parce que la prochaine UI vivante méritait « un vrai framework ». Cinq mécanismes, cinq endroits où chercher quand un
+champ se met à mal s'afficher.
+
+J'ai vu cette accumulation sur la majorité des projets Symfony un peu vivants que j'ai rejoints — y compris ceux que j'avais démarrés moi-même. Elle n'est pas
+le signe d'une équipe qui code mal. Elle est le signe d'un écosystème qui n'avait pas, jusqu'à récemment, d'unité d'organisation pour parler de _composant_, ni
+de mécanique pour faire de la réactivité côté serveur sans coller à la main du JavaScript et un endpoint dédié. Symfony UX a réglé les deux, en empilant deux
+briques : [Twig Components](https://ux.symfony.com/twig-component) (le composant statique typé) et [Live Components](https://ux.symfony.com/live-component) (le
+composant réactif piloté par le serveur).
+
+Ce premier épisode pose le diagnostic — sans diagnostic propre, le reste de la série flotte. On nomme les cinq mécanismes que Live Components rend redondants
+pour la réactivité serveur, on regarde ce que chacun résout et où il s'arrête, et on isole les trois douleurs structurelles qui ressortent une fois l'inventaire
+fait. Les épisodes suivants attaquent les briques de la réponse : Twig Components (épisode 2), le cycle Live (épisode 3), tests / perf / sécu en prod
+(épisode 4), règle de décision en code review (épisode 5).
+
+## L'inventaire — cinq mécanismes, cinq plafonds
 
 Avant de regarder ce que change Live Components, il faut nommer ce qu'il remplace. Pas pour enterrer les outils — la plupart restent utiles à leur échelle —
 mais pour comprendre _pourquoi_, mis bout à bout, ils ne tiennent pas le contrat « modèle composant ». Cinq mécanismes ont historiquement servi à composer l'UI
@@ -124,9 +167,9 @@ formulaire, une recherche live — exactement le terrain de Live Components.
 
 Précision importante avant la suite : ce qui devient redondant avec Live Components, c'est ce **couple précis** _Stimulus custom + endpoint Ajax custom_ pour
 faire de la réactivité serveur. Stimulus tout court reste l'outil de choix pour les comportements 100 % client (toggle, copy-to-clipboard, ouverture de menu,
-animation simple). On reviendra dessus au chapitre 5 avec une règle de décision en deux questions.
+animation simple). On reviendra dessus à l'épisode 5 avec une règle de décision en deux questions.
 
-### Trois douleurs structurelles, et un manque qui les explique
+## Trois douleurs structurelles, et un manque qui les explique
 
 Si on regarde l'inventaire à distance, trois douleurs transversales émergent.
 
@@ -151,4 +194,5 @@ Symfony. La réponse historique est précisément le couple Stimulus + Ajax — 
 supprimer aucune.
 
 Symfony UX répond à ces trois douleurs en empilant deux briques distinctes : Twig Components règle l'unité d'organisation et le contrat de typage, Live
-Components ajoute la réactivité server-driven sans toucher au reste. La suite de l'article les regarde dans cet ordre — d'abord le socle, puis le cycle.
+Components ajoute la réactivité server-driven sans toucher au reste. La suite de la série les regarde dans cet ordre — d'abord le socle dans l'épisode 2, puis
+le cycle Live dans le 3.

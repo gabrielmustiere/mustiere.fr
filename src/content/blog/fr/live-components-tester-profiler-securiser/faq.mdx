@@ -1,17 +1,5 @@
 ---
 questions:
-  - q: 'Live Components remplace-t-il React ?'
-    r: |
-      Non, et ce n'est pas l'objet de cet article. Live Components règle 95 % des UIs CRUD, backoffice, e-commerce, SaaS B2B avec un round-trip HTTP par
-      interaction et zéro JavaScript écrit à la main. Il devient un mauvais choix pour les cas qui sortent de la famille HTML-over-the-wire — animations
-      60 fps continues, mode offline, éditeur collaboratif temps réel, canvas drag-and-drop fluide. Ces cas restent du terrain React (ou Vue, Svelte). Le
-      débat « stack unifiée vs stack séparée » est un sujet d'organisation à part, traité dans un prochain article orienté CTO.
-  - q: 'Faut-il garder Stimulus avec Live Components ?'
-    r: |
-      Oui. Stimulus est intégré, pas remplacé. Le contrôleur que Live Components attache au DOM (`live_controller.js`, environ 25 à 30 Ko) **est** un
-      contrôleur Stimulus packagé dans le bundle. Et au-delà de cette dépendance technique, Stimulus reste l'outil de choix pour tous les comportements
-      100 % client — toggle, copy-to-clipboard, ouverture de menu, animation simple. Ce qui devient redondant avec Live Components, c'est précisément le
-      couple _Stimulus custom + endpoint Ajax custom_ pour faire de la réactivité serveur. Pas Stimulus tout court.
   - q: 'Combien coûte une interaction Live Component en prod ?'
     r: |
       Un round-trip HTTP, donc dépendant du réseau. Repères honnêtes : 50 à 200 ms en prod sur la même région que le client, 200 à 500 ms en mobile 4G,

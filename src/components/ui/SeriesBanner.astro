@@ -14,32 +14,195 @@ const tr = useTranslations(lang);
 const counter = tr.article.series.episode
   .replace('{n}', String(context.position))
   .replace('{m}', String(context.total));
-const firstHref = blogPath(context.firstEpisode, lang);
 ---
 
 <aside
-  class="series-banner mt-6 p-4 sm:p-5 border-l-2 text-[14px] leading-[1.55] text-[#2a2622]"
-  style="border-color: var(--a-blog); background: color-mix(in oklch, var(--a-blog) 6%, transparent)"
+  class="series-banner mt-6"
   aria-label={tr.article.series.partOf}
+  style="--series-accent: var(--a-blog)"
 >
-  <div
-    class="font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] flex items-center gap-2 flex-wrap"
-  >
-    <span>{tr.article.series.partOf}</span>
-    <span class="acc-blog">{context.series.data.title}</span>
-    <span class="text-[color:var(--color-rule-strong)]" aria-hidden="true"
-      >·</span
-    >
-    <span class="tnum">{counter}</span>
+  <div class="series-banner__head">
+    <span class="series-banner__label">{tr.article.series.chipLabel}</span>
+    <span class="series-banner__series-title">{context.series.data.title}</span>
+    <span class="series-banner__sep" aria-hidden="true">·</span>
+    <span class="series-banner__counter tnum">{counter}</span>
   </div>
-  {
-    !context.isFirst && (
-      <a
-        href={firstHref}
-        class="series-banner__cta mt-2 inline-flex items-center gap-1 text-[14px] underline decoration-1 underline-offset-2 hover:text-[color:var(--a-blog)] transition-colors"
-      >
-        ↩ {tr.article.series.firstEpisodeCta}
-      </a>
-    )
-  }
+
+  <ol class="series-banner__list" aria-label={tr.article.series.listAriaLabel}>
+    {
+      context.episodes.map((ep, i) => {
+        const num = String(i + 1).padStart(2, '0');
+        const isCurrent = ep.id === context.episodes[context.position - 1].id;
+        return (
+          <li class:list={['series-banner__item', isCurrent && 'is-current']}>
+            {isCurrent ? (
+              <span class="series-banner__row" aria-current="true">
+                <span class="series-banner__num tnum">{num}</span>
+                <span class="series-banner__title">{ep.data.title}</span>
+                <span class="series-banner__here">
+                  {tr.article.series.currentEpisode}
+                </span>
+              </span>
+            ) : (
+              <a class="series-banner__row" href={blogPath(ep, lang)}>
+                <span class="series-banner__num tnum">{num}</span>
+                <span class="series-banner__title">{ep.data.title}</span>
+              </a>
+            )}
+          </li>
+        );
+      })
+    }
+  </ol>
 </aside>
+
+<style>
+  /* Pas de fond ni de barre verticale : la liste navigationnelle se distingue
+     du panneau « Resume » qui suit. Le rail vertical interne suffit à donner
+     le sens de lecture. */
+  .series-banner {
+    padding: 4px 0 0;
+  }
+
+  .series-banner__head {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--color-muted);
+  }
+
+  .series-banner__series-title {
+    color: var(--series-accent);
+  }
+
+  .series-banner__sep {
+    color: var(--color-rule-strong);
+  }
+
+  .series-banner__list {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    position: relative;
+  }
+
+  /* Rail vertical reliant les épisodes — donne le sens de lecture haut → bas. */
+  .series-banner__list::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 14px;
+    bottom: 14px;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      var(--color-rule) 0%,
+      var(--color-rule-strong) 100%
+    );
+  }
+
+  .series-banner__item {
+    position: relative;
+    padding: 4px 0 4px 28px;
+  }
+
+  /* Puce de chaque épisode — creuse par défaut. */
+  .series-banner__item::before {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 11px;
+    width: 11px;
+    height: 11px;
+    border-radius: 999px;
+    background: var(--color-bg);
+    border: 1.5px solid var(--color-rule-strong);
+    box-sizing: border-box;
+    transition:
+      border-color 120ms ease,
+      background-color 120ms ease;
+  }
+
+  .series-banner__row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+
+  a.series-banner__row:hover::before,
+  .series-banner__item:has(a.series-banner__row:hover)::before {
+    border-color: var(--series-accent);
+  }
+
+  a.series-banner__row:hover .series-banner__title {
+    color: var(--series-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  .series-banner__num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-muted);
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    min-width: 1.6em;
+  }
+
+  .series-banner__title {
+    font-family: var(--font-serif);
+    font-size: 16px;
+    line-height: 1.3;
+    color: var(--color-ink);
+  }
+
+  /* Épisode courant : puce pleine + halo, titre serif emphasé, badge "vous lisez". */
+  .series-banner__item.is-current::before {
+    background: var(--series-accent);
+    border-color: var(--series-accent);
+    box-shadow: 0 0 0 3px
+      color-mix(in oklch, var(--series-accent) 18%, transparent);
+  }
+
+  .series-banner__item.is-current .series-banner__num {
+    color: var(--series-accent);
+  }
+
+  .series-banner__item.is-current .series-banner__title {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .series-banner__here {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--series-accent);
+    background: color-mix(in oklch, var(--series-accent) 12%, transparent);
+    padding: 2px 7px;
+    border-radius: 999px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 480px) {
+    .series-banner__title {
+      font-size: 15px;
+    }
+    .series-banner__item.is-current .series-banner__title {
+      font-size: 16px;
+    }
+    .series-banner__here {
+      display: none;
+    }
+  }
+</style>

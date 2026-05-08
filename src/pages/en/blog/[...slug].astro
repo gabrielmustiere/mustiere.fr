@@ -57,8 +57,7 @@ type Props = {
   seriesContext: SeriesContext | null;
   isDraftPreview: boolean;
 };
-const { post, nextPosts, seriesContext, isDraftPreview } =
-  Astro.props as Props;
+const { post, nextPosts, seriesContext, isDraftPreview } = Astro.props as Props;
 
 const { Content, headings } = await render(post);
 

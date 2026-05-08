@@ -157,7 +157,8 @@ function buildContextMap(
   // chaque groupe par `seriesOrder`. Une seule passe O(N + Σ K log K).
   const visibleByKey = new Map<string, BlogEntryLike[]>();
   for (const article of articles) {
-    if (!article.data.series || article.data.seriesOrder === undefined) continue;
+    if (!article.data.series || article.data.seriesOrder === undefined)
+      continue;
     if (!isVisible(article)) continue;
     const key = `${entryLang(article)}/${article.data.series}`;
     let list = visibleByKey.get(key);
@@ -169,8 +170,7 @@ function buildContextMap(
   }
   for (const list of visibleByKey.values()) {
     list.sort(
-      (a, b) =>
-        (a.data.seriesOrder as number) - (b.data.seriesOrder as number)
+      (a, b) => (a.data.seriesOrder as number) - (b.data.seriesOrder as number)
     );
   }
 

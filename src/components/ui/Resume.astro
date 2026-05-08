@@ -13,12 +13,12 @@ const accentVar = accent === 'blog' ? 'var(--a-blog)' : 'var(--a-projects)';
 ---
 
 <aside
-  class="resume mt-8 p-4 sm:p-5 border-l-2 text-[15px] leading-[1.65] text-[#2a2622]"
-  style={`border-color: ${accentVar}; background: color-mix(in oklch, ${accentVar} 6%, transparent)`}
+  class="resume mt-8 p-5 sm:p-6 text-[16px] sm:text-[17px] leading-[1.6] text-[#2a2622]"
+  style={`border-left: 3px solid ${accentVar}; background: color-mix(in oklch, ${accentVar} 9%, transparent)`}
   aria-label={ariaLabel ?? label}
 >
   <span
-    class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-2"
+    class="not-italic font-mono uppercase tracking-[0.14em] text-[10px] text-[color:var(--color-muted)] block mb-2.5"
   >
     {label}
   </span>
