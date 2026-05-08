@@ -35,6 +35,17 @@ const LASTMOD_RE = /<lastmod>[^<]+<\/lastmod>/g;
 // masque ces attributs comme on masque <lastmod>, ce sont des artefacts
 // techniques du build pas du comportement observable.
 const ASTRO_CID_RE = /\sdata-astro-cid-[a-z0-9]+(?:="[^"]*")?/g;
+// Astro fingerprint les bundles CSS/JS sous `_astro/<name>.<hash>.<ext>` ;
+// le hash dépend du contenu, donc l'ajout d'une classe Tailwind ou d'un
+// utilitaire change le hash sans changer la sémantique des pages qui les
+// référencent. On masque ces hashes (côté HTML), même principe que les
+// data-astro-cid : artefact de build, pas de comportement observable.
+// Couvre `.css` et `.js`. Le contenu des bundles est lui-même comparé via
+// le mappage par basename-sans-hash (voir `relWithoutBundleHash`).
+const ASTRO_BUNDLE_REF_RE =
+  /\/_astro\/([A-Za-z0-9_-]+)\.[A-Za-z0-9_-]+\.(css|js)/g;
+const ASTRO_BUNDLE_FILE_RE =
+  /^_astro\/([A-Za-z0-9_-]+)\.[A-Za-z0-9_-]+\.(css|js)$/;
 // L'extraction de markup d'un .astro vers un autre change l'indentation source
 // du JSX, qui se retrouve dans les text nodes du HTML (séquences de \n + tabs
 // + espaces ASCII). Au navigateur, ces séquences sont collapsées en un espace.
@@ -100,6 +111,23 @@ function maskAstroCid(rel, content) {
   return content;
 }
 
+// Remplace les références `_astro/<name>.<hash>.<ext>` par `_astro/<name>.<ext>`
+// dans le HTML. Symétrique de `relWithoutBundleHash` côté listing.
+function maskBundleHashRefs(rel, content) {
+  if (rel.endsWith('.html')) {
+    return content.replace(ASTRO_BUNDLE_REF_RE, '/_astro/$1.$2');
+  }
+  return content;
+}
+
+// Normalise le chemin d'un bundle Astro pour permettre l'appariement entre
+// les deux snapshots quand seul le hash diffère.
+function relWithoutBundleHash(rel) {
+  const m = rel.match(ASTRO_BUNDLE_FILE_RE);
+  if (!m) return rel;
+  return `_astro/${m[1]}.${m[2]}`;
+}
+
 function normalizeHtmlAsciiWs(rel, content) {
   if (rel.endsWith('.html')) {
     let out = content
@@ -118,7 +146,7 @@ function normalizeHtmlAsciiWs(rel, content) {
 function maskVolatile(rel, content) {
   return normalizeHtmlAsciiWs(
     rel,
-    maskAstroCid(rel, maskLastmod(rel, content))
+    maskBundleHashRefs(rel, maskAstroCid(rel, maskLastmod(rel, content)))
   );
 }
 
@@ -163,31 +191,39 @@ for (const variant of ['prod', 'with-drafts']) {
 
   const aFiles = listFiles(aBase);
   const bFiles = listFiles(bBase);
-  const aSet = new Set(aFiles);
-  const bSet = new Set(bFiles);
+  // Apparie les bundles `_astro/<name>.<hash>.<ext>` par leur basename
+  // sans hash : si seul le hash change entre snapshots, on compare le
+  // contenu plutôt que de signaler une différence de listing.
+  const aMap = new Map(aFiles.map((f) => [relWithoutBundleHash(f), f]));
+  const bMap = new Map(bFiles.map((f) => [relWithoutBundleHash(f), f]));
+  const aKeys = new Set(aMap.keys());
+  const bKeys = new Set(bMap.keys());
 
   console.log(
     `\n[${variant}] ${aFiles.length} fichiers (${aName}) ↔ ${bFiles.length} fichiers (${bName})`
   );
 
-  const onlyA = aFiles.filter((f) => !bSet.has(f));
-  const onlyB = bFiles.filter((f) => !aSet.has(f));
+  const onlyA = [...aKeys].filter((f) => !bKeys.has(f));
+  const onlyB = [...bKeys].filter((f) => !aKeys.has(f));
 
   if (onlyA.length) {
     console.log(`[${variant}] Présents uniquement dans ${aName} :`);
-    onlyA.forEach((f) => console.log(`  - ${f}`));
+    onlyA.forEach((f) => console.log(`  - ${aMap.get(f)}`));
     totalDiffs += onlyA.length;
   }
   if (onlyB.length) {
     console.log(`[${variant}] Présents uniquement dans ${bName} :`);
-    onlyB.forEach((f) => console.log(`  + ${f}`));
+    onlyB.forEach((f) => console.log(`  + ${bMap.get(f)}`));
     totalDiffs += onlyB.length;
   }
 
-  const common = aFiles.filter((f) => bSet.has(f));
-  for (const rel of common) {
-    const aBuf = readFileSync(join(aBase, rel));
-    const bBuf = readFileSync(join(bBase, rel));
+  const commonKeys = [...aKeys].filter((f) => bKeys.has(f));
+  for (const key of commonKeys) {
+    const aRel = aMap.get(key);
+    const bRel = bMap.get(key);
+    const rel = aRel; // utilisé pour les regex .endsWith('.html'), etc.
+    const aBuf = readFileSync(join(aBase, aRel));
+    const bBuf = readFileSync(join(bBase, bRel));
     if (isTextFile(rel)) {
       const aText = maskVolatile(rel, aBuf.toString('utf-8'));
       const bText = maskVolatile(rel, bBuf.toString('utf-8'));
