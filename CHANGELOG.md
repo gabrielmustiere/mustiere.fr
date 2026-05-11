@@ -7,6 +7,23 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-05-11
+
+### Added
+
+- Système de séries d'articles : bannière en tête, navigation prev/next entre épisodes, nouvelle collection `series` (FR + EN) avec frontmatter dédié.
+- Série « Live Components Symfony » publiée en 5 épisodes (inventaire UX, socle Twig Components, cycle live, tests/profiling/sécurité, arbitrage Twig/Stimulus/Live).
+- Lien RSS ajouté au compteur d'articles sur l'archive blog.
+
+### Changed
+
+- Collections content séparées physiquement par langue (`blog/fr/`, `blog/en/`, `projects/fr/`, etc.) — simplifie le filtrage et la déduplication.
+- Ligatures désactivées dans les blocs de code pour éviter les rendus ambigus (`!=`, `->`, `=>`).
+
+### Removed
+
+- Barre méta auteur/partage en pied d'article (redondante avec les infos en tête).
+
 ## [0.5.0] - 2026-05-05
 
 ### Changed
@@ -120,7 +137,8 @@ Première version publique du site mustiere.fr déployé en SSG sur Github Pages
 - URLs unifiées avec trailing slash systématique.
 - Navigation unifiée avec menu mobile.
 
-[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/gabrielmustiere/mustiere.fr/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.5.0...v1.0.0
 [0.5.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/gabrielmustiere/mustiere.fr/compare/v0.3.0...v0.3.1
