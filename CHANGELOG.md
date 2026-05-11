@@ -12,7 +12,8 @@ Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/)
 ### Added
 
 - Système de séries d'articles : bannière en tête, navigation prev/next entre épisodes, nouvelle collection `series` (FR + EN) avec frontmatter dédié.
-- Série « Live Components Symfony » publiée en 5 épisodes (inventaire UX, socle Twig Components, cycle live, tests/profiling/sécurité, arbitrage Twig/Stimulus/Live).
+- Série « Live Components Symfony » publiée en 5 épisodes (inventaire UX, socle Twig Components, cycle live, tests/profiling/sécurité, arbitrage
+  Twig/Stimulus/Live).
 - Lien RSS ajouté au compteur d'articles sur l'archive blog.
 
 ### Changed
