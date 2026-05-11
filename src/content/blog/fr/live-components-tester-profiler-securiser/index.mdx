@@ -1,8 +1,8 @@
 ---
 title: 'Live Components en prod : tester, profiler, sécuriser'
 excerpt:
-  "Trois objections de review reviennent toujours sur Live Components : comment tester sans navigateur, comment profiler, comment sécuriser un objet dont
-  l'état est dans le DOM. Trois réponses précises, aucun outil nouveau."
+  "Trois objections de review reviennent toujours sur Live Components : comment tester sans navigateur, comment profiler, comment sécuriser un objet dont l'état
+  est dans le DOM. Trois réponses précises, aucun outil nouveau."
 publishedAt: 2026-05-07
 category: Tech
 tags: [Symfony, PHP, Live Components, Symfony UX, Tests, Performance, Sécurité]
@@ -24,8 +24,8 @@ series: live-components-symfony
 seriesOrder: 4
 ---
 
-L'épisode [3](/blog/live-components-cycle-roundtrip/) a posé le cycle. Le code marche, le DOM se patche, le focus est préservé. La prod, elle, pose toujours
-les trois mêmes questions en code review : « comment on teste ça ? », « comment on profile ? », « comment on sécurise un objet dont l'état est dans le DOM ? ».
+L'épisode [3](/blog/live-components-cycle-roundtrip/) a posé le cycle. Le code marche, le DOM se patche, le focus est préservé. La prod, elle, pose toujours les
+trois mêmes questions en code review : « comment on teste ça ? », « comment on profile ? », « comment on sécurise un objet dont l'état est dans le DOM ? ».
 Toutes ont des réponses précises, et aucune ne demande d'apprendre un outillage nouveau — parce qu'**un Live Component, c'est un contrôleur Symfony déguisé**.
 Tout ce qu'on connaît marche.
 
@@ -109,8 +109,8 @@ dans le payload.
 ## Trois pièges perf à connaître par cœur
 
 **Entité Doctrine entière dans une `LiveProp`.** Sans surcharge `dehydrateWith`, l'entité est sérialisée en JSON dans le DOM puis renvoyée à chaque cycle. On
-peut atteindre des payloads de 30 à 100 KB pour un composant qui ne devrait en faire qu'un. Le fix tient en deux méthodes (cf. épisode 3) : sérialiser
-l'ID, recharger côté serveur via le repository.
+peut atteindre des payloads de 30 à 100 KB pour un composant qui ne devrait en faire qu'un. Le fix tient en deux méthodes (cf. épisode 3) : sérialiser l'ID,
+recharger côté serveur via le repository.
 
 **Rendre la même méthode N fois dans le template.** `{% if this.results %}...{% for r in this.results %}` exécute la méthode deux fois — donc deux requêtes SQL.
 Le fix : `computed.results`, ou `{% set results = this.results %}` puis utiliser `results` partout (cf. épisode 2).
@@ -150,8 +150,8 @@ public function deleteOrder(#[LiveArg] int $orderId): void { /* ... */ }
 ```
 
 - **`LiveProp(writable: false)` est le défaut**, et c'est volontaire. Pour qu'une valeur soit modifiable côté client, il faut l'opt-in. La signature serveur —
-  la clé `@checksum` qu'on a vue dans le payload de l'épisode 3 — est vérifiée à chaque cycle ; un attaquant qui modifie une prop non-writable se fait
-  rejeter par le bundle, pas par toi.
+  la clé `@checksum` qu'on a vue dans le payload de l'épisode 3 — est vérifiée à chaque cycle ; un attaquant qui modifie une prop non-writable se fait rejeter
+  par le bundle, pas par toi.
 
 - **Validation côté re-render**, jamais de confiance dans l'état renvoyé. Une `LiveProp(writable: true)` est une entrée utilisateur, à traiter exactement comme
   un `Request::get('foo')`. Les contraintes Symfony Validator (`#[Assert\Length]`, `#[Assert\Choice]`) s'appliquent telles quelles ; pour un Live Component qui
@@ -177,11 +177,11 @@ ci-dessus tombent dans l'acceptable.
 
 ## Trois anti-patterns, trois fix
 
-| Anti-pattern                                                        | Fix                                                  |
-| ------------------------------------------------------------------- | ---------------------------------------------------- |
-| Entité Doctrine entière en `LiveProp`                               | Stocker l'ID, recharger côté serveur                 |
-| `data-model` sans `debounce` sur input texte                        | `data-model="debounce(300)\|query"`                  |
-| Méthode lourde appelée plusieurs fois dans un template (`this.foo`) | `computed.foo` ou `{% set foo = this.foo %}`         |
+| Anti-pattern                                                        | Fix                                          |
+| ------------------------------------------------------------------- | -------------------------------------------- |
+| Entité Doctrine entière en `LiveProp`                               | Stocker l'ID, recharger côté serveur         |
+| `data-model` sans `debounce` sur input texte                        | `data-model="debounce(300)\|query"`          |
+| Méthode lourde appelée plusieurs fois dans un template (`this.foo`) | `computed.foo` ou `{% set foo = this.foo %}` |
 
 Tester, profiler, sécuriser : trois sujets, trois réponses, aucun outillage nouveau à apprendre. La seule règle vraiment propre à Live Components — l'état
 voyage dans le DOM, jamais de secret dans une `LiveProp` — tient sur une ligne. Pour le reste, c'est du Symfony.

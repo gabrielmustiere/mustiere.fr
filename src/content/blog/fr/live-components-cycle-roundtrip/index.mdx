@@ -271,14 +271,14 @@ revient à l'épisode suivant.
 
 Pour conclure cet épisode, le contraste qui rend le bénéfice tangible. Voici ce qu'on _arrête_ d'écrire dès qu'un fragment passe en Live Component.
 
-| Sans Live Components                         | Avec Live Components            |
-| -------------------------------------------- | ------------------------------- |
-| Écrire un endpoint Ajax dédié                | **Aucun endpoint** à écrire     |
-| Définir un format de réponse (JSON ? HTML ?) | **Du HTML**, c'est tout         |
-| Réimplémenter la logique en JS               | La logique reste **en PHP**     |
-| Mettre à jour le DOM à la main               | **DOM morphing** automatique    |
-| Gérer CSRF, signature, sérialisation         | **Géré par le bundle**          |
-| Tester deux codebases (PHPUnit + Jest)       | **PHPUnit suffit** (épisode 4)  |
+| Sans Live Components                         | Avec Live Components           |
+| -------------------------------------------- | ------------------------------ |
+| Écrire un endpoint Ajax dédié                | **Aucun endpoint** à écrire    |
+| Définir un format de réponse (JSON ? HTML ?) | **Du HTML**, c'est tout        |
+| Réimplémenter la logique en JS               | La logique reste **en PHP**    |
+| Mettre à jour le DOM à la main               | **DOM morphing** automatique   |
+| Gérer CSRF, signature, sérialisation         | **Géré par le bundle**         |
+| Tester deux codebases (PHPUnit + Jest)       | **PHPUnit suffit** (épisode 4) |
 
 Ce n'est pas l'absence de JavaScript qui fait le bénéfice — c'est l'absence du _couple_ JS custom + endpoint custom + format custom + tests custom à maintenir
 en parallèle de la version PHP. On garde Symfony, on gagne l'interactivité, on laisse la complexité SPA de côté pour les zones qui en ont réellement besoin.
