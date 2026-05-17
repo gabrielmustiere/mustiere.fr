@@ -12,4 +12,6 @@ url: 'https://github.com/gabrielmustiere/symfony-template'
 order: 1
 lang: fr
 translationOf: 'symfony-template'
+slug: symfony-template
+translationKey: symfony-template
 ---
