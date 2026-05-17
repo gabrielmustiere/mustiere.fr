@@ -21,10 +21,18 @@ test('publicSlug — sans data.slug, retourne la dernière section de entry.id',
   assert.equal(publicSlug({ id: 'live-components-symfony' }), 'live-components-symfony');
 });
 
-test('publicSlug — avec data.slug différent, ignore data.slug aujourd\'hui (verrou bascule étape 3)', () => {
-  // Comportement ACTUEL : `publicSlug` ne lit pas `data.slug`. Cette assertion
-  // sera inversée à l'étape 3 du plan ; tant qu'elle est ici, on a la preuve
-  // qu'aucun caller ne dérive vers le nouveau chemin avant l'heure.
+test('publicSlug — avec data.slug, retourne data.slug (prioritaire sur le nom de dossier)', () => {
+  // Bascule étape 3 du refacto 010 : `data.slug` est désormais source de
+  // vérité. Le nom de dossier n'est plus que fallback (et disparaîtra à
+  // l'étape 10 quand le champ deviendra obligatoire).
   const entry = { id: 'fr/foo', data: { slug: 'bar-different' } };
-  assert.equal(publicSlug(entry), 'foo');
+  assert.equal(publicSlug(entry), 'bar-different');
+});
+
+test('publicSlug — data.slug vide ou absent → fallback dossier (étape 3, fallback temporaire jusqu\'à étape 10)', () => {
+  // Le fallback reste actif tant que `slug` n'est pas requis dans Zod.
+  // À l'étape 10 ce test sera supprimé (le champ devient obligatoire,
+  // la branche du fallback disparaît).
+  assert.equal(publicSlug({ id: 'fr/foo', data: {} }), 'foo');
+  assert.equal(publicSlug({ id: 'fr/foo' }), 'foo');
 });

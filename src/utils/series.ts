@@ -17,6 +17,7 @@ export type BlogEntryLike = {
     lang?: Lang;
     series?: string;
     seriesOrder?: number;
+    slug?: string;
   };
 };
 
@@ -27,6 +28,7 @@ export type SeriesEntryLike = {
     description: string;
     lang?: Lang;
     translationOf?: string;
+    slug?: string;
   };
 };
 
@@ -56,7 +58,13 @@ export type SeriesIndex = {
 
 type IndexOptions = { isVisible?: (entry: BlogEntryLike) => boolean };
 
-function entrySlug(entry: { id: string }): string {
+// Même règle que `publicSlug` dans content-pure.ts : `data.slug` prioritaire,
+// fallback sur la dernière section de l'id. Dupliqué ici pour conserver
+// l'indépendance vis-à-vis de content-pure (qui dépend du type CollectionEntry
+// d'Astro). Si la règle change, propager des deux côtés.
+function entrySlug(entry: { id: string; data?: { slug?: string } }): string {
+  const explicit = entry.data?.slug;
+  if (explicit) return explicit;
   const parts = entry.id.split('/');
   return parts[parts.length - 1];
 }

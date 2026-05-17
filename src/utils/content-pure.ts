@@ -5,10 +5,20 @@
 // caractérisation : ces helpers sont la cible du refacto et doivent être
 // testables unitairement avant qu'on touche au code).
 
-// Les collections `blog` et `projects` utilisent `nestedByLang` : l'`id`
-// d'entrée porte un préfixe `fr/` ou `en/` (ex. `fr/symfony-template`). Le slug
-// public est la dernière section, sans préfixe.
-export function publicSlug(entry: { id: string }): string {
+// Slug public d'une entrée. Source de vérité : `entry.data.slug` (champ
+// introduit à l'étape 2 du refacto 010, optionnel pendant la phase Strangler).
+// Fallback : la dernière section de `entry.id` (= nom de dossier, ou nom de
+// fichier pour la forme plate). Le fallback disparaîtra à l'étape 10 quand
+// `slug` deviendra obligatoire dans le schéma Zod.
+//
+// `nestedByLang` actif sur blog/projects/series : l'`id` porte le préfixe
+// `fr/` ou `en/`, le slug public est la dernière section sans préfixe.
+export function publicSlug(entry: {
+  id: string;
+  data?: { slug?: string };
+}): string {
+  const explicit = entry.data?.slug;
+  if (explicit) return explicit;
   const parts = entry.id.split('/');
   return parts[parts.length - 1];
 }
@@ -28,7 +38,10 @@ export function publicSlug(entry: { id: string }): string {
 // `translationOf` pointe vers `entry`). Une seule déclaration suffit donc à
 // lier la paire.
 export function pickTranslationLegacy<
-  E extends { id: string; data: { translationOf?: string } },
+  E extends {
+    id: string;
+    data: { translationOf?: string; slug?: string };
+  },
 >(candidates: E[], entry: E): E | undefined {
   const forwardRef = entry.data.translationOf;
   if (forwardRef) {
