@@ -44,4 +44,62 @@ const accentVar = accent === 'blog' ? 'var(--a-blog)' : 'var(--a-projects)';
   .resume :global(em) {
     font-style: italic;
   }
+  .resume :global(code) {
+    background: var(--color-code-bg);
+    border: 1px solid var(--color-rule);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: var(--font-mono);
+    font-size: 0.88em;
+    font-variant-ligatures: none;
+    font-feature-settings:
+      'liga' 0,
+      'calt' 0;
+  }
+  .resume :global(ul),
+  .resume :global(ol) {
+    margin: 0.4em 0 0.8em;
+    padding-left: 1.4em;
+  }
+  .resume :global(ul) {
+    list-style: none;
+  }
+  .resume :global(ul li) {
+    position: relative;
+    margin: 0.25em 0;
+  }
+  .resume :global(ul li::before) {
+    content: '';
+    position: absolute;
+    left: -1em;
+    top: 0.7em;
+    width: 6px;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .resume :global(ol) {
+    list-style: decimal outside;
+  }
+  .resume :global(ol li) {
+    margin: 0.25em 0;
+    padding-left: 0.2em;
+  }
+  .resume :global(ol li::marker) {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-muted);
+  }
+  .resume :global(blockquote) {
+    margin: 0.6em 0;
+    padding-left: 0.9em;
+    border-left: 2px solid var(--color-rule);
+    font-style: italic;
+  }
+  .resume :global(hr) {
+    border: 0;
+    border-top: 1px solid var(--color-rule);
+    margin: 0.8em 0;
+  }
 </style>
