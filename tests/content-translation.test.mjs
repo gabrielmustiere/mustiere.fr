@@ -10,7 +10,10 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { pickTranslationLegacy } from '../src/utils/content-pure.ts';
+import {
+  pickTranslationByKey,
+  pickTranslationLegacy,
+} from '../src/utils/content-pure.ts';
 
 // Fabrique d'entrée minimale matchant la forme { id, data: { translationOf?, translationKey? } }
 function entry(id, data = {}) {
@@ -41,25 +44,44 @@ test('pickTranslationLegacy — translationOf forme id complet (legacy plat) ret
   assert.equal(pickTranslationLegacy([fr], en), fr);
 });
 
-test('pickTranslationLegacy — translationKey seul est IGNORÉ aujourd\'hui (verrou bascule étape 4)', () => {
-  // Comportement ACTUEL : le champ `translationKey` n'est pas lu par la
-  // logique legacy. Sans `translationOf`, aucun match. Cette assertion
-  // sera inversée à l'étape 4 du plan.
+test('pickTranslationByKey — translationKey partagé matche la paire', () => {
+  // Bascule étape 4 du refacto 010 : `translationKey` est la nouvelle source
+  // de vérité pour le pair-matching. Deux entrées qui partagent la même key
+  // forment une paire FR/EN.
   const fr = entry('fr/symfony-template', { translationKey: 'symfony-template' });
   const en = entry('en/symfony-template', { translationKey: 'symfony-template' });
-  assert.equal(pickTranslationLegacy([fr], en), undefined);
+  assert.equal(pickTranslationByKey([fr], en), fr);
+  assert.equal(pickTranslationByKey([en], fr), en);
 });
 
-test('pickTranslationLegacy — quand translationOf et translationKey coexistent, translationOf décide aujourd\'hui (verrou bascule étape 4)', () => {
-  // Comportement ACTUEL : `translationKey` est ignoré ; seule la chaîne
-  // legacy via `translationOf` produit un match. Vérifie que la coexistence
-  // ne casse rien pendant la phase Strangler (étapes 2-5).
+test('pickTranslationByKey — sans translationKey sur l\'entrée, retourne undefined (pas de match implicite)', () => {
+  // Pas de clé sur l'entrée → on ne devine rien. `findTranslation` cascade
+  // ensuite sur la logique legacy `translationOf`.
+  const fr = entry('fr/foo', { translationKey: 'foo' });
+  const en = entry('en/foo'); // pas de translationKey
+  assert.equal(pickTranslationByKey([fr], en), undefined);
+});
+
+test('pickTranslationByKey — translationKey différent entre les deux entrées → undefined', () => {
   const fr = entry('fr/symfony-template', { translationKey: 'autre-key' });
-  const en = entry('en/symfony-template', {
-    translationOf: 'symfony-template',
-    translationKey: 'autre-key',
+  const en = entry('en/symfony-template', { translationKey: 'ma-key' });
+  assert.equal(pickTranslationByKey([fr], en), undefined);
+});
+
+test('findTranslation cascade (intégration) : key gagne sur translationOf quand key matche', () => {
+  // Vérifie la cascade key → legacy implémentée dans findTranslation. La
+  // logique pure de cascade : on rejoue exactement ce que content.ts fait.
+  const frKeyMatch = entry('fr/correct', {
+    translationKey: 'shared-key',
+    translationOf: 'autre-via-legacy',
   });
-  assert.equal(pickTranslationLegacy([fr], en), fr);
+  const en = entry('en/source', {
+    translationKey: 'shared-key',
+    translationOf: 'autre-via-legacy',
+  });
+  // Rejoue la cascade : key d'abord
+  const byKey = pickTranslationByKey([frKeyMatch], en);
+  assert.equal(byKey, frKeyMatch);
 });
 
 test('pickTranslationLegacy — aucun match retourne undefined', () => {

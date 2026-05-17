@@ -3,7 +3,11 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from '@/i18n/config';
 import { localizedPath } from '@/i18n/utils';
 import { routePath } from '@/i18n/routes';
-import { publicSlug, pickTranslationLegacy } from './content-pure';
+import {
+  publicSlug,
+  pickTranslationByKey,
+  pickTranslationLegacy,
+} from './content-pure';
 
 export { publicSlug } from './content-pure';
 
@@ -101,13 +105,24 @@ export async function findTranslation<C extends TranslatableCollection>(
   );
   // Logique pure dans content-pure.ts pour testabilité (le module ne peut pas
   // être importé en test Node car `astro:content` est un module virtuel Astro).
-  return pickTranslationLegacy(
-    candidates as unknown as {
-      id: string;
-      data: { translationOf?: string };
-    }[],
-    entry as unknown as { id: string; data: { translationOf?: string } }
-  ) as CollectionEntry<C> | undefined;
+  //
+  // Cascade : `translationKey` prioritaire (refacto 010 étape 4), fallback
+  // sur la logique legacy `translationOf` (qui disparaîtra à l'étape 10).
+  // Tant qu'aucune entrée ne porte `translationKey` (migration étape 6),
+  // le résultat est identique au comportement historique.
+  const typedCandidates = candidates as unknown as {
+    id: string;
+    data: { translationOf?: string; translationKey?: string; slug?: string };
+  }[];
+  const typedEntry = entry as unknown as {
+    id: string;
+    data: { translationOf?: string; translationKey?: string; slug?: string };
+  };
+  const byKey = pickTranslationByKey(typedCandidates, typedEntry);
+  if (byKey) return byKey as CollectionEntry<C> | undefined;
+  return pickTranslationLegacy(typedCandidates, typedEntry) as
+    | CollectionEntry<C>
+    | undefined;
 }
 
 export function getDraftPreviewEntries<T extends PublishableEntry>(

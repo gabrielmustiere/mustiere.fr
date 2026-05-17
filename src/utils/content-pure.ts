@@ -37,6 +37,20 @@ export function publicSlug(entry: {
 // `entry.data.translationOf`), puis en `reverse` (candidat dont le
 // `translationOf` pointe vers `entry`). Une seule déclaration suffit donc à
 // lier la paire.
+// Matching par `translationKey` (refacto 010, étape 4). Une paire FR/EN est
+// formée par deux entrées qui portent le même `translationKey` dans la même
+// collection. Logique pure : prend la liste de candidats (déjà filtrée par
+// la lang cible) et retourne celui qui matche, ou undefined si pas de key
+// ou pas de candidat compatible. Ne fait PAS le fallback legacy — l'appelant
+// (findTranslation) cascade lui-même.
+export function pickTranslationByKey<
+  E extends { id: string; data: { translationKey?: string } },
+>(candidates: E[], entry: E): E | undefined {
+  const key = entry.data.translationKey;
+  if (!key) return undefined;
+  return candidates.find((c) => c.data.translationKey === key);
+}
+
 export function pickTranslationLegacy<
   E extends {
     id: string;
