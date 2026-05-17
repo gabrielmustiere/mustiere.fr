@@ -181,8 +181,10 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
             untouched.delete(id);
           } else if (entry.isDirectory()) {
             // `dirName` reste préfixé (sert à lire le disque) ; `id` est
-            // déduit du nom sans préfixe d'ordre éventuel, pour que renommer
-            // `foo/` en `001-foo/` ne change ni l'URL ni `translationOf`.
+            // déduit du nom sans préfixe d'ordre éventuel. Le slug public
+            // (URL canonique) vient désormais de `data.slug`, totalement
+            // découplé du dossier — renommer `foo/` en `001-foo/` ou même
+            // `archive/foo/` ne change strictement rien à l'output public.
             const dirSlug = stripOrderPrefix(entry.name);
             const id = idPrefix + dirSlug;
             claimId(id, join(dirPath, entry.name));

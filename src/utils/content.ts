@@ -3,11 +3,7 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from '@/i18n/config';
 import { localizedPath } from '@/i18n/utils';
 import { routePath } from '@/i18n/routes';
-import {
-  publicSlug,
-  pickTranslationByKey,
-  pickTranslationLegacy,
-} from './content-pure';
+import { publicSlug, pickTranslationByKey } from './content-pure';
 
 export { publicSlug } from './content-pure';
 
@@ -21,7 +17,10 @@ type TranslatableCollection = 'blog' | 'projects' | 'series';
 // URL canonique d'un projet pour la langue donnée. Combine `routePath`
 // (segment localisé `/projets` vs `/projects`) et `localizedPath` (préfixe lang
 // pour l'EN).
-export function projectPath(entry: { id: string }, lang: Lang): string {
+export function projectPath(
+  entry: { data: { slug: string } },
+  lang: Lang
+): string {
   return localizedPath(
     lang,
     `${routePath('projects', lang)}/${publicSlug(entry)}`
@@ -30,7 +29,10 @@ export function projectPath(entry: { id: string }, lang: Lang): string {
 
 // URL canonique d'un article de blog. Le segment `/blog` est identique en FR
 // et en EN ; seule la lang change le préfixe global.
-export function blogPath(entry: { id: string }, lang: Lang): string {
+export function blogPath(
+  entry: { data: { slug: string } },
+  lang: Lang
+): string {
   return localizedPath(lang, `${routePath('blog', lang)}/${publicSlug(entry)}`);
 }
 
@@ -89,12 +91,12 @@ export function getDraftSlugParam(slug: string): string | null {
 // Filtre les entrées d'une collection à exposer en mode preview draft. Renvoie
 // un tableau vide en dev (les drafts sont déjà à leur URL canonique via
 // `isPublished()`).
-// Résout l'entrée traduite d'un article ou projet, en regardant des deux côtés
-// de la relation `translationOf`. C'est défensif : historiquement, la déclaration
-// n'était faite que d'un côté, ce qui cassait silencieusement le lien EN/FR
-// quand on était sur la version « non-déclarante ». En cherchant aussi par
-// reverse-lookup (entrée de l'autre langue qui pointe vers `entry`), une seule
-// déclaration suffit.
+// Résout l'entrée traduite d'un article ou projet via `translationKey`
+// partagé. La cardinalité (strict 0 ou 2 par collection) est garantie au
+// build par `validateTranslationKeyCardinality` (astro.config.mjs), donc le
+// match est unique ou absent. Logique de matching dans content-pure.ts pour
+// testabilité (le module ne peut pas être importé en test Node car
+// `astro:content` est un module virtuel Astro).
 export async function findTranslation<C extends TranslatableCollection>(
   collection: C,
   entry: CollectionEntry<C>,
@@ -103,26 +105,13 @@ export async function findTranslation<C extends TranslatableCollection>(
   const candidates = await getCollection(collection, (e) =>
     isPublished(e as PublishableEntry, otherLang)
   );
-  // Logique pure dans content-pure.ts pour testabilité (le module ne peut pas
-  // être importé en test Node car `astro:content` est un module virtuel Astro).
-  //
-  // Cascade : `translationKey` prioritaire (refacto 010 étape 4), fallback
-  // sur la logique legacy `translationOf` (qui disparaîtra à l'étape 10).
-  // Tant qu'aucune entrée ne porte `translationKey` (migration étape 6),
-  // le résultat est identique au comportement historique.
-  const typedCandidates = candidates as unknown as {
-    id: string;
-    data: { translationOf?: string; translationKey?: string; slug?: string };
-  }[];
-  const typedEntry = entry as unknown as {
-    id: string;
-    data: { translationOf?: string; translationKey?: string; slug?: string };
-  };
-  const byKey = pickTranslationByKey(typedCandidates, typedEntry);
-  if (byKey) return byKey as CollectionEntry<C> | undefined;
-  return pickTranslationLegacy(typedCandidates, typedEntry) as
-    | CollectionEntry<C>
-    | undefined;
+  return pickTranslationByKey(
+    candidates as unknown as {
+      id: string;
+      data: { translationKey?: string };
+    }[],
+    entry as unknown as { id: string; data: { translationKey?: string } }
+  ) as CollectionEntry<C> | undefined;
 }
 
 export function getDraftPreviewEntries<T extends PublishableEntry>(

@@ -29,7 +29,9 @@ spacing) vivent dans `src/styles/global.css` sous `@theme`.
 ### i18n — ce qui rend ce projet non-trivial
 
 - `defaultLocale: 'fr'`, `prefixDefaultLocale: false` → FR servi sans préfixe (`/`, `/blog/`), EN préfixé (`/en/`, `/en/blog/`).
-- Pages EN dupliquées sous `src/pages/en/` ; chaque entrée de collection traduite porte `lang` + `translationOf` (slug du pendant FR) dans son frontmatter.
+- Pages EN dupliquées sous `src/pages/en/` ; chaque entrée de collection porte `lang` + `slug` (URL canonique, source de vérité) + `translationKey` partagé
+  avec son pendant FR/EN pour former la paire (refacto 010). Le slug est totalement découplé du nom de dossier — un dossier peut être renommé, préfixé `NNN-`
+  ou déplacé sans toucher aux URLs publiques. `translationKey` doit avoir une cardinalité stricte 0 (orphelin) ou 2 (paire FR/EN).
 - `astro.config.mjs` lit ces frontmatters au build (`buildTranslationIndex`) pour injecter les liens `hreflang` dans le sitemap via `serialize`. Les paires de
   **pages statiques** traduites (sans collection, ex. `/parcours/` ↔ `/en/background/`) sont déclarées en dur dans `STATIC_PAGE_PAIRS`.
 - Helpers dans `src/i18n/utils.ts` : `getLangFromUrl`, `localizedPath`, `swapLang`, `formatDate`. Les chaînes UI vivent dans `src/i18n/ui.ts`. Toujours router
@@ -39,8 +41,9 @@ spacing) vivent dans `src/styles/global.css` sous `@theme`.
 ### Content Collections (`src/content.config.ts`)
 
 - **`blog`** (`*.mdx`) — schéma Zod strict : `excerpt` 80–220, `number` requis, `category ∈ {IA, Tech, Lead, Business}`, `cover` requis (ou hérité via
-  `translationOf`), `lang` + `translationOf` optionnels. Sections SEO injectées par le loader (cf. `seo-sections.ts`) : `resume.mdx` **obligatoire** (≥ 60 chars
-  plain text, lu par les LLMs et affiché en tête d'article), `faq.mdx` optionnel (`questions: [{q, r}]` en YAML), `sources.mdx` optionnel (citations).
+  `translationKey` depuis la paire FR/EN), `slug` **requis** (kebab-case), `translationKey` optionnel (kebab-case, cardinalité stricte 0 ou 2). Sections SEO
+  injectées par le loader (cf. `seo-sections.ts`) : `resume.mdx` **obligatoire** (≥ 60 chars plain text, lu par les LLMs et affiché en tête d'article),
+  `faq.mdx` optionnel (`questions: [{q, r}]` en YAML), `sources.mdx` optionnel (citations).
 - **`projects`** (`*.md`) — `status`, `kind`, `order` pour le tri ; mêmes sections SEO (`resume.mdx` obligatoire, `faq.mdx` / `sources.mdx` optionnels).
 - Le build **échoue** si un frontmatter ne valide pas. C'est intentionnel : ne pas relâcher le schéma pour faire passer un article, corriger l'article.
 - **Loader** : `chapteredGlob` (`src/content-loaders/chaptered-glob.ts`) — remplace `glob`. Supporte deux formes pour chaque entrée :
@@ -52,9 +55,10 @@ spacing) vivent dans `src/styles/global.css` sous `@theme`.
   (l'agrégateur lèvera une erreur build sinon, cf. plan 004-r option ii) ; les noms `resume.mdx` / `faq.mdx` / `sources.mdx` sont réservés (cf.
   `RESERVED_SECTION_FILES`) ; pas d'autre `.md`/`.mdx` non conforme dans le dossier.
 - **Préfixe d'ordre éditeur** (optionnel) : un dossier d'entrée peut être préfixé `NNN-` (1–3 chiffres + tiret, ex. `001-symfony-avant-ux-inventaire/`) pour le
-  trier visuellement dans l'arborescence. Le préfixe est strippé par le loader (`src/content-loaders/order-prefix.ts`) avant calcul de l'`id` Astro, donc l'URL
-  publique, `translationOf` et le sitemap restent stables. Le préfixe vit uniquement sur disque, indépendamment du champ `number` du frontmatter (qui pilote
-  l'ordre éditorial réel). Une collision (ex. `foo/` + `001-foo/` côte à côte) fait planter le build avec un message explicite.
+  trier visuellement dans l'arborescence. Depuis le refacto 010, le slug public vient de `data.slug` (pas du nom de dossier), donc renommer/préfixer un
+  dossier ne change strictement rien aux URLs ni aux hreflang. Le préfixe vit uniquement sur disque, indépendamment du champ `number` du frontmatter (qui
+  pilote l'ordre éditorial réel). Une collision sur le slug final (deux entrées d'une même langue avec le même `slug:`) fait planter le build avec la liste
+  des fichiers fautifs.
 
 ### Vérifier la non-régression d'un chapitre
 

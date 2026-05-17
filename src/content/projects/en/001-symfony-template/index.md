@@ -12,7 +12,6 @@ coverAlt: 'Symfony template banner: a ready-to-use skeleton to kick off a projec
 url: 'https://github.com/gabrielmustiere/symfony-template'
 order: 1
 lang: en
-translationOf: 'symfony-template'
 slug: symfony-template
 translationKey: symfony-template
 ---

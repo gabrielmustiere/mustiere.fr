@@ -34,26 +34,22 @@ function readEntryMetadata(filePath, dirPath) {
   const fm = raw.match(/^---\n([\s\S]*?)\n---/)?.[1];
   if (!fm) return null;
   const lang = fm.match(/^lang:\s*["']?([a-z-]+)["']?\s*$/m)?.[1];
-  const translationOf = fm
-    .match(/^translationOf:\s*["']?([^"'\n]+?)["']?\s*$/m)?.[1]
-    ?.trim();
-  // Refacto 010 : `slug` et `translationKey` lus en plus de `translationOf`
-  // pour permettre le découplage progressif. Tant qu'une entrée porte au
-  // moins `translationOf` OU `translationKey`, elle est considérée comme
-  // i18n-pairable. `slug` reste optionnel (fallback nom de dossier).
   const slug = fm
     .match(/^slug:\s*["']?([a-z0-9-]+)["']?\s*$/m)?.[1]
     ?.trim();
+  // Refacto 010 étape 10 : `translationKey` est la seule source de
+  // pair-matching i18n. Une entrée sans key n'est pas pairable (les
+  // orphelins n'apparaissent simplement pas dans les hreflang du sitemap).
   const translationKey = fm
     .match(/^translationKey:\s*["']?([a-z0-9-]+)["']?\s*$/m)?.[1]
     ?.trim();
   const draft = /^draft:\s*true\s*$/m.test(fm);
   if (draft) return null;
   if (!lang) return null;
-  if (!translationOf && !translationKey) return null;
+  if (!translationKey) return null;
   const hasFaq = dirPath ? existsSync(join(dirPath, 'faq.mdx')) : false;
   const hasSources = dirPath ? existsSync(join(dirPath, 'sources.mdx')) : false;
-  return { lang, translationOf, translationKey, slug, hasFaq, hasSources };
+  return { lang, translationKey, slug, hasFaq, hasSources };
 }
 
 function collectFromDir(baseDir, collection, entries) {
@@ -75,9 +71,10 @@ function collectFromDir(baseDir, collection, entries) {
         existsSync(join(baseDir, entry.name, f))
       );
       if (!indexFile) continue;
-      // Strip du préfixe d'ordre éditeur pour aligner la clef sur le slug
-      // public (et donc sur ce que référence `translationOf`). Le `dirPath`
-      // reste préfixé pour lire le disque.
+      // Strip du préfixe d'ordre éditeur pour le `slug` de fallback (utilisé
+      // si le frontmatter n'a pas de `slug:`, ce qui ne devrait plus arriver
+      // depuis l'étape 10 où Zod l'impose). Le `dirPath` reste préfixé pour
+      // lire le disque.
       slug = entry.name.replace(ORDER_PREFIX_RE, '');
       dirPath = join(baseDir, entry.name);
       filePath = join(dirPath, indexFile);
@@ -86,11 +83,11 @@ function collectFromDir(baseDir, collection, entries) {
     }
     const meta = readEntryMetadata(filePath, dirPath);
     if (!meta) continue;
-    // Refacto 010 : le slug public peut être déclaré dans le frontmatter
-    // (`slug:`) ; sinon fallback sur le nom de dossier sans préfixe `NNN-`.
-    // La clef d'entrée est construite sur le slug public final pour rester
-    // alignée sur l'URL canonique et sur `translationOf` (qui référence un
-    // slug public). À l'étape 10 le fallback disparaîtra.
+    // Refacto 010 étape 10 : `slug:` est requis dans les schémas Zod. On
+    // le récupère ici via la regex frontmatter ; absence = bug, le build
+    // remontera l'erreur via Zod, mais on garde un fallback défensif sur
+    // le nom de dossier pour ne pas faire crasher cet index avant que
+    // Zod prenne la main.
     const publicSlug = meta.slug ?? slug;
     entries.set(`${collection}/${meta.lang}/${publicSlug}`, {
       ...meta,
@@ -142,30 +139,10 @@ function buildTranslationIndex() {
   for (const [key, meta] of entries) {
     if (checked.has(key)) continue;
     const otherLang = meta.lang === 'fr' ? 'en' : 'fr';
-    // Cascade refacto 010 : essaie `translationKey` d'abord (le futur), puis
-    // `translationOf` (le legacy, encore en place pendant la migration). À
-    // l'étape 10, seule la branche key restera.
-    let other;
-    if (meta.translationKey) {
-      const otherKey = byKey.get(
-        `${meta.collection}/${otherLang}/${meta.translationKey}`
-      );
-      if (otherKey) other = entries.get(otherKey);
-    }
-    if (!other && meta.translationOf) {
-      // `translationOf` peut référencer soit le slug pur (cas nestedByLang :
-      // `translationOf: 'symfony-template'`), soit l'id complet hérité de la
-      // forme plate (`symfony-template-en`). On essaie le slug pur puis le
-      // brut.
-      const candidates = [
-        `${meta.collection}/${otherLang}/${meta.translationOf}`,
-        `${meta.collection}/${otherLang}/${meta.translationOf.replace(/^(fr|en)\//, '')}`,
-      ];
-      for (const k of candidates) {
-        other = entries.get(k);
-        if (other) break;
-      }
-    }
+    const otherKey = byKey.get(
+      `${meta.collection}/${otherLang}/${meta.translationKey}`
+    );
+    const other = otherKey ? entries.get(otherKey) : undefined;
     if (!other) continue;
     checked.add(key);
     for (const section of ['Faq', 'Sources']) {
@@ -243,21 +220,12 @@ function findTranslationLinks(itemUrl) {
   const collection = collectionFromSegment(segment, lang);
   if (!collection) return null;
   const meta = TRANSLATIONS.get(`${collection}/${lang}/${slug}`);
-  if (!meta) return null;
+  if (!meta || !meta.translationKey) return null;
   const otherLang = lang === 'fr' ? 'en' : 'fr';
-  // Cascade refacto 010 : essaie d'abord translationKey (futur), puis
-  // translationOf (legacy). À l'étape 10 seul le premier chemin restera.
-  let otherMeta;
-  if (meta.translationKey) {
-    const otherKey = TRANSLATIONS_BY_KEY.get(
-      `${collection}/${otherLang}/${meta.translationKey}`
-    );
-    if (otherKey) otherMeta = TRANSLATIONS.get(otherKey);
-  }
-  if (!otherMeta && meta.translationOf) {
-    const otherSlug = meta.translationOf.replace(/^(fr|en)\//, '');
-    otherMeta = TRANSLATIONS.get(`${collection}/${otherLang}/${otherSlug}`);
-  }
+  const otherKey = TRANSLATIONS_BY_KEY.get(
+    `${collection}/${otherLang}/${meta.translationKey}`
+  );
+  const otherMeta = otherKey ? TRANSLATIONS.get(otherKey) : undefined;
   if (!otherMeta) return null;
   const otherUrl = buildLocalizedUrl(
     url.origin,

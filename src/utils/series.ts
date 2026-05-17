@@ -17,7 +17,10 @@ export type BlogEntryLike = {
     lang?: Lang;
     series?: string;
     seriesOrder?: number;
-    slug?: string;
+    // Requis par le schéma Zod blog en production (refacto 010 étape 10).
+    // Les fixtures de tests/series.test.mjs le génèrent depuis l'id via le
+    // helper `defaultSlug`.
+    slug: string;
   };
 };
 
@@ -27,8 +30,7 @@ export type SeriesEntryLike = {
     title: string;
     description: string;
     lang?: Lang;
-    translationOf?: string;
-    slug?: string;
+    slug: string;
   };
 };
 
@@ -58,15 +60,11 @@ export type SeriesIndex = {
 
 type IndexOptions = { isVisible?: (entry: BlogEntryLike) => boolean };
 
-// Même règle que `publicSlug` dans content-pure.ts : `data.slug` prioritaire,
-// fallback sur la dernière section de l'id. Dupliqué ici pour conserver
-// l'indépendance vis-à-vis de content-pure (qui dépend du type CollectionEntry
-// d'Astro). Si la règle change, propager des deux côtés.
-function entrySlug(entry: { id: string; data?: { slug?: string } }): string {
-  const explicit = entry.data?.slug;
-  if (explicit) return explicit;
-  const parts = entry.id.split('/');
-  return parts[parts.length - 1];
+// Slug public d'une entrée. Requis par le schéma Zod en production
+// (refacto 010 étape 10). Plus de fallback sur l'id : le slug d'URL ne
+// dépend plus du tout du chemin disque.
+function entrySlug(entry: { data: { slug: string } }): string {
+  return entry.data.slug;
 }
 
 function entryLang(entry: { data: { lang?: Lang } }): Lang {

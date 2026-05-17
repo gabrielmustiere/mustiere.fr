@@ -7,12 +7,20 @@ import {
   sortArchive,
 } from '../src/utils/series.ts';
 
+// Slug par défaut dérivé de l'id pour ne pas avoir à le passer dans chaque
+// fixture. En production, `slug` est requis par Zod (refacto 010 étape 10) —
+// ce helper le simule pour les tests.
+function defaultSlug(id) {
+  return id.split('/').pop();
+}
+
 function blog(id, data) {
   return {
     id,
     data: {
       title: id,
       publishedAt: new Date('2025-01-01'),
+      slug: defaultSlug(id),
       ...data,
     },
   };
@@ -25,6 +33,7 @@ function series(id, data = {}) {
       title: id,
       description:
         'Description de série suffisamment longue pour passer le seuil minimal de validation.',
+      slug: defaultSlug(id),
       ...data,
     },
   };

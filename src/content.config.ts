@@ -7,19 +7,19 @@ const categoryEnum = z.enum(['IA', 'Tech', 'Lead', 'Business']);
 const langEnum = z.enum(['fr', 'en']);
 
 // Slug public d'une entrée (refacto 010-r-decouple-dossiers-frontmatter).
-// Découplé du nom de dossier : `data.slug` est la source de vérité pour
-// l'URL canonique et le pair-matching i18n. Ajouté en optionnel ici pour
-// la phase Strangler ; deviendra requis à l'étape 10. Regex stricte =
-// même alphabet que les noms de dossiers/segments d'URL (kebab-case).
+// Source de vérité pour l'URL canonique : découplé du nom de dossier, ce qui
+// permet de renommer ou déplacer un dossier sans casser l'URL. Requis depuis
+// l'étape 10. Regex stricte = même alphabet que les segments d'URL
+// (kebab-case).
 const publicSlugField = z
   .string()
-  .regex(/^[a-z0-9-]+$/, 'slug doit être kebab-case (a-z, 0-9, -)')
-  .optional();
+  .regex(/^[a-z0-9-]+$/, 'slug doit être kebab-case (a-z, 0-9, -)');
 
-// Clef de paire FR/EN partagée (refacto 010). Quand deux entrées portent
-// le même `translationKey` dans la même collection, elles forment une
-// paire de traduction. Remplace progressivement `translationOf` (qui
-// disparaîtra à l'étape 10). Même contrainte de forme que `slug`.
+// Clef de paire FR/EN partagée. Deux entrées d'une même collection qui
+// portent la même `translationKey` forment une paire de traduction. La
+// cardinalité (strict 0 ou 2) est validée par
+// `validateTranslationKeyCardinality` dans astro.config.mjs. Optionnel pour
+// les entrées orphelines (pas de pendant dans l'autre langue).
 const translationKeyField = z
   .string()
   .regex(/^[a-z0-9-]+$/, 'translationKey doit être kebab-case (a-z, 0-9, -)')
@@ -79,7 +79,6 @@ const blog = defineCollection({
         sources: z.array(sourceItem).default([]),
         number: z.number().int().positive(),
         lang: langEnum.default('fr'),
-        translationOf: z.string().optional(),
         slug: publicSlugField,
         translationKey: translationKeyField,
         // Appartenance à une série d'articles (cf. plan 009-f-blog-series).
@@ -93,17 +92,17 @@ const blog = defineCollection({
         seriesOrder: z.number().int().positive().optional(),
       })
       // Une cover doit être disponible pour chaque article : soit déclarée
-      // localement (`cover: ./cover.webp`), soit héritée d'une entrée pointée
-      // par `translationOf` (typiquement la version FR pour un article EN
-      // bilingue). Le helper `getCover` (src/utils/cover.ts) opère
-      // la résolution au rendu.
+      // localement (`cover: ./cover.webp`), soit héritée de la paire FR/EN
+      // (via `translationKey` partagée — typiquement la version FR fournit la
+      // cover pour la version EN). Le helper `getCover` (src/utils/cover.ts)
+      // opère la résolution au rendu.
       .superRefine((data, ctx) => {
-        if (!data.cover && !data.translationOf) {
+        if (!data.cover && !data.translationKey) {
           ctx.addIssue({
             code: 'custom',
             path: ['cover'],
             message:
-              'cover required (or translationOf to inherit cover from another entry)',
+              'cover required (or translationKey to inherit cover from the paired entry)',
           });
         }
         const hasSeries = data.series !== undefined;
@@ -129,7 +128,6 @@ const series = defineCollection({
     title: z.string().min(1).max(120),
     description: z.string().min(40).max(280),
     lang: langEnum.default('fr'),
-    translationOf: z.string().optional(),
     slug: publicSlugField,
     translationKey: translationKeyField,
   }),
@@ -172,17 +170,16 @@ const projects = defineCollection({
         sources: z.array(sourceItem).default([]),
         draft: z.boolean().default(false),
         lang: langEnum.default('fr'),
-        translationOf: z.string().optional(),
         slug: publicSlugField,
         translationKey: translationKeyField,
       })
       .superRefine((data, ctx) => {
-        if (!data.cover && !data.translationOf) {
+        if (!data.cover && !data.translationKey) {
           ctx.addIssue({
             code: 'custom',
             path: ['cover'],
             message:
-              'cover required (or translationOf to inherit cover from another entry)',
+              'cover required (or translationKey to inherit cover from the paired entry)',
           });
         }
       }),

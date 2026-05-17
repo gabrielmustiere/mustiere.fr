@@ -1,7 +1,8 @@
 import type { ImageMetadata } from 'astro';
 import { getImage } from 'astro:assets';
-import { getEntry, type CollectionEntry } from 'astro:content';
+import { type CollectionEntry } from 'astro:content';
 import { SITE } from '@/consts';
+import { findTranslation } from './content';
 
 type CoverableCollection = 'blog' | 'projects';
 type CoverableEntry = CollectionEntry<CoverableCollection>;
@@ -19,10 +20,17 @@ export interface ResolvedOgImage {
 
 export async function getCover(entry: CoverableEntry): Promise<ResolvedCover> {
   let cover: ImageMetadata | undefined = entry.data.cover;
-  if (!cover && entry.data.translationOf) {
-    const target = await getEntry(
+  // Refacto 010 étape 10 : héritage de cover via la paire FR/EN identifiée
+  // par `translationKey` partagée. Quand l'entrée courante n'a pas de cover
+  // locale, on cherche l'entrée pendante (autre lang) et on réutilise sa
+  // cover. Typiquement une version EN sans cover hérite de la version FR.
+  if (!cover && entry.data.translationKey) {
+    const lang = entry.data.lang ?? 'fr';
+    const otherLang = lang === 'fr' ? 'en' : 'fr';
+    const target = await findTranslation(
       entry.collection as CoverableCollection,
-      entry.data.translationOf
+      entry,
+      otherLang
     );
     cover = target?.data.cover;
   }

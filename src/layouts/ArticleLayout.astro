@@ -57,9 +57,8 @@ const blogHref = localizedPath(lang, '/blog');
 const homeHref = localizedPath(lang, '/');
 
 const otherLang: Lang = otherLangOf(lang);
-// Lookup bidirectionnel : `translationOf` peut n'être déclaré que d'un seul
-// côté de la paire FR/EN. `findTranslation` couvre les deux sens et applique
-// `isPublished` (les drafts sont exclus en build prod).
+// Paire FR/EN via `translationKey` partagé. `findTranslation` matche par
+// key et applique `isPublished` (les drafts sont exclus en build prod).
 const translatedPost = await findTranslation('blog', post, otherLang);
 const otherLangHref = translatedPost
   ? blogPath(translatedPost, otherLang)

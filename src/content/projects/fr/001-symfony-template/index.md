@@ -11,7 +11,6 @@ coverAlt: 'Bannière du template Symfony : squelette prêt à l’emploi pour d�
 url: 'https://github.com/gabrielmustiere/symfony-template'
 order: 1
 lang: fr
-translationOf: 'symfony-template'
 slug: symfony-template
 translationKey: symfony-template
 ---
