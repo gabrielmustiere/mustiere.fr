@@ -35,7 +35,7 @@ export function localizedPath(lang: Lang, path: string = '/'): string {
   return `/${lang}${withSlash}`;
 }
 
-export function stripLangFromPath(pathname: string): {
+function stripLangFromPath(pathname: string): {
   lang: Lang;
   rest: string;
 } {

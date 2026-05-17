@@ -34,9 +34,7 @@ function readEntryMetadata(filePath, dirPath) {
   const fm = raw.match(/^---\n([\s\S]*?)\n---/)?.[1];
   if (!fm) return null;
   const lang = fm.match(/^lang:\s*["']?([a-z-]+)["']?\s*$/m)?.[1];
-  const slug = fm
-    .match(/^slug:\s*["']?([a-z0-9-]+)["']?\s*$/m)?.[1]
-    ?.trim();
+  const slug = fm.match(/^slug:\s*["']?([a-z0-9-]+)["']?\s*$/m)?.[1]?.trim();
   // Refacto 010 étape 10 : `translationKey` est la seule source de
   // pair-matching i18n. Une entrée sans key n'est pas pairable (les
   // orphelins n'apparaissent simplement pas dans les hreflang du sitemap).
@@ -117,10 +115,7 @@ function buildTranslationIndex() {
   const byKey = new Map();
   for (const [key, meta] of entries) {
     if (meta.translationKey) {
-      byKey.set(
-        `${meta.collection}/${meta.lang}/${meta.translationKey}`,
-        key
-      );
+      byKey.set(`${meta.collection}/${meta.lang}/${meta.translationKey}`, key);
     }
   }
   // Refacto 010 étape 9 : invariant strict — chaque translationKey doit être

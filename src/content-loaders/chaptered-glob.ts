@@ -271,8 +271,7 @@ async function loadFlat(args: {
       ? data.slug
       : fallbackSlug;
   const effectiveLang =
-    expectedLang ??
-    (typeof data.lang === 'string' ? data.lang : 'fr');
+    expectedLang ?? (typeof data.lang === 'string' ? data.lang : 'fr');
   claimPublicSlug(effectiveLang, effectiveSlug, filePath);
   const digest = ctx.generateDigest(contents);
   const relPath = posixRelative(rootPath, filePath);
@@ -365,8 +364,7 @@ async function loadFolder(args: {
       ? data.slug
       : fallbackSlug;
   const effectiveLang =
-    expectedLang ??
-    (typeof data.lang === 'string' ? data.lang : 'fr');
+    expectedLang ?? (typeof data.lang === 'string' ? data.lang : 'fr');
   claimPublicSlug(effectiveLang, effectiveSlug, indexPath);
 
   const chapterFiles: string[] = [];

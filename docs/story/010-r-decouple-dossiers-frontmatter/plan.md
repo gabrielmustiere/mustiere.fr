@@ -71,14 +71,14 @@ Tous consomment `publicSlug()`, `blogPath()`, `projectPath()`, `findTranslation(
 
 ### Alternatives écartées
 
-| Alternative                                                          | Pourquoi écartée                                                                                                                                                                                                                                                                                                  |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Supprimer `nestedByLang` et tout aplatir                             | Perte de lisibilité dans l'arbo, plus de risque d'erreur humaine sur `lang`. Conservé comme convention organisationnelle.                                                                                                                                                                                          |
-| Garder `translationOf` indéfiniment en parallèle de `translationKey` | Double chemin = drift garanti. Le snapshot-diff prouve qu'on peut couper proprement → on coupe.                                                                                                                                                                                                                    |
-| Identifiant `translationKey` abstrait (uuid ou slug neutre)          | Couche de nommage supplémentaire à maintenir, illisible dans les diffs git. Le slug FR est déjà lisible et stable éditorialement.                                                                                                                                                                                  |
-| Calculer le slug depuis le **titre** plutôt qu'un champ dédié         | Le titre est de la copie qui évolue ; le slug d'URL doit être stable. Pire d'un point de vue SEO.                                                                                                                                                                                                                  |
-| Stocker les redirections legacy pour pouvoir changer les slugs        | Hors scope : décision explicite que les URLs publiées ne bougent pas. Le refacto verrouille l'existant ; changer un slug à l'avenir restera un acte éditorial conscient et sortira de ce périmètre.                                                                                                                |
-| Refacto en une seule passe (introduire les champs + bascule stricte)  | Casse la propriété "chaque étape commitable + déployable seule". Le découpage en 10 étapes garantit qu'on peut s'arrêter à n'importe quel commit sans dette intermédiaire.                                                                                                                                         |
+| Alternative                                                          | Pourquoi écartée                                                                                                                                                                                    |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Supprimer `nestedByLang` et tout aplatir                             | Perte de lisibilité dans l'arbo, plus de risque d'erreur humaine sur `lang`. Conservé comme convention organisationnelle.                                                                           |
+| Garder `translationOf` indéfiniment en parallèle de `translationKey` | Double chemin = drift garanti. Le snapshot-diff prouve qu'on peut couper proprement → on coupe.                                                                                                     |
+| Identifiant `translationKey` abstrait (uuid ou slug neutre)          | Couche de nommage supplémentaire à maintenir, illisible dans les diffs git. Le slug FR est déjà lisible et stable éditorialement.                                                                   |
+| Calculer le slug depuis le **titre** plutôt qu'un champ dédié        | Le titre est de la copie qui évolue ; le slug d'URL doit être stable. Pire d'un point de vue SEO.                                                                                                   |
+| Stocker les redirections legacy pour pouvoir changer les slugs       | Hors scope : décision explicite que les URLs publiées ne bougent pas. Le refacto verrouille l'existant ; changer un slug à l'avenir restera un acte éditorial conscient et sortira de ce périmètre. |
+| Refacto en une seule passe (introduire les champs + bascule stricte) | Casse la propriété "chaque étape commitable + déployable seule". Le découpage en 10 étapes garantit qu'on peut s'arrêter à n'importe quel commit sans dette intermédiaire.                          |
 
 ## Comportement externe à préserver
 
@@ -102,24 +102,24 @@ Liste explicite de ce qui ne doit **pas** bouger :
 
 ### Tests existants utilisés comme filet
 
-| Test                              | Ce qu'il couvre                                                          | Niveau                              |
-| --------------------------------- | ------------------------------------------------------------------------ | ----------------------------------- |
-| `tests/chaptered-glob.test.mjs`   | Uniquement `stripOrderPrefix` (3 cas). N'effleure pas le loader lui-même | unit                                |
-| `tests/seo-sections.test.mjs`     | Parsing `resume`/`faq`/`sources` — orthogonal au slug, sert de stabilité | unit                                |
-| `tests/series.test.mjs`           | Graphe séries (validation, contexte, tri archive) — sera étendu          | unit                                |
-| `tests/draft-isolation.test.mjs`  | URLs draft (hash, isolation) — sensible aux changements de slug          | unit                                |
-| `scripts/snapshot-build.mjs` + `diff-snapshot.mjs` | **Filet principal** : diff byte-à-byte de `dist/` sur prod + with-drafts | intégration (build SSG complet)    |
+| Test                                               | Ce qu'il couvre                                                          | Niveau                          |
+| -------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------- |
+| `tests/chaptered-glob.test.mjs`                    | Uniquement `stripOrderPrefix` (3 cas). N'effleure pas le loader lui-même | unit                            |
+| `tests/seo-sections.test.mjs`                      | Parsing `resume`/`faq`/`sources` — orthogonal au slug, sert de stabilité | unit                            |
+| `tests/series.test.mjs`                            | Graphe séries (validation, contexte, tri archive) — sera étendu          | unit                            |
+| `tests/draft-isolation.test.mjs`                   | URLs draft (hash, isolation) — sensible aux changements de slug          | unit                            |
+| `scripts/snapshot-build.mjs` + `diff-snapshot.mjs` | **Filet principal** : diff byte-à-byte de `dist/` sur prod + with-drafts | intégration (build SSG complet) |
 
 ### Tests de caractérisation à écrire AVANT le refacto
 
-| Test à créer                                                    | Comportement à verrouiller                                                                                       | Niveau |
-| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ------ |
-| `tests/content-slug.test.mjs` — `publicSlug` fallback dossier    | Pour une entrée sans `data.slug`, `publicSlug(entry)` retourne la dernière section de `entry.id` (comportement actuel) | unit   |
-| `tests/content-slug.test.mjs` — `publicSlug` lit `data.slug`     | Pour une entrée avec `data.slug`, `publicSlug(entry)` retourne `data.slug` même si différent du dossier                | unit   |
-| `tests/content-translation.test.mjs` — `findTranslation` legacy  | Avec uniquement `translationOf` (forme actuelle), `findTranslation` retrouve la paire (bidirectionnel)             | unit   |
-| `tests/content-translation.test.mjs` — `findTranslation` key     | Avec `translationKey` partagé, `findTranslation` matche par key prioritairement                                   | unit   |
-| `tests/content-translation.test.mjs` — `findTranslation` mixed   | Si key et `translationOf` coexistent, key gagne (priorité)                                                        | unit   |
-| **Snapshot de référence** `tmp/snapshot/before/`                 | Build prod + with-drafts archivés byte-à-byte, référence absolue pour les 9 étapes suivantes                      | intégration |
+| Test à créer                                                    | Comportement à verrouiller                                                                                             | Niveau      |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `tests/content-slug.test.mjs` — `publicSlug` fallback dossier   | Pour une entrée sans `data.slug`, `publicSlug(entry)` retourne la dernière section de `entry.id` (comportement actuel) | unit        |
+| `tests/content-slug.test.mjs` — `publicSlug` lit `data.slug`    | Pour une entrée avec `data.slug`, `publicSlug(entry)` retourne `data.slug` même si différent du dossier                | unit        |
+| `tests/content-translation.test.mjs` — `findTranslation` legacy | Avec uniquement `translationOf` (forme actuelle), `findTranslation` retrouve la paire (bidirectionnel)                 | unit        |
+| `tests/content-translation.test.mjs` — `findTranslation` key    | Avec `translationKey` partagé, `findTranslation` matche par key prioritairement                                        | unit        |
+| `tests/content-translation.test.mjs` — `findTranslation` mixed  | Si key et `translationOf` coexistent, key gagne (priorité)                                                             | unit        |
+| **Snapshot de référence** `tmp/snapshot/before/`                | Build prod + with-drafts archivés byte-à-byte, référence absolue pour les 9 étapes suivantes                           | intégration |
 
 **Règle absolue** : aucun code de production touché tant que :
 
@@ -237,16 +237,16 @@ Pas de feature flag nécessaire : la rétro-compatibilité vit dans le code, pas
 
 ## Risques et mitigations
 
-| Risque                                                                                              | Probabilité | Mitigation                                                                                                                                                            |
-| --------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Drift entre `astro.config.mjs` (parsing regex) et le loader (parsing MDX)                            | moyen       | Étape 5 aligne explicitement ; snapshot couvre exhaustivement les hreflang du sitemap, donc tout drift apparaît immédiatement                                          |
-| Collision silencieuse de `slug` entre deux entrées de la même `(collection, lang)`                   | faible      | Étape 8 ajoute la validation explicite                                                                                                                                |
-| `translationKey` mal renseigné (asymétrie 1/3, ou 2 dans la même lang)                               | moyen       | Étape 9 strict 0/2 ; cardinalité même-lang explicitement rejetée                                                                                                       |
-| Snapshot pas reproductible (build non-déterministe — hash assets, ordre traversal)                   | faible      | Test de reproductibilité en étape 1 ; si non-déterministe, capturer la source du non-déterminisme avant de continuer                                                   |
-| Régression invisible sur llms.txt / llms-full.txt qui sortirait du diff (encodage, BOM, fin de ligne) | faible      | Snapshot byte-à-byte couvre déjà ces fichiers ; vérifier explicitement le diff sur ces deux fichiers en étape 9 (avant bascule étape 10)                               |
-| `findTranslation` matche un mauvais candidat lors de la phase de coexistence (key + legacy)          | moyen       | Tests `findTranslation mixed` en étape 1 verrouillent la priorité ; snapshot couvre le rendu final                                                                     |
-| Migration data oubliée sur une entrée (étape 6)                                                      | faible      | Étape 8 (collision) + étape 9 (cardinalité) cassent le build sur toute entrée orpheline ou dépareillée — détection automatique avant merge                            |
-| Édition manuelle des 11 frontmatters introduit une typo                                              | moyen       | Préférer un petit script de migration (`scripts/migrate-slugs.mjs` jetable) qui calcule slug + translationKey depuis l'état actuel et patche les frontmatters via `yaml` lib déjà en devDeps ; relu humain avant commit |
+| Risque                                                                                                | Probabilité | Mitigation                                                                                                                                                                                                              |
+| ----------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Drift entre `astro.config.mjs` (parsing regex) et le loader (parsing MDX)                             | moyen       | Étape 5 aligne explicitement ; snapshot couvre exhaustivement les hreflang du sitemap, donc tout drift apparaît immédiatement                                                                                           |
+| Collision silencieuse de `slug` entre deux entrées de la même `(collection, lang)`                    | faible      | Étape 8 ajoute la validation explicite                                                                                                                                                                                  |
+| `translationKey` mal renseigné (asymétrie 1/3, ou 2 dans la même lang)                                | moyen       | Étape 9 strict 0/2 ; cardinalité même-lang explicitement rejetée                                                                                                                                                        |
+| Snapshot pas reproductible (build non-déterministe — hash assets, ordre traversal)                    | faible      | Test de reproductibilité en étape 1 ; si non-déterministe, capturer la source du non-déterminisme avant de continuer                                                                                                    |
+| Régression invisible sur llms.txt / llms-full.txt qui sortirait du diff (encodage, BOM, fin de ligne) | faible      | Snapshot byte-à-byte couvre déjà ces fichiers ; vérifier explicitement le diff sur ces deux fichiers en étape 9 (avant bascule étape 10)                                                                                |
+| `findTranslation` matche un mauvais candidat lors de la phase de coexistence (key + legacy)           | moyen       | Tests `findTranslation mixed` en étape 1 verrouillent la priorité ; snapshot couvre le rendu final                                                                                                                      |
+| Migration data oubliée sur une entrée (étape 6)                                                       | faible      | Étape 8 (collision) + étape 9 (cardinalité) cassent le build sur toute entrée orpheline ou dépareillée — détection automatique avant merge                                                                              |
+| Édition manuelle des 11 frontmatters introduit une typo                                               | moyen       | Préférer un petit script de migration (`scripts/migrate-slugs.mjs` jetable) qui calcule slug + translationKey depuis l'état actuel et patche les frontmatters via `yaml` lib déjà en devDeps ; relu humain avant commit |
 
 ## Questions ouvertes
 

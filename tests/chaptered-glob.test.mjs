@@ -14,7 +14,10 @@ test('stripOrderPrefix — retire un préfixe numérique suivi d’un tiret', ()
 });
 
 test('stripOrderPrefix — laisse un nom sans préfixe inchangé', () => {
-  assert.equal(stripOrderPrefix('symfony-avant-ux-inventaire'), 'symfony-avant-ux-inventaire');
+  assert.equal(
+    stripOrderPrefix('symfony-avant-ux-inventaire'),
+    'symfony-avant-ux-inventaire'
+  );
   assert.equal(stripOrderPrefix('foo-001-bar'), 'foo-001-bar');
 });
 
@@ -58,12 +61,7 @@ test('assertLangMatchesParent — absent sous en/ rejette (défault Zod ferait f
 
 test('assertLangMatchesParent — mismatch explicite rejette avec chemin et valeurs', () => {
   assert.throws(
-    () =>
-      assertLangMatchesParent(
-        { lang: 'fr' },
-        'en',
-        '/x/en/foo/index.mdx'
-      ),
+    () => assertLangMatchesParent({ lang: 'fr' }, 'en', '/x/en/foo/index.mdx'),
     /lang="fr".*"en\/"/s
   );
 });
@@ -96,8 +94,14 @@ test('validateTranslationKeyCardinality — 0 entrée avec key passe', () => {
 test('validateTranslationKeyCardinality — paire FR + EN passe', () => {
   assert.doesNotThrow(() =>
     validateTranslationKeyCardinality([
-      ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
-      ['blog/en/foo', { lang: 'en', translationKey: 'k1', dirPath: '/x/en/foo' }],
+      [
+        'blog/fr/foo',
+        { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' },
+      ],
+      [
+        'blog/en/foo',
+        { lang: 'en', translationKey: 'k1', dirPath: '/x/en/foo' },
+      ],
     ])
   );
 });
@@ -106,7 +110,10 @@ test('validateTranslationKeyCardinality — 1 seule entrée avec key (orphelin a
   assert.throws(
     () =>
       validateTranslationKeyCardinality([
-        ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
+        [
+          'blog/fr/foo',
+          { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' },
+        ],
       ]),
     /porté par 1 entrée\(s\) — attendu 0.*ou 2/s
   );
@@ -116,9 +123,18 @@ test('validateTranslationKeyCardinality — 3 entrées avec même key lève', ()
   assert.throws(
     () =>
       validateTranslationKeyCardinality([
-        ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
-        ['blog/en/foo', { lang: 'en', translationKey: 'k1', dirPath: '/x/en/foo' }],
-        ['blog/fr/bar', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/bar' }],
+        [
+          'blog/fr/foo',
+          { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' },
+        ],
+        [
+          'blog/en/foo',
+          { lang: 'en', translationKey: 'k1', dirPath: '/x/en/foo' },
+        ],
+        [
+          'blog/fr/bar',
+          { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/bar' },
+        ],
       ]),
     /porté par 3 entrée/
   );
@@ -128,8 +144,14 @@ test('validateTranslationKeyCardinality — 2 entrées même lang lève (pas une
   assert.throws(
     () =>
       validateTranslationKeyCardinality([
-        ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
-        ['blog/fr/bar', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/bar' }],
+        [
+          'blog/fr/foo',
+          { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' },
+        ],
+        [
+          'blog/fr/bar',
+          { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/bar' },
+        ],
       ]),
     /2 entrées de la même lang \(fr\)/
   );
