@@ -5,6 +5,7 @@ import {
   assertLangMatchesParent,
   createPublicSlugClaimer,
 } from '../src/content-loaders/lang-validation.ts';
+import { validateTranslationKeyCardinality } from '../src/content-loaders/translation-cardinality.mjs';
 
 test('stripOrderPrefix — retire un préfixe numérique suivi d’un tiret', () => {
   assert.equal(stripOrderPrefix('001-foo'), 'foo');
@@ -80,5 +81,56 @@ test('createPublicSlugClaimer — deux entrées même (lang, slug) lèvent avec 
   assert.throws(
     () => claim('fr', 'foo', '/x/fr/archive/legacy-foo/index.mdx'),
     /collision de slug public "fr\/foo".*001-foo.*legacy-foo/s
+  );
+});
+
+test('validateTranslationKeyCardinality — 0 entrée avec key passe', () => {
+  assert.doesNotThrow(() =>
+    validateTranslationKeyCardinality([
+      ['blog/fr/foo', { lang: 'fr', dirPath: '/x/fr/foo' }],
+      ['blog/fr/bar', { lang: 'fr', dirPath: '/x/fr/bar' }],
+    ])
+  );
+});
+
+test('validateTranslationKeyCardinality — paire FR + EN passe', () => {
+  assert.doesNotThrow(() =>
+    validateTranslationKeyCardinality([
+      ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
+      ['blog/en/foo', { lang: 'en', translationKey: 'k1', dirPath: '/x/en/foo' }],
+    ])
+  );
+});
+
+test('validateTranslationKeyCardinality — 1 seule entrée avec key (orphelin avec key) lève', () => {
+  assert.throws(
+    () =>
+      validateTranslationKeyCardinality([
+        ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
+      ]),
+    /porté par 1 entrée\(s\) — attendu 0.*ou 2/s
+  );
+});
+
+test('validateTranslationKeyCardinality — 3 entrées avec même key lève', () => {
+  assert.throws(
+    () =>
+      validateTranslationKeyCardinality([
+        ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
+        ['blog/en/foo', { lang: 'en', translationKey: 'k1', dirPath: '/x/en/foo' }],
+        ['blog/fr/bar', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/bar' }],
+      ]),
+    /porté par 3 entrée/
+  );
+});
+
+test('validateTranslationKeyCardinality — 2 entrées même lang lève (pas une paire valide)', () => {
+  assert.throws(
+    () =>
+      validateTranslationKeyCardinality([
+        ['blog/fr/foo', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/foo' }],
+        ['blog/fr/bar', { lang: 'fr', translationKey: 'k1', dirPath: '/x/fr/bar' }],
+      ]),
+    /2 entrées de la même lang \(fr\)/
   );
 });

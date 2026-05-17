@@ -8,6 +8,7 @@ import sitemap from '@astrojs/sitemap';
 import robotsTxt from 'astro-robots-txt';
 
 import { SITE } from './src/consts.ts';
+import { validateTranslationKeyCardinality } from './src/content-loaders/translation-cardinality.mjs';
 
 const LOCALE_TAGS = { fr: 'fr-FR', en: 'en-GB' };
 const TRANSLATED_COLLECTIONS = ['blog', 'projects'];
@@ -124,6 +125,15 @@ function buildTranslationIndex() {
         key
       );
     }
+  }
+  // Refacto 010 étape 9 : invariant strict — chaque translationKey doit être
+  // porté par 0 ou 2 entrées de la même collection (une par lang). Validation
+  // collection par collection (les keys ne sont pas partagées cross-collection).
+  for (const collection of TRANSLATED_COLLECTIONS) {
+    const collectionEntries = Array.from(entries).filter(
+      ([, m]) => m.collection === collection
+    );
+    validateTranslationKeyCardinality(collectionEntries);
   }
 
   // Validation parité i18n des sections SEO (faq.mdx / sources.mdx).
