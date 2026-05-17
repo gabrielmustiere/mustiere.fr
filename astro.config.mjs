@@ -22,6 +22,11 @@ const COLLECTION_SEGMENTS = {
   blog: { fr: 'blog', en: 'blog' },
   projects: { fr: 'projets', en: 'projects' },
 };
+// Préfixe d'ordre éditeur sur les dossiers d'entrée (cf.
+// src/content-loaders/order-prefix.ts). Dupliqué ici parce qu'astro.config.mjs
+// ne peut pas importer le module TS au chargement de la config. Si tu modifies
+// la regex là-bas, propage ici (et inversement).
+const ORDER_PREFIX_RE = /^\d{1,3}-/;
 
 function readEntryMetadata(filePath, dirPath) {
   const raw = readFileSync(filePath, 'utf8');
@@ -58,7 +63,10 @@ function collectFromDir(baseDir, collection, entries) {
         existsSync(join(baseDir, entry.name, f))
       );
       if (!indexFile) continue;
-      slug = entry.name;
+      // Strip du préfixe d'ordre éditeur pour aligner la clef sur le slug
+      // public (et donc sur ce que référence `translationOf`). Le `dirPath`
+      // reste préfixé pour lire le disque.
+      slug = entry.name.replace(ORDER_PREFIX_RE, '');
       dirPath = join(baseDir, entry.name);
       filePath = join(dirPath, indexFile);
     } else {

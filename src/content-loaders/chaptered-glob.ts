@@ -15,6 +15,7 @@ import {
   parseResume,
   parseSources,
 } from './seo-sections';
+import { stripOrderPrefix } from './order-prefix';
 
 // Loader maison qui remplace `glob` pour les collections `blog` et `projects`
 // du refacto 004-r-mdx-chapter-split. Supporte deux formes en parallèle :
@@ -126,6 +127,19 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
       }
 
       const untouched = new Set(store.keys());
+      // Détecte les collisions d'id dans un même run (ex. `foo/` et `001-foo/`
+      // côte à côte produiraient le même slug public après strip du préfixe).
+      const seenIds = new Map<string, string>();
+      const claimId = (id: string, source: string) => {
+        const prev = seenIds.get(id);
+        if (prev) {
+          throw new Error(
+            `[chaptered-glob] collision d'id "${id}" entre "${prev}" et "${source}". ` +
+              `Renomme l'un des deux (le préfixe "NNN-" est strippé du nom de dossier).`
+          );
+        }
+        seenIds.set(id, source);
+      };
 
       const processDir = async (dirPath: string, idPrefix: string) => {
         const entries = readdirSync(dirPath, { withFileTypes: true });
@@ -138,6 +152,7 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
             if (!ext) continue;
             const slug = entry.name.slice(0, -ext.length);
             const id = idPrefix + slug;
+            claimId(id, join(dirPath, entry.name));
             await loadFlat({
               ctx,
               rootPath,
@@ -148,7 +163,11 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
             });
             untouched.delete(id);
           } else if (entry.isDirectory()) {
-            const id = idPrefix + entry.name;
+            // `dirName` reste préfixé (sert à lire le disque) ; `id` est
+            // déduit du nom sans préfixe d'ordre éventuel, pour que renommer
+            // `foo/` en `001-foo/` ne change ni l'URL ni `translationOf`.
+            const id = idPrefix + stripOrderPrefix(entry.name);
+            claimId(id, join(dirPath, entry.name));
             await loadFolder({
               ctx,
               rootPath,

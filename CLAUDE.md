@@ -51,6 +51,10 @@ spacing) vivent dans `src/styles/global.css` sous `@theme`.
 - Règles **strictes** dans la forme dossier : un seul `index.{md,mdx}` autorisé ; les chapitres sont sans frontmatter et sans `import`/`export` au top-level
   (l'agrégateur lèvera une erreur build sinon, cf. plan 004-r option ii) ; les noms `resume.mdx` / `faq.mdx` / `sources.mdx` sont réservés (cf.
   `RESERVED_SECTION_FILES`) ; pas d'autre `.md`/`.mdx` non conforme dans le dossier.
+- **Préfixe d'ordre éditeur** (optionnel) : un dossier d'entrée peut être préfixé `NNN-` (1–3 chiffres + tiret, ex. `001-symfony-avant-ux-inventaire/`) pour le
+  trier visuellement dans l'arborescence. Le préfixe est strippé par le loader (`src/content-loaders/order-prefix.ts`) avant calcul de l'`id` Astro, donc l'URL
+  publique, `translationOf` et le sitemap restent stables. Le préfixe vit uniquement sur disque, indépendamment du champ `number` du frontmatter (qui pilote
+  l'ordre éditorial réel). Une collision (ex. `foo/` + `001-foo/` côte à côte) fait planter le build avec un message explicite.
 
 ### Vérifier la non-régression d'un chapitre
 
