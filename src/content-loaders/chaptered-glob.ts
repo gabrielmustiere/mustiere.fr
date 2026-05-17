@@ -16,6 +16,7 @@ import {
   parseSources,
 } from './seo-sections';
 import { stripOrderPrefix } from './order-prefix';
+import { assertLangMatchesParent } from './lang-validation';
 
 // Loader maison qui remplace `glob` pour les collections `blog` et `projects`
 // du refacto 004-r-mdx-chapter-split. Supporte deux formes en parallèle :
@@ -141,7 +142,11 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
         seenIds.set(id, source);
       };
 
-      const processDir = async (dirPath: string, idPrefix: string) => {
+      const processDir = async (
+        dirPath: string,
+        idPrefix: string,
+        expectedLang: string | null
+      ) => {
         const entries = readdirSync(dirPath, { withFileTypes: true });
         for (const entry of entries) {
           if (entry.name.startsWith('.') || entry.name.startsWith('_'))
@@ -160,6 +165,7 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
               fileName: entry.name,
               ext,
               id,
+              expectedLang,
             });
             untouched.delete(id);
           } else if (entry.isDirectory()) {
@@ -176,6 +182,7 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
               extensions,
               id,
               collection,
+              expectedLang,
             });
             untouched.delete(id);
           }
@@ -186,11 +193,11 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
         for (const lang of nestedByLang) {
           const langDir = join(baseDirPath, lang);
           if (!existsSync(langDir)) continue;
-          await processDir(langDir, `${lang}/`);
+          await processDir(langDir, `${lang}/`, lang);
           if (watcher) watcher.add(langDir);
         }
       } else {
-        await processDir(baseDirPath, '');
+        await processDir(baseDirPath, '', null);
       }
 
       for (const id of untouched) {
@@ -216,8 +223,9 @@ async function loadFlat(args: {
   fileName: string;
   ext: string;
   id: string;
+  expectedLang: string | null;
 }) {
-  const { ctx, rootPath, baseDirPath, fileName, ext, id } = args;
+  const { ctx, rootPath, baseDirPath, fileName, ext, id, expectedLang } = args;
   const filePath = join(baseDirPath, fileName);
   const fileUrl = pathToFileURL(filePath);
   const contents = readFileSync(filePath, 'utf-8');
@@ -229,6 +237,7 @@ async function loadFlat(args: {
   }
 
   const { body, data } = await entryType.getEntryInfo({ contents, fileUrl });
+  assertLangMatchesParent(data, expectedLang, filePath);
   const digest = ctx.generateDigest(contents);
   const relPath = posixRelative(rootPath, filePath);
 
@@ -263,9 +272,18 @@ async function loadFolder(args: {
   extensions: string[];
   id: string;
   collection: string;
+  expectedLang: string | null;
 }) {
-  const { ctx, rootPath, baseDirPath, dirName, extensions, id, collection } =
-    args;
+  const {
+    ctx,
+    rootPath,
+    baseDirPath,
+    dirName,
+    extensions,
+    id,
+    collection,
+    expectedLang,
+  } = args;
   const dirPath = join(baseDirPath, dirName);
   const files = readdirSync(dirPath);
 
@@ -301,6 +319,7 @@ async function loadFolder(args: {
     contents: indexContents,
     fileUrl: indexUrl,
   });
+  assertLangMatchesParent(data, expectedLang, indexPath);
 
   const chapterFiles: string[] = [];
   // Sections SEO réservées : resume.mdx (obligatoire), faq.mdx, sources.mdx.
