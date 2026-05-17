@@ -6,6 +6,25 @@ const categoryEnum = z.enum(['IA', 'Tech', 'Lead', 'Business']);
 
 const langEnum = z.enum(['fr', 'en']);
 
+// Slug public d'une entrée (refacto 010-r-decouple-dossiers-frontmatter).
+// Découplé du nom de dossier : `data.slug` est la source de vérité pour
+// l'URL canonique et le pair-matching i18n. Ajouté en optionnel ici pour
+// la phase Strangler ; deviendra requis à l'étape 10. Regex stricte =
+// même alphabet que les noms de dossiers/segments d'URL (kebab-case).
+const publicSlugField = z
+  .string()
+  .regex(/^[a-z0-9-]+$/, 'slug doit être kebab-case (a-z, 0-9, -)')
+  .optional();
+
+// Clef de paire FR/EN partagée (refacto 010). Quand deux entrées portent
+// le même `translationKey` dans la même collection, elles forment une
+// paire de traduction. Remplace progressivement `translationOf` (qui
+// disparaîtra à l'étape 10). Même contrainte de forme que `slug`.
+const translationKeyField = z
+  .string()
+  .regex(/^[a-z0-9-]+$/, 'translationKey doit être kebab-case (a-z, 0-9, -)')
+  .optional();
+
 // Schémas des sections SEO injectées par chapteredGlob (cf. seo-sections.ts).
 // Le loader lit resume.mdx / faq.mdx / sources.mdx présents dans le dossier
 // de chaque entrée, parse leur contenu et l'injecte ici dans `data` avant la
@@ -61,6 +80,8 @@ const blog = defineCollection({
         number: z.number().int().positive(),
         lang: langEnum.default('fr'),
         translationOf: z.string().optional(),
+        slug: publicSlugField,
+        translationKey: translationKeyField,
         // Appartenance à une série d'articles (cf. plan 009-f-blog-series).
         // `series` référence le slug public d'une entrée de la collection
         // `series` dans la même langue que l'article. `seriesOrder` est le
@@ -109,6 +130,8 @@ const series = defineCollection({
     description: z.string().min(40).max(280),
     lang: langEnum.default('fr'),
     translationOf: z.string().optional(),
+    slug: publicSlugField,
+    translationKey: translationKeyField,
   }),
 });
 
@@ -150,6 +173,8 @@ const projects = defineCollection({
         draft: z.boolean().default(false),
         lang: langEnum.default('fr'),
         translationOf: z.string().optional(),
+        slug: publicSlugField,
+        translationKey: translationKeyField,
       })
       .superRefine((data, ctx) => {
         if (!data.cover && !data.translationOf) {
