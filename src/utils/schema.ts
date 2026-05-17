@@ -3,6 +3,7 @@ import { LANG_META, type Lang } from '@/i18n/config';
 import { localizedPath } from '@/i18n/utils';
 import { routePath } from '@/i18n/routes';
 import { ui } from '@/i18n/ui';
+import { parcoursContent } from '@/i18n/content/parcours';
 
 const PERSON_ID = `${SITE.url}/#person`;
 const ORG_ID = `${SITE.url}/#organization`;
@@ -176,78 +177,16 @@ export function parcoursPageSchema(
   };
 }
 
-export const PARCOURS_FAQ: Record<
-  Lang,
-  Array<{ question: string; answer: string }>
-> = {
-  fr: [
-    {
-      question: "Pourquoi un CTO freelance plutôt qu'un CTO en CDI ?",
-      answer:
-        "Pour les phases où l'équipe ne justifie pas un CDI plein temps (early stage, transition, audit), un CTO freelance livre l'expertise sans bloquer un poste permanent. Sur des missions longues ciblées (mise en conformité, scale-up, refonte), un freelance senior va à la cible plus vite qu'un recrutement.",
-    },
-    {
-      question:
-        "Qu'est-ce qui différencie un expert Symfony d'un développeur Symfony senior ?",
-      answer:
-        "Un dev senior code bien. Un expert tient compte de la dette de l'écosystème (versions LTS, montée Symfony 6 → 7, dépendances Doctrine ou API Platform), arbitre les choix architecturaux long terme, et sait lire ou refactorer une codebase existante sans tout casser.",
-    },
-    {
-      question: 'Tu travailles avec des stacks autres que Symfony et Sylius ?',
-      answer:
-        "Je travaille principalement avec Symfony et son écosystème (Doctrine, API Platform, Sylius). Côté front, j'ai aussi de l'expérience avec Vue.js et Nuxt. Sur une mission, l'enjeu est plus souvent le contexte produit et l'équipe que le langage exact.",
-    },
-    {
-      question: 'Tu acceptes les missions de cofondation ou equity ?',
-      answer: 'Je suis ouvert à toute proposition honnête et intelligente.',
-    },
-    {
-      question: 'Combien coûte une mission ?',
-      answer:
-        'TJM en ligne avec le marché senior CTO freelance Nantes / remote. Forfaits possibles sur audit. On en parle après un premier échange pour cadrer le besoin.',
-    },
-    {
-      question: 'Pourquoi Nantes ?',
-      answer:
-        "J'y vis. Le tissu tech nantais est dense (Lengow, iAdvize, Akeneo, Manzana…) avec une vraie communauté Symfony / PHP. La plupart de mes missions se font en remote ou hybride.",
-    },
-  ],
-  en: [
-    {
-      question: 'Why a freelance CTO rather than a permanent CTO?',
-      answer:
-        "For phases where the team doesn't justify a full-time hire (early stage, transition, audit), a freelance CTO delivers the expertise without freezing a permanent seat. On focused long engagements (compliance, scale-up, rewrite), a senior freelance reaches the target faster than a hire.",
-    },
-    {
-      question:
-        'What sets a Symfony expert apart from a senior Symfony developer?',
-      answer:
-        'A senior writes good code. An expert factors in ecosystem debt (LTS versions, Symfony 6 → 7 upgrade, Doctrine and API Platform dependencies), arbitrates long-term architectural choices, and can read or refactor an existing codebase without breaking everything.',
-    },
-    {
-      question: 'Do you work with stacks other than Symfony and Sylius?',
-      answer:
-        'I work primarily with Symfony and its ecosystem (Doctrine, API Platform, Sylius). On the front-end side, I also have experience with Vue.js and Nuxt. On an engagement, the product context and team usually matter more than the exact language.',
-    },
-    {
-      question: 'Do you take co-founder or equity engagements?',
-      answer: "I'm open to any honest, well-thought-out proposal.",
-    },
-    {
-      question: 'How much does an engagement cost?',
-      answer:
-        'Day rate aligned with senior freelance CTO market in Nantes / remote. Fixed fees possible for audits. We discuss it after a first call to frame the need.',
-    },
-    {
-      question: 'Why Nantes?',
-      answer:
-        'I live here. The Nantes tech ecosystem is dense (Lengow, iAdvize, Akeneo, Manzana…) with a real Symfony / PHP community. Most of my engagements run remote or hybrid.',
-    },
-  ],
-};
-
 export function parcoursFaqSchema(lang: Lang) {
-  return faqPageSchema(PARCOURS_FAQ[lang]);
+  // Source unique : `parcoursContent[lang].faq` (affiché côté page).
+  // Le JSON-LD doit refléter ce qui est visible — sinon Google peut détecter
+  // le décalage comme du cloaking.
+  return faqPageSchema(
+    parcoursContent[lang].faq.map((item) => ({
+      question: item.q,
+      answer: item.a,
+    }))
+  );
 }
 
 export function blogSchema(lang: Lang = 'fr') {
