@@ -36,12 +36,23 @@ function readEntryMetadata(filePath, dirPath) {
   const translationOf = fm
     .match(/^translationOf:\s*["']?([^"'\n]+?)["']?\s*$/m)?.[1]
     ?.trim();
+  // Refacto 010 : `slug` et `translationKey` lus en plus de `translationOf`
+  // pour permettre le découplage progressif. Tant qu'une entrée porte au
+  // moins `translationOf` OU `translationKey`, elle est considérée comme
+  // i18n-pairable. `slug` reste optionnel (fallback nom de dossier).
+  const slug = fm
+    .match(/^slug:\s*["']?([a-z0-9-]+)["']?\s*$/m)?.[1]
+    ?.trim();
+  const translationKey = fm
+    .match(/^translationKey:\s*["']?([a-z0-9-]+)["']?\s*$/m)?.[1]
+    ?.trim();
   const draft = /^draft:\s*true\s*$/m.test(fm);
   if (draft) return null;
-  if (!lang || !translationOf) return null;
+  if (!lang) return null;
+  if (!translationOf && !translationKey) return null;
   const hasFaq = dirPath ? existsSync(join(dirPath, 'faq.mdx')) : false;
   const hasSources = dirPath ? existsSync(join(dirPath, 'sources.mdx')) : false;
-  return { lang, translationOf, hasFaq, hasSources };
+  return { lang, translationOf, translationKey, slug, hasFaq, hasSources };
 }
 
 function collectFromDir(baseDir, collection, entries) {
@@ -74,13 +85,17 @@ function collectFromDir(baseDir, collection, entries) {
     }
     const meta = readEntryMetadata(filePath, dirPath);
     if (!meta) continue;
-    // Le slug public (sans préfixe lang) est la clef de pair-matching :
-    // `translationOf` côté FR référence le slug pur de l'EN et inversement.
-    entries.set(`${collection}/${meta.lang}/${slug}`, {
+    // Refacto 010 : le slug public peut être déclaré dans le frontmatter
+    // (`slug:`) ; sinon fallback sur le nom de dossier sans préfixe `NNN-`.
+    // La clef d'entrée est construite sur le slug public final pour rester
+    // alignée sur l'URL canonique et sur `translationOf` (qui référence un
+    // slug public). À l'étape 10 le fallback disparaîtra.
+    const publicSlug = meta.slug ?? slug;
+    entries.set(`${collection}/${meta.lang}/${publicSlug}`, {
       ...meta,
       dirPath,
       collection,
-      slug,
+      slug: publicSlug,
     });
   }
 }
@@ -99,23 +114,47 @@ function buildTranslationIndex() {
       collectFromDir(collectionDir, collection, entries);
     }
   }
+  // Refacto 010 : index secondaire par `translationKey` pour pair-matching
+  // O(1). Clef = `${collection}/${lang}/${translationKey}`.
+  const byKey = new Map();
+  for (const [key, meta] of entries) {
+    if (meta.translationKey) {
+      byKey.set(
+        `${meta.collection}/${meta.lang}/${meta.translationKey}`,
+        key
+      );
+    }
+  }
+
   // Validation parité i18n des sections SEO (faq.mdx / sources.mdx).
   // Asymétrie = build fail avec les deux chemins de fichiers concernés.
   const checked = new Set();
   for (const [key, meta] of entries) {
     if (checked.has(key)) continue;
     const otherLang = meta.lang === 'fr' ? 'en' : 'fr';
-    // `translationOf` peut référencer soit le slug pur (cas nestedByLang :
-    // `translationOf: 'symfony-template'`), soit l'id complet hérité de la
-    // forme plate (`symfony-template-en`). On essaie le slug pur puis le brut.
-    const candidates = [
-      `${meta.collection}/${otherLang}/${meta.translationOf}`,
-      `${meta.collection}/${otherLang}/${meta.translationOf.replace(/^(fr|en)\//, '')}`,
-    ];
+    // Cascade refacto 010 : essaie `translationKey` d'abord (le futur), puis
+    // `translationOf` (le legacy, encore en place pendant la migration). À
+    // l'étape 10, seule la branche key restera.
     let other;
-    for (const k of candidates) {
-      other = entries.get(k);
-      if (other) break;
+    if (meta.translationKey) {
+      const otherKey = byKey.get(
+        `${meta.collection}/${otherLang}/${meta.translationKey}`
+      );
+      if (otherKey) other = entries.get(otherKey);
+    }
+    if (!other && meta.translationOf) {
+      // `translationOf` peut référencer soit le slug pur (cas nestedByLang :
+      // `translationOf: 'symfony-template'`), soit l'id complet hérité de la
+      // forme plate (`symfony-template-en`). On essaie le slug pur puis le
+      // brut.
+      const candidates = [
+        `${meta.collection}/${otherLang}/${meta.translationOf}`,
+        `${meta.collection}/${otherLang}/${meta.translationOf.replace(/^(fr|en)\//, '')}`,
+      ];
+      for (const k of candidates) {
+        other = entries.get(k);
+        if (other) break;
+      }
     }
     if (!other) continue;
     checked.add(key);
@@ -127,17 +166,18 @@ function buildTranslationIndex() {
         const present = a ? meta : other;
         const missing = a ? other : meta;
         throw new Error(
-          `[i18n] Asymétrie ${fileName} entre paires translationOf : ` +
+          `[i18n] Asymétrie ${fileName} entre paires i18n : ` +
             `"${present.dirPath}/${fileName}" existe mais pas "${missing.dirPath}/${fileName}". ` +
             `Les sections SEO doivent être présentes dans les deux langues ou aucune.`
         );
       }
     }
   }
-  return entries;
+  return { entries, byKey };
 }
 
-const TRANSLATIONS = buildTranslationIndex();
+const { entries: TRANSLATIONS, byKey: TRANSLATIONS_BY_KEY } =
+  buildTranslationIndex();
 
 // Avec prefixDefaultLocale: false, le FR n'a pas de préfixe (/blog/slug/),
 // l'EN garde son préfixe (/en/blog/slug/). Le segment de collection peut être
@@ -195,14 +235,25 @@ function findTranslationLinks(itemUrl) {
   const meta = TRANSLATIONS.get(`${collection}/${lang}/${slug}`);
   if (!meta) return null;
   const otherLang = lang === 'fr' ? 'en' : 'fr';
-  const otherSlug = meta.translationOf.replace(/^(fr|en)\//, '');
-  const otherMeta = TRANSLATIONS.get(`${collection}/${otherLang}/${otherSlug}`);
+  // Cascade refacto 010 : essaie d'abord translationKey (futur), puis
+  // translationOf (legacy). À l'étape 10 seul le premier chemin restera.
+  let otherMeta;
+  if (meta.translationKey) {
+    const otherKey = TRANSLATIONS_BY_KEY.get(
+      `${collection}/${otherLang}/${meta.translationKey}`
+    );
+    if (otherKey) otherMeta = TRANSLATIONS.get(otherKey);
+  }
+  if (!otherMeta && meta.translationOf) {
+    const otherSlug = meta.translationOf.replace(/^(fr|en)\//, '');
+    otherMeta = TRANSLATIONS.get(`${collection}/${otherLang}/${otherSlug}`);
+  }
   if (!otherMeta) return null;
   const otherUrl = buildLocalizedUrl(
     url.origin,
     otherLang,
     collection,
-    otherSlug
+    otherMeta.slug
   );
   return [
     { url: itemUrl, lang: LOCALE_TAGS[lang] },
