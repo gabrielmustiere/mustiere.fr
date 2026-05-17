@@ -12,7 +12,7 @@ import { SITE } from '@/consts';
 import { useTranslations, localizedPath } from '@/i18n/utils';
 import { routePath } from '@/i18n/routes';
 import type { Lang } from '@/i18n/config';
-import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import type { LangComponents } from '@/i18n/components';
 
 interface Props {
   lang: Lang;
@@ -22,10 +22,7 @@ const { lang } = Astro.props;
 const tr = useTranslations(lang);
 const parcoursHref = localizedPath(lang, routePath('parcours', lang));
 
-const HERO: Record<Lang, AstroComponentFactory> = {
-  fr: HeroFR,
-  en: HeroEN,
-};
+const HERO: LangComponents = { fr: HeroFR, en: HeroEN };
 const Hero = HERO[lang];
 ---
 

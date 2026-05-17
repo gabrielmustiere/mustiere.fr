@@ -30,7 +30,7 @@ import ExtSyliusEN from '@components/i18n/parcours/expertise-sylius/en.astro';
 import ExtProductBuilderFR from '@components/i18n/parcours/expertise-product-builder/fr.astro';
 import ExtProductBuilderEN from '@components/i18n/parcours/expertise-product-builder/en.astro';
 import type { Lang } from '@/i18n/config';
-import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import type { LangComponents } from '@/i18n/components';
 
 interface Props {
   lang: Lang;
@@ -40,10 +40,10 @@ const { lang } = Astro.props;
 const tr = useTranslations(lang);
 const content = parcoursContent[lang];
 
-const HERO: Record<Lang, AstroComponentFactory> = { fr: HeroFR, en: HeroEN };
+const HERO: LangComponents = { fr: HeroFR, en: HeroEN };
 const EXPERIENCE_BODIES: Record<
   'passion-barbecue' | 'progicar' | 'xl-soft',
-  Record<Lang, AstroComponentFactory>
+  LangComponents
 > = {
   'passion-barbecue': { fr: ExpPassionBarbecueFR, en: ExpPassionBarbecueEN },
   progicar: { fr: ExpProgicarFR, en: ExpProgicarEN },
@@ -51,7 +51,7 @@ const EXPERIENCE_BODIES: Record<
 };
 const EXPERTISE_BODIES: Record<
   'symfony' | 'sylius' | 'product-builder',
-  Record<Lang, AstroComponentFactory>
+  LangComponents
 > = {
   symfony: { fr: ExtSymfonyFR, en: ExtSymfonyEN },
   sylius: { fr: ExtSyliusFR, en: ExtSyliusEN },

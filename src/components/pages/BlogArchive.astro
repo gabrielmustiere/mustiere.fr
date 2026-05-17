@@ -18,7 +18,7 @@ import type { Lang } from '@/i18n/config';
 import { isPublished } from '@/utils/content';
 import { buildSeriesIndex, sortArchive } from '@/utils/series';
 import type { CollectionEntry } from 'astro:content';
-import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
+import type { LangComponents } from '@/i18n/components';
 
 interface Props {
   lang: Lang;
@@ -68,8 +68,8 @@ const countSuffix =
     ? tr.blogIndex.countSuffixPlural
     : tr.blogIndex.countSuffixSingular;
 
-const HERO: Record<Lang, AstroComponentFactory> = { fr: HeroFR, en: HeroEN };
-const INTRO: Record<Lang, AstroComponentFactory> = { fr: IntroFR, en: IntroEN };
+const HERO: LangComponents = { fr: HeroFR, en: HeroEN };
+const INTRO: LangComponents = { fr: IntroFR, en: IntroEN };
 const Hero = HERO[lang];
 const Intro = INTRO[lang];
 ---
