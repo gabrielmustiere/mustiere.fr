@@ -1,40 +1,10 @@
 ---
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { render, type CollectionEntry } from 'astro:content';
 import ProjectLayout from '@layouts/ProjectLayout.astro';
-import {
-  isPublished,
-  getDraftPreviewEntries,
-  getDraftSlugParam,
-  publicSlug,
-} from '@/utils/content';
+import { buildProjectsStaticPaths } from '@/utils/static-paths';
 
 export async function getStaticPaths() {
-  const all = await getCollection('projects');
-  const published = all.filter((entry) => isPublished(entry, 'fr'));
-  const sorted = [...published].sort((a, b) => a.data.order - b.data.order);
-
-  const publishedRoutes = published.map((project) => {
-    const others = sorted.filter(
-      (p): p is CollectionEntry<'projects'> => p.id !== project.id
-    );
-    return {
-      params: { slug: publicSlug(project) },
-      props: { project, others, isDraftPreview: false },
-    };
-  });
-
-  const draftRoutes = getDraftPreviewEntries(all, 'fr')
-    .map((project) => {
-      const slug = getDraftSlugParam(publicSlug(project));
-      if (!slug) return null;
-      return {
-        params: { slug },
-        props: { project, others: [], isDraftPreview: true },
-      };
-    })
-    .filter((r): r is NonNullable<typeof r> => r !== null);
-
-  return [...publishedRoutes, ...draftRoutes];
+  return buildProjectsStaticPaths('fr');
 }
 
 type Props = {

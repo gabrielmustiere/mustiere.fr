@@ -1,54 +1,12 @@
 ---
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { render, type CollectionEntry } from 'astro:content';
 import ArticleLayout from '@layouts/ArticleLayout.astro';
 import { readingTimeFromText } from '@/utils/reading-time';
-import {
-  isPublished,
-  getDraftPreviewEntries,
-  getDraftSlugParam,
-  publicSlug,
-} from '@/utils/content';
-import { buildSeriesIndex, type SeriesContext } from '@/utils/series';
+import { buildBlogStaticPaths } from '@/utils/static-paths';
+import type { SeriesContext } from '@/utils/series';
 
 export async function getStaticPaths() {
-  const all = await getCollection('blog');
-  const allSeries = await getCollection('series');
-  // Cf. version FR : valide + pré-calcule en une passe, drafts alignés sur
-  // `isPublished`.
-  const seriesIndex = buildSeriesIndex(all, allSeries, {
-    isVisible: (a) => isPublished(a as CollectionEntry<'blog'>, 'en'),
-  });
-
-  const published = all.filter((entry) => isPublished(entry, 'en'));
-  const sorted = [...published].sort(
-    (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
-  );
-
-  const publishedRoutes = published.map((post) => {
-    const idx = sorted.findIndex((p) => p.id === post.id);
-    const nextPosts = [sorted[idx + 1], sorted[idx - 1]].filter(
-      (p): p is CollectionEntry<'blog'> => Boolean(p)
-    );
-    const seriesContext = seriesIndex.get(post.id);
-    return {
-      params: { slug: publicSlug(post) },
-      props: { post, nextPosts, seriesContext, isDraftPreview: false },
-    };
-  });
-
-  const draftRoutes = getDraftPreviewEntries(all, 'en')
-    .map((post) => {
-      const slug = getDraftSlugParam(publicSlug(post));
-      if (!slug) return null;
-      const seriesContext = seriesIndex.get(post.id);
-      return {
-        params: { slug },
-        props: { post, nextPosts: [], seriesContext, isDraftPreview: true },
-      };
-    })
-    .filter((r): r is NonNullable<typeof r> => r !== null);
-
-  return [...publishedRoutes, ...draftRoutes];
+  return buildBlogStaticPaths('en');
 }
 
 type Props = {
