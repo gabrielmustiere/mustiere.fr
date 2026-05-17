@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 import { SITE } from '@/consts';
 import { toISODate } from '@/utils/format-date';
 import { blogPath, isPublished, projectPath } from '@/utils/content';
-import { buildSeriesIndex } from '@/utils/series';
+import { buildSeriesIndex, sortArchive } from '@/utils/series';
 
 // Racine `llms.txt` — contenu FR (langue par défaut du site), avec un pointeur
 // explicite vers la variante localisée anglaise. Servi en text/plain pour que
@@ -15,11 +15,10 @@ export const GET: APIRoute = async () => {
   const seriesIndex = buildSeriesIndex(allBlog, allSeries, {
     isVisible: (a) => isPublished(a as CollectionEntry<'blog'>, 'fr'),
   });
-  const posts = allBlog
-    .filter((entry) => isPublished(entry, 'fr'))
-    .sort(
-      (a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime()
-    );
+  const posts = sortArchive(
+    allBlog.filter((entry) => isPublished(entry, 'fr')),
+    seriesIndex
+  );
 
   const projects = (
     await getCollection('projects', (entry) => isPublished(entry, 'fr'))
@@ -54,7 +53,8 @@ export const GET: APIRoute = async () => {
     seriesGroups.push({
       title: ctx.series.data.title,
       description: ctx.series.data.description,
-      episodes: ctx.episodes as CollectionEntry<'blog'>[],
+      // seriesOrder DESC : aligné avec l'archive (dernier épisode en tête).
+      episodes: [...ctx.episodes].reverse() as CollectionEntry<'blog'>[],
     });
   }
 

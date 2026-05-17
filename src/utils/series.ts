@@ -252,3 +252,53 @@ export function getSeriesContext(
   const map = buildContextMap(articles, seriesEntries, options);
   return map.get(article.id) ?? null;
 }
+
+// Tri des listings (archive blog, RSS, llms.txt) avec regroupement de séries.
+//
+// Règles, dans l'ordre :
+//   1. `bucketDate` DESC — pour un article de série, c'est `max(publishedAt)`
+//      de tous les épisodes visibles de la série ; pour un orphelin, c'est
+//      son propre `publishedAt`. Effet : toute la série partage la même clé
+//      primaire et reste contiguë, même si un orphelin a une date qui
+//      tomberait au milieu.
+//   2. `seriesOrder` DESC dans une série — le dernier épisode publié est
+//      en tête du bloc (cf. choix produit : "dernier en haut").
+//   3. `publishedAt` DESC en tie-break — départage deux orphelins à la même
+//      date, ou deux épisodes sans `seriesOrder` (cas improbable filtré
+//      avant, mais le comparateur reste total).
+//
+// L'`seriesIndex` doit avoir été construit avec le même `isVisible` que le
+// filtre amont des `articles`, sinon `bucketDate` peut inclure des épisodes
+// non rendus et casser le regroupement visuel.
+export function sortArchive<T extends BlogEntryLike>(
+  articles: ReadonlyArray<T>,
+  seriesIndex: SeriesIndex
+): T[] {
+  const bucketDateCache = new Map<string, number>();
+  const bucketDate = (a: T): number => {
+    const ctx = seriesIndex.get(a.id);
+    if (!ctx) return a.data.publishedAt.getTime();
+    const key = `${entryLang(a)}/${a.data.series}`;
+    const cached = bucketDateCache.get(key);
+    if (cached !== undefined) return cached;
+    let max = 0;
+    for (const ep of ctx.episodes) {
+      const t = ep.data.publishedAt.getTime();
+      if (t > max) max = t;
+    }
+    bucketDateCache.set(key, max);
+    return max;
+  };
+
+  return [...articles].sort((a, b) => {
+    const db = bucketDate(b) - bucketDate(a);
+    if (db !== 0) return db;
+    const oa = a.data.seriesOrder;
+    const ob = b.data.seriesOrder;
+    if (oa !== undefined && ob !== undefined) {
+      const ds = ob - oa;
+      if (ds !== 0) return ds;
+    }
+    return b.data.publishedAt.getTime() - a.data.publishedAt.getTime();
+  });
+}

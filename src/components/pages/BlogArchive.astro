@@ -16,7 +16,7 @@ import { routePath } from '@/i18n/routes';
 import { BLOG_CATEGORIES } from '@/i18n/ui';
 import type { Lang } from '@/i18n/config';
 import { isPublished } from '@/utils/content';
-import { buildSeriesIndex } from '@/utils/series';
+import { buildSeriesIndex, sortArchive } from '@/utils/series';
 import type { CollectionEntry } from 'astro:content';
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 
@@ -42,9 +42,13 @@ const seriesIndex = buildSeriesIndex(allBlogEntries, allSeries, {
   isVisible: (a) => isPublished(a as CollectionEntry<'blog'>, lang),
 });
 
-const all = allBlogEntries
-  .filter((entry) => isPublished(entry, lang))
-  .sort((a, b) => b.data.publishedAt.getTime() - a.data.publishedAt.getTime());
+// Tri archive : regroupement par série (bucketDate = max publishedAt du
+// groupe) puis seriesOrder DESC dans le bloc — dernier épisode en haut.
+// Cf. sortArchive() dans @/utils/series.
+const all = sortArchive(
+  allBlogEntries.filter((entry) => isPublished(entry, lang)),
+  seriesIndex
+);
 
 const totalCount = all.length;
 

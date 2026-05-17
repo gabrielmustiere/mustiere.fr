@@ -4,6 +4,7 @@ import {
   validateSeriesGraph,
   getSeriesContext,
   buildSeriesIndex,
+  sortArchive,
 } from '../src/utils/series.ts';
 
 function blog(id, data) {
@@ -195,6 +196,160 @@ test('buildSeriesIndex — lookup O(1) par article id', () => {
 
   assert.equal(index.get('fr/a3'), null);
   assert.equal(index.get('fr/inexistant'), null);
+});
+
+test('sortArchive — orphelins triés par publishedAt DESC', () => {
+  const a = blog('fr/a', {
+    lang: 'fr',
+    publishedAt: new Date('2026-05-01'),
+  });
+  const b = blog('fr/b', {
+    lang: 'fr',
+    publishedAt: new Date('2026-05-03'),
+  });
+  const c = blog('fr/c', {
+    lang: 'fr',
+    publishedAt: new Date('2026-05-02'),
+  });
+  const index = buildSeriesIndex([a, b, c], []);
+  const sorted = sortArchive([a, b, c], index);
+  assert.deepEqual(
+    sorted.map((x) => x.id),
+    ['fr/b', 'fr/c', 'fr/a']
+  );
+});
+
+test('sortArchive — épisodes de série regroupés, dernier en haut', () => {
+  // Une série de 3 épisodes aux dates mélangées : ils doivent tous être
+  // contigus, ordonnés par seriesOrder DESC dans le bloc, et le bloc daté
+  // sur la date la plus récente du groupe.
+  const e1 = blog('fr/e1', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 1,
+    publishedAt: new Date('2026-05-07'),
+  });
+  const e2 = blog('fr/e2', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 2,
+    publishedAt: new Date('2026-05-12'),
+  });
+  const e3 = blog('fr/e3', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 3,
+    publishedAt: new Date('2026-05-09'),
+  });
+  const s = series('fr/foo', { lang: 'fr' });
+  const index = buildSeriesIndex([e1, e2, e3], [s]);
+  const sorted = sortArchive([e1, e2, e3], index);
+  assert.deepEqual(
+    sorted.map((x) => x.id),
+    ['fr/e3', 'fr/e2', 'fr/e1']
+  );
+});
+
+test('sortArchive — orphelin avec date intermédiaire ne casse pas le bloc', () => {
+  // Le bloc série a un bucketDate = 2026-05-12 (max du groupe). L'orphelin
+  // au 2026-05-10 doit passer APRÈS tout le bloc, pas s'intercaler entre
+  // les épisodes.
+  const e1 = blog('fr/e1', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 1,
+    publishedAt: new Date('2026-05-07'),
+  });
+  const e2 = blog('fr/e2', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 2,
+    publishedAt: new Date('2026-05-12'),
+  });
+  const orphan = blog('fr/orphan', {
+    lang: 'fr',
+    publishedAt: new Date('2026-05-10'),
+  });
+  const s = series('fr/foo', { lang: 'fr' });
+  const index = buildSeriesIndex([e1, e2, orphan], [s]);
+  const sorted = sortArchive([e1, e2, orphan], index);
+  assert.deepEqual(
+    sorted.map((x) => x.id),
+    ['fr/e2', 'fr/e1', 'fr/orphan']
+  );
+});
+
+test('sortArchive — série plus ancienne passe sous un orphelin plus récent', () => {
+  const e1 = blog('fr/e1', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 1,
+    publishedAt: new Date('2026-04-01'),
+  });
+  const e2 = blog('fr/e2', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 2,
+    publishedAt: new Date('2026-04-05'),
+  });
+  const orphan = blog('fr/orphan', {
+    lang: 'fr',
+    publishedAt: new Date('2026-05-01'),
+  });
+  const s = series('fr/foo', { lang: 'fr' });
+  const index = buildSeriesIndex([e1, e2, orphan], [s]);
+  const sorted = sortArchive([e1, e2, orphan], index);
+  assert.deepEqual(
+    sorted.map((x) => x.id),
+    ['fr/orphan', 'fr/e2', 'fr/e1']
+  );
+});
+
+test('sortArchive — deux orphelins même date départagés par publishedAt (stable)', () => {
+  // Tie-break exact : même publishedAt → l'ordre dépend de Array.sort, qui
+  // est stable depuis ES2019. On vérifie juste qu'aucun n'écrase l'autre.
+  const a = blog('fr/a', {
+    lang: 'fr',
+    publishedAt: new Date('2026-05-07'),
+  });
+  const b = blog('fr/b', {
+    lang: 'fr',
+    publishedAt: new Date('2026-05-07'),
+  });
+  const index = buildSeriesIndex([a, b], []);
+  const sorted = sortArchive([a, b], index);
+  assert.equal(sorted.length, 2);
+  assert.ok(sorted.find((x) => x.id === 'fr/a'));
+  assert.ok(sorted.find((x) => x.id === 'fr/b'));
+});
+
+test('sortArchive — isVisible filtre amont aligné avec index (drafts cachés)', () => {
+  // Si le filtre amont retire un draft mais que l'index considère ce draft
+  // comme visible, le bucketDate inclurait sa publishedAt et fausserait le
+  // tri. On vérifie que le contrat tient quand les deux sont alignés.
+  const e1 = blog('fr/e1', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 1,
+    publishedAt: new Date('2026-05-01'),
+  });
+  const e2 = blog('fr/e2', {
+    lang: 'fr',
+    series: 'foo',
+    seriesOrder: 2,
+    publishedAt: new Date('2026-05-20'),
+    draft: true,
+  });
+  const s = series('fr/foo', { lang: 'fr' });
+  const isVisible = (a) => !a.data.draft;
+  const index = buildSeriesIndex([e1, e2], [s], { isVisible });
+  const visible = [e1, e2].filter(isVisible);
+  const sorted = sortArchive(visible, index);
+  // e2 (draft) filtré → bucketDate = 2026-05-01 → seul e1 reste.
+  assert.deepEqual(
+    sorted.map((x) => x.id),
+    ['fr/e1']
+  );
 });
 
 test('buildSeriesIndex — isVisible custom inclut les drafts (mode DEV/SHOW_DRAFTS)', () => {
