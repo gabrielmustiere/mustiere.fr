@@ -3,6 +3,7 @@
 @theme {
   --color-bg: #fafaf7;
   --color-ink: #181613;
+  --color-ink-soft: #2a2622;
   --color-muted: #6b655d;
   --color-rule: #e4dfd6;
   --color-rule-strong: #bdb6a8;
@@ -164,7 +165,7 @@ body {
 
 .prose {
   max-width: var(--w-prose);
-  color: #2a2622;
+  color: var(--color-ink-soft);
   font-size: 16px;
   line-height: 1.7;
   text-wrap: pretty;
