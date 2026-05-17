@@ -1,7 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { stripOrderPrefix } from '../src/content-loaders/order-prefix.ts';
-import { assertLangMatchesParent } from '../src/content-loaders/lang-validation.ts';
+import {
+  assertLangMatchesParent,
+  createPublicSlugClaimer,
+} from '../src/content-loaders/lang-validation.ts';
 
 test('stripOrderPrefix — retire un préfixe numérique suivi d’un tiret', () => {
   assert.equal(stripOrderPrefix('001-foo'), 'foo');
@@ -61,5 +64,21 @@ test('assertLangMatchesParent — mismatch explicite rejette avec chemin et vale
         '/x/en/foo/index.mdx'
       ),
     /lang="fr".*"en\/"/s
+  );
+});
+
+test('createPublicSlugClaimer — claim unique par (lang, slug) passe', () => {
+  const claim = createPublicSlugClaimer();
+  assert.doesNotThrow(() => claim('fr', 'foo', '/x/fr/foo'));
+  assert.doesNotThrow(() => claim('en', 'foo', '/x/en/foo')); // même slug, lang différente
+  assert.doesNotThrow(() => claim('fr', 'bar', '/x/fr/bar'));
+});
+
+test('createPublicSlugClaimer — deux entrées même (lang, slug) lèvent avec les deux chemins', () => {
+  const claim = createPublicSlugClaimer();
+  claim('fr', 'foo', '/x/fr/001-foo/index.mdx');
+  assert.throws(
+    () => claim('fr', 'foo', '/x/fr/archive/legacy-foo/index.mdx'),
+    /collision de slug public "fr\/foo".*001-foo.*legacy-foo/s
   );
 });

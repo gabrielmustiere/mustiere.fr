@@ -16,7 +16,10 @@ import {
   parseSources,
 } from './seo-sections';
 import { stripOrderPrefix } from './order-prefix';
-import { assertLangMatchesParent } from './lang-validation';
+import {
+  assertLangMatchesParent,
+  createPublicSlugClaimer,
+} from './lang-validation';
 
 // Loader maison qui remplace `glob` pour les collections `blog` et `projects`
 // du refacto 004-r-mdx-chapter-split. Supporte deux formes en parallèle :
@@ -141,6 +144,12 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
         }
         seenIds.set(id, source);
       };
+      // Refacto 010 étape 8 : détecte les collisions sur le slug FINAL
+      // (= `data.slug ?? slug-de-dossier`) par couple (collection, lang).
+      // Le `claimId` ci-dessus se base sur le nom de dossier ; il ne couvre
+      // pas le cas où deux entrées avec des dossiers différents portent un
+      // `slug:` identique dans le frontmatter.
+      const claimPublicSlug = createPublicSlugClaimer();
 
       const processDir = async (
         dirPath: string,
@@ -166,13 +175,16 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
               ext,
               id,
               expectedLang,
+              fallbackSlug: slug,
+              claimPublicSlug,
             });
             untouched.delete(id);
           } else if (entry.isDirectory()) {
             // `dirName` reste préfixé (sert à lire le disque) ; `id` est
             // déduit du nom sans préfixe d'ordre éventuel, pour que renommer
             // `foo/` en `001-foo/` ne change ni l'URL ni `translationOf`.
-            const id = idPrefix + stripOrderPrefix(entry.name);
+            const dirSlug = stripOrderPrefix(entry.name);
+            const id = idPrefix + dirSlug;
             claimId(id, join(dirPath, entry.name));
             await loadFolder({
               ctx,
@@ -183,6 +195,8 @@ export function chapteredGlob(options: ChapteredGlobOptions): Loader {
               id,
               collection,
               expectedLang,
+              fallbackSlug: dirSlug,
+              claimPublicSlug,
             });
             untouched.delete(id);
           }
@@ -224,8 +238,20 @@ async function loadFlat(args: {
   ext: string;
   id: string;
   expectedLang: string | null;
+  fallbackSlug: string;
+  claimPublicSlug: (lang: string, slug: string, source: string) => void;
 }) {
-  const { ctx, rootPath, baseDirPath, fileName, ext, id, expectedLang } = args;
+  const {
+    ctx,
+    rootPath,
+    baseDirPath,
+    fileName,
+    ext,
+    id,
+    expectedLang,
+    fallbackSlug,
+    claimPublicSlug,
+  } = args;
   const filePath = join(baseDirPath, fileName);
   const fileUrl = pathToFileURL(filePath);
   const contents = readFileSync(filePath, 'utf-8');
@@ -238,6 +264,14 @@ async function loadFlat(args: {
 
   const { body, data } = await entryType.getEntryInfo({ contents, fileUrl });
   assertLangMatchesParent(data, expectedLang, filePath);
+  const effectiveSlug =
+    typeof data.slug === 'string' && data.slug.length > 0
+      ? data.slug
+      : fallbackSlug;
+  const effectiveLang =
+    expectedLang ??
+    (typeof data.lang === 'string' ? data.lang : 'fr');
+  claimPublicSlug(effectiveLang, effectiveSlug, filePath);
   const digest = ctx.generateDigest(contents);
   const relPath = posixRelative(rootPath, filePath);
 
@@ -273,6 +307,8 @@ async function loadFolder(args: {
   id: string;
   collection: string;
   expectedLang: string | null;
+  fallbackSlug: string;
+  claimPublicSlug: (lang: string, slug: string, source: string) => void;
 }) {
   const {
     ctx,
@@ -283,6 +319,8 @@ async function loadFolder(args: {
     id,
     collection,
     expectedLang,
+    fallbackSlug,
+    claimPublicSlug,
   } = args;
   const dirPath = join(baseDirPath, dirName);
   const files = readdirSync(dirPath);
@@ -320,6 +358,14 @@ async function loadFolder(args: {
     fileUrl: indexUrl,
   });
   assertLangMatchesParent(data, expectedLang, indexPath);
+  const effectiveSlug =
+    typeof data.slug === 'string' && data.slug.length > 0
+      ? data.slug
+      : fallbackSlug;
+  const effectiveLang =
+    expectedLang ??
+    (typeof data.lang === 'string' ? data.lang : 'fr');
+  claimPublicSlug(effectiveLang, effectiveSlug, indexPath);
 
   const chapterFiles: string[] = [];
   // Sections SEO réservées : resume.mdx (obligatoire), faq.mdx, sources.mdx.
