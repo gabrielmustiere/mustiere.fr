@@ -3,6 +3,9 @@ import { getCollection, type CollectionEntry } from 'astro:content';
 import type { Lang } from '@/i18n/config';
 import { localizedPath } from '@/i18n/utils';
 import { routePath } from '@/i18n/routes';
+import { publicSlug, pickTranslationLegacy } from './content-pure';
+
+export { publicSlug } from './content-pure';
 
 type PublishableEntry =
   | CollectionEntry<'blog'>
@@ -10,14 +13,6 @@ type PublishableEntry =
   | CollectionEntry<'series'>;
 
 type TranslatableCollection = 'blog' | 'projects' | 'series';
-
-// Les collections `blog` et `projects` utilisent `nestedByLang` : l'`id`
-// d'entrée porte un préfixe `fr/` ou `en/` (ex. `fr/symfony-template`). Le slug
-// public est la dernière section, sans préfixe.
-export function publicSlug(entry: { id: string }): string {
-  const parts = entry.id.split('/');
-  return parts[parts.length - 1];
-}
 
 // URL canonique d'un projet pour la langue donnée. Combine `routePath`
 // (segment localisé `/projets` vs `/projects`) et `localizedPath` (préfixe lang
@@ -104,22 +99,15 @@ export async function findTranslation<C extends TranslatableCollection>(
   const candidates = await getCollection(collection, (e) =>
     isPublished(e as PublishableEntry, otherLang)
   );
-  // `translationOf` peut référencer soit l'id complet (forme historique :
-  // `symfony-template-en` quand la collection était plate), soit le slug public
-  // pur (`symfony-template` avec le layout nestedByLang). On compare sur les
-  // deux formes pour rester compatible avec les deux conventions.
-  const forwardRef = (entry.data as { translationOf?: string }).translationOf;
-  if (forwardRef) {
-    const forward = candidates.find(
-      (c) => c.id === forwardRef || publicSlug(c) === forwardRef
-    );
-    if (forward) return forward;
-  }
-  const entrySlug = publicSlug(entry);
-  return candidates.find((c) => {
-    const ref = (c.data as { translationOf?: string }).translationOf;
-    return ref === entry.id || ref === entrySlug;
-  });
+  // Logique pure dans content-pure.ts pour testabilité (le module ne peut pas
+  // être importé en test Node car `astro:content` est un module virtuel Astro).
+  return pickTranslationLegacy(
+    candidates as unknown as {
+      id: string;
+      data: { translationOf?: string };
+    }[],
+    entry as unknown as { id: string; data: { translationOf?: string } }
+  ) as CollectionEntry<C> | undefined;
 }
 
 export function getDraftPreviewEntries<T extends PublishableEntry>(
