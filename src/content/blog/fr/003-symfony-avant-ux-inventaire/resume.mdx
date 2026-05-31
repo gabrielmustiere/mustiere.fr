@@ -1,9 +1,0 @@
-Toute codebase Symfony d'une certaine maturité accumule la même couche sédimentaire : des `include` Twig, des macros, du `render(controller())`, une extension
-Twig, du Stimulus collé à un endpoint Ajax custom. **Cinq mécanismes** qui ont tous leur usage légitime à leur échelle, mais qui, mis bout à bout, ne tiennent
-pas le contrat « modèle composant ».
-
-Trois douleurs structurelles ressortent une fois l'inventaire fait : **pas de contrat de typage** entre vue et données (props non typées, refactor risqué),
-**pas d'unité d'organisation** pour parler de _composant_ (un fragment vivant éclate sur quatre à cinq fichiers sans nom commun), **pas de réactivité
-server-driven** sans sortir de Symfony (le couple Stimulus + endpoint Ajax réintroduit deux codebases sans en supprimer aucune). Symfony UX règle les trois en
-empilant deux briques : Twig Components apporte le composant statique typé (épisode 2 de la série), Live Components ajoute la réactivité server-driven (épisodes
-3 à 5). Premier épisode : le diagnostic. Sans diagnostic propre, le reste de la série flotte.

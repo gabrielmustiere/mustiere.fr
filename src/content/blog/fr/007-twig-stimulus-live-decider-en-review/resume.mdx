@@ -1,9 +1,0 @@
-Dernier épisode, celui qu'on cite en review. **La règle qui suffit dans 95 % des cas tient en deux questions** : (1) y a-t-il une interaction qui modifie l'UI ?
-Si non → Twig Component. Si oui → (2) cette interaction dépend-elle d'un état ou de données serveur ? Non → Stimulus. Oui → Live Component. Stimulus apparaît
-deux fois dans la grille de décision (toggle dark mode, copy-to-clipboard) — Live Components n'a jamais visé à le remplacer, il le pousse vers ses cas
-pertinents. **Cinq anti-patterns** à reconnaître : entité Doctrine entière en `LiveProp`, plusieurs `LiveAction` enchaînées sur un seul clic, Live Component
-sans `LiveProp writable` ni `LiveAction` (= Twig Component qui paie la sérialisation pour rien), slider/WYSIWYG/canvas en Live (= Stimulus pur), composants
-imbriqués profilés au coup par coup au lieu de la cascade complète. **Plan d'adoption progressive** : cette semaine, installer + extraire un Twig Component
-trivial + écrire un Counter Live. Ce mois-ci, réécrire un widget Stimulus + endpoint Ajax custom en Live Component. Ce trimestre, documenter la règle en guide
-d'équipe + auditer les pages existantes. La grille ne couvre pas l'arbitrage React, qui n'est pas un sujet techno mais d'organisation d'équipe — sujet d'un
-prochain article orienté CTO.
