@@ -1,0 +1,8 @@
+Twig Components est le **socle statique** de Symfony UX : une classe PHP (les props sont des propriétés publiques typées) plus un template Twig qui porte le
+markup, appelé en `<twig:Alert message="…" />`. Trois mécaniques structurent l'API : `{{ attributes }}` capture et fusionne les attributs HTML extra de
+l'appelant (oubli classique en review), les **slots** passent un fragment HTML structuré (équivalent `children` React) via `{% block %}` Twig, et la classe est
+un **service Symfony** comme un autre — injection de dépendances par le constructeur, accès aux repositories, plus besoin d'extension Twig globale pour
+formater. Côté template, la convention `computed.foo` met en cache une méthode pour la durée du rendu (sans elle, deux accès dans un `{% if %}…{% for %}` = deux
+requêtes SQL — piège récurrent qui remonte dans l'épisode 4). Le cycle de vie offre `mount`, `#[PreMount]` (validation via `OptionsResolver`), `#[PostMount]`,
+plus un template dynamique pour les composants polymorphes. Twig Components règle deux des trois douleurs de l'épisode 1 — contrat de typage et unité
+d'organisation — mais reste **statique** : aucun état entre requêtes, aucune réactivité. C'est précisément ce que l'épisode 3 ajoute par-dessus.

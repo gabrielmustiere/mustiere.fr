@@ -1,0 +1,10 @@
+Pivot de la série. Live Components est une **surcouche** de Twig Components, opt-in composant par composant : on ajoute trois briques à la classe — `LiveProp`
+(état synchronisé client ↔ serveur via attributs `data-live-*` dans le DOM), `LiveAction` (méthode PHP déclenchable depuis le DOM, autowiring + CSRF gérés par
+le bundle), `data-model` (liaison input ↔ prop, équivalent `v-model` Vue). Le **cycle est en deux phases** : phase 1, render initial qui sérialise l'état dans
+le HTML rendu, le composant n'existe plus côté serveur ensuite ; phase 2, à chaque interaction, le contrôleur Stimulus côté client envoie
+`POST /_components/<NomDuComposant>?action=…` avec `props + updated + @checksum`, le serveur reconstruit le composant, exécute l'action, re-rend, **morphdom**
+patche les nœuds modifiés (focus, scroll, classes CSS préservés). Live Components s'inscrit dans la famille **HTML-over-the-wire** : Phoenix LiveView (2018,
+ancêtre Elixir), Hotwire (2020, Rails), Laravel Livewire (2020, cousin PHP), htmx (2020, agnostique). Stimulus n'est ni mort ni remplacé : `live_controller.js`
+(25-30 Ko) **est** un contrôleur Stimulus packagé dans le bundle. `LiveProp` a quatre modes : read-only par défaut, writable, writable sélectif (whitelist sur
+objet), URL binding (query string + bouton retour). Pour les entités Doctrine, surcharger `hydrateWith` / `dehydrateWith` pour ne sérialiser qu'un ID — sinon
+l'entité entière voyage à chaque cycle.
