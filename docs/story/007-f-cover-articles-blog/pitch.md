@@ -96,3 +96,11 @@ Pistes brutes à creuser dans `/feature-design`, **sans concevoir ici** :
 - **Format(s) servis** : WebP seul, AVIF + WebP, fallback PNG/JPEG ? À calibrer selon les capacités cibles et le poids résultant.
 - **Lazy-loading** : `loading="lazy"` partout sauf header de l'article et carte au-dessus de la ligne de flottaison sur `/blog/` ?
 - **Test OG** : qui valide les vignettes LinkedIn / X manuellement et à quelle fréquence (à chaque release ? à chaque nouvel article ?) ?
+
+---
+
+## Changelog
+
+| Date       | Type             | Description                                                                                                                                         |
+| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : renommage `feature.md`→`pitch.md` / `design.md`→`plan.md` + ajout de la table de changelog. Contenu inchangé. |

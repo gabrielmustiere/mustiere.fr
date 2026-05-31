@@ -104,3 +104,11 @@ Pointeurs bruts pour `/feature-design`, sans concevoir ici :
 - **Slugs des 4 nouveaux articles** : à dériver des chapitres actuels (`live-components-archeologie-pre-ux`, `live-components-twig-components-le-socle`, etc.) ou complètement repensés (les chapitres ont été nommés pour s'enchaîner, pas pour être des billets autonomes). À valider éditorialement.
 - **Position visuelle exacte du bandeau de série dans `ArticleLayout.astro`** : avant H1, après H1 mais avant la cover, ou après la cover ? À trancher en review du design — cohérence avec `ReadingProgress`, breadcrumbs et autres éléments en tête de page.
 - **Réutilisation de la cover de l'article actuel** : la cover existante (`cover.png` du dossier live-components) sert-elle de cover de l'épisode 1, est-elle retravaillée pour 5 visuels, ou est-elle déclinée sur le même thème ? Choix éditorial.
+
+---
+
+## Changelog
+
+| Date       | Type             | Description                                                                                                                                         |
+| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : renommage `feature.md`→`pitch.md` / `design.md`→`plan.md` + ajout de la table de changelog. Contenu inchangé. |

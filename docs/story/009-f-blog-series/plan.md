@@ -1,6 +1,6 @@
 # Design — Séries d'articles de blog
 
-> Feature spec : `docs/story/009-f-blog-series/feature.md`
+> Feature spec : `docs/story/009-f-blog-series/pitch.md`
 > Stack : Astro 6 SSG bilingue (FR/EN), TypeScript strict, content collections Zod, loader custom `chapteredGlob`.
 
 ## Approche retenue
@@ -183,3 +183,11 @@ Les tests E2E Playwright n'existent pas sur ce projet (mention `workflow:test-sc
 - **Sort de l'`index.mdx` actuel** (619 mots, intro de l'article live-components) : absorbé dans l'épisode 1 ou redistribué. Choix éditorial.
 - **Réutilisation de la cover** : déclinée en 5 visuels, identique sur les 5, ou retravaillée. Choix éditorial.
 - **Comportement en cas de série déclarée mais sans aucun épisode publié** : `getSeriesContext` renvoie `null` pour ses (futurs) épisodes encore drafts ? Ou un contexte avec `episodes=[]` et tout à null/-1 ? Je penche pour `null` (cohérent avec "aucun rendu si rien n'est publié"), mais à confirmer en cours d'implémentation. Le test de l'étape 2 le tranche.
+
+---
+
+## Changelog
+
+| Date       | Type             | Description                                                                                                                                         |
+| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : renommage `feature.md`→`pitch.md` / `design.md`→`plan.md` + ajout de la table de changelog. Contenu inchangé. |

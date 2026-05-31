@@ -1,6 +1,6 @@
 # Design — Sections SEO standardisées pour articles et side-projects
 
-> Feature spec : `docs/story/005-f-sections-seo-articles/feature.md`
+> Feature spec : `docs/story/005-f-sections-seo-articles/pitch.md`
 > Stack : Astro 6 SSG bilingue (FR/EN) · Content Collections · MDX · loader custom `chaptered-glob` · Tailwind CSS 4 · Github Pages
 
 ## Approche retenue

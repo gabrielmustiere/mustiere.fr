@@ -149,3 +149,11 @@ Approche : créer une fixture (un article + un side-project marqués `draft: tru
 
 - Faut-il garder une fixture draft committée en permanence comme test de régression vivant (ex: `src/content/blog/_fixture-draft.mdx`) ? Décider à l'étape 5.
 - Convention de nommage des slugs draft : aucune contrainte technique, mais on peut adopter un préfixe `wip-` pour repérage visuel rapide. Optionnel.
+
+---
+
+## Changelog
+
+| Date       | Type             | Description                                                                                      |
+| ---------- | ---------------- | ----------------------------------------------------------------------------------------------- |
+| 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : ajout de la table de changelog en pied. Contenu inchangé. |

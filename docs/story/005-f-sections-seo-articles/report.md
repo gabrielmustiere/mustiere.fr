@@ -1,13 +1,13 @@
 # Report — Sections SEO standardisées pour articles et side-projects
 
-> Feature spec : `docs/story/005-f-sections-seo-articles/feature.md`
-> Design : `docs/story/005-f-sections-seo-articles/design.md`
+> Feature spec : `docs/story/005-f-sections-seo-articles/pitch.md`
+> Design : `docs/story/005-f-sections-seo-articles/plan.md`
 > Date d'implémentation : 2026-04-29
 > Commits liés : `fb6b1df`
 
 ## Résumé
 
-Convention de fichiers MDX réservés (`resume.mdx`, `faq.mdx`, `sources.mdx`) livrée intégralement, schéma Zod resserré, layouts basculés, validation parité i18n active. **Conformité globale au design** avec quelques écarts mineurs assumés (tooling de tests, snapshots before/after, suppression de `<Callout>` devenu mort). Aucun écart fonctionnel par rapport à `feature.md`.
+Convention de fichiers MDX réservés (`resume.mdx`, `faq.mdx`, `sources.mdx`) livrée intégralement, schéma Zod resserré, layouts basculés, validation parité i18n active. **Conformité globale au design** avec quelques écarts mineurs assumés (tooling de tests, snapshots before/after, suppression de `<Callout>` devenu mort). Aucun écart fonctionnel par rapport à `pitch.md`.
 
 ## Ce qui a été implémenté
 
@@ -92,11 +92,11 @@ QA finale : `npm run check` 0/0/1 hint pré-existant (avant suppression de Callo
 - **Pas de test fonctionnel isolé du loader** : aujourd'hui le build prod sert de test fonctionnel implicite. Acceptable vu la taille du projet (3 articles + 2 projets), à reconsidérer si l'arborescence content/ se densifie.
 - **Frontmatter `index.mdx` peut écraser silencieusement** une section injectée par le loader : risque faible mais pas couvert.
 - **`marked` non utilisé en mode safe / sanitize** : sans risque vu le contexte mono-auteur SSG, à revoir si le projet ouvre un jour aux contributions externes.
-- **`docs/story/005-f-sections-seo-articles/design.md`** mentionne en "questions ouvertes" plusieurs points qui restent ouverts post-implémentation : placement TOC (gardé sous le résumé), troncature meta description (non implémentée car l'`excerpt` joue toujours ce rôle), format précis sources (livré : liste numérotée avec auteur · date · hostname).
+- **`docs/story/005-f-sections-seo-articles/plan.md`** mentionne en "questions ouvertes" plusieurs points qui restent ouverts post-implémentation : placement TOC (gardé sous le résumé), troncature meta description (non implémentée car l'`excerpt` joue toujours ce rôle), format précis sources (livré : liste numérotée avec auteur · date · hostname).
 
 ## Critères d'acceptation
 
-Reprise depuis `feature.md` :
+Reprise depuis `pitch.md` :
 
 - [x] Le loader `chaptered-glob` reconnaît les noms réservés `resume.mdx`, `faq.mdx`, `sources.mdx` et les expose en metadata sans les agréger au body.
 - [ ] Le build échoue avec un message **clair** si `resume.mdx` est absent dans un dossier d'article ou de projet. → Le build échoue, mais via Zod (message générique). Voir dette ci-dessus.

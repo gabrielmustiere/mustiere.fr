@@ -9,7 +9,7 @@ type: project
 > Date : 2026-05-08
 > Stack : Astro 6 SSG bilingue (TypeScript strict, content collections Zod, loader `chapteredGlob`)
 > Périmètre : working tree (13 fichiers modifiés, ~412 lignes ajoutées) + 5 fichiers/dossiers nouveaux (`src/components/ui/SeriesBanner.astro`, `SeriesNav.astro`, `src/utils/series.ts`, `src/content/series/{fr,en}/`, `tests/series.test.mjs`)
-> Référence d'intention : `docs/story/009-f-blog-series/design.md` + `feature.md`
+> Référence d'intention : `docs/story/009-f-blog-series/plan.md` + `pitch.md`
 
 ## Bloquants
 
@@ -34,7 +34,7 @@ _Aucun._ Le mécanisme tourne — `npm run check` clean, `npm run test` passe (2
 ## Points positifs
 
 - **Helper testable hors Astro** : `src/utils/series.ts` est strictement structural (`BlogEntryLike`, `SeriesEntryLike`), aucun import de `astro:content`. Permet le test Node natif `tests/series.test.mjs` qui couvre 11 cas — pathologiques inclus (mismatch lang, duplicate draft toléré, draft courant inclus dans sa propre page).
-- **Byte-équivalence préservée par construction** : `isPartOf` reste `{'@id': WEBSITE_ID}` sans série ; `seriesGroups` vide ⇒ `orphans = posts` ⇒ rendu llms.txt identique à la version pré-feature ; `seriesChipLabel` null ⇒ `class:list` ne pousse pas la classe `flex-wrap`. Le critère « aucune régression sur articles non-série » du `feature.md` ligne 59 sera vérifiable via `scripts/snapshot-build.mjs` (étape 8 du plan, à dérouler).
+- **Byte-équivalence préservée par construction** : `isPartOf` reste `{'@id': WEBSITE_ID}` sans série ; `seriesGroups` vide ⇒ `orphans = posts` ⇒ rendu llms.txt identique à la version pré-feature ; `seriesChipLabel` null ⇒ `class:list` ne pousse pas la classe `flex-wrap`. Le critère « aucune régression sur articles non-série » du `pitch.md` ligne 59 sera vérifiable via `scripts/snapshot-build.mjs` (étape 8 du plan, à dérouler).
 - **Validation cross-collection au seuil de la page** : `validateSeriesGraph` lance avec un message qui pointe l'`id` fautif et propose la correction (`Crée src/content/series/<lang>/<slug>.md`). Casse le build au moment où c'est rattrapable, comme exigé par CLAUDE.md.
 
 ## Verdict

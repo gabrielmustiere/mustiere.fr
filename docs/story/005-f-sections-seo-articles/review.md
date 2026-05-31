@@ -3,7 +3,7 @@
 > Date : 2026-04-29
 > Stack : Astro 6 SSG · MDX · loader `chaptered-glob`
 > Périmètre : working tree (18 fichiers M, 11 fichiers nouveaux, ~580 ajouts / ~165 suppressions)
-> Référence d'intention : `docs/story/005-f-sections-seo-articles/design.md` + `feature.md`
+> Référence d'intention : `docs/story/005-f-sections-seo-articles/plan.md` + `pitch.md`
 
 ## Bloquants
 
@@ -20,7 +20,7 @@ Aucun. Build vert, 15/15 tests, lint clean, conforme au design.
 - [ ] **CONV** `src/content-loaders/chaptered-glob.ts:301-303` — `data.faq = faqData` (idem pour `resume`/`sources`) écrase silencieusement un éventuel champ `faq` présent dans le frontmatter `index.mdx`. Avec le schéma Zod actuel (sans `tldr`/`faq`/`summary`), le frontmatter ignore les champs inconnus par défaut — donc un dev qui remettrait `faq:` par mégarde dans son index.mdx ne serait pas averti. Optionnel : avertir explicitement (logger) si `data` contient déjà un champ qui sera écrasé par le loader.
 - [ ] **DESIGN** `src/content-loaders/chaptered-glob.ts` — Si `resume.mdx` est absent dans une forme dossier, l'erreur vient de Zod (`resume: Required`) avec un message générique pointant l'`index.mdx`. L'attendu (cf. design : "Le build échoue avec un message clair si resume.mdx est absent") serait plutôt une erreur du loader pointant le dossier. Pas critique vu que tout le contenu est migré, mais le message d'erreur ne pointera pas l'auteur dans la bonne direction si l'erreur survient à l'avenir.
 - [ ] **SECU** `src/components/ui/Resume.astro:25` — `set:html={html}` injecte le HTML produit par `marked.parse()`. Le contenu vient du repo (mono-auteur, build statique), donc pas d'exposition XSS. Acceptable dans ce contexte. À ré-évaluer si le projet accepte des contributions externes ou des contenus tiers — auquel cas il faudrait passer le HTML par `DOMPurify` ou activer `marked` en mode sanitize.
-- [ ] **DOC** `docs/story/005-f-sections-seo-articles/design.md` — Le design promet une convention "FAQ obligatoire pour blog, optionnelle projects" comme one des options du pitch, mais la convention finale retenue est "FAQ optionnelle, sources optionnelles" partout. Bien aligné avec l'implémentation, juste à confirmer que c'est l'intention.
+- [ ] **DOC** `docs/story/005-f-sections-seo-articles/plan.md` — Le design promet une convention "FAQ obligatoire pour blog, optionnelle projects" comme one des options du pitch, mais la convention finale retenue est "FAQ optionnelle, sources optionnelles" partout. Bien aligné avec l'implémentation, juste à confirmer que c'est l'intention.
 
 ## Points positifs
 

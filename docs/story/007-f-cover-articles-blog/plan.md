@@ -1,6 +1,6 @@
 # Design — Cover image obligatoire pour les articles de blog
 
-> Feature spec : `docs/story/007-f-cover-articles-blog/feature.md`
+> Feature spec : `docs/story/007-f-cover-articles-blog/pitch.md`
 > Stack : Astro 6 SSG bilingue (TS + Tailwind 4)
 
 ## Approche retenue
@@ -19,7 +19,7 @@ L'héritage FR↔EN est centralisé dans un helper `getCover(entry)` qui résout
 
 - `cover: z.string()` (chemin sous `/public/`) comme pour les projects : exclu pour bénéficier de l'optimisation `<Image>` / `<Picture>` (impossible depuis `/public/`) et du typage `ImageMetadata`.
 - Stockage sous `src/assets/blog/<slug>/` (séparation contenu/binaire) : exclu au profit de la co-localisation déjà en place pour le reste des assets éditoriaux du dossier article.
-- **Cover 1:1 carrée** initialement prévue dans `feature.md` règle 3 + design : remplacée par 16:9 paysage. Raisons : (1) cohérence avec le ratio des covers projects et avec la majorité des sources d'images éditoriales (illustrations LLM, screenshots), (2) un seul rendu partout (header + cartes + OG) sans avoir à gérer un crop visuel par emplacement, (3) ratio plus naturel pour les vignettes OG paysage attendues par LinkedIn/X.
+- **Cover 1:1 carrée** initialement prévue dans `pitch.md` règle 3 + design : remplacée par 16:9 paysage. Raisons : (1) cohérence avec le ratio des covers projects et avec la majorité des sources d'images éditoriales (illustrations LLM, screenshots), (2) un seul rendu partout (header + cartes + OG) sans avoir à gérer un crop visuel par emplacement, (3) ratio plus naturel pour les vignettes OG paysage attendues par LinkedIn/X.
 - **Layout header « row vignette + texte »** initialement prévu : remplacé par cover 16/9 full-width au-dessus du titre. Évite le crop visuel d'une image source en vignette carrée.
 - `cover` strictement obligatoire (zod `image()` non-optionnel) : remplacé par `image().optional()` + `superRefine` (cover OR translationOf). Permet à une entrée EN d'hériter de la cover FR sans fichier dupliqué. Si les deux entrées d'une paire FR/EN portent leur propre `cover`, c'est valide aussi (deux fichiers, deux images).
 - `coverAlt` obligatoire : remplacé par optionnel ; fallback `''` (image décorative) plutôt que `data.title` pour éviter que les lecteurs d'écran annoncent le titre deux fois (image puis h1/h2/h3 voisin). L'auteur peut déclarer un `coverAlt` descriptif si l'image porte une information non redondante avec le titre.
@@ -36,7 +36,7 @@ Schéma `blog` (`src/content.config.ts`) — passage à la forme fonction pour a
 | `coverAlt` | `z.string().min(3).optional()`                 | **ajouté, optionnel** (fallback `''` au rendu — image décorative) |
 | `ogImage`  | `z.string().optional()`                        | **retiré**                                                        |
 
-Schéma `projects` inchangé (le champ `cover: z.string().optional()` du côté projects reste hors scope, cf. `feature.md` — Hors scope).
+Schéma `projects` inchangé (le champ `cover: z.string().optional()` du côté projects reste hors scope, cf. `pitch.md` — Hors scope).
 
 Forme finale du schéma blog :
 
@@ -120,7 +120,7 @@ Les frontmatters référencent leur cover via un chemin **relatif à l'index** (
 - **A11y** — `alt = data.coverAlt ?? ''`. Sans `coverAlt` explicite, l'image est traitée comme **décorative** (alt vide) puisque le titre est rendu en h1/h2/h3 immédiatement à côté du `<Picture>`. Évite le doublon TalkBack/VoiceOver. À tester via `pa11y-ci` sur `/blog/`, une page article et la home.
 - **Migration de données** — retrait global de `ogImage` (schéma + 3 consommateurs + frontmatters existants) ; backfill de covers par article publié. Les paires FR/EN peuvent partager une seule image via `translationOf` ou en porter deux distinctes selon le choix éditorial.
 - **Build** — `superRefine` valide qu'une cover est résolvable (locale ou héritée) ; un article sans `cover` et sans `translationOf` casse `npm run build` avec un message Zod clair.
-- Multi-channel / multi-tenant / multi-thème / API / permissions / emails : non pertinents (cf. `feature.md`).
+- Multi-channel / multi-tenant / multi-thème / API / permissions / emails : non pertinents (cf. `pitch.md`).
 
 ## Ordre d'implémentation
 
@@ -157,10 +157,18 @@ Pas de test unitaire formel introduit (le projet n'a pas de runner) — la couve
 - **LCP du premier item `/blog/`** — devient candidate au LCP. `loading="eager"` + `fetchpriority="high"` uniquement sur le premier ; tout le reste en `loading="lazy"`. À vérifier dans le rapport `lhci`.
 - **CLS sur mobile** — `<Picture>` Astro pose `width`/`height`, donc 0 layout shift attendu. Tester sur viewport étroit.
 - **Source PNG ~1 MB** — taille des fichiers checked-in non négligeable (~4 MB cumulés sur 4 covers). Astro régénère AVIF/WebP optimisés à la sortie (~12-30 KB). Si le poids du repo devient un sujet, convertir les sources en WebP avant commit.
-- **Cover ProjectLayout** — l'ajout de la cover 16/9 dans `ProjectLayout.astro` est hors scope explicite de cette story (`feature.md` / Hors scope). Soit on retire la modif et on ouvre une story distincte « cover dans le header projects », soit on l'intègre formellement à la présente story (mise à jour Hors scope + critère d'acceptation).
+- **Cover ProjectLayout** — l'ajout de la cover 16/9 dans `ProjectLayout.astro` est hors scope explicite de cette story (`pitch.md` / Hors scope). Soit on retire la modif et on ouvre une story distincte « cover dans le header projects », soit on l'intègre formellement à la présente story (mise à jour Hors scope + critère d'acceptation).
 
 ## Questions ouvertes
 
-- **Cover home blog** — la décision actuelle est de **garder la liste texte-only** sur la home (`showCover={false}` dans `BlogSection`) pour préserver la sobriété de la home. Critère d'acceptation `feature.md` ajusté en conséquence (« sauf décision produit explicite contraire documentée »). À reconfirmer si le rendu home évolue.
+- **Cover home blog** — la décision actuelle est de **garder la liste texte-only** sur la home (`showCover={false}` dans `BlogSection`) pour préserver la sobriété de la home. Critère d'acceptation `pitch.md` ajusté en conséquence (« sauf décision produit explicite contraire documentée »). À reconfirmer si le rendu home évolue.
 - **`coverAlt` rétroactif** — choix éditorial : déclarer un `coverAlt` descriptif quand l'image porte une info supplémentaire (capture d'écran annotée, schéma) ; sinon laisser vide (image décorative, le titre voisin tient le rôle).
 - **Loader assets co-localisés et digest** — si on observe en pratique des covers stale après remplacement d'asset, étendre le `digestSource` du loader pour inclure les hash des assets co-localisés (cf. risque ci-dessus).
+
+---
+
+## Changelog
+
+| Date       | Type             | Description                                                                                                                                         |
+| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : renommage `feature.md`→`pitch.md` / `design.md`→`plan.md` + ajout de la table de changelog. Contenu inchangé. |

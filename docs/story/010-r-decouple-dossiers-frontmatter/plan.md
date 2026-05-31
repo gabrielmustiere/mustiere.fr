@@ -253,3 +253,11 @@ Pas de feature flag nécessaire : la rétro-compatibilité vit dans le code, pas
 - Faut-il garder le préfixe `NNN-` du dossier comme un signal éditorial (tri visuel) ou aller au bout et nommer les dossiers librement (ex. `symfony-2026-cto-perspective` sans préfixe) ? **Proposition** : laisser le préfixe en place après le refacto, c'est purement décoratif et n'a plus aucun impact fonctionnel. Décision à acter au moment de l'exécution.
 - Le script de migration data (étape 6) est-il jeté après usage ou conservé sous `scripts/` ? **Proposition** : jeté, c'est un one-shot ; trace dans la PR suffisante.
 - Les fixtures pour les tests `findTranslation` doivent-elles vivre sous `tests/fixtures/` (nouveau dossier) ou être inline dans le test ? **Proposition** : inline (les fixtures sont des objets `BlogEntryLike` purs, pas des fichiers à parser).
+
+---
+
+## Changelog
+
+| Date       | Type             | Description                                                                                      |
+| ---------- | ---------------- | ----------------------------------------------------------------------------------------------- |
+| 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : ajout de la table de changelog en pied. Contenu inchangé. |

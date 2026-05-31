@@ -3,11 +3,11 @@
 > Date : 2026-04-30
 > Stack : Astro 6 SSG bilingue (TS + Tailwind 4)
 > Périmètre : working tree (~30 fichiers, dont 4 covers PNG nouveaux + 1 nouveau composant + 1 helper)
-> Référence d'intention : `docs/story/007-f-cover-articles-blog/feature.md` + `docs/story/007-f-cover-articles-blog/design.md`
+> Référence d'intention : `docs/story/007-f-cover-articles-blog/pitch.md` + `docs/story/007-f-cover-articles-blog/plan.md`
 
 ## Bloquants
 
-- [x] **[DESIGN]** ~~Source image **16:9** au lieu de **1:1**.~~ **Décision actée : pivot 16:9.** `feature.md` règle métier 3 et critère d'acceptation header mis à jour ; `design.md` réécrit (approche retenue, alternative écartée 1:1, mécanismes Astro, dimensions OG, ordre d'implémentation, risques). Le rendu uniforme 16:9 partout — header + cartes + OG — supprime tout crop visuel.
+- [x] **[DESIGN]** ~~Source image **16:9** au lieu de **1:1**.~~ **Décision actée : pivot 16:9.** `pitch.md` règle métier 3 et critère d'acceptation header mis à jour ; `plan.md` réécrit (approche retenue, alternative écartée 1:1, mécanismes Astro, dimensions OG, ordre d'implémentation, risques). Le rendu uniforme 16:9 partout — header + cartes + OG — supprime tout crop visuel.
 
 - [x] **[BUG]** ~~`getOgImageUrl` distordait l'image en forçant `width: 1200, height: 1200`.~~ **Corrigé** dans `src/utils/article-cover.ts` : la fonction est renommée `getOgImage` et appelle `getImage({ src, width: 1200, format: 'png' })` (largeur seule, hauteur calculée par sharp depuis le ratio source). Retourne `{ url, width, height }`. Build vérifié : `og:image:width="1200" og:image:height="675"` et JSON-LD `BlogPosting.image` `{"width":1200,"height":675}` cohérents — pas de distortion.
 
@@ -17,11 +17,11 @@
 
 - [ ] **[ARCHI]** Aucun article n'utilise actuellement l'héritage `translationOf` pour la cover (4 fichiers, 4 md5 distincts). Le mécanisme est en place et documenté, simplement non exercé sur le backfill courant. **Décision design : non bloquant.** L'auteur a le choix entre une image par paire (via `translationOf`) ou une image par langue. À tester explicitement la première fois qu'on retire une cover EN.
 
-- [ ] **[DESIGN]** `BlogSection.astro:37` rend la home blog en liste texte-only (`showCover={false}`) — choix produit pour préserver la sobriété de la home. **Acté dans `feature.md` (critère d'acceptation amendé)** et `design.md` (table fichiers à modifier + question ouverte). Reconfirmer si le rendu home évolue.
+- [ ] **[DESIGN]** `BlogSection.astro:37` rend la home blog en liste texte-only (`showCover={false}`) — choix produit pour préserver la sobriété de la home. **Acté dans `pitch.md` (critère d'acceptation amendé)** et `plan.md` (table fichiers à modifier + question ouverte). Reconfirmer si le rendu home évolue.
 
-- [ ] **[CONV]** Sources `.png` à ~1 MB par fichier (~4 MB cumulés). Astro régénère AVIF+WebP optimisés à la sortie (~12-30 KB), donc bundle final OK. **Acté comme risque dans `design.md`** : converti en WebP si poids du repo devient un sujet.
+- [ ] **[CONV]** Sources `.png` à ~1 MB par fichier (~4 MB cumulés). Astro régénère AVIF+WebP optimisés à la sortie (~12-30 KB), donc bundle final OK. **Acté comme risque dans `plan.md`** : converti en WebP si poids du repo devient un sujet.
 
-- [ ] **[ARCHI]** `ProjectLayout.astro:136-148` ajoute une cover 16:9 pour les projects → **hors scope explicite de la story 007**. **Acté comme risque dans `design.md`** : à isoler dans une story dédiée ou intégrer formellement (mise à jour Hors scope + critère d'acceptation) avant merge.
+- [ ] **[ARCHI]** `ProjectLayout.astro:136-148` ajoute une cover 16:9 pour les projects → **hors scope explicite de la story 007**. **Acté comme risque dans `plan.md`** : à isoler dans une story dédiée ou intégrer formellement (mise à jour Hors scope + critère d'acceptation) avant merge.
 
 ## Mineurs
 
@@ -46,6 +46,6 @@
 - Bloquants restants : 0 / 3
 - Statut : **READY TO COMMIT**
 
-Les 3 bloquants sont corrigés (pivot 16:9 acté dans `feature.md` + `design.md`, `getOgImage` ne distord plus, `alt` ne duplique plus le titre). Les importants restants sont des arbitrages produit déjà documentés (héritage FR↔EN optionnel, home blog texte-only, format PNG, cover projects à isoler) — ils ne bloquent pas le merge mais à surveiller.
+Les 3 bloquants sont corrigés (pivot 16:9 acté dans `pitch.md` + `plan.md`, `getOgImage` ne distord plus, `alt` ne duplique plus le titre). Les importants restants sont des arbitrages produit déjà documentés (héritage FR↔EN optionnel, home blog texte-only, format PNG, cover projects à isoler) — ils ne bloquent pas le merge mais à surveiller.
 
 > Prochaine étape : `/commit` pour commit et push.

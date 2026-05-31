@@ -276,3 +276,11 @@ Pas de bascule différée : le cycle est `migrer un article → diff snapshot �
   maintenant.
 - **`scripts/snapshot-build.mjs` checké en git ou non** : oui pour qu'il soit reproductible et utilisable par la CI plus tard si on veut. Le contenu de
   `tmp/snapshot/` reste hors git.
+
+---
+
+## Changelog
+
+| Date       | Type             | Description                                                                                      |
+| ---------- | ---------------- | ----------------------------------------------------------------------------------------------- |
+| 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : ajout de la table de changelog en pied. Contenu inchangé. |
