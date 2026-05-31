@@ -17,8 +17,10 @@ npm run format    # prettier --write .
 
 `make serve` lance dev sur `http://mustiere.wip:4321` (ajoute l'entrée /etc/hosts via sudo).
 
-Tests unitaires Node natifs (`node --test`) ciblant les loaders / parseurs de content collections (`tests/seo-sections.test.mjs`). La CI ajoute `astro check`,
-Lighthouse CI (`lighthouserc.json`) et pa11y-ci (`.pa11yci.json`). Pour reproduire localement : `npm run build && npx lhci autorun` ou `npx pa11y-ci`.
+Tests unitaires Node natifs (`node --test`) ciblant les loaders / parseurs de content collections (`tests/`, 6 fichiers : `chaptered-glob`, `content-slug`,
+`content-translation`, `draft-isolation`, `seo-sections`, `series`). La CI (`.github/workflows/deploy.yml`) ne fait **que** build + déploiement GitHub Pages sur
+publication d'une release : elle n'exécute ni `check`, ni `lint`, ni `test`, ni Lighthouse, ni pa11y. Ces garde-fous sont à la **discipline locale**. Lighthouse CI
+(`lighthouserc.json`) et pa11y-ci (`.pa11yci.json`) se lancent à la main : `npm run build && npx lhci autorun` ou `npx pa11y-ci`.
 
 ## Architecture
 
@@ -109,6 +111,38 @@ JSON-LD émis par `src/utils/schema.ts` selon le type de page (`Person`, `WebSit
 
 ## Références
 
+- `docs/vision.md` — vision produit (problème résolu, audience, proposition de valeur, principes, anti-objectifs).
+- `docs/stack.md` — cartographie factuelle de la stack (versions, intégrations, CI/CD, dette de stack connue).
 - `DEVELOPMENT.md` — guide pratique (ajout d'article, déploiement Github, budgets perf).
 - `README.md` — brief design original (tokens, échelles typo, scroll-spy, comportements).
 - `designs/*.html` — source de vérité visuelle haute-fidélité.
+
+## Principes de travail
+
+Ces principes biaisent volontairement vers la prudence plutôt que la vitesse. Pour une tâche triviale, garde ton jugement.
+
+### 1. Réfléchir avant de coder
+
+Avant d'écrire la moindre ligne, **énonce tes hypothèses explicitement**. Si la demande est ambiguë, **demande** plutôt que de trancher en silence : présente les
+interprétations possibles et laisse l'utilisateur arbitrer. Une question posée en amont coûte moins cher qu'une correction après coup — d'autant qu'ici une erreur
+de frontmatter ou de slug fait **échouer le build** (schéma Zod strict, collision de slug).
+
+### 2. Simplicité d'abord
+
+Écris le **code minimal qui résout le problème posé** — rien de spéculatif. Pas de fonctionnalité au-delà de ce qui est demandé, pas d'abstraction pour un usage
+unique, pas d'île JS « au cas où ». Ce projet tient sur ~1 KB de JS inline : si une solution exige un framework client ou une dépendance lourde pour un besoin
+mineur, c'est probablement le mauvais chemin. Si le code pourrait être nettement plus court sans perdre en clarté, resserre-le.
+
+### 3. Modifications chirurgicales
+
+Quand tu modifies du code existant, **ne touche qu'à ce que la demande exige**. N'« améliore » pas le code adjacent, ni les commentaires, ni le formatage.
+Préserve le style alentour (single quotes, alias `@/*`, helpers i18n, tokens design). Ne supprime que les dépendances que **tes** changements ont rendues
+orphelines — pas les problèmes préexistants.
+
+### 4. Exécution pilotée par l'objectif
+
+Transforme une demande floue en **critères de succès vérifiables** avant d'implémenter. Le critère par défaut ici : `npm run build` passe, `npm run check` est
+vert, et — si tu as touché un loader ou un parseur de content collection — `npm run test` passe. Pour une édition de contenu publié, valide la non-régression via
+`scripts/snapshot-build.mjs` (cf. § « Vérifier la non-régression d'un chapitre »). Définis comment tu sauras que c'est fini, puis **boucle jusqu'à validation**.
+
+*Principes adaptés de [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT).*
