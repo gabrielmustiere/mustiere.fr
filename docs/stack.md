@@ -6,14 +6,14 @@
 
 Site personnel **bilingue FR/EN** (CTO freelance) construit en **Astro 6 en mode SSG pur** : aucune base de données, aucun runtime serveur, aucune île JS framework — uniquement du HTML/CSS statique généré au build et quelques scripts inline. Déployé sur **GitHub Pages** derrière le domaine custom `mustiere.fr`. Contenu géré via Content Collections (blog MDX, projets MD) avec un loader maison « chaptered ».
 
-| Couche | Techno principale |
-|---|---|
-| Langage(s) | TypeScript 5.7, JavaScript (ESM) |
-| Backend | _aucun_ — SSG, pas de runtime serveur |
-| Frontend | Astro 6 (SSG) + Tailwind CSS 4 |
-| Données | _aucune_ — contenu en fichiers MDX/MD |
-| Ops | GitHub Pages (domaine custom `mustiere.fr`) |
-| DevOps | GitHub Actions (build + deploy uniquement) |
+| Couche     | Techno principale                           |
+| ---------- | ------------------------------------------- |
+| Langage(s) | TypeScript 5.7, JavaScript (ESM)            |
+| Backend    | _aucun_ — SSG, pas de runtime serveur       |
+| Frontend   | Astro 6 (SSG) + Tailwind CSS 4              |
+| Données    | _aucune_ — contenu en fichiers MDX/MD       |
+| Ops        | GitHub Pages (domaine custom `mustiere.fr`) |
+| DevOps     | GitHub Actions (build + deploy uniquement)  |
 
 ## Langages & runtimes
 

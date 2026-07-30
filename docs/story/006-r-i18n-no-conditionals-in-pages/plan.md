@@ -345,8 +345,9 @@ commit) autonome qui peut être mergé et déployé seul.
 
 ## Changelog
 
-| Date       | Type             | Description                                                                                      |
+| Date       | Type             | Description                                                                                     |
 | ---------- | ---------------- | ----------------------------------------------------------------------------------------------- |
 | 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : ajout de la table de changelog en pied. Contenu inchangé. |
+
 - **Vérifier reproductibilité du snapshot** : si l'étape 0 révèle du non-déterminisme, on annexe un mini-PR de stabilisation avant de démarrer. À évaluer
   uniquement après avoir fait tourner le double build.

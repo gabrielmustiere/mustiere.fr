@@ -8,9 +8,9 @@ _Document vivant — enrichi au fil du cycle de vie, refondu lors d'un pivot str
 
 Historique des évolutions structurantes (création, enrichissements, éditions ciblées, pivots). Lecture du haut vers le bas = ordre chronologique. Détails fins dans `git log`.
 
-| Date | Nature | Axe | Motif |
-|------|--------|-----|-------|
-| 2026-05-31 | Création | — | Vision initiale |
+| Date       | Nature   | Axe | Motif           |
+| ---------- | -------- | --- | --------------- |
+| 2026-05-31 | Création | —   | Vision initiale |
 
 ## Le problème
 
@@ -26,7 +26,7 @@ Quand quelqu'un doit juger Gabriel Mustiere — « il vaut quoi, techniquement e
 
 ### Utilisateur principal
 
-- **Persona** : *le sourceur* — toute personne en position d'évaluer, recommander ou solliciter Gabriel. Recruteur tech, ESN, fondateur de startup/PME cherchant un CTO fractional ou un audit, pair technique susceptible de recommander, client final. Hétérogène en métier, homogène en intention : **il évalue, et il décide vite**.
+- **Persona** : _le sourceur_ — toute personne en position d'évaluer, recommander ou solliciter Gabriel. Recruteur tech, ESN, fondateur de startup/PME cherchant un CTO fractional ou un audit, pair technique susceptible de recommander, client final. Hétérogène en métier, homogène en intention : **il évalue, et il décide vite**.
 - **Volume cible** : non pertinent — pas d'objectif d'audience chiffré. Le site sert chaque évaluateur individuel, pas un volume.
 - **Ce qui le bloque aujourd'hui** : il ne trouve pas, en un endroit, de quoi se faire une opinion nette et défendable sur Gabriel. Il doit reconstituer le puzzle (LinkedIn + recherches + questions à des tiers).
 
@@ -79,11 +79,11 @@ Ce qu'on **refuse explicitement** de faire, et pourquoi :
 
 ## Hypothèses critiques
 
-| # | Hypothèse | Comment l'invalider | Statut |
-|---|-----------|---------------------|--------|
-| 1 | Un site personnel sobre et crédible pèse davantage dans une décision de sourcing qu'un profil LinkedIn seul. | Des évaluateurs disent explicitement que le site n'a rien changé à leur jugement, ou qu'ils se seraient décidés pareil sans lui. | À tester |
-| 2 | Des articles techniques de fond renforcent la crédibilité, même auprès de sourceurs non-techniques (effet signal). | Retours indiquant que les articles sont ignorés ou perçus comme du remplissage par les évaluateurs non-techniques. | À tester |
-| 3 | La parité FR/EN élargit utilement l'audience (évaluateurs internationaux). | La version EN ne génère aucun contact ni consultation pertinente sur la durée. | À tester |
+| #   | Hypothèse                                                                                                          | Comment l'invalider                                                                                                              | Statut   |
+| --- | ------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| 1   | Un site personnel sobre et crédible pèse davantage dans une décision de sourcing qu'un profil LinkedIn seul.       | Des évaluateurs disent explicitement que le site n'a rien changé à leur jugement, ou qu'ils se seraient décidés pareil sans lui. | À tester |
+| 2   | Des articles techniques de fond renforcent la crédibilité, même auprès de sourceurs non-techniques (effet signal). | Retours indiquant que les articles sont ignorés ou perçus comme du remplissage par les évaluateurs non-techniques.               | À tester |
+| 3   | La parité FR/EN élargit utilement l'audience (évaluateurs internationaux).                                         | La version EN ne génère aucun contact ni consultation pertinente sur la durée.                                                   | À tester |
 
 ## Risques externes
 

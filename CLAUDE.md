@@ -145,4 +145,4 @@ Transforme une demande floue en **critères de succès vérifiables** avant d'im
 vert, et — si tu as touché un loader ou un parseur de content collection — `npm run test` passe. Pour une édition de contenu publié, valide la non-régression via
 `scripts/snapshot-build.mjs` (cf. § « Vérifier la non-régression d'un chapitre »). Définis comment tu sauras que c'est fini, puis **boucle jusqu'à validation**.
 
-*Principes adaptés de [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT).*
+_Principes adaptés de [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills) (MIT)._

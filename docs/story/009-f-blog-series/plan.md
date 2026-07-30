@@ -189,5 +189,5 @@ Les tests E2E Playwright n'existent pas sur ce projet (mention `workflow:test-sc
 ## Changelog
 
 | Date       | Type             | Description                                                                                                                                         |
-| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ---------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : renommage `feature.md`→`pitch.md` / `design.md`→`plan.md` + ajout de la table de changelog. Contenu inchangé. |

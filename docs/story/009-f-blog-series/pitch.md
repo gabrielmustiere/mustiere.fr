@@ -110,5 +110,5 @@ Pointeurs bruts pour `/feature-design`, sans concevoir ici :
 ## Changelog
 
 | Date       | Type             | Description                                                                                                                                         |
-| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ---------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : renommage `feature.md`→`pitch.md` / `design.md`→`plan.md` + ajout de la table de changelog. Contenu inchangé. |

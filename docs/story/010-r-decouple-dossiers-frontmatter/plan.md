@@ -258,6 +258,6 @@ Pas de feature flag nécessaire : la rétro-compatibilité vit dans le code, pas
 
 ## Changelog
 
-| Date       | Type             | Description                                                                                      |
+| Date       | Type             | Description                                                                                     |
 | ---------- | ---------------- | ----------------------------------------------------------------------------------------------- |
 | 2026-05-31 | Migration legacy | Alignement au gabarit unifié v1.1.0 : ajout de la table de changelog en pied. Contenu inchangé. |
