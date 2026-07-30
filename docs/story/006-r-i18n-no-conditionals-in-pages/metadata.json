@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "title": "Refacto — Éradiquer les conditions `lang === '…'` des pages, layouts et composants",
+  "created": "2026-04-30",
+  "updated": "2026-05-31",
+  "tags": ["i18n", "refactoring"],
+  "changelog": [
+    {
+      "date": "2026-04-30",
+      "type": "Création",
+      "description": "plan.md posé (fada0f7). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-30",
+      "type": "Livraison",
+      "description": "Gestion des traductions uniformisée et revue (fada0f7). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-30",
+      "type": "Release",
+      "description": "Publiée dans v0.2.0. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-31",
+      "type": "Sync",
+      "description": "Migration au gabarit unifié v1.1.0 (8b8c6cc), contenu inchangé. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": "v0.2.0", "commit": "fada0f7" }
+}

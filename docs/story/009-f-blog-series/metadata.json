@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "title": "Séries d'articles de blog",
+  "created": "2026-05-08",
+  "updated": "2026-05-31",
+  "tags": ["blog", "series"],
+  "changelog": [
+    {
+      "date": "2026-05-08",
+      "type": "Création",
+      "description": "Cadrage posé — feature.md et design.md (04f72fc). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-08",
+      "type": "Livraison",
+      "description": "Séries d'articles livrées et revues (04f72fc). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-11",
+      "type": "Release",
+      "description": "Publiée dans v1.0.0. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-31",
+      "type": "Sync",
+      "description": "Migration au gabarit unifié v1.1.0 (8b8c6cc) : feature.md → pitch.md, design.md → plan.md. Contenu inchangé. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": "v1.0.0", "commit": "04f72fc" }
+}

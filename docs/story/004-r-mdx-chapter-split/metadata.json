@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "title": "Refacto — Découpage des MDX longs en chapitres",
+  "created": "2026-04-28",
+  "updated": "2026-05-31",
+  "tags": ["mdx", "content-loader"],
+  "changelog": [
+    {
+      "date": "2026-04-28",
+      "type": "Création",
+      "description": "plan.md posé (fe04251). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-28",
+      "type": "Livraison",
+      "description": "Loader chaptered-glob livré avec compatibilité ascendante (34c0a7f). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-29",
+      "type": "Release",
+      "description": "Publiée dans v0.1.0. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-31",
+      "type": "Sync",
+      "description": "Migration au gabarit unifié v1.1.0 (8b8c6cc), contenu inchangé. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": "v0.1.0", "commit": "34c0a7f" }
+}

@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "title": "Refacto — Découpler les noms de dossiers du frontmatter (slug + translationKey)",
+  "created": "2026-05-17",
+  "updated": "2026-05-31",
+  "tags": ["content-collections", "slug", "i18n"],
+  "changelog": [
+    {
+      "date": "2026-05-17",
+      "type": "Création",
+      "description": "plan.md posé (462bec4). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-17",
+      "type": "Livraison",
+      "description": "Refacto livrée en 10 étapes, du verrou de caractérisation à la bascule stricte slug requis / translationOf retiré (eae151a). Aucune release ne l'embarque à ce jour. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-31",
+      "type": "Sync",
+      "description": "Migration au gabarit unifié v1.1.0 (8b8c6cc), contenu inchangé. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": null, "commit": "eae151a" }
+}

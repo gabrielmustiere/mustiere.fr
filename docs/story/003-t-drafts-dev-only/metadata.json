@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "title": "Évolution tech — Drafts visibles en dev, masqués en prod",
+  "created": "2026-05-05",
+  "updated": "2026-05-31",
+  "tags": ["drafts", "content-collections"],
+  "changelog": [
+    {
+      "date": "2026-04-26",
+      "type": "Livraison",
+      "description": "Gestion centralisée des brouillons livrée (a193bcf) — antérieure à l'entrée du plan dans le dépôt. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-29",
+      "type": "Release",
+      "description": "Publiée dans v0.1.0. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-05",
+      "type": "Création",
+      "description": "plan.md posé a posteriori (7eb2d84). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-31",
+      "type": "Sync",
+      "description": "Migration au gabarit unifié v1.1.0 (8b8c6cc), contenu inchangé. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": "v0.1.0", "commit": "a193bcf" }
+}

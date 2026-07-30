@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "title": "Sections SEO standardisées pour articles et side-projects",
+  "created": "2026-04-29",
+  "updated": "2026-05-31",
+  "tags": ["seo", "content-collections"],
+  "changelog": [
+    {
+      "date": "2026-04-29",
+      "type": "Création",
+      "description": "Cadrage posé — feature.md et design.md (fb6b1df). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-29",
+      "type": "Livraison",
+      "description": "Sections SEO via fichiers MDX réservés livrées et revues (fb6b1df), rapport ajouté (4c7590c). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-29",
+      "type": "Release",
+      "description": "Publiée dans v0.1.0. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-31",
+      "type": "Sync",
+      "description": "Migration au gabarit unifié v1.1.0 (8b8c6cc) : feature.md → pitch.md, design.md → plan.md. Contenu inchangé. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": "v0.1.0", "commit": "fb6b1df" }
+}

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "title": "Cover image obligatoire pour les articles de blog",
+  "created": "2026-04-30",
+  "updated": "2026-05-31",
+  "tags": ["blog", "cover", "seo"],
+  "changelog": [
+    {
+      "date": "2026-04-30",
+      "type": "Création",
+      "description": "Cadrage posé — feature.md et design.md (15fe9e0). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-30",
+      "type": "Livraison",
+      "description": "Cover obligatoire avec image OG dérivée livrée et revue (15fe9e0). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-04-30",
+      "type": "Release",
+      "description": "Publiée dans v0.2.0. Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-31",
+      "type": "Sync",
+      "description": "Migration au gabarit unifié v1.1.0 (8b8c6cc) : feature.md → pitch.md, design.md → plan.md. Contenu inchangé. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": "v0.2.0", "commit": "15fe9e0" }
+}

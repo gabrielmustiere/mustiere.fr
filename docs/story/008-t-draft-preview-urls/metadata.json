@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "title": "Évolution tech — URLs de prévisualisation des drafts en prod",
+  "created": "2026-05-04",
+  "updated": "2026-05-04",
+  "tags": ["drafts", "preview"],
+  "changelog": [
+    {
+      "date": "2026-05-04",
+      "type": "Création",
+      "description": "plan.md posé (d9296de). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-04",
+      "type": "Livraison",
+      "description": "Partage des drafts en prod via URL non-devinable livré (d9296de), rapport et synchronisation du plan ajoutés (4028563). Reconstruit depuis l'historique git."
+    },
+    {
+      "date": "2026-05-04",
+      "type": "Release",
+      "description": "Publiée dans v0.3.0. Reconstruit depuis l'historique git."
+    }
+  ],
+  "delivery": { "release": "v0.3.0", "commit": "d9296de" }
+}
