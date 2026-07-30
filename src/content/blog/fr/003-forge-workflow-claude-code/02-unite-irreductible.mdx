@@ -1,0 +1,50 @@
+## L’unité irréductible : un bon PO, un bon lead, un bon dev
+
+Sur les projets qui ont bien tourné, ce n’était jamais la méthode qui faisait la différence. C’était trois personnes. Quelqu’un qui savait dire non au périmètre
+et défendre le problème réel de l’utilisateur. Quelqu’un qui tranchait la solution technique, avec ses alternatives écartées assumées. Et quelqu’un qui
+exécutait proprement, en testant ce qu’il livrait. Quand ces trois-là étaient bons, le projet avançait — quel que soit le rituel autour.
+
+Les autres rôles d’un organigramme agile ne sont pas inutiles : ils servent la **coordination**. Un Scrum Master protège une équipe des interruptions, arbitre
+des dépendances entre plusieurs personnes, tient un rythme collectif. Un analyste fait circuler l’information entre des services qui ne se parlent pas. Ces
+fonctions sont réelles, et elles disparaissent intégralement quand il n’y a qu’un développeur et un agent. Il n’y a personne à coordonner, personne à protéger,
+aucune information à faire circuler entre deux étages.
+
+Ce qui reste, une fois la coordination retirée, ce ne sont pas trois personnes : ce sont **deux moments de cadrage et une exécution**. Le moment fonctionnel, où
+l’on décide quoi livrer et pour qui. Le moment technique, où l’on décide comment. Puis l’exécution, qui n’écrit aucun document — elle produit du code et des
+tests. Le troisième rôle est bien là, mais il ne laisse pas de trace écrite, et c’est normal : son livrable, c’est le diff.
+
+Chacun de ces deux moments produit un fichier, et un seul. Le `pitch.md` pour le fonctionnel, le `plan.md` pour le technique.
+
+### La règle du registre
+
+C’est le cœur du dispositif, et c’est aussi ce qui le rend difficile à tenir : **chaque document écrit dans un seul registre**, annoncé dans son en-tête.
+
+Le pitch est fonctionnel. Il ne contient aucun nom de classe, de service, de table ou de framework. Toute trouvaille technique doit se traduire en capacité vécue
+avant d’avoir le droit d’y entrer : « `class Cart` » devient « le client peut remplir un panier ». Un lecteur non technicien doit pouvoir le lire en entier.
+
+Le plan est technique. Il décrit le code, et il ne rediscute pas le besoin — le pourquoi vit dans le pitch, le plan y renvoie sans le résumer. Pas de
+duplication : une seule source de vérité par question.
+
+Tous les documents ouvrent sur le même bloc, ce qui rend le registre explicitement vérifiable :
+
+```markdown
+# Plan technique — Découpler les noms de dossiers du frontmatter
+
+> **But** : concevoir la solution technique et la découper en étapes commitables
+> **Registre** : technique
+> **Story** : `docs/story/010-r-decouple-dossiers-frontmatter/`
+> **Amont** : `pitch.md`
+```
+
+Cette séparation paraît formelle. Elle est en réalité la seule protection contre le défaut le plus coûteux du développement assisté : **un agent résout
+techniquement un problème mal posé, et il le fait très bien**. Il ne bute pas sur l’ambiguïté, il la comble — silencieusement, avec une solution plausible. En
+forçant le fonctionnel à s’écrire d’abord, sans vocabulaire technique disponible pour se dérober, on rend l’ambiguïté visible avant qu’elle soit résolue de
+travers.
+
+| Rôle réel        | Moment de cadrage         | Artifact produit | Registre imposé                                               |
+| ---------------- | ------------------------- | ---------------- | ------------------------------------------------------------- |
+| PO               | Que livrer, et pour qui ? | `pitch.md`       | Fonctionnel — aucun nom de classe, de service ou de framework |
+| Lead technique   | Comment le livrer ?       | `plan.md`        | Technique — décrit le code, ne rediscute pas le besoin        |
+| Développeur      | Exécution                 | Code + tests     | Aucun document : le livrable est le diff                      |
+
+Trois lignes. C’est tout l’organigramme, et il n’a pas bougé depuis que je l’utilise.

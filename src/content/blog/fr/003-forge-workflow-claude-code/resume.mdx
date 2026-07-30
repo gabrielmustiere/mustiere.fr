@@ -1,0 +1,8 @@
+Après avoir testé GSD, BMAD-METHOD et GitHub Spec Kit, je les ai abandonnés pour la même raison de fond : ils modélisent une organisation là où il suffit de
+modéliser un geste. Un workflow agentique n’a pas besoin de simuler une équipe agile — un bon PO, un bon lead, un bon dev suffisent, soit deux moments de cadrage
+(le fonctionnel dans un `pitch.md`, le technique dans un `plan.md`) et une exécution. Chaque document tient un seul registre : le pitch sans aucun nom de classe
+ni de framework, le plan sans rediscuter le besoin. Ces artifacts vivent dans `docs/story/`, versionnés avec le code : l’agent les a dans la même fenêtre de
+contexte, le cadrage se fait avec l’existant sous les yeux, et une story se relit en diff. Le pipeline tient en quatre phases (décor, cadrage, implémentation,
+clôture) et trois tracks (feature, refacto, tech), plus un track fast pour le trivial. La clôture enchaîne revue, report factuel, réalignement des documents
+d’intention, puis commit — et aucune étape ne s’enchaîne sans validation explicite. Le gain principal est cognitif : on relit deux pages avant qu’une ligne
+existe, plutôt que six cents après coup.

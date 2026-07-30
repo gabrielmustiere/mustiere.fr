@@ -1,0 +1,96 @@
+## Le dépôt est la source de vérité
+
+Voilà le principe le plus structurant de la méthode : **la story vit dans `docs/story/`, versionnée avec le code**, dans le même commit que le diff qu’elle
+décrit. Un dossier par unité de travail, à côté du code qu’il change.
+
+Ce principe n’appartient à personne — les trois outils cités plus haut écrivent eux aussi dans le dépôt, et c’est une bonne chose. Le point de comparaison
+n’est pas eux, c’est le réflexe par défaut de l’industrie : la spécification vit dans l’outil de ticketing. Elle y est **invisible à l’agent** — il faudrait la
+coller à la main dans chaque session, ce que personne ne fait au-delà de la troisième fois. Et elle est **périmée dès la deuxième itération**, parce que rien ne
+la confronte jamais à ce que le code est devenu. Deux propriétés qui, mises bout à bout, garantissent qu’elle finira ignorée.
+
+Ce que j’ai mis trois projets à comprendre, c’est à quel point les conséquences de ce déplacement dépassent le confort d’accès.
+
+Déplacer ce document dans le dépôt a trois effets, et aucun n’était évident avant de l’avoir fait.
+
+### Effet 1 — on cadre avec le code sous les yeux
+
+Quand le PO écrit son pitch depuis le dépôt, l’agent qui l’assiste a l’existant à disposition. Le périmètre proposé cesse d’être imaginé à côté du produit : il
+est confronté à ce qui existe déjà. Une capacité qu’on croyait à construire s’avère à moitié présente. Une règle métier qu’on croyait simple révèle trois cas
+particuliers déjà codés, dont personne ne se souvenait.
+
+C’est la différence entre un cadrage qui produit une intention et un cadrage qui produit une intention **réaliste**. Sur mes propres stories, c’est le moment où
+le périmètre se réduit — presque toujours à la baisse, et presque toujours pour de bonnes raisons.
+
+### Effet 2 — l’implémentation a tout dans la même fenêtre
+
+À l’exécution, le modèle dispose du pitch, du plan et du code dans un seul contexte. C’est le contexte le plus riche qu’on puisse lui donner pour cette tâche
+précise, et il est **gratuit** : il ne coûte aucune orchestration, aucun passage de relais, aucun sous-agent à briefer. Deux documents courts et le dépôt
+suffisent.
+
+C’est exactement la friction du contexte, retournée. Un pipeline multi-agents dépense des tokens à reconstituer, rôle après rôle, un décor qui était déjà là.
+Garder les documents courts et à portée de lecture ne fait pas qu’économiser cette dépense : ça produit un contexte de meilleure qualité, parce que rien n’a
+été résumé en chemin.
+
+### Effet 3 — une story se relit comme du code
+
+Une story versionnée se lit en diff, se commente en revue, se blâme. Elle passe la même barre de qualité que le code, avec les mêmes outils et les mêmes
+réflexes. On voit quand une exigence a été ajoutée après coup, par qui, et dans quel commit. On peut refuser un pitch en revue comme on refuse une pull request.
+
+C’est un effet de bord du choix technique, mais c’est celui qui a le plus d’impact sur la qualité réelle des documents : un document relisible finit par être
+relu.
+
+### La convention de nommage
+
+Les stories sont numérotées globalement, puis taguées par type : `NNN-<f|r|t>-<slug>` — `f` pour feature, `r` pour refacto, `t` pour évolution technique. Le
+numéro vient **en premier**, ce qui n’est pas un détail cosmétique : le tri lexicographique d’un `ls` restitue la timeline du projet dans l’ordre.
+
+Voici le dossier de ce site, tel qu’il est aujourd’hui :
+
+```
+docs/story/
+├── 003-t-drafts-dev-only/          ← les brouillons ne sortent qu'en dev
+│   ├── plan.md                     ← cadrage technique (registre : technique)
+│   ├── report.md                   ← ce qui a été fait vs ce qui était prévu
+│   └── metadata.json               ← timeline machine-lisible
+├── 004-r-mdx-chapter-split/        ← refacto : découper les articles en chapitres
+├── 005-f-sections-seo-articles/    ← feature : résumé, FAQ et sources par article
+│   ├── pitch.md                    ← cadrage fonctionnel (registre : fonctionnel)
+│   ├── plan.md
+│   ├── review.md                   ← revue du diff avant commit
+│   ├── report.md
+│   └── metadata.json
+├── 007-f-cover-articles-blog/
+├── 009-f-blog-series/
+└── 010-r-decouple-dossiers-frontmatter/
+```
+
+Trois choses se lisent d’un coup d’œil, sans ouvrir un seul fichier : l’ordre dans lequel le projet a évolué, la nature de chaque changement, et jusqu’où chaque
+story est allée — une story avec un `report.md` est livrée, une story qui s’arrête au `plan.md` ne l’est pas.
+
+### La timeline vit dans un fichier machine
+
+Chaque story porte un `metadata.json` : titre réel, dates, tags, changelog consolidé, livraison.
+
+```json
+{
+  "title": "Refacto — Découpler les noms de dossiers du frontmatter (slug + translationKey)",
+  "created": "2026-05-17",
+  "updated": "2026-05-31",
+  "tags": ["content-collections", "slug", "i18n"],
+  "changelog": [{ "date": "2026-05-17", "type": "Création", "description": "plan.md posé." }],
+  "delivery": { "release": null, "commit": "eae151a" }
+}
+```
+
+Le choix de sortir la timeline des documents Markdown pour la mettre là est délibéré. Un changelog en pied de `plan.md` diverge, se duplique, et finit par mentir
+— alors qu’un fichier dédié, écrit en append par chaque passe, reste vrai. Surtout, il est **branchable** : c’est ce qui permet à un [tableau de
+bord](https://github.com/gabrielmustiere/forge-board) de projeter l’état réel des stories d’un dépôt sans qu’aucun document n’ait été écrit pour lui. Le
+kanban n’est pas une fonctionnalité du workflow, c’est une conséquence du fait que les artifacts soient rangés et typés.
+
+### Le corollaire honnête
+
+Ça a un prix, et il faut le dire : **le dépôt grossit**. Les artifacts d’une story livrée il y a huit mois restent là, à côté du code, à jamais. Sur un projet
+mené une année entière, ça fait des dizaines de dossiers dont la grande majorité ne sera jamais rouverte.
+
+Je l’assume, parce que c’est le prix de la mémoire, et parce que le coût est asymétrique : quelques dizaines de kilo-octets de Markdown contre la capacité à
+répondre, deux ans plus tard, à la seule question qui compte vraiment sur un legacy — *pourquoi ce code est-il comme ça ?*

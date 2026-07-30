@@ -1,0 +1,44 @@
+---
+title: 'Le workflow que j’utilise avec Claude Code : un bon PO, un bon lead, un bon dev'
+excerpt:
+  'J’ai testé GSD, BMAD et Spec Kit avant d’écrire forge. Pourquoi deux documents versionnés dans le dépôt battent une équipe d’agents simulée, et comment mener
+  un projet du cadrage au commit.'
+publishedAt: 2026-07-30
+category: IA
+tags: [Claude Code, Forge, Workflow, Agents, Spec-Driven Development, PO]
+cover: ./cover.png
+coverAlt: 'Le pipeline forge : cadrage, implémentation, clôture avec Claude Code'
+keywords:
+  - workflow Claude Code
+  - plugin Claude Code
+  - forge Claude Code
+  - BMAD METHOD
+  - GitHub Spec Kit
+  - GSD framework
+  - spec-driven development
+  - développement assisté par IA
+  - artifacts versionnés
+  - cadrage produit IA
+number: 3
+draft: true
+lang: fr
+slug: forge-workflow-claude-code
+---
+
+Quatorze ans de projets, et trois frameworks de développement agentique installés puis retirés en l’espace de quelques mois. GSD, BMAD-METHOD, GitHub Spec Kit :
+chacun avec sa promesse, chacun abandonné pour des raisons différentes, mais avec le même arrière-goût. Trop de cérémonial pour ce que je faisais réellement, et
+des rôles qui ne correspondaient à rien de ce que j’avais vécu sur le terrain.
+
+Ce n’est pas un benchmark. Je n’ai pas fait tourner de protocole comparatif entre ces outils, et le prétendre serait malhonnête — ce qui suit est un retour de
+praticien sur ce que j’ai gardé, ce que j’ai jeté, et ce que j’ai écrit à la place. Parce qu’en équipe réelle, ce qui débloque un projet n’a jamais été
+l’organigramme : c’est un bon PO qui sait dire non au périmètre, un bon lead technique qui tranche la solution, un bon développeur qui exécute proprement. Trois
+rôles. Les autres servent à coordonner des humains — or face à un agent, il n’y a personne à coordonner.
+
+Un second constat, plus discret, s’est ajouté au premier. Ces outils rangent bien leurs documents dans le dépôt — ce n’est pas là qu’est le problème. Mais ils
+en produisent beaucoup, très longs, et rien ne les oblige à redevenir vrais une fois le code livré. Or un document de cadrage n’a que deux fonctions : être relu
+attentivement avant qu’une ligne existe, puis rester fiable pour celui qui reprendra le projet dans six mois. Trop long, il n’est que parcouru ; jamais
+réaligné, il finit par mentir.
+
+C’est ce qui m’a conduit à écrire [`forge`](https://forge.mustiere.fr) : deux moments de cadrage — le fonctionnel, puis le technique —, une exécution, et des
+documents qui vivent dans le dépôt, versionnés avec le code qu’ils décrivent. Les sections qui suivent déroulent la méthode telle que je l’utilise réellement, du
+besoin flou jusqu’au commit, ce qu’elle coûte, et une grille de critères pour situer les contextes où elle vaut son prix.

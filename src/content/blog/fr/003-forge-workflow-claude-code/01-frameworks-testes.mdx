@@ -1,0 +1,65 @@
+## Ce que j’ai testé, et où j’ai décroché
+
+Les trois outils partagent un même pari : écrire avant de coder, et faire porter cette écriture par l’agent lui-même. C’est un bon pari — c’est exactement le
+mien. Ce qui les sépare, c’est ce qu’on écrit, et combien de monde on convoque pour l’écrire.
+
+**[BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)** est le plus ambitieux des trois. Il installe l’équipe agile au complet sous forme de personas
+spécialisées, et déroule un pipeline entier avant la première ligne de code : brief produit, PRD, document d’architecture, découpage en stories, puis
+implémentation. Le travail de cadrage produit est réel, structuré, et la couverture est impressionnante.
+
+**[GitHub Spec Kit](https://github.com/github/spec-kit)** prend le problème par l’autre bout. Peu de rôles, mais un cycle imposé : une constitution de projet qui
+fixe des principes non négociables, puis une spécification, un plan, un découpage en tâches, et une passe d’analyse qui vérifie la cohérence de l’ensemble avant
+d’exécuter. C’est cohérent, outillé, et compatible avec la plupart des agents du marché.
+
+**[GSD](https://github.com/gsd-build/get-shit-done)** n’est pas multi-rôles du tout. Il attaque frontalement le *context rot* en confiant chaque phase à un
+sous-agent doté d’un contexte frais, avec son objectif propre. C’est la meilleure intuition des trois, et de loin la plus proche de ce que j’ai fini par
+construire — je lui dois d’avoir compris que le problème n’était pas le nombre de rôles.
+
+Trois outils sérieux, donc. Et pourtant, à chaque fois, le même décrochage au bout de quelques stories. Trois frictions, que j’ai mis un moment à nommer.
+
+### Friction 1 — le cérémonial
+
+Un Scrum Master agent ne tranche aucun arbitrage. Il produit un document. Un PO agent qui n’a ni utilisateur à interroger, ni budget à défendre, ni roadmap à
+tenir, ne fait pas de la gestion de produit : il rédige la mise en forme d’une décision que j’ai déjà prise. Sur un projet réel, ces rôles existent parce que
+plusieurs personnes doivent se synchroniser autour d’un même périmètre. Reproduire l’organigramme sans les personnes garde la cérémonie et perd la fonction.
+
+Le symptôme est facile à reconnaître : quand la validation d’une étape consiste à lire un document dont on connaît déjà le contenu parce qu’on vient de le
+dicter, l’étape ne produit pas de valeur — elle produit de la conformité.
+
+### Friction 2 — le contexte
+
+Chaque rôle qui entre en scène recharge le décor. C’est le coût invisible du multi-agents, et il se mesure. Anthropic a publié des ordres de grandeur issus de
+son propre système : un agent consomme environ **quatre fois** les tokens d’une interaction de chat, et un système multi-agents environ **quinze fois**. La
+mesure porte sur un système de recherche, pas de développement logiciel, et je ne la transpose pas telle quelle. Mais la mécanique est la même : chaque persona
+convoqué doit se refaire une idée du projet avant de pouvoir dire quoi que ce soit d’utile.
+
+Sur une session de travail réelle, ça se traduit très concrètement : on passe le tiers de sa fenêtre de contexte à réexpliquer le décor à des agents qui viennent
+d’y être présentés.
+
+### Friction 3 — la spec qu’on ne relit pas
+
+C’est la friction qui m’a fait partir pour de bon, et c’est la moins visible des trois. Contrairement à ce que je croyais en démarrant, ce n’est pas une question
+d’emplacement : les trois outils écrivent bien leurs documents dans le dépôt, versionnés avec le code. Sur ce point, ils ont raison et je ne les ai jamais pris
+en défaut.
+
+Le problème est ailleurs, et il arrive en deux temps. D’abord le **volume**. Un dossier produit programme complet, un document d’architecture, une spécification
+par feature découpée en tâches : ça fait beaucoup de pages, et rien, dans une génération automatique, ne pousse à l’abréger. Or une spec longue n’est pas relue,
+elle est parcourue — alors que sa seule et unique fonction est d’être lue attentivement avant que le code existe. Un document de cadrage qu’on survole a déjà
+échoué, quel que soit son contenu.
+
+Ensuite, **ce qui se passe après la livraison**. Le code dévie toujours de ce qui était prévu : un modèle ajusté, une route renommée, une bibliothèque
+remplacée. La question est de savoir ce qui, dans le processus, oblige à revenir sur le document d’intention pour le rendre à nouveau vrai. C’est l’étape que je
+n’ai trouvée nulle part sous une forme qui me convienne — et c’est celle qui manque le plus, parce que sans elle le corpus grossit et se met à mentir
+progressivement, avec toute l’autorité que confère un document bien écrit et versionné.
+
+Un document que personne ne relit et que rien ne réaligne n’est pas une spécification. C’est un artefact de conformité, exactement comme le document du Scrum
+Master agent — la boucle se referme.
+
+| Framework                                                      | Ce qu’il propose                                                                | Pourquoi j’ai décroché                                                                  |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD)     | Un roster de personas et un pipeline produit complet avant implémentation       | L’organigramme agile joué par des agents : la cérémonie sans la fonction                |
+| [GitHub Spec Kit](https://github.com/github/spec-kit)           | Une constitution de projet et un cycle spec → plan → tâches → analyse           | Un cycle cohérent, mais lourd à dérouler sur de petites itérations                      |
+| [GSD](https://github.com/gsd-build/get-shit-done)               | Des sous-agents à contexte frais, une phase par agent, contre le *context rot*  | La bonne intuition, mais l’orchestration se paie en tokens à chaque passage de relais   |
+
+Ces trois frictions ont une racine commune, et il m’a fallu les trois essais pour la voir : ces outils modélisent une **organisation**, alors que ce dont j’avais
+besoin, c’est de modéliser un **geste**. Une organisation se décrit par des rôles. Un geste se décrit par ce qu’on écrit, dans quel ordre, et où on le range.

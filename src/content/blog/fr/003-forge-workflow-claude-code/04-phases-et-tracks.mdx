@@ -1,0 +1,62 @@
+## Quatre phases, trois tracks
+
+Le pipeline se lit sur deux axes qu’il ne faut surtout pas confondre. **La phase dit *quand*. Le track dit *avec quelles skills*.** Une story traverse toujours
+les mêmes phases ; elle n’emprunte qu’un seul track.
+
+### Phase 0 — poser le décor, une fois
+
+Avant la première story, trois documents à écrire une fois pour toutes, à la racine de `docs/` :
+
+- **la vision** — pourquoi ce produit existe, pour qui, quelle valeur il crée, et ce qu’on refuse explicitement de faire ;
+- **le backlog produit** — les domaines, les capacités, les parcours, et les features candidates priorisées ;
+- **la stack** — sur quoi on marche, chaque techno prouvée par un fichier source, pas par une déclaration d’intention.
+
+S’ajoutent le `CLAUDE.md` du projet et, quand c’est pertinent, des règles scopées par chemins : des instructions que le harness ne charge que lorsque l’agent
+ouvre un fichier de la zone concernée. C’est ce qui évite le `CLAUDE.md` de six cents lignes que plus personne ne lit — y compris le modèle.
+
+Ces trois documents sont **vivants**, pas des livrables figés : ils s’enrichissent au fil des stories. Une feature qui étend le périmètre enrichit la vision ;
+une feature qui contredit un anti-objectif le fait retirer. La vision suit le produit, elle ne le bloque pas.
+
+### Phases 1 à 3 — ce que traverse chaque story
+
+Cadrer, implémenter, clôturer. Trois phases, dans cet ordre, pour toutes les stories sans exception. Ce qui change d’un track à l’autre, c’est ce qu’on écrit en
+phase 1 et comment on avance en phase 2 — jamais la phase 3, qui est identique partout.
+
+```
+                    PHASE 1              PHASE 2            PHASE 3
+                    cadrer               implémenter        clôturer
+
+  feature   →   pitch.md → plan.md   →   code + tests   →   review → report → sync → commit
+  refacto   →         plan.md        →   verrou tests   →   review → report → sync → commit
+  tech      →         plan.md        →   baseline       →   review → report → sync → commit
+                                          + kill switch
+```
+
+Le track feature est le seul à porter deux documents de cadrage, parce qu’il est le seul à avoir un besoin utilisateur à formaliser avant de concevoir. Un
+refacto et une évolution technique n’ont pas de pitch : leur motivation est technique, elle vit dans le plan.
+
+### Choisir son track
+
+Le choix se fait à l’entrée de la phase 1, en questions fermées :
+
+| Question                                                                                                                            | Si oui        |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------- |
+| Un utilisateur final ou un admin peut décrire ce qu’il voit de nouveau ?                                                            | **Feature**   |
+| Le comportement externe reste **strictement** identique et on restructure juste le code ?                                            | **Refacto**   |
+| Un observateur externe peut détecter la différence, mais c’est pour mieux — plus rapide, plus résilient, plus sûr — sans valeur user nouvelle ? | **Tech** |
+| Moins de trois fichiers, pas de migration, pas d’impact transverse ?                                                                | **Fast**      |
+
+Chaque track impose ensuite sa discipline propre, et c’est là qu’est la valeur du découpage. Un refacto exige un **verrou de tests de caractérisation avant** de
+toucher quoi que ce soit, et une exécution incrémentale réversible. Une évolution technique exige une **métrique cible chiffrée**, une baseline mesurée avant
+modification, et un kill switch activable. Ces contraintes n’ont pas de sens sur une feature — d’où l’intérêt de ne pas mélanger.
+
+Le piège classique, c’est justement le diff qui mélange deux tracks. La règle qui tranche : si tu ne peux pas scinder ton diff en commits distincts — le refacto
+pur, puis la brique technique, puis la feature qui s’en sert — c’est que tu as embarqué deux tracks dans un seul. Sépare.
+
+### Le track fast, et l’aveu qui va avec
+
+Sur un changement de trois fichiers sans migration ni impact transverse, dérouler le pipeline complet est une **perte de temps**. Pas une précaution
+disproportionnée : une perte de temps sèche. Le cadrage prendra plus longtemps que le correctif, et le document produit ne sera jamais rouvert.
+
+Dans ce cas : coder, lancer la QA du projet, les tests ciblés, et commiter. C’est tout. Le dire explicitement n’affaiblit pas la méthode — c’est ce qui la rend
+utilisable au quotidien, parce qu’une méthode qui prétend s’appliquer à tout finit par ne s’appliquer à rien.

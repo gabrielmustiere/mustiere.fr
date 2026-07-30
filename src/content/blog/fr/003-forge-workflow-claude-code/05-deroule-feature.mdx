@@ -1,0 +1,87 @@
+## Le déroulé d’une feature, du besoin flou au commit
+
+Voici la méthode en marche. Quatre étapes, chacune avec ce qu’elle produit et ce qu’elle coûte.
+
+### Le besoin flou
+
+C’est le point de départ le plus fréquent, et le plus mal traité par les outils : on n’a pas une feature, on a un irritant. « La page des articles est
+pénible à maintenir. » Ce n’est pas un besoin, c’est un symptôme.
+
+L’étape d’interview part de là et produit un `brief.md` — la matière première, explicitement non validée. Ce qui la distingue d’un simple échange de questions,
+c’est qu’elle est **ancrée sur une reconnaissance du code existant** : l’agent va voir avant de demander. Il ne pose pas les questions dont il peut déjà lire la
+réponse dans le dépôt, ce qui change complètement la qualité de l’interview — on ne passe plus dix minutes à décrire une architecture qui est sous les yeux de
+son interlocuteur.
+
+Cette étape est optionnelle. Quand le besoin est déjà clair, on saute directement au pitch.
+
+### Le cadrage fonctionnel
+
+Le pitch formalise le problème utilisateur, les critères d’acceptation, ce qui est hors scope, et les questions encore ouvertes. Son intérêt réel n’est pas la
+mise en forme : c’est qu’il **challenge l’alignement**. Il confronte la feature à la vision et au backlog produit posés en phase 0 — quel problème elle adresse,
+pour quelle audience, si elle ne contredit pas un anti-objectif qu’on s’était fixé six mois plus tôt.
+
+C’est le moment où l’on abandonne le plus de features. Ce qui est exactement ce qu’on attend d’un bon PO.
+
+### Le cadrage technique
+
+Le plan conçoit la solution. Il liste les **alternatives écartées** avec la raison — la section qui a le plus de valeur trois mois après, quand quelqu’un
+demande pourquoi on n’a pas fait autrement. Il énumère les fichiers à créer et à modifier, la stratégie de test, les risques, et il découpe le travail en étapes
+vérifiables.
+
+Les trois tracks partagent le même squelette, ce qui fait qu’on sait lire un plan qu’on n’a pas écrit :
+
+```markdown
+## Approche retenue
+### Mécanismes mobilisés
+### Alternatives écartées
+## Modèle de données
+## Périmètre            ← fichiers à créer / fichiers à modifier
+## Hors scope
+## Impacts transverses
+## Stratégie de test
+## Ordre d'exécution
+## Critères de sortie
+## Risques et mitigations
+## Questions ouvertes
+```
+
+Une section canonique sans contenu ne disparaît pas : elle se remplit d’un « aucun » explicite. C’est ce qui distingue « vérifié, rien à dire » de « pas
+regardé » — deux états que l’absence de section rend indistinguables.
+
+Chaque étape de l’ordre d’exécution suit la même structure, et c’est elle qui rend l’implémentation pilotable :
+
+```markdown
+1. [ ] **Extraire le parseur de sections SEO**
+   - Objectif : isoler la lecture de resume/faq/sources hors du loader.
+   - Fichiers : `src/content-loaders/seo-sections.ts` (créé).
+   - Vérification : `npm run test` vert, build inchangé.
+   - Commitable seule : oui.
+```
+
+Une étape = une unité commitable, avec sa propre vérification. C’est ce qui permet de s’arrêter au milieu d’une story sans laisser le dépôt dans un état bâtard.
+
+### L’exécution
+
+L’implémentation avance **sous-tâche par sous-tâche**, avec la QA du projet lancée en continu. L’agent ne part pas en roue libre sur trente fichiers pour revenir
+avec un diff qu’il faudra démêler. Il fait une étape, la vérifie, la présente, attend.
+
+Et c’est là qu’intervient la règle qui rend tout le reste supportable dans la durée.
+
+### La règle d’or
+
+**Aucune étape ne s’enchaîne sans validation explicite.** Pas d’enchaînement automatique du pitch au plan, du plan à l’implémentation, d’une sous-tâche à la
+suivante. À chaque frontière, l’agent s’arrête et attend un « ok ».
+
+C’est contre-intuitif — on a l’impression de brider l’outil, et sur une démo de trois minutes, c’est vrai. Sur un projet mené pendant six mois, c’est l’inverse :
+c’est la seule chose qui empêche une divergence de s’amplifier sur douze étapes avant d’être repérée. Une erreur de cadrage rattrapée à l’étape 1 coûte une
+phrase. La même erreur rattrapée après implémentation coûte la story.
+
+### Le vrai gain n’est pas économique
+
+Voilà le retournement qui a mis le plus de temps à me sauter aux yeux, et c’est celui que je retiens.
+
+Avec un agent lâché sur une feature, on relit un diff de six cents lignes **après coup**, avec la fatigue et le biais du fait accompli — le code existe, il a
+l’air de marcher, et le refuser coûte cher. Avec un plan, on relit deux pages **avant** que la moindre ligne existe, à un moment où changer d’avis ne coûte
+qu’une phrase.
+
+Ce n’est pas une économie de tokens. C’est un déplacement de la charge de relecture vers le seul moment où elle est encore bon marché.

@@ -1,0 +1,36 @@
+## Quand ce workflow est le bon choix
+
+Voici comment je situe aujourd’hui cette méthode, critère par critère :
+
+| Critère                    | Verdict                                                                                                |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Durée de vie du projet     | Rentable au-delà de quelques semaines ; sur un projet de trois jours, le cadrage ne se rembourse pas   |
+| Taille du diff typique     | Décisif au-delà de la dizaine de fichiers touchés ; en deçà, le track fast fait le travail             |
+| Reprises après pause       | C’est là que le gain est maximal — les artifacts sont la seule mémoire qui survit à trois semaines     |
+| Besoin de traçabilité      | Story versionnée, revue en diff, ADR gravés : la justification vit dans le dépôt, pas dans une mémoire |
+| Solo ou à plusieurs        | Conçu pour le solo assisté ; à plusieurs, la valeur monte encore — la story remplace la réunion        |
+
+### Ce pour quoi ce n’est pas fait
+
+Un script jetable. Un POC exploratoire dont on sait qu’il finira à la poubelle. Un one-shot. Un terrain de jeu où le but est justement de ne pas savoir où l’on
+va — cadrer y détruirait ce qu’on est venu chercher.
+
+Et un dernier cas, le plus important à admettre : **une équipe qui n’écrira de toute façon rien**. Aucun outillage ne crée la discipline d’écrire ; il ne fait
+que la rendre moins coûteuse à ceux qui l’ont déjà. Installer ce pipeline dans une équipe qui ne relit pas ses pull requests produira des documents que personne
+ne relira non plus. Simplement, ils seront dans le dépôt.
+
+### Le cas où le bénéfice est maximal
+
+C’est celui du projet mené **par intermittence**. Deux jours par-ci, une semaine trois mois plus tard, un correctif urgent l’hiver suivant. Les projets
+personnels fonctionnent tous comme ça, et une bonne partie des projets freelance aussi.
+
+Dans ce régime, le goulot d’étranglement n’est jamais la vitesse d’écriture du code. C’est la reconstitution du contexte : pourquoi ce choix, qu’est-ce qui avait
+été essayé, où en était-on. C’est précisément ce que des artifacts rangés à côté du code restituent en quelques minutes, et ce qu’aucune fenêtre de contexte, si
+large soit-elle, ne restituera jamais toute seule.
+
+### Ce que je retiens
+
+Trois frameworks essayés m’ont appris la même chose par trois chemins différents : ce n’est pas le nombre d’agents qui fait la qualité d’un développement
+assisté. C’est ce qu’on a écrit avant de les lancer — et le fait de l’avoir rangé là où le code peut le voir.
+
+Le reste est de l’intendance.

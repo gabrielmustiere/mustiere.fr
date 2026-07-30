@@ -1,0 +1,28 @@
+---
+questions:
+  - q: 'Est-ce que ça vaut le coup sur un projet solo, ou est-ce que le cadrage écrit est un luxe d’équipe ?'
+    r: |
+      C’est en solo que ça vaut le plus, et c’est contre-intuitif. En équipe, le cadrage écrit sert d’abord à se synchroniser : plusieurs personnes doivent
+      partager le même périmètre, et l’écrit est le seul support fiable pour ça. En solo, ce besoin disparaît — mais un autre le remplace, et il est plus
+      brutal : personne d’autre que toi ne se souviendra de quoi que ce soit, et toi-même tu auras oublié dans trois semaines. Un document d’intention en solo
+      n’est pas un outil de coordination, c’est une prothèse de mémoire. Le vrai discriminant n’est donc pas le nombre de personnes, c’est la continuité du
+      travail : un projet mené en continu pendant dix jours a peu besoin d’artifacts, un projet repris tous les deux mois en dépend entièrement — qu’on soit
+      un ou six.
+  - q: 'Combien de temps ajoute réellement le cadrage avant qu’une ligne de code soit écrite ?'
+    r: |
+      Assez pour que ça se sente, et je ne vais pas prétendre l’inverse : sur une feature structurante, l’interview, le pitch et le plan représentent un vrai
+      moment de travail avant le premier fichier touché. Ce temps n’est pas récupéré sur l’implémentation — il s’ajoute. Ce qu’il faut mettre en face, c’est
+      ce qu’il évite : les tours de boucle sur une fonctionnalité mal comprise, le diff qu’on jette, la session relancée à zéro parce qu’elle a dérivé. Ce
+      coût-là ne figure sur aucun compteur, ce qui le rend facile à sous-estimer. Le mauvais réflexe serait d’en conclure qu’il faut cadrer partout : sur un
+      correctif de trois fichiers, le cadrage coûte plus cher que le correctif, et c’est exactement pour ça qu’un track fast existe. La question utile n’est
+      pas « combien de temps ça ajoute » mais « à partir de quelle taille de story ça se rembourse » — dans mon expérience, autour de la dizaine de fichiers
+      touchés.
+  - q: 'Est-ce que ça marche avec un autre agent que Claude Code, ou avec un autre plugin de workflow ?'
+    r: |
+      Le plugin, non : il est packagé pour Claude Code, avec ses skills et son namespacing. La méthode, oui, et c’est ce qui compte. Rien dans ce qui précède
+      ne dépend d’un modèle ou d’un éditeur : deux documents de cadrage à registres séparés, rangés dans le dépôt, une validation explicite entre chaque
+      étape, et une clôture qui réaligne la documentation avant de commiter. Ça se tient à la main dans n’importe quel outil, y compris sans agent du tout —
+      c’est d’ailleurs comme ça que je l’ai testé avant de l’outiller. Si tu utilises déjà BMAD ou Spec Kit et que ça te convient, il n’y a aucune raison d’en
+      changer : ce sont des outils sérieux, et le contexte de travail décide plus que la méthode. Ce que je reprendrais d’abord, quel que soit l’outil, c’est
+      la coprésence des artifacts et du code. C’est le principe qui donne le plus, et le moins cher à adopter.
+---

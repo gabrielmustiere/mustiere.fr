@@ -1,0 +1,66 @@
+## Ce que ça coûte vraiment
+
+Une méthode qu’on ne présente que par ses bénéfices est une méthode qu’on n’a pas assez utilisée. Voici la facture.
+
+### Le coût, d’abord
+
+**Le cadrage prend du temps humain.** Pas du temps machine — du temps de cerveau disponible, celui qui manque. Écrire un pitch, le challenger contre la vision,
+concevoir un plan, relire ses alternatives écartées : sur une feature moyenne, c’est un moment de travail réel avant la première ligne de code. On ne le récupère
+pas ailleurs.
+
+**Les validations successives sont bavardes.** La règle d’or a un coût d’ergonomie : à chaque frontière d’étape, il faut lire quelque chose et répondre. Sur une
+story qui compte huit sous-tâches, ça fait huit arrêts. C’est voulu, mais il faut être honnête sur ce que ça change au confort de travail — on ne lance pas ce
+workflow pour se détendre.
+
+**Sur une petite story, c’est disproportionné.** D’où le track fast, et d’où le fait que je l’emprunte souvent.
+
+### L’économie, ensuite
+
+Elle est réelle, mais elle n’est pas là où on l’attend.
+
+Le premier poste, c’est le contexte non rechargé. Moins de rôles convoqués, donc moins de décor à réinstaller ; des documents courts et réellement lus plutôt que
+des spécifications générées et jamais ouvertes. Les ordres de grandeur cités plus haut — quatre fois pour un agent, quinze pour un système multi-agents — sont
+mesurés sur un système de recherche et je ne les transpose pas au développement. Mais la direction, elle, n’est pas discutable : chaque agent supplémentaire
+paie un droit d’entrée en contexte.
+
+Le second poste est invisible, et c’est le plus important : **un agent qui repart d’une story bien cadrée refait moins de tours de boucle**. Le token économisé
+n’est pas celui du prompt initial — c’est celui de la reprise. Celui de la troisième tentative sur une fonctionnalité mal comprise, du diff qu’on jette, de la
+session qu’on relance à zéro parce qu’elle a dérivé. Ce coût-là ne figure sur aucun compteur, et il domine largement le reste.
+
+### Chiffrer le temps : les deux colonnes
+
+Il existe une étape dédiée au chiffrage d’une story, et sa particularité m’a été dictée par la facturation. Elle produit un `estimate.md` en **heures, jamais en
+montants**, sur toutes les phases — cadrage, implémentation, tests, revue, documentation de clôture — et surtout en **deux colonnes** :
+
+```markdown
+| Phase                    | Réf. (sans IA) | Avec IA | État        | Justification (signal)       |
+| ------------------------ | -------------- | ------- | ----------- | ---------------------------- |
+| Cadrage fonctionnel      | <h>            | <h·IA>  | déjà fait   | <pitch écrit ; reste des ajustements> |
+| Conception technique     | <h>            | <h·IA>  | déjà fait   | <plan détaillé, N fichiers identifiés> |
+| Implémentation           | <h>            | <h·IA>  | reste       | <N fichiers à créer dont 1 migration>  |
+| Tests (auto + QA)        | <h>            | <h·IA>  | reste       | <3 niveaux de test prévus>   |
+| Review & corrections     | <h>            | <h·IA>  | reste       | <zone sensible, 1 passe + reprises> |
+| Documentation de clôture | <h>            | <h·IA>  | reste       | <report + sync>              |
+```
+
+La colonne de gauche est le temps de référence, celui qu’aurait pris la story sans assistant. Celle de droite est le temps réel. **L’écart entre les deux est
+exactement ce qu’on facture, ou ce qu’on négocie** — et il n’est pas uniforme : le facteur d’accélération est fort sur l’implémentation, les tests et la
+documentation, faible sur la conception, et nul sur la mise en production.
+
+Pour un freelance, c’est la donnée qui manquait. On ne facture pas des heures machine, on facture une livraison ; savoir de combien l’outillage a raccourci le
+chemin est ce qui permet de tenir un prix sans le justifier au doigt mouillé — dans un sens comme dans l’autre.
+
+### Reprendre après trois semaines
+
+Le dernier coût est celui qu’on oublie systématiquement : **on ne travaille pas en continu**. On revient sur un projet après trois semaines et on ne sait plus où
+on en était.
+
+Une étape en lecture seule répond à cette question : elle recense les stories, déduit pour chacune l’étape atteinte à partir des artifacts présents et du
+`metadata.json`, évalue leur fraîcheur — active, en pause, dormante —, relève l’état du dépôt (branche, working tree, commits non poussés, stash oublié) et
+conseille **une** reprise, en nommant l’étape à lancer. Une seule, pas une liste.
+
+Elle n’écrit aucun fichier, pas même les métadonnées. Ce n’est pas une passe du pipeline, et ça n’apparaît donc pas dans le changelog des stories — un point de
+situation qui modifierait la situation qu’il décrit serait un mauvais point de situation.
+
+Avec un garde-fou qui vaut pour n’importe quelle méthode : **un plan qui dort depuis plus d’un mois se relit avant d’être exécuté**. Le code a bougé, les
+dépendances ont bougé, et parfois l’avis qu’on avait sur le sujet aussi.
